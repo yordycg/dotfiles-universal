@@ -1,0 +1,49 @@
+packages:
+	core:
+		- git
+		- curl
+		- wget
+		- zsh
+		- neovim
+		- tmux
+		- fzf
+		- zoxide
+		- eza
+		- bat
+		- ripgrep
+		- fd-find
+		- starship
+		- just
+		- gh
+		- chezmoi
+		- btop
+		- jq
+		- yq
+		- delta
+		- lazygit
+
+	linux_desktop:
+		- distrobox
+		- podman
+		- flatpak
+		- fontconfig
+
+	sway_desktop:
+		- waybar
+		- wofi
+		- mako
+	        - grim
+	        - slurp
+	        - wl-clipboard
+	        - gammastep
+	        - kanshi
+	        - swayidle
+	        - swaylock
+
+        terminals:
+                - foot
+                - ghostty
+                - kitty
+        fonts:
+                - jetbrains-mono-fonts
+                - fontawesome-fonts
