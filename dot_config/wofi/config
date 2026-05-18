@@ -1,0 +1,16 @@
+# Wofi Config
+mode=drun
+width=600
+height=400
+location=center
+always_parse_args=true
+show_all=false
+print_command=true
+insensitive=true
+prompt=Search Apps...
+allow_images=true
+image_size=32
+# Usa el archivo style.css que creamos
+style=/home/yordycg/.config/wofi/style.css
+# Tema de iconos (Asegurate de tenerlo instalado en el sistema)
+gtk_helper=true
