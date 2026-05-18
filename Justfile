@@ -5,6 +5,7 @@ default:
 
 # Aplicar todos los dotfiles
 apply:
+	@sudo -v
 	chezmoi apply -v
 
 # Ver cambios pendientes
@@ -20,7 +21,7 @@ edit FILE:
 	chezmoi edit {{FILE}} --apply
 
 # Instalar paquetes segun el distro actual
-intall:
+install:
 	@if [ -f /etc/fedora-release ]; then \
 		bash scripts/packages/installers/fedora.sh; \
 	elif [ -f /etc/arch-release ]; then \

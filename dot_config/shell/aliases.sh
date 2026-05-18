@@ -2,6 +2,11 @@
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ~='cd ~'
+alias ws='cd ~/workspace'
+alias as='cd ~/workspace/assets'
+alias pr='cd ~/workspace/personal'
+alias wk='cd ~/workspace/work'
+alias iv='cd ~/workspace/ivpg'
 
 # -- Reemplazos modernos -----------------------
 alias ls='eza --icons'
@@ -40,4 +45,7 @@ alias reload='source ~/.zshrc'
 alias path='echo $PATH | tr ":" "\n"'
 alias ports='ss -tulnp'
 alias myip='curl -s ifconfig.me'
+alias logout='loginctl terminate-user $USER'
+alias shutdown='sudo shutdown now'
+alias restart='sudo reboot'
 
