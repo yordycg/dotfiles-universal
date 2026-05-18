@@ -1,0 +1,122 @@
+/* =============================================================================
+ * Waybar Style - Solid Gruvbox Design
+ * ============================================================================= */
+
+/* Gruvbox Colors */
+@define-color bg      #282828;
+@define-color red     #cc241d;
+@define-color green   #98971a;
+@define-color yellow  #d79921;
+@define-color blue    #458588;
+@define-color purple  #b16286;
+@define-color aqua    #689d6a;
+@define-color gray    #a89984;
+@define-color fg      #ebdbb2;
+
+* {
+    border: none;
+    border-radius: 0;
+    font-family: "JetBrainsMono Nerd Font", monospace;
+    font-size: 13px;
+    min-height: 0;
+}
+
+window#waybar {
+    background: @bg;
+    color: @fg;
+    border-bottom: 2px solid @blue;
+}
+
+#workspaces button {
+    padding: 0 10px;
+    background: transparent;
+    color: @gray;
+    border-bottom: 3px solid transparent;
+}
+
+#workspaces button.focused {
+    color: @fg;
+    background: #3c3836;
+    border-bottom: 3px solid @blue;
+}
+
+#workspaces button.urgent {
+    background-color: @red;
+    color: @fg;
+}
+
+#workspaces button:hover {
+    background: #3c3836;
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+#mode, #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #idle_inhibitor, #tray {
+    padding: 0 12px;
+}
+
+#clock {
+    font-weight: bold;
+    color: @aqua;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.critical:not(.charging) {
+    background-color: @red;
+    color: @fg;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+}
+
+#cpu {
+    color: @blue;
+}
+
+#memory {
+    color: @purple;
+}
+
+#temperature {
+    color: @yellow;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#network {
+    color: @aqua;
+}
+
+#pulseaudio {
+    color: @blue;
+}
+
+#pulseaudio.muted {
+    color: @gray;
+}
+
+#idle_inhibitor {
+    color: @gray;
+}
+
+#idle_inhibitor.activated {
+    color: @red;
+}
+
+#tray {
+    background-color: #3c3836;
+}
+
+@keyframes blink {
+    to {
+        background-color: @fg;
+        color: @bg;
+    }
+}
