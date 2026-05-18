@@ -1,0 +1,9 @@
+Host github.com
+	HostName github.com
+	User git
+	IdentityFile ~/.ssh/id_ed25519_github
+
+Host homelab
+	HostName 192.168.18.99
+	User yordycg
+	IdentityFile ~/.ssh/id_ed25519
