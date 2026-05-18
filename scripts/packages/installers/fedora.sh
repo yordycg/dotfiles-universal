@@ -24,15 +24,15 @@ install_section() {
 	sudo dnf install -y --skip-unavailable $packages
 }
 
+# Instalar secciones
 install_section "core"
 
 if [ -z "${WSL_DISTRO_NAME:-}" ]; then
 	install_section "linux_desktop"
 fi
 
-if [ "$XDG_CURRENT_DESKTOP:-}" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
+if [ "$XDG_CURRENT_DESKTOP" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
 	install_section "sway_desktop"
-	install_section "fonts"
 	install_section "terminals"
 fi
 

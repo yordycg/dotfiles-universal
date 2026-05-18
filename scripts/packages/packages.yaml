@@ -12,6 +12,7 @@ packages:
                 - bat
                 - ripgrep
                 - fd-find
+                - ffmpegthumbnailer
                 - just
                 - gh
                 - chezmoi
@@ -19,7 +20,6 @@ packages:
                 - jq
                 - yq
                 - delta
-                - lazygit
 
         linux_desktop:
                 - distrobox
@@ -31,9 +31,17 @@ packages:
                 - waybar
                 - wofi
                 - mako
+                - imv
                 - grim
                 - slurp
                 - wl-clipboard
+                - swaybg
+                - brightnessctl
+                - pavucontrol
+                - nm-connection-editor
+                - blueman
+                - pulseaudio-utils
+                - papirus-icon-theme
                 - gammastep
                 - kanshi
                 - swayidle
@@ -41,8 +49,4 @@ packages:
 
         terminals:
                 - foot
-                - ghostty
                 - kitty
-        fonts:
-                - jetbrains-mono-fonts
-                - fontawesome-fonts

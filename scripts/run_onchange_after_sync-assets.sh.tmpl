@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+# Script de sincronización de Assets (Wallpapers y Notas)
+# Este script se ejecuta cuando cambia la lista de repositorios o manualmente.
+
+set -euo pipefail
+
+# Colores para la salida
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+sync_repo() {
+    local url=$1
+    local path=$2
+    local name=$3
+
+    if [ ! -d "$path/.git" ]; then
+        echo -e "${BLUE}==> Clonando $name en $path...${NC}"
+        mkdir -p "$(dirname "$path")"
+        git clone "$url" "$path"
+    else
+        echo -e "${BLUE}==> Actualizando $name...${NC}"
+        cd "$path"
+        
+        # Verificar si hay cambios locales
+        if ! git diff-index --quiet HEAD --; then
+            echo -e "${YELLOW}  (Cambios locales detectados, haciendo stash temporal)${NC}"
+            git stash
+            git pull --rebase
+            git stash pop || echo -e "${YELLOW}  (Aviso: Conflicto al aplicar stash, revisa manualmente en $path)${NC}"
+        else
+            git pull --rebase
+        fi
+        cd - > /dev/null
+    fi
+}
+
+echo -e "${GREEN}--- Iniciando sincronización de Assets ---${NC}"
+
+# Lista de repositorios (SSH recomendado para evitar prompts de password)
+sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
+sync_repo "git@github.com:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian" "Obsidian Notes"
+
+echo -e "${GREEN}--- Sincronización completada ---${NC}"
