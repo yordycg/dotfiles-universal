@@ -1,44 +1,43 @@
 packages:
-	core:
-		- git
-		- curl
-		- wget
-		- zsh
-		- neovim
-		- tmux
-		- fzf
-		- zoxide
-		- eza
-		- bat
-		- ripgrep
-		- fd-find
-		- starship
-		- just
-		- gh
-		- chezmoi
-		- btop
-		- jq
-		- yq
-		- delta
-		- lazygit
+        core:
+                - git
+                - curl
+                - wget
+                - zsh
+                - neovim
+                - tmux
+                - fzf
+                - zoxide
+                - eza
+                - bat
+                - ripgrep
+                - fd-find
+                - just
+                - gh
+                - chezmoi
+                - btop
+                - jq
+                - yq
+                - delta
+                - lazygit
 
-	linux_desktop:
-		- distrobox
-		- podman
-		- flatpak
-		- fontconfig
+        linux_desktop:
+                - distrobox
+                - podman
+                - flatpak
+                - fontconfig
 
-	sway_desktop:
-		- waybar
-		- wofi
-		- mako
-	        - grim
-	        - slurp
-	        - wl-clipboard
-	        - gammastep
-	        - kanshi
-	        - swayidle
-	        - swaylock
+        sway_desktop:
+                - waybar
+                - wofi
+                - mako
+                - grim
+                - slurp
+                - wl-clipboard
+                - gammastep
+                - kanshi
+                - swayidle
+                - swaylock
 
         terminals:
                 - foot

@@ -1,24 +1,21 @@
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
-
 {{- if eq .chezmoi.os "linux" -}}
-	{{- if env "WSL_DISTRO_NAME" -}}
-		{{- $isWSL = true -}}
-	{{- else if stat "/sys/class/power_supply/BAT0" -}}
-		{{- $isLaptop = true -}}
-	{{- else -}}
-		{{- $isDesktop = true -}}
-	{{- end -}}
+{{-   if env "WSL_DISTRO_NAME" -}}
+{{-     $isWSL = true -}}
+{{-   else if stat "/sys/class/power_supply/BAT0" -}}
+{{-     $isLaptop = true -}}
+{{-   else -}}
+{{-     $isDesktop = true -}}
+{{-   end -}}
 {{- end -}}
-
 data:
-	isLaptop: {{ $isLaptop }}
-	isDesktop: {{ $isDesktop }}
-	isWSL: {{ $isWSL }}
-	os: {{ .chezmoi.os }}
-	hostname: {{ .chezmoi.hostname }}
-
-	fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
-	gitName: "yordycg"
-	gitEmail: "yordy.carmona8@gmail.com"
+  isLaptop: {{ $isLaptop }}
+  isDesktop: {{ $isDesktop }}
+  isWSL: {{ $isWSL }}
+  os: {{ .chezmoi.os }}
+  hostname: {{ .chezmoi.hostname }}
+  fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
+  gitName: "yordycg"
+  gitEmail: "yordy.carmona8@gmail.com"
