@@ -6,15 +6,29 @@
 	editor = nvim
 	pager = delta
 	autocrlf = input
+	compression = 9
+	whitespace = error
+	preloadindex = true
+	symlinks = true
+
+[init]
+	defaultBranch = main
 
 [delta]
-	navigate = true
+	navigate = true						# use n and N to move between diff sections
 	line-numbers = true
 	side-by-side = true
-	theme = gruvbox-dark
+	syntax-theme = gruvbox-dark
+	plus-style = syntax "#012800"
+	minus-style = syntax "#340001"
+	file-added-label = [+]
+	file-modified-label = [*]
+	file-removed-label = [-]
+	file-copied-label = [==]
+	file-renamed-label = [->]
 
 [merge]
-	conflictstyle = diff3
+	conflictstyle = zdiff3
 
 [diff]
 	colorMoved = default
@@ -23,13 +37,47 @@
 	rebase = true
 
 [push]
-	autoSetupRemote = true
+	autoSetupRemote = true					# easier to push new branches
+	default = current					# push only current branch by default
+	followTags = true					# push also tags
+
+[rebase]
+	autoStash = true
 
 [alias]
 	st = status -sb
-	lg = log --oneline --graph --decorate --all
-	undo = reset --soft HEAD~1
+	lg = log --graph --abbrev-commit --decorate --pretty=modern --all
+	undo = reset --soft HEAD~1				# undo last commit
 	aliases = config --get-regexp alias
+	unstage = reset HEAD --					# remove files from stage
+	amend = commit --amend					# modify last commit, open editor
+	amend-no = commit --amend --no-edit			# modify last commit WITHOUT change message
 
-[init]
-	defaultBranch = main
+[pretty]
+	modern = format:%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)
+	colored = format:%C(yellow)%h%C(reset) %C(bold blue)<%an>%C(reset) %s %C(green)(%cr) %C(reset)
+	graph = format:%C(yellow)%h%C(reset) -%C(red)%d%C(reset) %s %C(green)(%ar) %C(bold blue)<%an>%C(reset)
+	bw = format:%h | %as | %>(20,trunc)%d%x09%s
+
+[url "git@github.com:"]
+	insteadOf = "gh:"					# ex: 'g clone gh:torvals/linux'
+
+# -- Multi-Git --------------
+{{ if eq .chezmoi.os "linux" }}
+# -- IPVG Identity (Linux) ----------
+[includeIf "gitdir:~/workspace/ipvg/**"]
+	path = ~/.gitconfig-ipvg
+
+# -- WORK Identity (Linux) ----------
+[includeIf "gitdir:~/workspace/work/**"]
+	path = ~/.gitconfig-work
+{{ else if eq .chezmoi.os "windows" }}
+# -- IPVG Identity (Windows) --------
+[includeIf "gitdir/i:C:/Users/yordycg/workspace/ipvg/**"]
+	path = ~/.gitconfig-ipvg
+
+# -- WORK Identity (Windows) --------
+[includeIf "gitdir/i:C:/Users/yordycg/workspace/work/**"]
+	path = ~/.gitconfig-work
+{{ end }}
+

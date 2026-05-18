@@ -35,4 +35,4 @@ tree:
 
 # Commit rapido
 save MSG="feat: update dotfiles":
-	cd $(chezmoi source-path_ && git add . && git commit -m "{{MSG}}" && git push
+	cd $(chezmoi source-path) && git add . && git commit -m "{{MSG}}" && git push
