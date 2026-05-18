@@ -1,0 +1,29 @@
+# Directorios de organizacion interna - nunca van a $HOME
+home/
+hosts/
+scripts/
+docs/
+
+# Perfiles: solo aplicar el que corresponde
+{{ if not .isLaptop }}
+hosts/laptop/**
+{{ end }}
+{{ if not .isDesktop }}
+hosts/desktop/**
+{{ end }}
+
+# Sway: solo en Linux nativo con entorno grafico
+{{ if eq .os "windows" }}
+home/profile_sway/**
+home/os_linux/**
+{{ end }}
+
+# WSL: solo cuando estemos en WSL
+{{ if not .isWSL }}
+home/profile_wsl/**
+{{ end }}
+
+# Windows: solo en windows nativo
+{{ if ne .os "windows" }}
+home/os_windows/**
+{{ end }}
