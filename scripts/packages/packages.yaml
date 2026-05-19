@@ -4,33 +4,13 @@ packages:
                 - curl
                 - wget
                 - zsh
-                - neovim
-                - tmux
-                - fzf
-                - zoxide
-                - eza
-                - bat
-                - ripgrep
-                - fd-find
-                - ffmpegthumbnailer
-                - just
-                - gh
                 - chezmoi
-                - btop
-                - jq
-                - yq
-                - delta
-                - age
                 - gcc
-                - gcc-c++
                 - make
                 - unzip
-                - nodejs
-                - npm
-                - python3
-                - python3-pip
                 - sqlite
-                - sqlite-devel
+                - readline-devel
+                - ncurses-devel
 
         linux_desktop:
                 - distrobox
