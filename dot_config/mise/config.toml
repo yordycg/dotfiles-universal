@@ -1,0 +1,37 @@
+[tools]
+# Core Tools
+neovim = "latest"
+tmux = "latest"
+starship = "latest"
+lazygit = "latest"
+lazydocker = "latest"
+yazi = "latest"
+fzf = "latest"
+zoxide = "latest"
+eza = "latest"
+bat = "latest"
+ripgrep = "latest"
+fd = "latest"
+just = "latest"
+gh = "latest"
+btop = "latest"
+jq = "latest"
+yq = "latest"
+age = "latest"
+delta = "latest"
+usage = "latest"
+tree-sitter = "latest"
+
+# Development tools managed via Mise
+direnv = "latest"
+
+# Runtimes for Neovim and Development
+node = "22"
+python = "3.12"
+lua = "5.1"
+
+[settings]
+experimental = true
+asdf_compat = true
+# Automatizar la instalacion de herramientas faltantes al entrar en un directorio
+all_compile = false

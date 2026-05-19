@@ -14,6 +14,12 @@ source_if /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 source_if /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # -- Herramientas -------------------------------------------
+# Inicializar Mise (Gestiona nvim, tmux, zoxide, starship, etc)
+if command -v mise &>/dev/null; then
+    eval "$(mise activate zsh)"
+fi
+
+# Inicializar integraciones de herramientas (Mise garantiza que esten en el PATH)
 eval "$(zoxide init zsh)"
 eval "$(starship init zsh)"
 
