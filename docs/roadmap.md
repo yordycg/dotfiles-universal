@@ -211,6 +211,25 @@ chezmoi apply
 
 ---
 
+## 🔧 Fase 6 — Flujo SSH Senior (Homelab)
+> Objetivo: Trabajar en el servidor como si fuera local, con persistencia y seguridad.
+
+### 6.1 SSH Agent Forwarding
+Permite usar las llaves de la laptop en el servidor sin copiarlas.
+- [ ] Configurar `AllowAgentForwarding yes` en el servidor.
+- [ ] Configurar `ForwardAgent yes` en el `~/.ssh/config` gestionado por Chezmoi.
+
+### 6.2 Forgejo Mirroring
+- [ ] Configurar Forgejo para sincronizar repositorios desde GitHub.
+- [ ] Configurar remotos adicionales (`git remote add homelab ...`) para push local.
+
+### 6.3 Personalización del Nodo 1 (Servidor)
+- [ ] Ejecutar `chezmoi init` en el servidor.
+- [ ] Adaptar `debian.sh` (o el instalador que corresponda) para paquetes headless (sin GUI).
+- [ ] Configurar **Tmux** como shell por defecto o sesión persistente al entrar.
+
+---
+
 ## 📋 Comandos útiles del día a día
 
 ```bash
