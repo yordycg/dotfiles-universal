@@ -37,6 +37,8 @@ install_section() {
     local mapped_packages=""
     for pkg in $packages; do
         case "$pkg" in
+            "chezmoi") continue ;; # Ya está instalado vía bootstrap
+            "sqlite") mapped_packages="$mapped_packages sqlite3" ;;
             "gcc-c++") mapped_packages="$mapped_packages g++" ;;
             "sqlite-devel") mapped_packages="$mapped_packages libsqlite3-dev" ;;
             "readline-devel") mapped_packages="$mapped_packages libreadline-dev" ;;
