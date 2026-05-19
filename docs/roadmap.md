@@ -164,69 +164,36 @@ con las herramientas específicas de cada entorno.
 ---
 
 ## 🔧 Fase 4 — Seguridad y secrets
-
-### 4.1 Encriptar secrets con age
-```bash
-# Instalar age
-sudo dnf install -y age
-
-# Generar llave de encriptación
-age-keygen -o ~/.config/chezmoi/key.txt
-
-# Configurar Chezmoi para usar age
-# En .chezmoi.yaml.tmpl agregar:
-# encryption: age
-# age:
-#   identity: ~/.config/chezmoi/key.txt
-#   recipient: <tu-public-key>
-```
-
-### 4.2 Agregar secrets encriptados
-Archivos sensibles que pueden ir al repo encriptados:
-- Variables de entorno privadas
-- Tokens de API
-- Config de servicios internos
-
----
-
-## 🔧 Fase 5 — Windows (Nodo 3)
-
-### 5.1 Chezmoi en Windows
-```powershell
-# Instalar Chezmoi via winget
-winget install twpayne.chezmoi
-
-# Clonar el repo
-chezmoi init git@github.com:yordycg/dotfiles-universal.git
-chezmoi apply
-```
-
-### 5.2 WSL2
-```bash
-# Dentro de WSL2, mismo proceso que Linux
-# Chezmoi detectará isWSL=true automáticamente
-chezmoi init git@github.com:yordycg/dotfiles-universal.git
-chezmoi apply
-```
+- [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
+- [ ] **SOPS**: Implementar para cifrar archivos `.env` y configuraciones sensibles en todos los repos.
+- [ ] **Configurar Chezmoi**: Usar `encryption: age` en `.chezmoi.yaml.tmpl`.
 
 ---
 
 ## 🔧 Fase 6 — Flujo SSH Senior (Homelab)
 > Objetivo: Trabajar en el servidor como si fuera local, con persistencia y seguridad.
 
-### 6.1 SSH Agent Forwarding
-Permite usar las llaves de la laptop en el servidor sin copiarlas.
-- [ ] Configurar `AllowAgentForwarding yes` en el servidor.
-- [ ] Configurar `ForwardAgent yes` en el `~/.ssh/config` gestionado por Chezmoi.
+- [ ] **SSH Agent Forwarding**: Configurar `ForwardAgent yes` en el `~/.ssh/config` gestionado por Chezmoi.
+- [ ] **Forgejo Mirroring**: Configurar sincronización desde GitHub y remotos locales.
+- [ ] **Personalización Nodo 1**: Aplicar `chezmoi init` y configurar Tmux persistente.
 
-### 6.2 Forgejo Mirroring
-- [ ] Configurar Forgejo para sincronizar repositorios desde GitHub.
-- [ ] Configurar remotos adicionales (`git remote add homelab ...`) para push local.
+---
 
-### 6.3 Personalización del Nodo 1 (Servidor)
-- [ ] Ejecutar `chezmoi init` en el servidor.
-- [ ] Adaptar `debian.sh` (o el instalador que corresponda) para paquetes headless (sin GUI).
-- [ ] Configurar **Tmux** como shell por defecto o sesión persistente al entrar.
+## 🔧 Fase 7 — Servicios Homelab Avanzados
+> Gestión de la infraestructura del Nodo 1 (Servidor).
+
+### 7.1 Seguridad y Acceso
+- [ ] **Password Manager**: Desplegar **Vaultwarden** en `containers/vaultwarden`.
+- [ ] **HTTPS Real**: Configurar Caddy con DNS-01 challenge para certificados válidos (Let's Encrypt).
+- [ ] **VPN Avanzada**: Configurar Nodo 1 como *Exit Node* en Tailscale.
+
+### 7.2 Mantenimiento y Resiliencia
+- [ ] **Backups Automáticos**: Cron job para backup de volúmenes de Podman (Restic/Borg).
+- [ ] **Monitorización**: Stack de telemetría (Netdata o Grafana/Prometheus).
+- [ ] **Dashboard de Servicios**: Configurar Homepage o Dashy para ver todos los links .home en un solo sitio.
+
+### 7.3 Automatización (CI/CD)
+- [ ] **Auto-Deploy**: Webhooks en Forgejo para que el servidor haga `git pull` y `./manage.sh up` automáticamente al recibir cambios.
 
 ---
 
