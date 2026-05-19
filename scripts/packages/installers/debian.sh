@@ -57,7 +57,7 @@ install_section() {
 install_section "core"
 
 # Solo instalar desktop si no es un sistema headless (Nodo 1 es headless)
-if [ -n "$DISPLAY" ] || [ -n "$WAYLAND_DISPLAY" ]; then
+if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
     if [ -z "${WSL_DISTRO_NAME:-}" ]; then
         install_section "linux_desktop"
     fi
