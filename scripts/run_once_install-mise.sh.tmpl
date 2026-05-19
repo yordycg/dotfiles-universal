@@ -6,6 +6,11 @@
 
 set -euo pipefail
 
+# Exportar token para evitar rate limits de GitHub
+export GITHUB_TOKEN={{ .githubToken | quote }}
+# Desactivar attestations de python que fallan sin token/red
+export MISE_PYTHON_GITHUB_ATTESTATIONS=false
+
 if ! command -v mise &>/dev/null; then
     echo "== Instalando mise..."
     curl https://mise.jdx.dev/install.sh | sh

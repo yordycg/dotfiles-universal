@@ -41,6 +41,9 @@ install_section() {
             "sqlite-devel") mapped_packages="$mapped_packages libsqlite3-dev" ;;
             "readline-devel") mapped_packages="$mapped_packages libreadline-dev" ;;
             "ncurses-devel") mapped_packages="$mapped_packages libncurses-dev" ;;
+            "llvm-devel") mapped_packages="$mapped_packages llvm-dev" ;;
+            "zlib-devel") mapped_packages="$mapped_packages zlib1g-dev" ;;
+            "openssl-devel") mapped_packages="$mapped_packages libssl-dev" ;;
             *) mapped_packages="$mapped_packages $pkg" ;;
         esac
     done

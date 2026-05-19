@@ -33,5 +33,6 @@ lua = "5.1"
 [settings]
 experimental = true
 asdf_compat = true
+python.github_attestations = false
 # Automatizar la instalacion de herramientas faltantes al entrar en un directorio
 all_compile = false

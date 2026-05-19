@@ -1,3 +1,4 @@
+{{- $githubToken := promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
@@ -15,6 +16,7 @@ age:
   identity: "~/.config/chezmoi/key.txt"
   recipient: "age1w93unwnu802h9vkygj2d4dxmu23yghw9kd39thwgc0susmsu7spscwp0wa"
 data:
+  githubToken: {{ $githubToken | quote }}
   isLaptop: {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
   isWSL: {{ $isWSL }}
