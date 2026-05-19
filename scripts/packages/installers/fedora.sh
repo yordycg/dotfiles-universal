@@ -36,4 +36,15 @@ if [ "$XDG_CURRENT_DESKTOP" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
 	install_section "terminals"
 fi
 
+echo "== Configurando providers de Neovim..."
+if command -v npm &>/dev/null; then
+    sudo npm install -g neovim tree-sitter-cli
+fi
+
+if command -v pip &>/dev/null; then
+    sudo pip install pynvim
+elif command -v pip3 &>/dev/null; then
+    sudo pip3 install pynvim
+fi
+
 echo "[OK] Fedora Listo"

@@ -41,6 +41,9 @@ alias czu='chezmoi update'
 alias czs='chezmoit source-path'
 
 # -- Sistema ----------------------------------
+alias lv='NVIM_APPNAME=LazyVim nvim'
+alias nv='NVIM_APPNAME=nvim-personal nvim'
+alias v='nv'
 alias reload='source ~/.zshrc'
 alias path='echo $PATH | tr ":" "\n"'
 alias ports='ss -tulnp'

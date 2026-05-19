@@ -20,6 +20,16 @@ packages:
                 - jq
                 - yq
                 - delta
+                - gcc
+                - gcc-c++
+                - make
+                - unzip
+                - nodejs
+                - npm
+                - python3
+                - python3-pip
+                - sqlite
+                - sqlite-devel
 
         linux_desktop:
                 - distrobox
