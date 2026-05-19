@@ -81,13 +81,6 @@ return {
     },
   },
 
-  -- Comentarios
-  {
-    "numToStr/Comment.nvim",
-    event = "BufReadPre",
-    config = true,
-  },
-
   -- Saltar a cualquier parte de la pantalla
   {
     "folke/flash.nvim",
@@ -102,6 +95,22 @@ return {
         desc = "Flash jump",
       },
     },
+  },
+
+  -- Diffview: Ver cambios de git de forma global
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewClose" },
+  },
+
+  -- Oil: Editar el sistema de archivos como un buffer de texto
+  {
+    "stevearc/oil.nvim",
+    opts = {},
+    keys = {
+      { "-", "<CMD>Oil<CR>", desc = "Abrir Oil" },
+    },
+    dependencies = { "nvim-tree/nvim-web-devicons" },
   },
 
   -- Mostrar identacion

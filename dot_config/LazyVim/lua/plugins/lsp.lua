@@ -1,7 +1,29 @@
 return {
+  -- Glance: Vista "Peek" tipo VS Code para LSP
+  {
+    "dnlhc/glance.nvim",
+    cmd = "Glance",
+    opts = {
+      height = 20, -- Altura de la ventana flotante
+      zindex = 45,
+      detached = true,
+      preview_win_opts = {
+        cursorline = true,
+        number = true,
+        relativenumber = true,
+      },
+    },
+    keys = {
+      { "gD", "<CMD>Glance definitions<CR>", desc = "Peek Definition" },
+      { "gR", "<CMD>Glance references<CR>", desc = "Peek References" },
+      { "gY", "<CMD>Glance type_definitions<CR>", desc = "Peek Type Definition" },
+      { "gM", "<CMD>Glance implementations<CR>", desc = "Peek Implementation" },
+    },
+  },
+
   -- Mason: instala servidores LSP, linters y formatters automaticamente
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {
       ensure_installed = {
         -- Python

@@ -11,16 +11,7 @@ map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Buffer anterior" })
 map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Buffer siguiente" })
 map("n", "<leader>bd", "<cmd>bdelete<cr>", { desc = "Cerrar buffer" })
 
--- LSP -------------------------------------------------------------
-map("n", "gd", vim.lsp.buf.definition, { desc = "Ir a definicion" })
-map("n", "gr", vim.lsp.buf.references, { desc = "Referencias" })
-map("n", "K", vim.lsp.buf.hover, { desc = "Documentacion" })
-map("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Renombrar simbolo" })
-map("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code action" })
-
 -- Diagnosticos -----------------------------------------------------
-map("n", "[d", vim.diagnostic.goto_prev, { desc = "Error anterior" })
-map("n", "]d", vim.diagnostic.goto_next, { desc = "Error siguiente" })
 map("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<cr>", { desc = "Toggle Trouble" })
 
 -- Utilidades -----------------------------------------------------

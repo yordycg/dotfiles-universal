@@ -24,9 +24,8 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.typescript" }, -- JS / TS
     { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.tailwind" }, -- CSS / Tailwind
-    { import = "lazyvim.plugins.extras.lang.omnisharp" }, -- C#
+    { import = "lazyvim.plugins.extras.lang.dotnet" }, -- .NET / C#
     { import = "lazyvim.plugins.extras.lang.clangd" }, -- C / C++
-    { import = "lazyvim.plugins.extras.lang.html" },
 
     -- ----- Extras Herramientas -------------------------------------------
     { import = "lazyvim.plugins.extras.editor.fzf" },
