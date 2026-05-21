@@ -19,6 +19,7 @@ El objetivo es centralizar el desarrollo en el **Nodo 1** para garantizar persis
     - `age` instalado en el sistema.
     - Llave pública generada para encriptación de secretos.
     - Automatización SSH configurada con registro automático en GitHub.
+    - **SOPS** configurado e integrado con `age` para gestión de secretos.
 
 ## 📋 Próximos Pasos (Inmediatos)
 1. **Blindaje Nodo 1:** Iniciar el hardening del servidor Debian (SSH, Firewall).

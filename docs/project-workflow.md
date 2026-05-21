@@ -29,11 +29,18 @@ Define *dónde* y *cómo* compila y corre el código de la aplicación, aislando
 ## 4. Capa de Orquestación y Configuración (Developer Experience)
 Para que las tres capas anteriores funcionen en armonía sin que el desarrollador deba memorizar comandos complejos, se estandariza el uso de dos elementos clave:
 
-### Gestión de Variables de Entorno
+### Gestion de Variables de Entorno
 - **.env.example**: Plantilla documentada que se comitea al repositorio. Muestra todas las variables necesarias sin revelar secretos.
 - **.env**: Archivo ignorado por Git (debe estar en el `.gitignore`) que contiene los secretos reales para uso del `compose.yaml` o el framework de turno.
 
-### Task Runner (Simplificación de Comandos)
+### Gestion de Secretos con SOPS
+Para proyectos que requieren maxima seguridad y reproducibilidad de secretos:
+1. Usar **SOPS** con **age** para cifrar archivos de entorno.
+2. El archivo cifrado se guarda como `secrets.enc.env` y se sube al repositorio.
+3. El archivo original `.env` se añade al `.gitignore`.
+4. El Task Runner (`Justfile`) debe incluir una tarea para descifrar el archivo al vuelo.
+
+### Task Runner (Simplificacion de Comandos)
 Se debe utilizar un orquestador de tareas para documentar y estandarizar los comandos del proyecto.
 - **Herramienta Preferida:** `Just` (mediante un archivo `Justfile`).
 - **Alternativa Tradicional:** `Make` (mediante un `Makefile`).

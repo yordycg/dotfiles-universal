@@ -65,7 +65,7 @@ Configuración dual para máxima versatilidad:
 
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
-- [ ] **SOPS**: Implementar para cifrar archivos `.env` y configuraciones sensibles.
+- [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
 - [ ] **Configurar Chezmoi**: Usar `encryption: age` en `.chezmoi.yaml.tmpl`.
 
 ---
