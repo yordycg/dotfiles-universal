@@ -1,41 +1,40 @@
-# Flujo de Trabajo: Homelab (Nodo 1)
+# Arquitectura y Flujo de Trabajo (Homelab)
 
-Este documento detalla la arquitectura de trabajo remoto para el desarrollo diario.
+Este documento detalla la topología de la infraestructura personal y el flujo de trabajo remoto para el desarrollo diario.
 
-## 1. El Flujo de Trabajo Diario: De la Laptop al Servidor
-Tu notebook del instituto tiene Fedora Sway. Es ligero, rápido y consume mínima batería. No vas a compilar proyectos pesados de .NET o Node.js ahí; todo se ejecutará en el servidor.
+## 1. Topología de Nodos
 
-### El paso a paso de tu rutina:
-1.  Abres la laptop en el instituto o en tu casa.
-2.  Presionas `Super + Enter` y abres tu terminal (**Kitty**).
-3.  Escribes el comando `homelab`. Este alias hace esto internamente:
-    ```bash
-    ssh -t yordycg@192.168.18.99 "tmux attach -t dev || tmux new -s dev"
-    ```
-4.  **Resultado:** Estás dentro del servidor, y automáticamente se abrió (o se recuperó) una sesión de Tmux llamada `dev`.
+La infraestructura se categoriza en tres roles estrictos:
 
-## 2. ¿Por qué TMUX es obligatorio? 🪟
-Trabajar en el servidor mediante SSH tiene un peligro: la red se puede caer. Con Tmux esto no pasa:
-*   **Persistencia Total:** Si cierras la laptop, la sesión sigue viva en el servidor. Al reconectarte desde cualquier nodo (Laptop o Desktop), recuperas exactamente el mismo estado.
-*   **Multiplexación:** Dentro de la conexión SSH, divides la pantalla:
-    *   **Panel superior:** Neovim abierto.
-    *   **Panel inferior izquierdo:** Terminal para tests/logs.
-    *   **Panel inferior derecho:** Git (Lazygit).
+- **Nodo 1 (Servidor Central):** El cuartel general. Generalmente un equipo headless (sin interfaz gráfica) conectado 24/7 (ej. Debian). Aloja el código fuente, servicios persistentes y entornos de desarrollo mediante contenedores.
+- **Nodo 2 (Estación de Fuerza / Desktop):** El músculo. Un equipo potente utilizado para compilaciones pesadas, simulaciones 3D, máquinas virtuales o videojuegos. Su sistema operativo es agnóstico (Linux, DualBoot o Windows+WSL) ya que las herramientas base (Chezmoi, Docker) funcionan igual.
+- **Nodo N (Clientes Ligeros):** Las interfaces. Laptops (ej. Fedora Sway), tablets o equipos secundarios. Su trabajo es proyectar la interfaz de usuario. Tienen paquetes mínimos, no compilan localmente, y actúan como "controles remotos" hacia el Nodo 1 o Nodo 2.
 
-## 3. ¿Cómo se conecta tu editor (Neovim)? 💻
-No vas a usar Neovim en tu laptop para editar archivos locales. Tu Neovim va a correr directamente dentro del servidor. Al usar **dotfiles universales**, la configuración es idéntica en ambos sitios. El editor consume la RAM y CPU del servidor, manteniendo tu notebook fría y con batería.
+## 2. El Flujo de Trabajo Diario (Online)
+El objetivo es mantener a los Nodos N fríos, con batería y sin archivos residuales.
 
-## 4. ¿Y qué pasa si no tienes internet? (El Plan B) 📶
-Si el Wi-Fi falla, el flujo no se detiene gracias a **Distrobox**:
-1.  Abres una terminal local en Fedora.
-2.  Escribes `distrobox enter dev-dotnet` (o el contenedor correspondiente).
-3.  Trabajas de forma aislada. Al volver el internet, subes cambios a GitHub y sincronizas con el servidor.
+1. Se abre el Nodo N (ej. Laptop en un café).
+2. Se ejecuta la conexión hacia el Nodo 1: `ssh homelab`
+3. Automáticamente se adjunta (o crea) una sesión persistente:
+   `ssh -t yordycg@192.168.18.99 "tmux attach -t dev || tmux new -s dev"`
+4. **Resultado:** El usuario está dentro del Nodo 1. La sesión de Neovim y los procesos en ejecución consumen la RAM y CPU del Servidor. 
+
+## 3. La Regla de Tmux (Persistencia)
+Trabajar mediante SSH tiene un peligro: la inestabilidad de red. Tmux soluciona esto garantizando **Persistencia Total**. Si el Nodo N pierde conexión, la sesión sigue viva en el Servidor. Al reconectarse, el estado del editor, los logs y los paneles se recuperan intactos.
+
+## 4. El "Plan B" (Modo Offline o Desconectado)
+Si el Nodo N pierde la conexión a internet de manera prolongada y el Nodo 1 es inaccesible, el desarrollo no se detiene gracias al estándar de contenedores. Ya no se requieren entornos complejos ni máquinas virtuales locales:
+
+1. Se clona (o se utiliza la copia local) el repositorio del proyecto en el Nodo N.
+2. Como todos los proyectos cumplen con la arquitectura de *Capa 2 y Capa 3*, solo se necesita ejecutar el Task Runner (ej. `just up` o `podman compose up`).
+3. El proyecto descargará sus propias imágenes y se levantará idéntico a como lo hace en el servidor.
+4. Se utiliza Neovim localmente en el Nodo N para editar. Al volver la conexión, se realiza un `git push` y se reanuda el trabajo en el Nodo 1.
 
 ---
-### Resumen del Flujo
-| Acción | ¿Dónde ocurre? | Herramienta |
+### Resumen del Flujo por Defecto
+| Acción | Ubicación | Herramienta |
 | :--- | :--- | :--- |
-| **Escribir Código** | Servidor (Nodo 1) | Neovim (vía SSH) |
-| **Persistencia** | Servidor (Nodo 1) | Tmux |
-| **Compilar / Ejecutar** | Servidor (Nodo 1) | Terminal en Tmux |
-| **Interfaz / Teclado** | Laptop (Nodo 2) | Fedora Sway + Kitty |
+| **Interfaz (Ventana)** | Nodo N (Cliente Ligero) | Terminal (Kitty) + SSH |
+| **Edición de Código** | Nodo 1 (Servidor) | Neovim |
+| **Persistencia** | Nodo 1 (Servidor) | Tmux |
+| **Ejecución y BD** | Nodo 1 (Servidor) | Podman / Dockerfiles |
