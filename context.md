@@ -20,11 +20,10 @@ El objetivo es centralizar el desarrollo en el **Nodo 1** para garantizar persis
     - Llave pública generada para encriptación de secretos.
     - Automatización SSH configurada con registro automático en GitHub.
     - **SOPS** configurado e integrado con `age` para gestión de secretos.
+- [x] **Blindaje (Hardening):** Gestionado vía `homelab-infra` (SSH, Firewall, Podman).
 
 ## 📋 Próximos Pasos (Inmediatos)
-1. **Blindaje Nodo 1:** Iniciar el hardening del servidor Debian (SSH, Firewall).
-2. **Sincronización:** Ejecutar `chezmoi init` en el Nodo 1 para compartir entorno.
-3. **Editor:** Refinar la configuración de LazyVim para el flujo de contenedores.
+1. **Sincronización:** Ejecutar `chezmoi init` en el Nodo 1 para compartir entorno.
 
 ---
 *Última actualización: 21 de mayo de 2026*
