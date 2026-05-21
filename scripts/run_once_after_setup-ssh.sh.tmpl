@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_once_after_setup-ssh.sh.tmpl
+# Configura llave SSH única para este dispositivo y la sube a GitHub.
+# Basado en la lógica probada de dotfiles-2024.
+# =============================================================================
+
+set -euo pipefail
+
+# Variables de Chezmoi
+HOSTNAME="{{ .hostname }}"
+KEY_COMMENT="Key for ${HOSTNAME} (managed by chezmoi)"
+KEY_TITLE="SSH Key: ${HOSTNAME}"
+
+# Configuración de rutas
+SSH_DIR="$HOME/.ssh"
+SSH_KEY_NAME="id_ed25519"
+SSH_KEY_PATH="$SSH_DIR/$SSH_KEY_NAME"
+SSH_KEY_PUB_PATH="${SSH_KEY_PATH}.pub"
+SSH_CONFIG_FILE="$SSH_DIR/config"
+
+# Colores para feedback
+info()    { echo "  [INFO]  $*"; }
+success() { echo "  [ OK ]  $*"; }
+warn()    { echo "  [WARN]  $*"; }
+die()     { echo "  [ERROR] $*" >&2; exit 1; }
+
+echo ""
+echo "== Configuración de Identidad SSH para: ${HOSTNAME} =="
+
+# 1. Verificar dependencias
+for cmd in gh ssh-keygen jq; do
+    command -v "$cmd" &>/dev/null || die "'$cmd' no encontrado. Asegúrate de que los paquetes core se instalaron correctamente."
+done
+
+# 2. Autenticación con GitHub CLI (Verificar scopes necesarios)
+if ! gh auth status &>/dev/null; then
+    warn "No autenticado en GitHub. Iniciando flujo de login..."
+    gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || die "Falló la autenticación."
+fi
+
+# Verificar si el token actual tiene el scope necesario para subir llaves
+if ! gh auth status 2>&1 | grep -q "admin:public_key"; then
+    warn "El token actual no tiene permisos para subir llaves (admin:public_key). Refrescando..."
+    gh auth refresh -h github.com -s admin:public_key,admin:ssh_signing_key || die "Falló el refresco de permisos."
+fi
+success "Autenticación de GitHub verificada con los scopes correctos."
+
+# 3. Preparar directorio .ssh
+mkdir -p "$SSH_DIR"
+chmod 700 "$SSH_DIR"
+
+# 4. Generar llave SSH (Idempotente)
+if [[ -f "$SSH_KEY_PATH" && -f "$SSH_KEY_PUB_PATH" ]]; then
+    success "La llave SSH ya existe. Reutilizando."
+else
+    info "Generando nueva llave ed25519..."
+    ssh-keygen -t ed25519 -f "$SSH_KEY_PATH" -N "" -C "$KEY_COMMENT" -q
+    chmod 600 "$SSH_KEY_PATH"
+    chmod 644 "$SSH_KEY_PUB_PATH"
+    success "Llave generada en $SSH_KEY_PATH"
+fi
+
+# 5. Sincronizar con GitHub
+EXISTING_KEY_ID=$(gh ssh-key list 2>/dev/null | grep -F "$KEY_TITLE" | awk '{print $1}' || true)
+
+if [[ -n "$EXISTING_KEY_ID" ]]; then
+    success "Esta llave ya está registrada en GitHub (ID: $EXISTING_KEY_ID)."
+else
+    info "Subiendo nueva llave a GitHub con título: $KEY_TITLE"
+    gh ssh-key add "$SSH_KEY_PUB_PATH" --title "$KEY_TITLE" || die "No se pudo subir la llave a GitHub."
+    success "Llave vinculada exitosamente."
+fi
+
+# 6. Configuración de ~/.ssh/config (Asegurar que se use la llave correcta para GitHub)
+# Nota: Chezmoi ya gestiona el config en private_dot_ssh/config, 
+# pero este paso asegura que el archivo sea funcional incluso antes de un apply profundo.
+if [[ ! -f "$SSH_CONFIG_FILE" ]] || ! grep -q "Host github.com" "$SSH_CONFIG_FILE"; then
+    info "Configurando acceso base en $SSH_CONFIG_FILE..."
+    cat >> "$SSH_CONFIG_FILE" <<EOF
+
+Host github.com
+    HostName github.com
+    User git
+    IdentityFile ${SSH_KEY_PATH}
+    IdentitiesOnly yes
+EOF
+    chmod 600 "$SSH_CONFIG_FILE"
+fi
+
+# 7. Verificación final
+info "Probando conexión con GitHub..."
+if ssh -T git@github.com -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 2>&1 | grep -q "successfully authenticated"; then
+    success "Conexión SSH verificada: Estás listo para trabajar."
+else
+    warn "La conexión falló, pero la llave fue configurada. Es posible que GitHub tarde unos segundos en propagarla."
+fi
+
+echo "== Fin del Setup SSH =="
