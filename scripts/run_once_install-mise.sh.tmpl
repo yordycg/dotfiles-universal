@@ -35,6 +35,8 @@ eval "$(~/.local/bin/mise activate bash)"
 if command -v npm &>/dev/null; then
     echo "  - Instalando neovim npm package..."
     npm install -g neovim || echo "Advertencia: Fallo npm neovim"
+    echo "  - Instalando Gemini CLI..."
+    npm install -g @google/gemini-cli || echo "Advertencia: Fallo Gemini CLI"
 fi
 
 # Provider de Python
