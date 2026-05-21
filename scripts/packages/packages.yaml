@@ -1,56 +1,102 @@
-packages:
-        core:
-                - git
-                - curl
-                - wget
-                - zsh
-                - chezmoi
-                - gcc
-                - make
-                - build-essential
-                - libssl-dev
-                - zlib1g-dev
-                - libbz2-dev
-                - libreadline-dev
-                - libsqlite3-dev
-                - llvm
-                - libncurses5-dev
-                - libncursesw5-dev
-                - xz-utils
-                - tk-dev
-                - libffi-dev
-                - liblzma-dev
-                - unzip
-                - sqlite
-                - readline-devel
-                - ncurses-devel
+# Estructura de paquetes organizada por Distribución
+# Evita conflictos de nombres entre gestores de paquetes (dnf vs apt)
 
-        linux_desktop:
-                - distrobox
-                - podman
-                - flatpak
-                - fontconfig
+fedora:
+  core:
+    - git
+    - curl
+    - wget
+    - zsh
+    - chezmoi
+    - gh
+    - jq
+    - gcc
+    - gcc-c++
+    - make
+    - openssl-devel
+    - zlib-devel
+    - bzip2-devel
+    - readline-devel
+    - sqlite-devel
+    - llvm-devel
+    - ncurses-devel
+    - xz-devel
+    - libffi-devel
+    - unzip
+    - sqlite
+  desktop:
+    - distrobox
+    - podman
+    - flatpak
+    - fontconfig
+  sway:
+    - waybar
+    - wofi
+    - mako
+    - imv
+    - grim
+    - slurp
+    - wl-clipboard
+    - swaybg
+    - brightnessctl
+    - pavucontrol
+    - nm-connection-editor
+    - blueman
+    - pulseaudio-utils
+    - papirus-icon-theme
+    - gammastep
+    - kanshi
+    - swayidle
+    - swaylock
+    - kitty
 
-        sway_desktop:
-                - waybar
-                - wofi
-                - mako
-                - imv
-                - grim
-                - slurp
-                - wl-clipboard
-                - swaybg
-                - brightnessctl
-                - pavucontrol
-                - nm-connection-editor
-                - blueman
-                - pulseaudio-utils
-                - papirus-icon-theme
-                - gammastep
-                - kanshi
-                - swayidle
-                - swaylock
+debian:
+  core:
+    - git
+    - curl
+    - wget
+    - zsh
+    - chezmoi
+    - gh
+    - jq
+    - gcc
+    - g++
+    - make
+    - build-essential
+    - libssl-dev
+    - zlib1g-dev
+    - libbz2-dev
+    - libreadline-dev
+    - libsqlite3-dev
+    - llvm
+    - libncurses5-dev
+    - libncursesw5-dev
+    - xz-utils
+    - tk-dev
+    - libffi-dev
+    - liblzma-dev
+    - unzip
+    - sqlite3
 
-        terminals:
-                - foot
-                - kitty
+arch:
+  core:
+    - git
+    - curl
+    - wget
+    - zsh
+    - chezmoi
+    - github-cli
+    - jq
+    - gcc
+    - make
+    - base-devel
+    - openssl
+    - zlib
+    - bzip2
+    - readline
+    - sqlite
+    - llvm
+    - ncurses
+    - xz
+    - libffi
+    - unzip

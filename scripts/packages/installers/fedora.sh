@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Instalador para Fedora (dnf)
-# No editar la lista de paquetes aqui... editar en packages.yaml
+# Lee la sección 'fedora' de packages.yaml
 
 set -euo pipefail
 
@@ -8,32 +8,33 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGES_FILE="$SCRIPT_DIR/../packages.yaml"
 
 if ! command -v yq &>/dev/null; then
-	echo "== Instalando yq..."
-	sudo dnf install -y yq
+    echo "== Instalando yq..."
+    sudo dnf install -y yq
 fi
 
 install_section() {
-	local section="$1"
-	echo "== Instalando: $section"
-	local packages
-	packages=$(yq e ".packages.${section}[]" "$PACKAGES_FILE" 2>/dev/null || echo "")
-	if [ -z "$packages" ]; then
-		echo "  (vacio, omitiendo)"
-		return
-	fi
-	sudo dnf install -y --skip-unavailable $packages
+    local section="$1"
+    echo "== Instalando Fedora: $section"
+    local packages
+    packages=$(yq e ".fedora.${section}[]" "$PACKAGES_FILE" 2>/dev/null || echo "")
+    if [ -z "$packages" ]; then
+        echo "  (vacio, omitiendo)"
+        return
+    fi
+    sudo dnf install -y --skip-unavailable $packages
 }
 
-# Instalar secciones
+# 1. Paquetes Base
 install_section "core"
 
+# 2. Solo instalar Desktop si no es WSL y tiene entorno gráfico
 if [ -z "${WSL_DISTRO_NAME:-}" ]; then
-	install_section "linux_desktop"
+    install_section "desktop"
+    
+    # Solo instalar Sway si estamos en ese entorno
+    if [ "$XDG_CURRENT_DESKTOP" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
+        install_section "sway"
+    fi
 fi
 
-if [ "$XDG_CURRENT_DESKTOP" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
-	install_section "sway_desktop"
-	install_section "terminals"
-fi
-
-echo "[OK] Fedora Listo"
+echo "[OK] Fedora Bootstrap completado."
