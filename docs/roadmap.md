@@ -27,16 +27,15 @@
 - [x] Unificar identidad en `id_ed25519`
 - [x] Configurar SSH Agent Forwarding para Nodo 1
 
-### 1.2 Neovim (LazyVim) ⏳
-Migrar y refinar la configuración para soportar el flujo de contenedores:
-- [ ] Instalar LazyVim starter
-- [ ] Configurar LSPs y Formateadores para leer localmente del proyecto
-- [ ] Sincronizar plugins de desarrollo (Docker, Just, etc.)
+### 1.2 Neovim (Estrategia Dual) ✅
+Configuración dual para máxima versatilidad:
+- **LazyVim (`lv`)**: Para proyectos grandes/gigantes.
+- **Personal (`nv`)**: Para modificaciones rápidas y experimentación.
 
-### 1.3 Tmux ⏳
-- [ ] Traer configuración Pro de dotfiles-2024
-- [ ] Configurar prefijo `Ctrl+Space`
-- [ ] Integrar tema visual y barra de estado
+### 1.3 Tmux ✅
+- Prefijo `Ctrl+Space` configurado.
+- Navegación Vim-style y soporte para Popups (lazygit, yazi).
+- Gestión automática de plugins con TPM.
 
 ---
 

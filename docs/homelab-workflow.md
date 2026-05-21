@@ -30,6 +30,14 @@ Si el Nodo N pierde la conexión a internet de manera prolongada y el Nodo 1 es 
 3. El proyecto descargará sus propias imágenes y se levantará idéntico a como lo hace en el servidor.
 4. Se utiliza Neovim localmente en el Nodo N para editar. Al volver la conexión, se realiza un `git push` y se reanuda el trabajo en el Nodo 1.
 
+## 5. Estrategia Dual de Editores (Neovim)
+Para optimizar el rendimiento y la comodidad, se han configurado dos instancias aisladas de Neovim mediante `NVIM_APPNAME`:
+
+- **LazyVim (`lv`)**: Orientado a la productividad máxima en proyectos grandes. Incluye LSPs pesados, debugging y herramientas de refactorización complejas.
+- **Nvim Personal (`nv` / `v`)**: Una configuración ligera y altamente personalizada ubicada en `~/.config/nvim-personal`. Ideal para edición rápida de archivos de sistema, scripts o proyectos pequeños donde la velocidad de arranque es prioridad.
+
+Esta separación permite experimentar con nuevas configuraciones en la versión Personal sin romper el entorno de producción (LazyVim).
+
 ---
 ### Resumen del Flujo por Defecto
 | Acción | Ubicación | Herramienta |
