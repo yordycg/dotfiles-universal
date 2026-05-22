@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_before_00-install-packages.sh.tmpl
+# scripts/run_onchange_before_00-install-packages.sh.tmpl
 # Bootstrap de Secretos y Paquetes del Sistema
 # Fase 0: Preparación del entorno base
+#
+# Dependencias (Caché):
+# packages.yaml hash: {{ include "scripts/packages/packages.yaml" | sha256sum }}
+# fedora.sh hash: {{ include "scripts/packages/installers/fedora.sh" | sha256sum }}
+# debian.sh hash: {{ include "scripts/packages/installers/debian.sh" | sha256sum }}
+# arch.sh hash: {{ include "scripts/packages/installers/arch.sh" | sha256sum }}
 # =============================================================================
 set -euo pipefail
 

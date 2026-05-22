@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_20-install-mise.sh.tmpl
+# scripts/run_onchange_after_20-install-mise.sh.tmpl
 # Instalación de Mise y Herramientas (Runtimes)
 # Fase 2: Gestión de Entornos (Node, Python, Lua)
+#
+# Dependencias (Caché):
+# config.toml hash: {{ include "dot_config/mise/config.toml" | sha256sum }}
 # =============================================================================
 set -euo pipefail
 
