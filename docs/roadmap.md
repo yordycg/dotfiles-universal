@@ -71,9 +71,11 @@ Configuración dual para máxima versatilidad:
 - [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. 
 - [x] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
 - [x] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
-- [ ] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, assets).
-- [x] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
+- [x] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, mise).
+- [x] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) nativamente y autenticación silenciosa de `gh`.
+- [x] **Detección de Nodos Inteligente**: Identificación automática del Nodo 1 (Notebook-Servidor) en plantillas.
 - [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
+
 - [ ] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 
 ## 🔧 Fase 5 — Red y DNS (Próxima sesión)
@@ -114,13 +116,14 @@ dotfiles-universal/
 ├── home/                   (Estructura OK)
 ├── hosts/                  (Estructura OK)
 └── scripts/
-    ├── run_once_after_setup-ssh.sh   [OK]
-    ├── run_once_install-mise.sh      [OK]
-    └── packages/
-        ├── packages.yaml             [OK]
-        └── installers/               [OK]
+    ├── run_onchange_before_00-install-packages.sh   [OK]
+    ├── run_onchange_after_10-install-fonts.sh      [OK]
+    ├── run_onchange_after_20-install-mise.sh       [OK]
+    ├── run_once_after_90-setup-ssh.sh              [OK]
+    ├── run_after_95-trust-homelab-ca.sh            [OK]
+    └── run_once_after_99-change-shell.sh           [OK]
 ```
 
 ---
 
-> Actualizado: 22 de mayo de 2026 — Estandarización Homelab-Style completada
+> Actualizado: 22 de mayo de 2026 — Optimización de Caché y Zero-Touch consolidado
