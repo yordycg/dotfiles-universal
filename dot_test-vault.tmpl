@@ -1,0 +1,8 @@
+# Archivo de Prueba de Secretos (Chezmoi + Vaultwarden)
+# -----------------------------------------------------------------------------
+# Usando la sintaxis de búsqueda por nombre exacto
+
+USUARIO_BITWARDEN: {{ (bitwarden "item" "TEST").login.username }}
+CLAVE_BITWARDEN: {{ (bitwarden "item" "TEST").login.password }}
+
+# Generado el: {{ now | date "2006-01-02 15:04:05" }}
