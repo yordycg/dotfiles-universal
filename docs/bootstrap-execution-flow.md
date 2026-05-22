@@ -2,7 +2,7 @@
 
 Este documento describe paso a paso qué ocurre bajo el capó desde el momento en que se clona el repositorio de dotfiles hasta que el comando `chezmoi apply` finaliza. Comprender este flujo es clave para depurar la automatización y lograr un despliegue "zero-touch".
 
-## 🚀 Fase 0: Inicialización
+## Fase 0: Inicialización
 
 El proceso comienza normalmente con un comando de una sola línea (ej. `sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply yordycg`) o clonando manualmente y ejecutando `chezmoi init yordycg`.
 
@@ -13,7 +13,7 @@ El proceso comienza normalmente con un comando de una sola línea (ej. `sh -c "$
    - **Detección de Entorno:** Evalúa si es Linux, si tiene batería (Laptop), si es WSL o Desktop, y guarda estas variables.
    - Se genera la configuración estática en `~/.config/chezmoi/chezmoi.toml`.
 
-## ⚙️ Fase 1: Pre-Ejecución (Scripts `before_`)
+## Fase 1: Pre-Ejecución (Scripts `before_`)
 
 Antes de modificar o crear cualquier archivo en el sistema de destino (`~`), Chezmoi ejecuta los scripts marcados con el prefijo `before_`.
 
@@ -31,7 +31,7 @@ Una vez garantizadas las dependencias, Chezmoi calcula el "diff" y procede a cop
     *   `dot_gitconfig.tmpl` -> `~/.gitconfig`
     *   Se inyectan las variables calculadas en la Fase 0 (ej. tamaño de fuente de la terminal, configuraciones específicas del SO).
 
-## 🛠️ Fase 3: Ejecución Estándar (Scripts en paralelo o alfabéticos)
+## Fase 3: Ejecución Estándar (Scripts en paralelo o alfabéticos)
 
 Estos scripts se ejecutan durante la fase principal de aplicación (después de crear los archivos que no dependen de ellos).
 
@@ -53,7 +53,7 @@ Estos scripts se ejecutan al final, asegurando que todos los binarios, archivos 
 
 ---
 
-## 🔍 Análisis y Posibles Puntos de Mejora (Discusión)
+## Análisis y Posibles Puntos de Mejora (Discusión)
 
 Al observar este flujo, se aprecian algunos detalles importantes para estabilizar el proceso:
 

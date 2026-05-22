@@ -41,17 +41,17 @@ save MSG="feat: update dotfiles":
 # Desplegar dotfiles en un servidor remoto inyectando secretos desde Bitwarden
 deploy-remote host:
     #!/usr/bin/env bash
-    echo "🚀 Iniciando despliegue remoto en {{host}}..."
+    echo "Iniciando despliegue remoto en {{host}}..."
     if ! bw status | jq -e '.status == "unlocked"' >/dev/null; then
-        echo "🔐 Bitwarden bloqueado. Por favor, usa 'bwu' primero."
+        echo "Bitwarden bloqueado. Por favor, usa 'bwu' primero."
         exit 1
     fi
     AGE_KEY=$(bw get item Dotfiles | jq -r .login.password)
     GH_TOKEN=$(bw get item Dotfiles | jq -r '.fields[] | select(.name=="token") | .value')
     if [ "$AGE_KEY" = "null" ] || [ "$GH_TOKEN" = "null" ]; then
-        echo "❌ Error: No se pudieron obtener los secretos de Bitwarden. Verifica el item 'Dotfiles'."
+        echo "Error: No se pudieron obtener los secretos de Bitwarden. Verifica el item 'Dotfiles'."
         exit 1
     fi
     ssh -t {{host}} "rm -rf \$HOME/.local/share/chezmoi \$HOME/.config/chezmoi && \
                    CHEZMOI_AGE_KEY='$AGE_KEY' GITHUB_TOKEN='$GH_TOKEN' sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b \$HOME/bin init --apply https://\$GH_TOKEN@github.com/yordycg/dotfiles-universal.git"
-    echo "✅ Despliegue en {{host}} finalizado."
+    echo "Despliegue en {{host}} finalizado."

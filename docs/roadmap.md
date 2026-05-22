@@ -3,7 +3,7 @@
 
 ---
 
-## ✅ Completado
+##  Completado
 
 - [x] Fedora actualizado y bootstrap mínimo (git, curl, gh, chezmoi, zsh, just)
 - [x] Shell cambiado a Zsh automáticamente
@@ -26,14 +26,14 @@
 ### 1.1 Gestionar ~/.ssh/config con Chezmoi
 - [x] Unificar identidad en `id_ed25519`
 - [x] Configurar SSH Agent Forwarding para Nodo 1
-- [x] Automatización total de identidad SSH (Zero-Touch) ✅
+- [x] Automatización total de identidad SSH (Zero-Touch) 
 
-### 1.2 Neovim (Estrategia Dual) ✅
+### 1.2 Neovim (Estrategia Dual) 
 Configuración dual para máxima versatilidad:
 - **LazyVim (`lv`)**: Para proyectos grandes/gigantes.
 - **Personal (`nv`)**: Para modificaciones rápidas y experimentación.
 
-### 1.3 Tmux ✅
+### 1.3 Tmux 
 - Prefijo `Ctrl+Space` configurado.
 - Navegación Vim-style y soporte para Popups (lazygit, yazi).
 - Gestión automática de plugins con TPM.
@@ -67,8 +67,8 @@ Configuración dual para máxima versatilidad:
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
-- [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal. ✅
-- [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. ✅
+- [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal. 
+- [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. 
 - [ ] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
 - [ ] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
 - [ ] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, assets).
@@ -94,31 +94,31 @@ just save         # commit + push rápido
 
 ---
 
-## 🗂️ Estado del repo en GitHub
+## Estado del repo en GitHub
 
 ```
 dotfiles-universal/
-├── .chezmoi.yaml.tmpl      ✅
-├── .chezmoignore          ✅
-├── .gitignore              ✅
-├── Justfile                ✅
-├── dot_gitconfig.tmpl      ✅
-├── dot_zshrc.tmpl          ✅
+├── .chezmoi.yaml.tmpl      
+├── .chezmoignore          
+├── .gitignore              
+├── Justfile                
+├── dot_gitconfig.tmpl      
+├── dot_zshrc.tmpl          
 ├── dot_config/
 │   ├── shell/
-│   │   ├── aliases.sh      ✅
-│   │   └── functions.sh    ✅
-│   ├── starship.toml       ✅
+│   │   ├── aliases.sh      
+│   │   └── functions.sh    
+│   ├── starship.toml       
 │   ├── nvim/               ⏳ Fase 1
 │   └── tmux/               ⏳ Fase 1
-├── home/                   ✅ (Estructura)
-├── hosts/                  ✅ (Estructura)
+├── home/                    (Estructura)
+├── hosts/                   (Estructura)
 └── scripts/
-    ├── run_once_after_setup-ssh.sh   ✅
-    ├── run_once_install-mise.sh      ✅
+    ├── run_once_after_setup-ssh.sh   
+    ├── run_once_install-mise.sh      
     └── packages/
-        ├── packages.yaml             ✅
-        └── installers/               ✅
+        ├── packages.yaml             
+        └── installers/               
 ```
 
 ---

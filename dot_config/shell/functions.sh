@@ -52,7 +52,7 @@ dsync() {
   echo "== 2. Conectando al Servidor (Homelab) para actualizar..."
   ssh -t yordycg@192.168.18.99 "cd ~/.local/share/chezmoi && just update"
   
-  echo "✅ Sincronización finalizada en ambos nodos."
+  echo "Sincronización finalizada en ambos nodos."
 }
 
 # --- Búsqueda e Interactividad (FZF) ---
@@ -61,15 +61,15 @@ dsync() {
 bw-unlock() {
     # Comprobar si ya está desbloqueado
     if ! bw status | jq -e '.status == "unlocked"' &>/dev/null; then
-        echo "🔐 Desbloqueando Bóveda de Bitwarden..."
+        echo "Desbloqueando Bóveda de Bitwarden..."
         export BW_SESSION=$(bw unlock --raw)
         if [ -n "$BW_SESSION" ]; then
-            echo "✅ Bóveda desbloqueada."
+            echo "Bóveda desbloqueada."
             # Sincronizar por si hubo cambios en otros nodos
             bw sync
         fi
     else
-        echo "✅ La bóveda ya está desbloqueada."
+        echo "La bóveda ya está desbloqueada."
     fi
 }
 
@@ -95,14 +95,14 @@ fkill() {
 
     if [[ -n "$pid" ]]; then
         echo "$pid" | xargs kill -9
-        echo "✅ Proceso(s) $pid terminado(s)."
+        echo "Proceso(s) $pid terminado(s)."
     fi
 }
 
 # Gestor interactivo de servicios Systemd
 fsvc() {
     local service
-    service=$(systemctl list-unit-files --type=service --state=enabled,disabled | fzf --header "⚙️ Systemd Services" --header-lines=1 | awk '{print $1}')
+    service=$(systemctl list-unit-files --type=service --state=enabled,disabled | fzf --header "Systemd Services" --header-lines=1 | awk '{print $1}')
     
     [[ -z "$service" ]] && return 0
 
