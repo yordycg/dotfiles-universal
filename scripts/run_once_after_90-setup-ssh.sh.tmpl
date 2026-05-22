@@ -46,8 +46,14 @@ log_ok "Dependencias verificadas."
 log_step "Autenticación de GitHub CLI"
 
 if ! gh auth status &>/dev/null; then
-    log_warn "No autenticado en GitHub. Iniciando flujo de login..."
-    gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || log_err "Falló la autenticación."
+    if [ -n "{{ .githubToken }}" ]; then
+        log_info "No autenticado. Usando GITHUB_TOKEN proporcionado por Chezmoi..."
+        echo "{{ .githubToken }}" | gh auth login --with-token
+        log_ok "Autenticación automática completada."
+    else
+        log_warn "No autenticado y no se encontró token. Iniciando flujo interactivo..."
+        gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || log_err "Falló la autenticación."
+    fi
 else
     log_ok "Autenticación activa en GitHub."
 fi
