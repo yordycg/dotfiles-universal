@@ -72,7 +72,7 @@ Configuración dual para máxima versatilidad:
 - [x] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
 - [x] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
 - [ ] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, assets).
-- [ ] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
+- [x] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
 - [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
 - [ ] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 
