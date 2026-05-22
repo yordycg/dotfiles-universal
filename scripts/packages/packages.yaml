@@ -55,7 +55,6 @@ debian:
     - curl
     - wget
     - zsh
-    - chezmoi
     - gh
     - jq
     - gcc
@@ -83,7 +82,6 @@ arch:
     - curl
     - wget
     - zsh
-    - chezmoi
     - github-cli
     - jq
     - gcc
