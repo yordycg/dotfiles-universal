@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_once_after_99-change-shell.sh.tmpl
+# scripts/run_after_99-change-shell.sh.tmpl
 # Cambia el shell por defecto del usuario a ZSH si no lo es ya.
 # =============================================================================
 
@@ -10,16 +10,18 @@ DESIRED_SHELL=$(command -v zsh)
 
 echo "== Verificando Shell del usuario..."
 
-if [ "$SHELL" = "$DESIRED_SHELL" ]; then
-    echo "  [ OK ] El shell ya es ZSH ($SHELL)."
+# Detectar el shell actual de forma fiable
+CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+
+if [ "$CURRENT_SHELL" = "$DESIRED_SHELL" ]; then
+    echo "  [ OK ] El shell ya es ZSH ($CURRENT_SHELL)."
 else
-    echo "  [INFO] Cambiando shell de $SHELL a $DESIRED_SHELL..."
+    echo "  [INFO] Cambiando shell de $CURRENT_SHELL a $DESIRED_SHELL..."
     echo "  (Es posible que se te pida tu contraseña de usuario)"
     
-    if chsh -s "$DESIRED_SHELL"; then
-        echo "  [ OK ] Shell cambiado exitosamente. Por favor, reinicia tu sesión."
+    if sudo chsh -s "$DESIRED_SHELL" "$USER"; then
+        echo "  [ OK ] Shell cambiado exitosamente."
     else
         echo "  [ERROR] No se pudo cambiar el shell automáticamente."
-        echo "          Prueba manualmente con: chsh -s \$(which zsh)"
     fi
 fi

@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# ----------------------------------------------------------------------
+# Bootstrap System Packages & Secrets (Run before everything else)
+# ----------------------------------------------------------------------
+
+set -euo pipefail
+
+# --- BOOTSTRAP DE SECRETOS (AGE) ---
+# Si se proporciona la llave age por entorno, la configuramos antes de que chezmoi la necesite
+AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+if [ -z "${CHEZMOI_AGE_KEY:-}" ]; then
+    echo "==> [INFO] No se detectó CHEZMOI_AGE_KEY en el entorno."
+else
+    if [ ! -f "$AGE_KEY_FILE" ]; then
+        echo "==> [SECRET] Configurando llave age desde variable de entorno..."
+        mkdir -p "$(dirname "$AGE_KEY_FILE")"
+        echo "$CHEZMOI_AGE_KEY" > "$AGE_KEY_FILE"
+        chmod 600 "$AGE_KEY_FILE"
+        echo "  [ OK ] Llave age configurada en $AGE_KEY_FILE"
+    else
+        echo "  [ OK ] El archivo de llave age ya existe. Saltando bootstrap."
+    fi
+fi
+
+echo "== Detectando sistema operativo para instalación de paquetes..."
+if [ -f /etc/fedora-release ]; then
+    echo "  - Sistema detectado: Fedora"
+    bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/fedora.sh"
+elif [ -f /etc/arch-release ]; then
+    echo "  - Sistema detectado: Arch Linux"
+    bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/arch.sh"
+elif [ -f /etc/debian_version ]; then
+    echo "  - Sistema detectado: Debian/Ubuntu"
+    bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/debian.sh"
+else
+    echo "  [WARN] Sistema operativo no soportado para instalación automática."
+fi
+
+echo "[OK] Instalación de paquetes del sistema completada."

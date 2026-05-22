@@ -8,41 +8,38 @@ set -euo pipefail
 
 # Exportar token para evitar rate limits de GitHub
 export GITHUB_TOKEN={{ .githubToken | quote }}
-# Desactivar attestations de python que fallan sin token/red
+# Desactivar attestations de python
 export MISE_PYTHON_GITHUB_ATTESTATIONS=false
 
-if ! command -v mise &>/dev/null; then
+MISE_BIN="$HOME/.local/bin/mise"
+
+if [ ! -f "$MISE_BIN" ]; then
     echo "== Instalando mise..."
     curl https://mise.jdx.dev/install.sh | sh
-    
-    # Asegurar que el binario sea accesible para el resto del script
-    export PATH="$HOME/.local/bin:$PATH"
 fi
 
 echo "== Verificando herramientas de mise..."
 # Forzar la instalacion de las herramientas y runtimes (Node, Python, Lua)
-~/.local/bin/mise install -y
+"$MISE_BIN" install -y
 
 # ----------------------------------------------------------------------
-# Post-Install: Neovim Providers
+# Post-Install: Providers & CLIs
 # ----------------------------------------------------------------------
-echo "== Configurando providers para Neovim..."
+echo "== Configurando providers y herramientas globales..."
 
 # Activar Mise para que npm y pip estén disponibles en el script
-eval "$(~/.local/bin/mise activate bash)"
+eval "$("$MISE_BIN" activate bash)"
 
-# Provider de Node.js
+# Provider de Node.js / Global Packages
 if command -v npm &>/dev/null; then
-    echo "  - Instalando neovim npm package..."
-    npm install -g neovim || echo "Advertencia: Fallo npm neovim"
-    echo "  - Instalando Gemini CLI..."
-    npm install -g @google/gemini-cli || echo "Advertencia: Fallo Gemini CLI"
+    echo "  - Verificando paquetes npm globales..."
+    npm install -g neovim @google/gemini-cli @bitwarden/cli --silent
 fi
 
 # Provider de Python
 if command -v pip &>/dev/null; then
-    echo "  - Instalando pynvim..."
-    pip install pynvim || echo "Advertencia: Fallo pynvim"
+    echo "  - Verificando paquetes python globales..."
+    pip install pynvim --quiet
 fi
 
-echo "[OK] Mise y entorno de Neovim configurados."
+echo "[OK] Mise y herramientas configuradas."

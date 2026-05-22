@@ -5,6 +5,17 @@ export PAGER="bat"
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
 
+# -- SSL / Trust ---------------------------------------------
+# Enseñar a Node.js (bw cli) a confiar en la CA del Homelab
+{{ if eq .chezmoi.os "linux" -}}
+{{   if eq .chezmoi.osRelease.id "fedora" -}}
+HOMELAB_CA="/etc/pki/ca-trust/source/anchors/homelab-caddy-ca.crt"
+{{   else -}}
+HOMELAB_CA="/usr/local/share/ca-certificates/homelab-caddy-ca.crt"
+{{   end -}}
+[ -f "$HOMELAB_CA" ] && export NODE_EXTRA_CA_CERTS="$HOMELAB_CA"
+{{ end -}}
+
 # -- Paths ---------------------------------------------------
 export PATH="$HOME/.local/bin:$PATH"
 

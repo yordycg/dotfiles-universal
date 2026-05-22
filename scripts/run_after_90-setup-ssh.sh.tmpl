@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_once_after_setup-ssh.sh.tmpl
+# scripts/run_after_90-setup-ssh.sh.tmpl
 # Configura llave SSH única para este dispositivo y la sube a GitHub.
-# Basado en la lógica probada de dotfiles-2024.
 # =============================================================================
 
 set -euo pipefail
@@ -33,18 +32,12 @@ for cmd in gh ssh-keygen jq; do
     command -v "$cmd" &>/dev/null || die "'$cmd' no encontrado. Asegúrate de que los paquetes core se instalaron correctamente."
 done
 
-# 2. Autenticación con GitHub CLI (Verificar scopes necesarios)
+# 2. Autenticación con GitHub CLI
 if ! gh auth status &>/dev/null; then
     warn "No autenticado en GitHub. Iniciando flujo de login..."
+    # Usamos login interactivo solo si es necesario
     gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || die "Falló la autenticación."
 fi
-
-# Verificar si el token actual tiene el scope necesario para subir llaves
-if ! gh auth status 2>&1 | grep -q "admin:public_key"; then
-    warn "El token actual no tiene permisos para subir llaves (admin:public_key). Refrescando..."
-    gh auth refresh -h github.com -s admin:public_key,admin:ssh_signing_key || die "Falló el refresco de permisos."
-fi
-success "Autenticación de GitHub verificada con los scopes correctos."
 
 # 3. Preparar directorio .ssh
 mkdir -p "$SSH_DIR"
@@ -72,9 +65,7 @@ else
     success "Llave vinculada exitosamente."
 fi
 
-# 6. Configuración de ~/.ssh/config (Asegurar que se use la llave correcta para GitHub)
-# Nota: Chezmoi ya gestiona el config en private_dot_ssh/config, 
-# pero este paso asegura que el archivo sea funcional incluso antes de un apply profundo.
+# 6. Configuración de ~/.ssh/config
 if [[ ! -f "$SSH_CONFIG_FILE" ]] || ! grep -q "Host github.com" "$SSH_CONFIG_FILE"; then
     info "Configurando acceso base en $SSH_CONFIG_FILE..."
     cat >> "$SSH_CONFIG_FILE" <<EOF
@@ -93,7 +84,7 @@ info "Probando conexión con GitHub..."
 if ssh -T git@github.com -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5 2>&1 | grep -q "successfully authenticated"; then
     success "Conexión SSH verificada: Estás listo para trabajar."
 else
-    warn "La conexión falló, pero la llave fue configurada. Es posible que GitHub tarde unos segundos en propagarla."
+    warn "La conexión falló, pero la llave fue configurada."
 fi
 
 echo "== Fin del Setup SSH =="

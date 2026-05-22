@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# Script de sincronización de Assets (Wallpapers)
+# -----------------------------------------------------------------------------
+# Se encarga de mantener los recursos gráficos actualizados.
+
+{{ if not (or .isLaptop .isDesktop) -}}
+echo "== Saltando sincronización de assets (Entorno Headless/Servidor detectado)"
+exit 0
+{{- end }}
+
+set -euo pipefail
+
+sync_repo() {
+    local url=$1
+    local path=$2
+    local name=$3
+
+    if [ ! -d "$path/.git" ]; then
+        echo "==> Clonando $name en $path..."
+        mkdir -p "$(dirname "$path")"
+        git clone "$url" "$path"
+    else
+        echo "==> Actualizando $name..."
+        cd "$path"
+        if ! git diff-index --quiet HEAD --; then
+            git stash
+            git pull --rebase
+            git stash pop || echo "  (Aviso: Conflicto en $path)"
+        else
+            git pull --rebase
+        fi
+        cd - > /dev/null
+    fi
+}
+
+echo "--- Iniciando sincronización de Wallpapers ---"
+sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
+echo "--- Sincronización completada ---"

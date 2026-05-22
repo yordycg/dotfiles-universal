@@ -1,4 +1,7 @@
-{{- $githubToken := promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
+{{- $githubToken := env "GITHUB_TOKEN" -}}
+{{- if not $githubToken -}}
+{{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
+{{- end -}}
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
@@ -15,6 +18,8 @@ encryption: "age"
 age:
   identity: "~/.config/chezmoi/key.txt"
   recipient: "age1w93unwnu802h9vkygj2d4dxmu23yghw9kd39thwgc0susmsu7spscwp0wa"
+bitwarden:
+  base_url: "https://vault.home"
 data:
   githubToken: {{ $githubToken | quote }}
   isLaptop: {{ $isLaptop }}

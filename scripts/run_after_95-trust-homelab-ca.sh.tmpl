@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_95-trust-homelab-ca.sh.tmpl
+# Automatiza la confianza en la CA interna de Caddy (Nodo 1)
+# =============================================================================
+
+{{ if not (or .isLaptop .isDesktop) -}}
+exit 0
+{{- end }}
+
+set -euo pipefail
+
+DOMAIN="vault.home"
+CERT_NAME="homelab-caddy-ca.crt"
+TEMP_CERT="/tmp/${CERT_NAME}"
+
+echo "== Verificando confianza SSL para ${DOMAIN}..."
+
+if ! ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
+    echo "  [WARN] ${DOMAIN} no es alcanzable. Saltando."
+    exit 0
+fi
+
+# Intentar extraer el certificado raíz de la cadena
+# Usamos -showcerts y sed para capturar el ÚLTIMO certificado de la cadena, que suele ser el Root
+echo "  - Extrayendo certificado raíz de ${DOMAIN}..."
+if ! openssl s_client -showcerts -connect "${DOMAIN}:443" </dev/null 2>/dev/null | \
+     awk '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out="cert"a".tmp"; print > out } END{ print "cert"a".tmp" }' | \
+     xargs cat > "$TEMP_CERT"; then
+    echo "  [ERROR] No se pudo extraer el certificado."
+    exit 0
+fi
+
+# Limpiar archivos temporales de awk
+rm -f cert*.tmp
+
+if [ -f /etc/fedora-release ]; then
+    TRUST_STORE="/etc/pki/ca-trust/source/anchors/${CERT_NAME}"
+    UPDATE_CMD="sudo update-ca-trust"
+elif [ -f /etc/debian_version ]; then
+    TRUST_STORE="/usr/local/share/ca-certificates/${CERT_NAME}"
+    UPDATE_CMD="sudo update-ca-certificates"
+else
+    exit 0
+fi
+
+if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_CERT" "$TRUST_STORE" &>/dev/null; then
+    echo "  [ OK ] El certificado ya es de confianza."
+else
+    echo "  [INFO] Instalando Root CA..."
+    sudo cp "$TEMP_CERT" "$TRUST_STORE"
+    $UPDATE_CMD
+    echo "  [ OK ] Sistema actualizado."
+fi
+
+rm -f "$TEMP_CERT"
