@@ -6,7 +6,7 @@ default:
 # Aplicar todos los dotfiles
 apply:
 	@sudo -v
-	chezmoi apply -v
+	chezmoi apply
 
 # Ver cambios pendientes
 diff:
