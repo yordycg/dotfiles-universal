@@ -75,6 +75,7 @@ debian:
     - liblzma-dev
     - unzip
     - sqlite3
+    - restic
 
 arch:
   core:

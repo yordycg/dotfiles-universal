@@ -29,7 +29,8 @@ CURRENT_HASH="{{ include "scripts/packages/packages.yaml" | sha256sum }} {{ incl
 
 log_step "Paquetes del Sistema"
 
-if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ]; then
+# Senior Check: Si el estado coincide Y restic está instalado, saltamos.
+if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && command -v restic &>/dev/null; then
     log_ok "Todos los paquetes base están al día."
     exit 0
 fi
