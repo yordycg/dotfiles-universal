@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_95-trust-homelab-ca.sh.tmpl
-# Automatiza la confianza en la CA interna de Caddy (Nodo 1)
-# Basado en: docs/ssl-trust-architecture.md
+# Confianza SSL e Infraestructura PKI
 # =============================================================================
 set -euo pipefail
 
@@ -29,59 +28,46 @@ CERT_NAME="homelab-caddy-ca.crt"
 TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
-# ── 1. Verificación de Conectividad ──────────────────────────────────────────
-log_step "Verificación de Infraestructura SSL"
+log_step "Confianza SSL (Homelab PKI)"
 
+# ── 1. Verificación ──────────────────────────────────────────────────────────
 if ! ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
-    log_warn "${DOMAIN} no es alcanzable. Saltando configuración de confianza SSL."
+    log_warn "${DOMAIN} no alcanzable. Saltando actualización SSL."
     exit 0
 fi
-log_ok "Servidor ${DOMAIN} alcanzable."
 
-# ── 2. Obtención de Certificados ─────────────────────────────────────────────
-log_step "Recolección de Cadena de Confianza"
-
-# Intento A: Endpoint de Caddy
-log_info "Intentando obtener Root CA vía HTTP..."
+# ── 2. Obtención de Bundle ───────────────────────────────────────────────────
+# Root CA vía HTTP
 curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$TEMP_DIR/root.crt" || true
 
-# Intento B: SSH Fallback al Nodo 1
+# SSH Fallback si HTTP falla
 if [ ! -s "$TEMP_DIR/root.crt" ]; then
-    log_info "Endpoint HTTP no disponible. Intentando extracción vía SSH desde Nodo 1..."
     SERVER_IP=$(getent hosts "$DOMAIN" | awk '{print $1}')
     REMOTE_PATH="/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/root.crt"
     ssh -o BatchMode=yes -o ConnectTimeout=2 "yordycg@${SERVER_IP}" "cat ${REMOTE_PATH}" > "$TEMP_DIR/root.crt" 2>/dev/null || true
 fi
 
-# Obtener Intermediate CA (Handshake)
-log_info "Extrayendo Intermediate CA del handshake TLS..."
+# Intermediate CA (Handshake)
 openssl s_client -showcerts -connect "${DOMAIN}:443" </dev/null 2>/dev/null | \
     awk -v dir="$TEMP_DIR" '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out=dir"/cert"a".crt"; print > out }'
 
 if [ -f "$TEMP_DIR/cert2.crt" ]; then
     mv "$TEMP_DIR/cert2.crt" "$TEMP_DIR/intermediate.crt"
-    log_ok "Intermediate CA extraído del handshake."
-else
-    log_warn "No se detectó Intermediate CA por separado."
 fi
 
-# ── 3. Generación del Bundle ─────────────────────────────────────────────────
-log_step "Generación de Bundle de Confianza"
-
+# ── 3. Instalación ───────────────────────────────────────────────────────────
+# Crear bundle si tenemos ambos, o usar root
 if [ -s "$TEMP_DIR/root.crt" ] && [ -f "$TEMP_DIR/intermediate.crt" ]; then
-    log_info "Creando bundle maestro (Root + Intermediate) para Node.js..."
     cat "$TEMP_DIR/root.crt" "$TEMP_DIR/intermediate.crt" > "$TEMP_DIR/$CERT_NAME"
-    log_ok "Bundle generado exitosamente."
 elif [ -s "$TEMP_DIR/root.crt" ]; then
-    log_warn "Solo se obtuvo el Root CA. El bundle podría estar incompleto para algunas aplicaciones."
     cp "$TEMP_DIR/root.crt" "$TEMP_DIR/$CERT_NAME"
-else
-    log_err "No se pudo obtener el Root CA por ningún medio. Abortando."
 fi
 
-# ── 4. Instalación en el Sistema ─────────────────────────────────────────────
-log_step "Instalación en el Almacén de Certificados"
+if [ ! -s "$TEMP_DIR/$CERT_NAME" ]; then
+    log_err "No se pudo obtener la cadena de confianza."
+fi
 
+# Detectar Distro y Store
 if [ -f /etc/fedora-release ]; then
     TRUST_STORE="/etc/pki/ca-trust/source/anchors/${CERT_NAME}"
     UPDATE_CMD="sudo update-ca-trust"
@@ -89,15 +75,15 @@ elif [ -f /etc/debian_version ]; then
     TRUST_STORE="/usr/local/share/ca-certificates/${CERT_NAME}"
     UPDATE_CMD="sudo update-ca-certificates"
 else
-    log_err "Distribución no soportada para automatización de certificados."
+    log_err "SO no soportado."
 fi
 
+# Aplicar solo si hay cambios
 if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_DIR/$CERT_NAME" "$TRUST_STORE" &>/dev/null; then
-    log_ok "La cadena de confianza ya está instalada y actualizada."
+    log_ok "Cadena de confianza sincronizada."
 else
-    log_info "Copiando bundle a $TRUST_STORE..."
+    log_info "Instalando nueva CA en el sistema..."
     sudo cp "$TEMP_DIR/$CERT_NAME" "$TRUST_STORE"
-    log_info "Actualizando base de datos de confianza del sistema..."
     $UPDATE_CMD
-    log_ok "Confianza SSL establecida correctamente."
+    log_ok "Sistema actualizado con éxito."
 fi

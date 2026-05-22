@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_10-install-fonts.sh.tmpl
+# Instalación de Nerd Fonts
+# =============================================================================
+set -euo pipefail
+
+{{ if .isServer -}}
+exit 0
+{{- end }}
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+# ── 1. Gestión de Estado (Caché Senior) ──────────────────────────────────────
+CACHE_DIR="$HOME/.cache/chezmoi-scripts"
+mkdir -p "$CACHE_DIR"
+STATE_FILE="$CACHE_DIR/fonts-state"
+
+# Hash del propio script para detectar cambios en la lista de fuentes
+CURRENT_HASH="{{ include "scripts/run_after_10-install-fonts.sh.tmpl" | sha256sum }}"
+
+log_step "Tipografías (Nerd Fonts)"
+
+if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ]; then
+    log_ok "Fuentes JetBrains, FiraCode y Lilex están al día."
+    exit 0
+fi
+
+# ── 2. Instalación ───────────────────────────────────────────────────────────
+VERSION="3.3.0"
+FONTS_DIR="${HOME}/.local/share/fonts"
+declare -a fonts=(JetBrainsMono FiraCode Lilex CaskaydiaCove)
+
+mkdir -p "$FONTS_DIR"
+
+for font in "${fonts[@]}"; do
+    if [ ! -d "$FONTS_DIR/$font" ]; then
+        log_info "Descargando $font..."
+        zip_file="${font}.zip"
+        download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${VERSION}/${zip_file}"
+        if wget -q --show-progress "$download_url"; then
+            unzip -o -q "$zip_file" -d "$FONTS_DIR/$font"
+            rm "$zip_file"
+        fi
+    fi
+done
+
+log_info "Actualizando caché del sistema..."
+find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true
+fc-cache -f > /dev/null
+
+# Guardar estado exitoso
+echo "$CURRENT_HASH" > "$STATE_FILE"
+log_ok "Fuentes instaladas y sincronizadas."

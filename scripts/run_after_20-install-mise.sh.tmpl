@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_20-install-mise.sh.tmpl
+# Gestión de Runtimes y Herramientas (Mise)
+# =============================================================================
+set -euo pipefail
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+# ── 1. Gestión de Estado (Caché Senior) ──────────────────────────────────────
+CACHE_DIR="$HOME/.cache/chezmoi-scripts"
+mkdir -p "$CACHE_DIR"
+STATE_FILE="$CACHE_DIR/mise-state"
+
+# Hash de la configuración de Mise
+CURRENT_HASH="{{ include "dot_config/mise/config.toml" | sha256sum }}"
+
+log_step "Gestión de Entornos (Mise)"
+
+if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && command -v mise &>/dev/null; then
+    log_ok "Node, Python y CLIs están sincronizados."
+    exit 0
+fi
+
+# ── 2. Instalación/Sincronización ────────────────────────────────────────────
+export GITHUB_TOKEN={{ .githubToken | quote }}
+export MISE_PYTHON_GITHUB_ATTESTATIONS=false
+MISE_BIN="$HOME/.local/bin/mise"
+
+if [ ! -f "$MISE_BIN" ]; then
+    log_info "Instalando Mise..."
+    curl https://mise.jdx.dev/install.sh | sh -s -- --quiet
+fi
+
+log_info "Sincronizando herramientas y CLIs globales..."
+"$MISE_BIN" install -y
+eval "$("$MISE_BIN" activate bash)"
+
+[ -x "$(command -v npm)" ] && npm install -g neovim @google/gemini-cli @bitwarden/cli --silent
+[ -x "$(command -v pip)" ] && pip install pynvim --quiet
+
+# Guardar estado exitoso
+echo "$CURRENT_HASH" > "$STATE_FILE"
+log_ok "Entorno de desarrollo actualizado."
