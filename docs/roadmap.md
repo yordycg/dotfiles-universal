@@ -67,8 +67,19 @@ Configuración dual para máxima versatilidad:
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
+- [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal. ✅
+- [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. ✅
+- [ ] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
+- [ ] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
+- [ ] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, assets).
 - [ ] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
-- [ ] **Configurar Chezmoi**: Usar `encryption: age` en `.chezmoi.yaml.tmpl`.
+- [ ] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
+- [ ] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
+
+## 🔧 Fase 5 — Red y DNS (Próxima sesión)
+- [ ] **DNS Interno**: Desplegar Pi-hole o AdGuard Home en Nodo 1 para resolución de dominios `.home`.
+- [ ] **DHCP Static Leases**: Configurar el router para IPs estáticas en Nodos críticos.
+- [ ] **VPN Mesh**: Refinar la red de Tailscale para acceso remoto seguro a los servicios.
 
 ---
 
