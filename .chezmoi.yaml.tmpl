@@ -1,6 +1,7 @@
 {{- $githubToken := env "GITHUB_TOKEN" -}}
 {{- if not $githubToken -}}
 {{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
+{{- end -}}
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
@@ -29,7 +30,6 @@ data:
   isWSL: {{ $isWSL }}
   isServer: {{ $isServer }}
   os: {{ .chezmoi.os }}
-...
   hostname: {{ .chezmoi.hostname }}
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
   gitName: "yordycg"
