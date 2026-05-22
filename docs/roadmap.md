@@ -69,11 +69,11 @@ Configuración dual para máxima versatilidad:
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
 - [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal. 
 - [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. 
-- [ ] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
-- [ ] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
+- [x] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
+- [x] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
 - [ ] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, assets).
 - [ ] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
-- [ ] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
+- [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
 - [ ] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 
 ## 🔧 Fase 5 — Red y DNS (Próxima sesión)
@@ -98,29 +98,29 @@ just save         # commit + push rápido
 
 ```
 dotfiles-universal/
-├── .chezmoi.yaml.tmpl      
-├── .chezmoignore          
-├── .gitignore              
-├── Justfile                
-├── dot_gitconfig.tmpl      
-├── dot_zshrc.tmpl          
+├── .chezmoi.yaml.tmpl      [OK]
+├── .chezmoignore          [OK]
+├── .gitignore              [OK]
+├── Justfile                [OK]
+├── dot_gitconfig.tmpl      [OK]
+├── dot_zshrc.tmpl          [OK]
 ├── dot_config/
 │   ├── shell/
-│   │   ├── aliases.sh      
-│   │   └── functions.sh    
-│   ├── starship.toml       
-│   ├── nvim/               ⏳ Fase 1
-│   └── tmux/               ⏳ Fase 1
-├── home/                    (Estructura)
-├── hosts/                   (Estructura)
+│   │   ├── aliases.sh      [OK]
+│   │   └── functions.sh    [OK]
+│   ├── starship.toml       [OK]
+│   ├── nvim/               [OK] Fase 1
+│   └── tmux/               [OK] Fase 1
+├── home/                   (Estructura OK)
+├── hosts/                  (Estructura OK)
 └── scripts/
-    ├── run_once_after_setup-ssh.sh   
-    ├── run_once_install-mise.sh      
+    ├── run_once_after_setup-ssh.sh   [OK]
+    ├── run_once_install-mise.sh      [OK]
     └── packages/
-        ├── packages.yaml             
-        └── installers/               
+        ├── packages.yaml             [OK]
+        └── installers/               [OK]
 ```
 
 ---
 
-> Actualizado: 21 de mayo de 2026 — Arquitectura de 3 capas consolidada
+> Actualizado: 22 de mayo de 2026 — Estandarización Homelab-Style completada
