@@ -1,0 +1,42 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_50-setup-backup.sh.tmpl
+# Activación del sistema de backup automatizado (Solo Servidor)
+# =============================================================================
+set -euo pipefail
+
+{{ if not .isServer -}}
+exit 0
+{{- end }}
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+
+log_step "Configuración de Backup Automático"
+
+log_info "Recargando unidades de Systemd User..."
+systemctl --user daemon-reload
+
+if ! systemctl --user is-enabled homelab-backup.timer &>/dev/null; then
+    log_info "Activando temporizador de backup (04:00 AM)..."
+    systemctl --user enable --now homelab-backup.timer
+    log_ok "Temporizador activado."
+else
+    log_ok "El temporizador de backup ya está activo."
+fi
+
+# Habilitar Lingering si no lo está
+if [ ! -f "/var/lib/systemd/linger/$USER" ]; then
+    log_info "Habilitando lingering para ejecución persistente en background..."
+    sudo loginctl enable-linger "$USER"
+    log_ok "Lingering habilitado."
+fi
+
+log_ok "Sincronización de backup completada."

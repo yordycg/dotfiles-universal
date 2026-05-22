@@ -1,0 +1,11 @@
+{{- if .isServer -}}
+[Unit]
+Description=Ejecutar backup del Homelab cada madrugada
+
+[Timer]
+OnCalendar=*-*-* 04:00:00
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+{{- end -}}

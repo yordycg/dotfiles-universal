@@ -57,20 +57,40 @@ dsync() {
 
 # --- Búsqueda e Interactividad (FZF) ---
 
-# Desbloquear Bitwarden para la sesión actual
-bw-unlock() {
-    # Comprobar si ya está desbloqueado
-    if ! bw status | jq -e '.status == "unlocked"' &>/dev/null; then
-        echo "Desbloqueando Bóveda de Bitwarden..."
-        export BW_SESSION=$(bw unlock --raw)
-        if [ -n "$BW_SESSION" ]; then
-            echo "Bóveda desbloqueada."
-            # Sincronizar por si hubo cambios en otros nodos
-            bw sync
-        fi
-    else
-        echo "La bóveda ya está desbloqueada."
+# Desbloquear y gestionar Bitwarden de forma inteligente
+bwu() {
+    local vault_url="https://vault.home"
+    local status=$(bw status 2>/dev/null | jq -r '.status')
+
+    # 1. Configurar servidor si es necesario
+    if [[ "$(bw config list | grep url)" != *"$vault_url"* ]]; then
+        echo "→ Configurando servidor a $vault_url..."
+        bw config server "$vault_url"
     fi
+
+    # 2. Gestionar estado según el reporte de BW
+    case "$status" in
+        "unauthenticated")
+            echo "→ No autenticado. Iniciando login..."
+            bw login
+            bwu # Re-ejecutar para desbloquear tras el login
+            ;;
+        "locked")
+            echo "🔐 Desbloqueando Bóveda..."
+            export BW_SESSION=$(bw unlock --raw)
+            if [ -n "$BW_SESSION" ]; then
+                echo "✓ Bóveda desbloqueada y sesión exportada."
+                bw sync
+            fi
+            ;;
+        "unlocked")
+            echo "✓ La bóveda ya está desbloqueada."
+            ;;
+        *)
+            echo "✗ Error: Estado de Bitwarden desconocido ($status)."
+            return 1
+            ;;
+    esac
 }
 
 # Buscar texto con ripgrep y abrir en nvim en la línea exacta
