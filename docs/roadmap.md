@@ -26,6 +26,7 @@
 ### 1.1 Gestionar ~/.ssh/config con Chezmoi
 - [x] Unificar identidad en `id_ed25519`
 - [x] Configurar SSH Agent Forwarding para Nodo 1
+- [x] Automatización total de identidad SSH (Zero-Touch) ✅
 
 ### 1.2 Neovim (Estrategia Dual) ✅
 Configuración dual para máxima versatilidad:
@@ -66,6 +67,7 @@ Configuración dual para máxima versatilidad:
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
+- [ ] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) o 1Password (`op`) nativamente en Chezmoi.
 - [ ] **Configurar Chezmoi**: Usar `encryption: age` en `.chezmoi.yaml.tmpl`.
 
 ---
