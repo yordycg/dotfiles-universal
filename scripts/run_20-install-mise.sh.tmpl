@@ -1,45 +1,70 @@
 #!/usr/bin/env bash
-
-# ----------------------------------------------------------------------
-# Bootstrap Mise (Universal Tool Manager)
-# ----------------------------------------------------------------------
-
+# =============================================================================
+# scripts/run_20-install-mise.sh.tmpl
+# Instalación de Mise y Herramientas (Runtimes)
+# Fase 2: Gestión de Entornos (Node, Python, Lua)
+# =============================================================================
 set -euo pipefail
 
-# Exportar token para evitar rate limits de GitHub
-export GITHUB_TOKEN={{ .githubToken | quote }}
-# Desactivar attestations de python
-export MISE_PYTHON_GITHUB_ATTESTATIONS=false
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
 
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+# Configuración de Entorno
+export GITHUB_TOKEN={{ .githubToken | quote }}
+export MISE_PYTHON_GITHUB_ATTESTATIONS=false
 MISE_BIN="$HOME/.local/bin/mise"
 
+# ── 1. Instalación de Mise ───────────────────────────────────────────────────
+log_step "Gestionando Mise"
+
 if [ ! -f "$MISE_BIN" ]; then
-    echo "== Instalando mise..."
-    curl https://mise.jdx.dev/install.sh | sh
+    log_info "Instalando mise (Gestor Universal)..."
+    curl https://mise.jdx.dev/install.sh | sh -s -- --quiet
+    log_ok "Mise instalado exitosamente."
+else
+    log_ok "Mise ya está instalado en $MISE_BIN."
 fi
 
-echo "== Verificando herramientas de mise..."
-# Forzar la instalacion de las herramientas y runtimes (Node, Python, Lua)
+# ── 2. Instalación de Runtimes ───────────────────────────────────────────────
+log_step "Sincronizando Herramientas (mise install)"
+
+log_info "Verificando versiones y runtimes (Node, Python, Lua, etc.)..."
 "$MISE_BIN" install -y
+log_ok "Todas las herramientas de mise están sincronizadas."
 
-# ----------------------------------------------------------------------
-# Post-Install: Providers & CLIs
-# ----------------------------------------------------------------------
-echo "== Configurando providers y herramientas globales..."
+# ── 3. Post-Instalación: CLIs y Providers ────────────────────────────────────
+log_step "Configuración de Herramientas Globales"
 
-# Activar Mise para que npm y pip estén disponibles en el script
+# Activar Mise temporalmente para este script
 eval "$("$MISE_BIN" activate bash)"
 
-# Provider de Node.js / Global Packages
+# Node.js / NPM Packages
 if command -v npm &>/dev/null; then
-    echo "  - Verificando paquetes npm globales..."
+    log_info "Verificando paquetes NPM globales (Neovim, Gemini, Bitwarden)..."
     npm install -g neovim @google/gemini-cli @bitwarden/cli --silent
+    log_ok "Paquetes NPM actualizados."
+else
+    log_warn "NPM no disponible. Saltando paquetes globales de Node."
 fi
 
-# Provider de Python
+# Python / Pip Packages
 if command -v pip &>/dev/null; then
-    echo "  - Verificando paquetes python globales..."
+    log_info "Verificando paquetes Python globales (pynvim)..."
     pip install pynvim --quiet
+    log_ok "Paquetes Python actualizados."
+else
+    log_warn "PIP no disponible. Saltando paquetes globales de Python."
 fi
 
-echo "[OK] Mise y herramientas configuradas."
+log_ok "Instalación de Mise y herramientas finalizada."

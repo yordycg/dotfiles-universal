@@ -1,40 +1,60 @@
 #!/usr/bin/env bash
-
-# ----------------------------------------------------------------------
-# Bootstrap System Packages & Secrets (Run before everything else)
-# ----------------------------------------------------------------------
-
+# =============================================================================
+# scripts/run_before_00-install-packages.sh.tmpl
+# Bootstrap de Secretos y Paquetes del Sistema
+# Fase 0: Preparación del entorno base
+# =============================================================================
 set -euo pipefail
 
-# --- BOOTSTRAP DE SECRETOS (AGE) ---
-# Si se proporciona la llave age por entorno, la configuramos antes de que chezmoi la necesite
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+# ── 1. Bootstrap de Secretos (Age) ───────────────────────────────────────────
+log_step "Configurando Secretos (Age)"
+
 AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+
 if [ -z "${CHEZMOI_AGE_KEY:-}" ]; then
-    echo "==> [INFO] No se detectó CHEZMOI_AGE_KEY en el entorno."
+    log_info "No se detectó CHEZMOI_AGE_KEY en el entorno. Saltando bootstrap de secrets."
 else
     if [ ! -f "$AGE_KEY_FILE" ]; then
-        echo "==> [SECRET] Configurando llave age desde variable de entorno..."
+        log_info "Configurando llave age desde variable de entorno..."
         mkdir -p "$(dirname "$AGE_KEY_FILE")"
         echo "$CHEZMOI_AGE_KEY" > "$AGE_KEY_FILE"
         chmod 600 "$AGE_KEY_FILE"
-        echo "  [ OK ] Llave age configurada en $AGE_KEY_FILE"
+        log_ok "Llave age configurada exitosamente."
     else
-        echo "  [ OK ] El archivo de llave age ya existe. Saltando bootstrap."
+        log_ok "El archivo de llave age ya existe."
     fi
 fi
 
-echo "== Detectando sistema operativo para instalación de paquetes..."
+# ── 2. Instalación de Paquetes del Sistema ───────────────────────────────────
+log_step "Instalación de Paquetes Base"
+
+log_info "Detectando sistema operativo..."
+
 if [ -f /etc/fedora-release ]; then
-    echo "  - Sistema detectado: Fedora"
+    log_info "Sistema detectado: Fedora"
     bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/fedora.sh"
 elif [ -f /etc/arch-release ]; then
-    echo "  - Sistema detectado: Arch Linux"
+    log_info "Sistema detectado: Arch Linux"
     bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/arch.sh"
 elif [ -f /etc/debian_version ]; then
-    echo "  - Sistema detectado: Debian/Ubuntu"
+    log_info "Sistema detectado: Debian/Ubuntu"
     bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/debian.sh"
 else
-    echo "  [WARN] Sistema operativo no soportado para instalación automática."
+    log_warn "Sistema operativo no soportado para instalación automática."
 fi
 
-echo "[OK] Instalación de paquetes del sistema completada."
+log_ok "Instalación de paquetes del sistema completada."

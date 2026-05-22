@@ -1,39 +1,59 @@
 #!/usr/bin/env bash
-
-# Script de sincronización de Assets (Wallpapers)
-# -----------------------------------------------------------------------------
-# Se encarga de mantener los recursos gráficos actualizados.
+# =============================================================================
+# scripts/run_after_80-sync-assets.sh.tmpl
+# Sincronización de Assets (Recursos Gráficos)
+# Fase 4: Sincronización de Datos Externos
+# =============================================================================
+set -euo pipefail
 
 {{ if .isServer -}}
-echo "== Saltando sincronización de assets (Entorno Servidor detectado)"
 exit 0
 {{- end }}
 
-set -euo pipefail
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
 
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+# ── Funciones de Utilidad ────────────────────────────────────────────────────
 sync_repo() {
     local url=$1
     local path=$2
     local name=$3
 
     if [ ! -d "$path/.git" ]; then
-        echo "==> Clonando $name en $path..."
+        log_info "Clonando repositorio de $name en $path..."
         mkdir -p "$(dirname "$path")"
-        git clone "$url" "$path"
+        git clone -q "$url" "$path"
+        log_ok "$name clonado exitosamente."
     else
-        echo "==> Actualizando $name..."
+        log_info "Actualizando $name..."
         cd "$path"
         if ! git diff-index --quiet HEAD --; then
-            git stash
-            git pull --rebase
-            git stash pop || echo "  (Aviso: Conflicto en $path)"
+            log_warn "Cambios locales detectados en $name. Realizando stash temporal..."
+            git stash -q
+            git pull -q --rebase
+            git stash pop -q || log_warn "Conflicto de mezcla en $path. Se requiere intervención manual."
         else
-            git pull --rebase
+            git pull -q --rebase
         fi
         cd - > /dev/null
+        log_ok "$name está al día."
     fi
 }
 
-echo "--- Iniciando sincronización de Wallpapers ---"
+# ── 1. Sincronización de Recursos ────────────────────────────────────────────
+log_step "Sincronizando Recursos Gráficos"
+
 sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
-echo "--- Sincronización completada ---"
+
+log_ok "Sincronización de assets finalizada."

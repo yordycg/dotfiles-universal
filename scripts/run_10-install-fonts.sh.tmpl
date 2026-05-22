@@ -1,18 +1,35 @@
-#!/usr/bin/bash
-
-# run_10-install-fonts.sh
-# -----------------------------------------------------------------------------
-# Este script instala las Nerd Fonts seleccionadas para Linux.
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_10-install-fonts.sh.tmpl
+# Instalación de Nerd Fonts (Linux)
+# Fase 1: Entorno Visual
+# =============================================================================
+set -euo pipefail
 
 {{ if .isServer -}}
-echo "== Saltando instalación de fuentes (Entorno Servidor detectado)"
 exit 0
 {{- end }}
 
-version="3.3.0"
-fonts_dir="${HOME}/.local/share/fonts"
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
 
-# Lista de fuentes
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+VERSION="3.3.0"
+FONTS_DIR="${HOME}/.local/share/fonts"
+
+# ── 1. Preparación ───────────────────────────────────────────────────────────
+log_step "Preparando Entorno de Fuentes"
+
 declare -a fonts=(
   JetBrainsMono
   FiraCode
@@ -20,36 +37,40 @@ declare -a fonts=(
   CaskaydiaCove
 )
 
-# Asegurar que el directorio de fuentes existe
-if [[ ! -d "$fonts_dir" ]]; then
-  echo "📁 Creando directorio de fuentes en $fonts_dir..."
-  mkdir -p "$fonts_dir"
+if [[ ! -d "$FONTS_DIR" ]]; then
+  log_info "Creando directorio de fuentes en $FONTS_DIR..."
+  mkdir -p "$FONTS_DIR"
 fi
 
-echo "🔍 Verificando fuentes..."
+# ── 2. Descarga e Instalación ────────────────────────────────────────────────
+log_step "Instalación de Nerd Fonts"
 
 for font in "${fonts[@]}"; do
-  if [ ! -d "$fonts_dir/$font" ]; then
-    echo "📥 Descargando e instalando: $font Nerd Font..."
+  if [ ! -d "$FONTS_DIR/$font" ]; then
+    log_info "Instalando $font Nerd Font (v$VERSION)..."
     zip_file="${font}.zip"
-    download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${version}/${zip_file}"
+    download_url="https://github.com/ryanoasis/nerd-fonts/releases/download/v${VERSION}/${zip_file}"
     
     if wget -q --show-progress "$download_url"; then
-      unzip -o "$zip_file" -d "$fonts_dir/$font"
+      unzip -o -q "$zip_file" -d "$FONTS_DIR/$font"
       rm "$zip_file"
-      echo "✅ $font instalado correctamente."
+      log_ok "$font instalada correctamente."
     else
-      echo "❌ Error al descargar $font. Verifica tu conexión."
+      log_warn "No se pudo descargar $font. Verifica tu conexión o el enlace."
     fi
   else
-    echo "✨ $font ya está instalada. Saltando..."
+    log_ok "$font ya está instalada."
   fi
 done
 
-echo "🧹 Limpiando archivos innecesarios..."
-find "$fonts_dir" -name '*Windows Compatible*' -delete
+# ── 3. Optimización y Caché ──────────────────────────────────────────────────
+log_step "Finalizando Instalación"
 
-echo "🔄 Actualizando caché de fuentes (fc-cache)..."
-fc-cache -fv
+log_info "Limpiando archivos innecesarios..."
+find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true
 
-echo "🎉 ¡Proceso de fuentes finalizado!"
+log_info "Actualizando caché de fuentes (fc-cache)..."
+fc-cache -f > /dev/null
+log_ok "Caché de fuentes actualizada."
+
+log_ok "¡Instalación de fuentes completada!"
