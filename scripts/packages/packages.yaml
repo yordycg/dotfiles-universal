@@ -97,3 +97,4 @@ arch:
     - xz
     - libffi
     - unzip
+    - restic
