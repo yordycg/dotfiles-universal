@@ -57,6 +57,22 @@ dsync() {
 
 # --- Búsqueda e Interactividad (FZF) ---
 
+# Desbloquear Bitwarden para la sesión actual
+bw-unlock() {
+    # Comprobar si ya está desbloqueado
+    if ! bw status | jq -e '.status == "unlocked"' &>/dev/null; then
+        echo "🔐 Desbloqueando Bóveda de Bitwarden..."
+        export BW_SESSION=$(bw unlock --raw)
+        if [ -n "$BW_SESSION" ]; then
+            echo "✅ Bóveda desbloqueada."
+            # Sincronizar por si hubo cambios en otros nodos
+            bw sync
+        fi
+    else
+        echo "✅ La bóveda ya está desbloqueada."
+    fi
+}
+
 # Buscar texto con ripgrep y abrir en nvim en la línea exacta
 findedit() {
   local file=$(
