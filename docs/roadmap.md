@@ -110,6 +110,11 @@ dotfiles-universal/
 │   ├── shell/
 │   │   ├── aliases.sh      [OK]
 │   │   └── functions.sh    [OK]
+│   ├── homelab/
+│   │   └── backup.env      [OK] (Secretos)
+│   ├── systemd/user/
+│   │   ├── homelab-backup.service [OK]
+│   │   └── homelab-backup.timer   [OK]
 │   ├── starship.toml       [OK]
 │   ├── nvim/               [OK] Fase 1
 │   └── tmux/               [OK] Fase 1
