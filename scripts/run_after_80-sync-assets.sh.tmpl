@@ -4,8 +4,8 @@
 # -----------------------------------------------------------------------------
 # Se encarga de mantener los recursos gráficos actualizados.
 
-{{ if not (or .isLaptop .isDesktop) -}}
-echo "== Saltando sincronización de assets (Entorno Headless/Servidor detectado)"
+{{ if .isServer -}}
+echo "== Saltando sincronización de assets (Entorno Servidor detectado)"
 exit 0
 {{- end }}
 

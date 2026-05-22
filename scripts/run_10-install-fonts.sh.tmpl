@@ -4,8 +4,8 @@
 # -----------------------------------------------------------------------------
 # Este script instala las Nerd Fonts seleccionadas para Linux.
 
-{{ if not (or .isLaptop .isDesktop) -}}
-echo "== Saltando instalación de fuentes (Entorno Headless/Servidor detectado)"
+{{ if .isServer -}}
+echo "== Saltando instalación de fuentes (Entorno Servidor detectado)"
 exit 0
 {{- end }}
 

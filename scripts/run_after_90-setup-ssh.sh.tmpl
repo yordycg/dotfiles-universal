@@ -61,8 +61,11 @@ if [[ -n "$EXISTING_KEY_ID" ]]; then
     success "Esta llave ya está registrada en GitHub (ID: $EXISTING_KEY_ID)."
 else
     info "Subiendo nueva llave a GitHub con título: $KEY_TITLE"
-    gh ssh-key add "$SSH_KEY_PUB_PATH" --title "$KEY_TITLE" || die "No se pudo subir la llave a GitHub."
-    success "Llave vinculada exitosamente."
+    if gh ssh-key add "$SSH_KEY_PUB_PATH" --title "$KEY_TITLE"; then
+        success "Llave vinculada exitosamente."
+    else
+        warn "No se pudo subir la llave. Es posible que ya exista con otro nombre."
+    fi
 fi
 
 # 6. Configuración de ~/.ssh/config
