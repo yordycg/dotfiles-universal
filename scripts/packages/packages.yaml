@@ -7,7 +7,6 @@ fedora:
     - curl
     - wget
     - zsh
-    - chezmoi
     - gh
     - jq
     - gcc
