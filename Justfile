@@ -52,5 +52,6 @@ deploy-remote host:
         echo "❌ Error: No se pudieron obtener los secretos de Bitwarden. Verifica el item 'Dotfiles'."
         exit 1
     fi
-    ssh -t {{host}} "CHEZMOI_AGE_KEY='$AGE_KEY' GITHUB_TOKEN='$GH_TOKEN' sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b \$HOME/bin init --apply https://\$GH_TOKEN@github.com/yordycg/dotfiles-universal.git"
+    ssh -t {{host}} "rm -rf \$HOME/.local/share/chezmoi \$HOME/.config/chezmoi && \
+                   CHEZMOI_AGE_KEY='$AGE_KEY' GITHUB_TOKEN='$GH_TOKEN' sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b \$HOME/bin init --apply https://\$GH_TOKEN@github.com/yordycg/dotfiles-universal.git"
     echo "✅ Despliegue en {{host}} finalizado."
