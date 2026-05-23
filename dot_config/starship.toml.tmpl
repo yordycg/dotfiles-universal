@@ -1,0 +1,220 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# -- Configuracion Global --
+add_newline = true
+command_timeout = 2000
+palette = 'default'
+
+# -- Prompt Format --
+format = """
+$os\
+$username\
+{{ if .isServer }}$hostname{{ end }}\
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$git_state\
+$fill\
+$c\
+$rust\
+$golang\
+$nodejs\
+$python\
+$package\
+$docker_context\
+$kubernetes\
+$shell\
+$container\
+$jobs\
+$cmd_duration\
+$status\
+$line_break\
+$character"""
+
+# -- Paletas de Colores --
+[palettes.default]
+color_ok = 'bright-green'
+color_danger = 'bright-red'
+color_caution = 'bright-yellow'
+color_os = 'red'
+color_username = 'red'
+color_hostname = 'bright-red'
+color_directory = 'yellow'
+color_git = 'cyan'
+color_git_added = 'bright-green'
+color_git_deleted = 'bright-red'
+color_env = 'blue'
+color_kubernetes = 'purple'
+color_docker = 'blue'
+color_shell = 'bright-black'
+color_container = 'bright-black'
+color_other = 'bright-black'
+color_duration = 'bright-yellow'
+
+[palettes.gruvbox_dark]
+color_ok = '#b8bb26'
+color_danger = '#fb4934'
+color_caution = '#d79921'
+color_os = '#d65d0e'
+color_username = '#d65d0e'
+color_hostname = '#d65d0e'
+color_directory = '#d79921'
+color_git = '#689d6a'
+color_git_added = '#b8bb26'
+color_git_deleted = '#fb4934'
+color_env = '#458588'
+color_kubernetes = '#b16286'
+color_docker = '#458588'
+color_shell = '#a89984'
+color_container = '#cc241d'
+color_other = '#d5c4a1'
+color_duration = '#fbf1c7'
+
+# -- Modulos --
+
+[fill]
+symbol = " "
+
+[os]
+disabled = false
+style = "fg:color_os"
+format = '[$symbol]($style)'
+
+[os.symbols]
+Windows = "󰍲"
+Ubuntu = "󰕈"
+Fedora = "󰣛"
+Arch = "󰣇"
+Debian = "󰣚"
+Linux = "󰌽"
+
+[username]
+show_always = true
+style_user = "fg:color_username"
+style_root = "bold fg:color_danger"
+format = '[ $user]($style)'
+
+[hostname]
+ssh_only = false
+style = "fg:color_hostname"
+format = '[@$hostname]($style) '
+
+[directory]
+style = "fg:color_directory"
+read_only_style = "fg:color_directory"
+repo_root_style = "bold fg:color_directory"
+format = "[ $path]($style)"
+read_only = " "
+home_symbol = "~"
+truncation_symbol = "…/"
+truncation_length = 0
+truncate_to_repo = true
+use_logical_path = true
+
+[git_branch]
+symbol = ""
+style = "fg:color_git"
+format = '( [$symbol $branch]($style))'
+
+[git_status]
+style = "fg:color_git"
+format = '([$ahead_behind]($style)) ([$all_status]($style))'
+stashed = "*${count}"
+ahead = "⇡${count}"
+behind = "⇣${count}"
+diverged = "⇡${ahead_count}⇣${behind_count}"
+conflicted = "=${count}"
+deleted = "×${count}"
+renamed = "»${count}"
+modified = "!${count}"
+staged = "+${count}"
+untracked = "?${count}"
+
+[git_metrics]
+format = '([([+$added]($added_style))([-$deleted]($deleted_style))](fg:color_git) )'
+added_style = "fg:color_git_added"
+deleted_style = "fg:color_git_deleted"
+only_nonzero_diffs = true
+
+[git_state]
+style = "fg:color_danger"
+format = '([$state( $progress_current/$progress_total)]($style bold) )'
+
+[nodejs]
+symbol = ""
+style = "fg:color_env"
+format = '( [$symbol( $version)]($style))'
+
+[c]
+symbol = ""
+style = "fg:color_env"
+format = '( [$symbol( $version)]($style))'
+
+[rust]
+symbol = "󱘗"
+style = "fg:color_env"
+format = '( [$symbol( $version)]($style))'
+
+[golang]
+symbol = "󰟓"
+style = "fg:color_env"
+format = '( [$symbol( $version)]($style))'
+
+[python]
+symbol = ""
+style = "fg:color_env"
+format = '( [$symbol( $version)( $virtualenv)]($style))'
+version_format = '${raw}'
+
+[package]
+symbol = "󰏗"
+style = "fg:color_env"
+format = '( [$symbol( $version)]($style))'
+
+[docker_context]
+symbol = ""
+style = "fg:color_docker"
+format = '( [$symbol $context]($style))'
+
+[kubernetes]
+symbol = "󱃾"
+style = "fg:color_kubernetes"
+format = '( [$symbol( $cluster)]($style))'
+
+[shell]
+disabled = false
+format = '[  $indicator]($style)'
+zsh_indicator = "zsh"
+bash_indicator = "bash"
+style = "fg:color_shell"
+
+[container]
+style = "fg:color_container"
+format = '( [$symbol $name]($style))'
+
+[jobs]
+symbol = "󰒋"
+style = "fg:color_other"
+format = '( [$symbol( $number)]($style))'
+
+[cmd_duration]
+min_time = 2000
+format = '( [󱫑 $duration]($style))'
+style = 'fg:color_duration'
+
+[status]
+disabled = false
+format = '( [$symbol( $common_meaning)( $signal_name)]($style))'
+map_symbol = true
+pipestatus = true
+symbol = '󰅙'
+style = 'bold fg:color_danger'
+
+[line_break]
+disabled = false
+
+[character]
+success_symbol = '[❯](bold fg:color_ok)'
+error_symbol = '[❯](bold fg:color_danger)'
+vimcmd_symbol = '[❮](bold fg:color_vimcmd_ok)'
