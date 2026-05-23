@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_92-setup-tailscale.sh.tmpl
+# Automatización de Tailscale (VPN Mesh)
+# =============================================================================
+{{ if eq .chezmoi.os "linux" -}}
+set -euo pipefail
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+
+if ! command -v tailscale &>/dev/null; then
+    exit 0
+fi
+
+log_info "Verificando estado de Tailscale..."
+
+# Verificar si está autenticado
+if tailscale status &>/dev/null; then
+    log_ok "Tailscale está activo y autenticado."
+else
+    echo ""
+    echo "  ┌─────────────────────────────────────────────────────────────┐"
+    echo "  │  ACCIÓN REQUERIDA: Tailscale no está autenticado.           │"
+    echo "  │  Ejecuta el siguiente comando para unir este nodo a la red: │"
+    echo "  │                                                             │"
+    echo "  │    sudo tailscale up --accept-dns=true                      │"
+    echo "  │                                                             │"
+    echo "  └─────────────────────────────────────────────────────────────┘"
+    echo ""
+fi
+{{ end -}}

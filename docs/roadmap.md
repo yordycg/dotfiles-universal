@@ -76,12 +76,13 @@ Configuración dual para máxima versatilidad:
 - [x] **Detección de Nodos Inteligente**: Identificación automática del Nodo 1 (Notebook-Servidor) en plantillas.
 - [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
 
-- [ ] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
+- [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 
-## 🔧 Fase 5 — Red y DNS (Próxima sesión)
-- [ ] **DNS Interno**: Desplegar Pi-hole o AdGuard Home en Nodo 1 para resolución de dominios `.home`.
+## 🔧 Fase 5 — Red y DNS (Configuración final)
+- [x] **Preparar Infraestructura**: Creado `containers/adguard/compose.yaml` y script de provisión `03-dns-setup.sh`.
+- [ ] **DNS Interno (Configuración UI)**: Completar el asistente de AdGuard y añadir rewrites para `*.home`.
 - [ ] **DHCP Static Leases**: Configurar el router para IPs estáticas en Nodos críticos.
-- [ ] **VPN Mesh**: Refinar la red de Tailscale para acceso remoto seguro a los servicios.
+- [ ] **VPN Mesh (Tailscale Console)**: Configurar el Nodo 1 como Nameserver Global en Tailscale.
 
 ---
 

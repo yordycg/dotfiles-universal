@@ -3,6 +3,7 @@
 
 fedora:
   core:
+    - tailscale
     - git
     - curl
     - wget
@@ -51,6 +52,7 @@ fedora:
 
 debian:
   core:
+    - tailscale
     - git
     - curl
     - wget
@@ -79,6 +81,7 @@ debian:
 
 arch:
   core:
+    - tailscale
     - git
     - curl
     - wget
