@@ -24,6 +24,7 @@ fedora:
     - libffi-devel
     - unzip
     - sqlite
+    - w3m
   desktop:
     - distrobox
     - podman
@@ -78,6 +79,7 @@ debian:
     - unzip
     - sqlite3
     - restic
+    - w3m
 
 arch:
   core:
@@ -102,3 +104,4 @@ arch:
     - libffi
     - unzip
     - restic
+    - w3m

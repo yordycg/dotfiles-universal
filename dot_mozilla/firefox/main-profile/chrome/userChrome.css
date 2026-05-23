@@ -1,0 +1,47 @@
+/* =============================================================================
+   FIREFOX USERCHROME.CSS - MINIMALISMO TOTAL PARA SENIORS
+   ============================================================================= */
+
+/* --- 1. OCULTAR LA BARRA DE PESTAÑAS --- */
+/* Como usamos Surfingkeys (T) para cambiar de pestaña, no las necesitamos arriba */
+#TabsToolbar {
+    visibility: collapse !important;
+}
+
+/* --- 2. MINIMIZAR LA BARRA DE NAVEGACIÓN --- */
+/* Quitar bordes y simplificar colores */
+#nav-bar {
+    border-top: none !important;
+    box-shadow: none !important;
+    background-color: #282c34 !important; /* Color a juego con Surfingkeys/Terminal */
+}
+
+/* Ocultar el botón de menú de hamburguesa y otros botones innecesarios */
+#PanelUI-button, 
+#TabsToolbar .titlebar-buttonbox-container {
+    display: none !important;
+}
+
+/* --- 3. AUTO-OCULTAR LA BARRA DE DIRECCIONES (Opcional, pero muy Senior) --- */
+/* Solo se muestra al pasar el ratón por la parte superior o al enfocarla (Ctrl+L) */
+/*
+#nav-bar {
+  margin-top: -40px !important;
+  transition: margin-top 0.2s ease-in-out !important;
+}
+
+#navigator-toolbox:hover #nav-bar,
+#nav-bar:focus-within {
+  margin-top: 0 !important;
+}
+*/
+
+/* --- 4. AJUSTES FINOS --- */
+/* Quitar la barra de scroll (opcional, para look total CLI) */
+/* * { scrollbar-width: none !important; } */
+
+/* Color de fondo de la ventana antes de cargar la página */
+#browser-privileged-address,
+#tabbrowser-tabpanels {
+    background-color: #282c34 !important;
+}
