@@ -1,46 +1,73 @@
 // =============================================================================
-// SURFINGKEYS CONFIG - REFINADO (ESTILO TELESCOPE / MINIMALISTA)
+// SURFINGKEYS CONFIG - REFINADO (ESTILO TELESCOPE / CATPPUCCIN)
 // =============================================================================
 
-// --- 1. ESTÉTICA AVANZADA (OMNIBAR CENTRADA) ---
+// --- 1. ESTÉTICA AVANZADA (OMNIBAR CENTRADA Y MODERNA) ---
 settings.theme = `
 #sk_omnibar {
-    width: 50%;
-    left: 25%;
-    top: 15%;
-    background: #1e1e2e; /* Catppuccin Mocha Background */
-    border: 1px solid #45475a;
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.5);
-    border-radius: 8px;
-    font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", monospace;
+    width: 60% !important;
+    left: 20% !important;
+    top: 20% !important;
+    background: #1e1e2e !important;
+    border: 1px solid #45475a !important;
+    box-shadow: 0px 15px 45px rgba(0,0,0,0.7) !important;
+    border-radius: 12px !important;
+    font-family: "JetBrainsMono Nerd Font", "FiraCode Nerd Font", monospace !important;
+    padding: 10px !important;
 }
 .sk_theme input {
-    color: #cdd6f4;
-    font-size: 16px;
-    padding: 10px;
+    color: #cdd6f4 !important;
+    background: #313244 !important;
+    font-size: 18px !important;
+    padding: 12px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    outline: none !important;
+    width: 100% !important;
+}
+.sk_theme #sk_omnibarSearchResult {
+    margin-top: 10px !important;
 }
 .sk_theme #sk_omnibarSearchResult ul li {
-    padding: 8px 12px;
-    font-size: 14px;
+    padding: 10px 15px !important;
+    font-size: 15px !important;
+    border-radius: 4px !important;
+    margin: 2px 0 !important;
+    color: #a6adc8 !important;
 }
 .sk_theme #sk_omnibarSearchResult ul li:nth-child(odd) {
-    background: #181825;
+    background: #181825 !important;
 }
 .sk_theme #sk_omnibarSearchResult ul li.focused {
-    background: #313244;
+    background: #45475a !important;
+    color: #f5e0dc !important;
 }
 .sk_theme .url {
-    color: #89b4fa;
-    font-weight: normal;
+    color: #89b4fa !important;
+    font-size: 12px !important;
+    margin-left: 10px !important;
 }
 .sk_theme .omnibar_highlight {
-    color: #f38ba8;
+    color: #f38ba8 !important;
+    font-weight: bold !important;
 }
 #sk_status, #sk_find {
-    font-size: 10pt;
-    background: #1e1e2e;
-    color: #cdd6f4;
-    border: 1px solid #45475a;
+    font-size: 11pt !important;
+    background: #1e1e2e !important;
+    color: #cdd6f4 !important;
+    border: 1px solid #45475a !important;
+    padding: 5px 10px !important;
+    border-radius: 4px !important;
+}
+/* Hints (letras amarillas) más legibles */
+#sk_hints .sk_hint {
+    background: #f9e2af !important;
+    color: #11111b !important;
+    font-weight: bold !important;
+    border: 1px solid #fab387 !important;
+    font-size: 12px !important;
+    padding: 2px 4px !important;
+    border-radius: 3px !important;
 }
 `;
 
@@ -66,12 +93,7 @@ map('F', 'gf');  // Abrir en nueva pestaña
 map('x', 'x');
 
 // --- 3. EXCLUSIONES Y COMPORTAMIENTO ---
-
-// Desactivar en sitios donde los atajos nativos son mejores (Evita conflictos)
 settings.blacklistPattern = /.*mail.google.com.*|.*docs.google.com.*|.*github.com.*|.*forgejo.*/i;
-
-// Suavizar el scroll
 settings.smoothScroll = true;
-
-// Permitir que las webs roben el foco (útil para buscadores nativos)
 settings.stealFocusOnLoad = true;
+`;
