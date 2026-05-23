@@ -1,0 +1,50 @@
+# =============================================================================
+# Capa 2: Motor de Búsqueda Difusa (FZF Pro)
+# Basado en Radley Lewis UI + Previsualizaciones Senior
+# =============================================================================
+
+# -- FZF KEYBINDINGS (Guarda de Sintaxis para Fedora) --
+if [[ -f /usr/share/fzf/shell/key-bindings.zsh ]]; then
+  if zsh -n /usr/share/fzf/shell/key-bindings.zsh 2>/dev/null; then
+    source /usr/share/fzf/shell/key-bindings.zsh
+  else
+    # Fallback: Definir keybindings manualmente si el script de Fedora es solo para Bash
+    _fzf_history_widget() {
+      local selected
+      selected=$(fc -rl 1 | fzf --height 40% --reverse --no-sort \
+        --query "$LBUFFER" --prompt='History> ' \
+        | sed 's/^ *[0-9]* *//')
+      [[ -n "$selected" ]] && BUFFER="$selected" && CURSOR=${#BUFFER}
+      zle reset-prompt
+    }
+    zle -N _fzf_history_widget
+    bindkey '^R' _fzf_history_widget
+
+    _fzf_file_widget() {
+      local selected
+      selected=$(fzf --height 40% --reverse --prompt='Files> ')
+      [[ -n "$selected" ]] && LBUFFER+="$selected"
+      zle reset-prompt
+    }
+    zle -N _fzf_file_widget
+    bindkey '^T' _fzf_file_widget
+  fi
+fi
+
+# -- RESTAURACIÓN: Look Radley Lewis Original --
+export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+export FZF_DEFAULT_OPTS='
+  --height=60% 
+  --layout=reverse 
+  --border=rounded 
+  --margin=1
+  --prompt="❯ " 
+  --pointer="▶" 
+  --marker="✓"
+  --color=header:italic,info:4,pointer:2,marker:2
+  --preview-window=right:65%:wrap:border-left
+'
+
+# -- Previsualizaciones Inteligentes (Bat) --
+export _FZF_PREVIEW_CMD='bat --color=always --style=plain,numbers --line-range=:500 {}'
+export FZF_CTRL_T_OPTS="--preview '$_FZF_PREVIEW_CMD'"

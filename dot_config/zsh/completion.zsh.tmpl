@@ -1,0 +1,33 @@
+# =============================================================================
+# Capa 4: Completado y UI Interactiva (Zsh Native)
+# Fix Claude: Asegurar EXTENDED_GLOB para validación de caché
+# =============================================================================
+
+# -- Fix Crítico: Permitir globs avanzados para el chequeo de caché --
+setopt EXTENDED_GLOB
+
+# -- Inicialización de Compinit (Debe ejecutarse ANTES de fzf-tab) --
+autoload -Uz compinit
+
+# Regenerar zcompdump solo si tiene más de 24h o no existe
+local _dump="${ZDOTDIR:-$HOME}/.zcompdump"
+if [[ ! -f "$_dump" ]] || [[ "$_dump"(#qNmh+24) ]]; then
+  compinit
+else
+  compinit -C
+fi
+unset _dump
+
+# -- Estilos de Completado Base --
+zstyle ':completion:*' menu select
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}' 'r:|=*' 'l:|=* r:|=*'
+
+# -- Estilos de FZF-TAB (Se activan al cargar el plugin en plugins.zsh) --
+zstyle ':fzf-tab:complete:cd:*' fzf-preview \
+  'eza -1 --icons --color=always -- ${(Q)realpath} 2>/dev/null || ls -1 -- ${(Q)realpath}'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview \
+  'eza -1 --icons --color=always -- ${(Q)realpath} 2>/dev/null || ls -1 -- ${(Q)realpath}'
+
+zstyle ':fzf-tab:complete:*' fzf-min-height 15
+zstyle ':fzf-tab:*' switch-group ',' '.'

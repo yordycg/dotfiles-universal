@@ -39,7 +39,6 @@ alias czd='chezmoi diff'
 alias cze='chezmoi edit'
 alias czu='chezmoi update'
 alias czs='chezmoit source-path'
-alias bwu='bw-unlock'
 
 # -- Sistema ----------------------------------
 alias lv='NVIM_APPNAME=LazyVim nvim'

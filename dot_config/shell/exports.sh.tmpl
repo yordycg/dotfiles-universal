@@ -1,0 +1,41 @@
+# =============================================================================
+# Capa 1: Variables de Entorno y Entorno Base
+# Compatible con Bash y Zsh
+# =============================================================================
+
+# -- Colores Homelab-Style --
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+# -- Funciones de Logging --
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; }
+
+# -- Editores y Pager --
+export EDITOR="nvim"
+export VISUAL="nvim"
+export PAGER="bat"
+export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+
+# -- Secretos y Seguridad --
+export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+
+# -- Homelab SSL / Trust (Capa de Infraestructura) --
+{{ if eq .chezmoi.os "linux" -}}
+{{   if eq .chezmoi.osRelease.id "fedora" -}}
+HOMELAB_CA="/etc/pki/ca-trust/source/anchors/homelab-caddy-ca.crt"
+{{   else -}}
+HOMELAB_CA="/usr/local/share/ca-certificates/homelab-caddy-ca.crt"
+{{   end -}}
+[ -f "$HOMELAB_CA" ] && export NODE_EXTRA_CA_CERTS="$HOMELAB_CA"
+{{ end -}}
+
+# -- Paths --
+export PATH="$HOME/.local/bin:$PATH"

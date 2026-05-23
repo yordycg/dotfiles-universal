@@ -1,0 +1,64 @@
+# =============================================================================
+# Capa 3: Ecosistema de Plugins (Carga Directa y Robusta)
+# IMPORTANTE: compinit ya corrió en completion.zsh antes de llegar aquí
+# =============================================================================
+
+ZPLUGINDIR="$HOME/.local/share/zsh/plugins"
+mkdir -p "$ZPLUGINDIR"
+
+# -- Función de instalación (Solo descarga) --
+_install_plugin() {
+    local repo="$1"
+    local name="${repo:t}"
+    if [[ ! -d "$ZPLUGINDIR/$name" ]]; then
+        log_info "Instalando plugin: $name..."
+        git clone --depth=1 "https://github.com/$repo.git" "$ZPLUGINDIR/$name" > /dev/null 2>&1
+        log_ok "$name instalado."
+    fi
+}
+
+# 1. Asegurar descargas
+_install_plugin "Aloxaf/fzf-tab"
+_install_plugin "zsh-users/zsh-autosuggestions"
+_install_plugin "zsh-users/zsh-history-substring-search"
+_install_plugin "djui/alias-tips"
+_install_plugin "joshskidmore/zsh-fzf-history-search"
+_install_plugin "zdharma-continuum/fast-syntax-highlighting"
+
+# -- 2. CARGA DIRECTA DE PLUGINS (Orden Blindado) --
+
+# A. FZF-TAB (Debe ser el primero en modificar widgets de ZLE)
+source "$ZPLUGINDIR/fzf-tab/fzf-tab.zsh"
+
+# B. Autosuggestions
+source "$ZPLUGINDIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+
+# C. Utilidades de Historial y Alias
+source "$ZPLUGINDIR/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null
+source "$ZPLUGINDIR/alias-tips/alias-tips.plugin.zsh" 2>/dev/null
+source "$ZPLUGINDIR/zsh-fzf-history-search/zsh-fzf-history-search.zsh" 2>/dev/null
+
+# D. Syntax Highlighting (Debe ser el último en modificar ZLE)
+source "$ZPLUGINDIR/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
+
+# -- 3. MODO VIM NATIVO Y BINDINGS FINALES --
+
+bindkey -v              # Activar modo Vi nativo (sin plugins)
+export KEYTIMEOUT=1     # Lag de ESC a 10ms (instántaneo)
+
+# Re-vincular teclas en el mapa 'viins' (modo insertar)
+bindkey -M viins '^I' fzf-tab-complete      # TAB abre FZF
+bindkey -M viins '^ ' autosuggest-accept    # Ctrl+Space acepta sugerencia
+bindkey -M viins '^R' fzf_history_search    # Ctrl+R busca historial FZF
+
+# Re-vincular teclas en el mapa 'vicmd' (modo normal)
+bindkey -M vicmd '^R' fzf_history_search
+
+# Flechas para búsqueda de historial (substring-search)
+bindkey '^[[A' history-substring-search-up
+bindkey '^[[B' history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down

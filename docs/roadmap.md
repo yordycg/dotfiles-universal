@@ -39,8 +39,9 @@ Configuración dual para máxima versatilidad:
 - [x] Gestión automática de plugins con TPM.
 
 ### 1.4 Refinamiento de Shell y Prompt
-- [ ] **Mejorar Starship**: Investigar preset `starship-cockpit`, eliminar la hora final, añadir hostname para diferenciar Nodos (Server vs Nodo N) y personalizar colores.
-- [ ] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
+- [x] **Mejorar Starship**: Investigar preset `starship-cockpit`, eliminar la hora final, añadir hostname para diferenciar Nodos (Server vs Nodo N) y personalizar colores.
+- [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
+- [ ] **Auditoría de Scripts**: Analizar funciones y scripts de `dotfiles-2024` y otras fuentes para reutilizarlos en el Dotfile Universal.
 
 ---
 

@@ -1,55 +1,66 @@
-# -- Entorno base ---------------------------------------------
-export EDITOR="nvim"
-export VISUAL="nvim"
-export PAGER="bat"
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
-export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+# .███████.███████.██...██.██████.. ██████.
+# .██......██......██...██.██...██.██......
+# .███████.███████.███████.██████..██......
+# ......██......██.██...██.██...██.██......
+# .███████.███████.██...██.██...██..██████.
+# =============================================================================
+# ARQUITECTURA MODULAR DE SHELL (Senior Hybrid - Claude Fix)
+# =============================================================================
 
-# -- SSL / Trust ---------------------------------------------
-# Enseñar a Node.js (bw cli) a confiar en la CA del Homelab
-{{ if eq .chezmoi.os "linux" -}}
-{{   if eq .chezmoi.osRelease.id "fedora" -}}
-HOMELAB_CA="/etc/pki/ca-trust/source/anchors/homelab-caddy-ca.crt"
-{{   else -}}
-HOMELAB_CA="/usr/local/share/ca-certificates/homelab-caddy-ca.crt"
-{{   end -}}
-[ -f "$HOMELAB_CA" ] && export NODE_EXTRA_CA_CERTS="$HOMELAB_CA"
-{{ end -}}
+# -- MOTOR DE RENDIMIENTO (CACHING ENGINE) ------------------------------------
+ZSH_CACHE_DIR="$HOME/.cache/zsh"
+[[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
 
-# -- Paths ---------------------------------------------------
-export PATH="$HOME/.local/bin:$PATH"
+run_cached() {
+    local name="${1:?run_cached requiere un nombre}"
+    local cmd="${2:?run_cached requiere un comando}"
+    local friendly_name="${3:-$name}"
+    local cache_file="$ZSH_CACHE_DIR/${name}.zsh"
+    
+    if [[ ! -f "$cache_file" ]] || [[ -n "$(command find "$cache_file" -mmin +1440 2>/dev/null)" ]]; then
+        log_info "Regenerando caché: $friendly_name..."
+        ( eval "$cmd" ) > "$cache_file" 2>/dev/null || {
+            rm -f "$cache_file"
+            return 1
+        }
+        log_ok "$friendly_name sincronizado."
+    fi
+    [[ -f "$cache_file" ]] && builtin source "$cache_file"
+}
 
-# -- Plugins (manual, sin framework) -------------------------
-source_if() { [ -f "$1" ] && source "$1"; }
+# -- CAPA 1: ENTORNO BASE Y LOGS (SHELL AGNOSTIC) -----------------------------
+source "$HOME/.config/shell/exports.sh"
+source "$HOME/.config/shell/aliases.sh"
+source "$HOME/.config/shell/functions.sh"
 
-source_if /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source_if /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# -- CAPA 2: COMPLETADO (compinit DEBE IR ANTES QUE FZF-TAB) ------------------
+source "$HOME/.config/zsh/completion.zsh"
 
-# -- Herramientas -------------------------------------------
-# Inicializar Mise (Gestiona nvim, tmux, zoxide, starship, etc)
+# -- CAPA 3: PLUGINS (fzf-tab, autosuggestions, etc.) -------------------------
+source "$HOME/.config/zsh/plugins.zsh"
+
+# -- CAPA 4: FZF KEYBINDINGS (Después de plugins) -----------------------------
+source "$HOME/.config/zsh/fzf.zsh"
+
+# -- CAPA 5: HERRAMIENTAS (MISE/STARSHIP) -------------------------------------
+# Al final para no interferir con el sistema de completado
 if command -v mise &>/dev/null; then
-    eval "$(mise activate zsh)"
+    run_cached "mise" "mise activate zsh" "Mise"
 fi
+[[ -x $(command -v zoxide) ]]   && run_cached "zoxide" "zoxide init zsh" "Zoxide"
+[[ -x $(command -v starship) ]] && run_cached "starship" "starship init zsh" "Starship"
 
-# Inicializar integraciones de herramientas (Mise garantiza que esten en el PATH)
-eval "$(zoxide init zsh)"
-eval "$(starship init zsh)"
-
-# -- fzf ---------------------------------------------------
-source_if /usr/share/fzf/shell/key-bindings.zsh
-source_if /usr/share/fzf/shell/completion.zsh
-export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow'
-export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-
-# -- Aliases y funciones -----------------------------------
-source_if "$HOME/.config/shell/aliases.sh"
-source_if "$HOME/.config/shell/functions.sh"
-
-# -- Historial ---------------------------------------------
+# -- CONFIGURACIÓN DE HISTORIAL -----------------------------------------------
 HISTFILE=~/.zsh_history
-HISTSIZE=10000
-SAVEHIST=10000
+HISTSIZE=100000
+SAVEHIST=100000
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_DUPS
 setopt HIST_IGNORE_SPACE
+setopt HIST_REDUCE_BLANKS
+setopt HIST_FIND_NO_DUPS
 
+# -- FINALIZACIÓN -------------------------------------------------------------
+if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
+    fastfetch
+fi
