@@ -34,17 +34,23 @@ Configuración dual para máxima versatilidad:
 - **Personal (`nv`)**: Para modificaciones rápidas y experimentación.
 
 ### 1.3 Tmux 
-- Prefijo `Ctrl+Space` configurado.
-- Navegación Vim-style y soporte para Popups (lazygit, yazi).
-- Gestión automática de plugins con TPM.
+- [x] Prefijo `Ctrl+Space` configurado.
+- [x] Navegación Vim-style y soporte para Popups (lazygit, yazi).
+- [x] Gestión automática de plugins con TPM.
+
+### 1.4 Refinamiento de Shell y Prompt
+- [ ] **Mejorar Starship**: Investigar preset `starship-cockpit`, eliminar la hora final, añadir hostname para diferenciar Nodos (Server vs Nodo N) y personalizar colores.
+- [ ] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
 
 ---
+
 
 ## 🔧 Fase 2 — Instaladores y Nodos
 
 ### 2.1 Nodo 1 (Servidor Central)
 - [ ] Aplicar `chezmoi init` en Debian
-- [ ] Configurar Tmux persistente y entorno de shell idéntico
+- [ ] **Tmux Persistente**: Configurar el flujo de auto-attach al hacer SSH para un workflow senior.
+- [ ] **Configurar Forgejo**: Completar el asistente web y vincular con Postgres (resolver bucle de ping).
 
 ### 2.2 Nodo 2 (Estación de Fuerza / Desktop)
 - [ ] Configurar `windows.ps1` o instalador Linux correspondiente
