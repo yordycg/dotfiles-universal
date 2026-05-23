@@ -78,11 +78,11 @@ Configuración dual para máxima versatilidad:
 
 - [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 
-## 🔧 Fase 5 — Red y DNS (Configuración final)
+## 🔧 Fase 5 — Red y DNS (Completado)
 - [x] **Preparar Infraestructura**: Creado `containers/adguard/compose.yaml` y script de provisión `03-dns-setup.sh`.
-- [ ] **DNS Interno (Configuración UI)**: Completar el asistente de AdGuard y añadir rewrites para `*.home`.
-- [ ] **DHCP Static Leases**: Configurar el router para IPs estáticas en Nodos críticos.
-- [ ] **VPN Mesh (Tailscale Console)**: Configurar el Nodo 1 como Nameserver Global en Tailscale.
+- [x] **DNS Interno (Configuración UI)**: AdGuard configurado con rewrites para `*.home` y upstream a Podman.
+- [x] **Estrategia Anti-Desastres**: Implementado script `restore.sh` y backups automáticos de volúmenes con Restic.
+- [x] **VPN Mesh (Tailscale Global)**: Nodo 1 configurado como Nameserver Global y automatización en Chezmoi.
 
 ---
 
