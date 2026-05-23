@@ -20,18 +20,21 @@ fi
 
 log_info "Verificando estado de Tailscale..."
 
-# Verificar si está autenticado
+# 1. Asegurar que el servicio esté corriendo
+if systemctl list-unit-files tailscaled.service &>/dev/null; then
+    if ! systemctl is-active --quiet tailscaled; then
+        log_info "Activando servicio tailscaled..."
+        sudo systemctl enable --now tailscaled
+    fi
+fi
+
+# 2. Verificar autenticación
 if tailscale status &>/dev/null; then
     log_ok "Tailscale está activo y autenticado."
 else
-    echo ""
-    echo "  ┌─────────────────────────────────────────────────────────────┐"
-    echo "  │  ACCIÓN REQUERIDA: Tailscale no está autenticado.           │"
-    echo "  │  Ejecuta el siguiente comando para unir este nodo a la red: │"
-    echo "  │                                                             │"
-    echo "  │    sudo tailscale up --accept-dns=true                      │"
-    echo "  │                                                             │"
-    echo "  └─────────────────────────────────────────────────────────────┘"
-    echo ""
+    log_warn "Tailscale no está autenticado. Iniciando proceso de unión..."
+    # Ejecutamos 'up'. Si es la primera vez, mostrará la URL de login.
+    # Usamos --accept-dns=true para integrar con nuestro AdGuard.
+    sudo tailscale up --accept-dns=true
 fi
 {{ end -}}

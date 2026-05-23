@@ -59,30 +59,27 @@ Como el servidor ya pasó por el Escenario 1, **ya tiene los secretos guardados 
 
 ---
 
-## Escenario 3: Desastre Total (Bare Metal)
-**Situación:** Pérdida total de equipos. Estás frente a una computadora vacía (o prestada) y necesitas volver a tener tu entorno (tu "Nodo N") operativo para luego recuperar el servidor.
-**Objetivo:** Reconstruir la "llave maestra" de tu infraestructura.
+## Escenario 3: Recuperación de Desastre (Bare Metal / Restore)
+**Situación:** El disco duro de tu servidor ha muerto o has perdido el equipo. Tienes un servidor nuevo (limpio).
+**Objetivo:** Restaurar todos tus servicios (Vaultwarden, AdGuard) con sus datos intactos.
 
-### Pasos (Intervención manual obligatoria):
-Dado que no hay máquinas con acceso a tus secretos, debes realizar el puente inicial a mano.
+### Pasos:
 
-1. **Accede a tus secretos:**
-   Abre la web o instala la app de tu Gestor de Contraseñas (Bitwarden, 1Password) en la máquina limpia.
+1. **Aprovisionamiento Base:**
+   Sigue los pasos del **Escenario 1** (Capa 1 y Capa 2) para tener el servidor blindado y con tus dotfiles.
 
-2. **Extrae las llaves:**
-   Busca y copia temporalmente al portapapeles:
-   * Tu **GitHub Personal Access Token (PAT)**.
-   * Tu **Llave secreta Age**.
-
-3. **El Bootstrap Maestro:**
-   Pega este comando en la terminal limpia, reemplazando los valores. Este comando auto-configurará Chezmoi, guardará la llave age, instalará paquetes e inyectará tu identidad.
+2. **Restauración de Datos (Capa 3 - Restic):**
+   Usa el nuevo script de restauración para traer de vuelta los volúmenes de los contenedores.
    ```bash
-   CHEZMOI_AGE_KEY="AGE-SECRET-KEY-1..." GITHUB_TOKEN="ghp_X..." \
-   sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply yordycg
+   ssh usuario@IP_DEL_SERVIDOR "cd ~/homelab-infra && ./restore.sh"
    ```
+   *El script te mostrará los snapshots disponibles y restaurará el último en las rutas originales.*
 
-4. **Resurrección:**
-   Cuando el script termine, esta computadora será oficialmente tu nuevo **Nodo N**. Ahora puedes seguir los pasos del **Escenario 1** para recuperar los servidores caídos.
+3. **Resurrección Final:**
+   ```bash
+   ssh usuario@IP_DEL_SERVIDOR "cd ~/homelab-infra && ./manage.sh up"
+   ```
+   *¡Toda tu red (.home) y tus contraseñas están de vuelta!*
 
 ---
 
