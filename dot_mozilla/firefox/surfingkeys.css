@@ -1,0 +1,33 @@
+/* =============================================================================
+   SIDEBERY CSS CUSTOMIZATION - MINIMALIST VIM-STYLE
+   ============================================================================= */
+
+/* Fondo general (Catppuccin Mocha) */
+#root {
+  --bg: #1e1e2e;
+  --fg: #cdd6f4;
+  --active-bg: #313244;
+}
+
+/* Ocultar elementos innecesarios para ganar espacio */
+.NavigationBar { display: none !important; } /* Ocultar barra de navegación superior */
+.TabsPanel .tab .t-box .t-ctx { display: none; } /* Ocultar indicador de contenedor */
+
+/* Estilo de las pestañas */
+.Tab {
+  font-family: "JetBrainsMono Nerd Font", monospace;
+  font-size: 13px;
+  height: 28px;
+}
+
+.Tab:hover {
+  background: var(--active-bg);
+}
+
+.Tab[data-active="true"] {
+  border-left: 3px solid #89b4fa; /* Indicador azul de pestaña activa */
+  background: var(--active-bg);
+}
+
+/* Ocultar el botón de "Nueva Pestaña" (ya usamos shortcuts) */
+.NewTabBtn { display: none !important; }

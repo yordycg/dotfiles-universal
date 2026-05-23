@@ -1,47 +1,46 @@
 /* =============================================================================
-   FIREFOX USERCHROME.CSS - MINIMALISMO TOTAL PARA SENIORS
+   FIREFOX USERCHROME.CSS - AUTO-HIDE TABS (FAILSAFE DESIGN)
    ============================================================================= */
 
-/* --- 1. OCULTAR LA BARRA DE PESTAÑAS --- */
-/* Como usamos Surfingkeys (T) para cambiar de pestaña, no las necesitamos arriba */
+/* --- 1. BARRA DE PESTAÑAS AUTO-RETRÁCTIL --- */
 #TabsToolbar {
-    visibility: collapse !important;
+    position: fixed;
+    display: block;
+    top: 0;
+    width: 100vw;
+    background: #282c34 !important;
+    transition: transform 0.2s ease-in-out !important;
+    transform: translateY(-100%); /* Escondida hacia arriba */
+    z-index: 10;
 }
 
-/* --- 2. MINIMIZAR LA BARRA DE NAVEGACIÓN --- */
-/* Quitar bordes y simplificar colores */
+/* Mostrar cuando el ratón está cerca del borde superior */
+#titlebar:hover #TabsToolbar,
+#TabsToolbar:hover {
+    transform: translateY(0);
+}
+
+/* Ajustar el área de contenido para que no deje un hueco vacío */
+#navigator-toolbox {
+    border-bottom: none !important;
+}
+
+/* --- 2. MINIMIZAR LA BARRA DE NAVEGACIÓN (URL BAR) --- */
 #nav-bar {
-    border-top: none !important;
+    border: none !important;
     box-shadow: none !important;
-    background-color: #282c34 !important; /* Color a juego con Surfingkeys/Terminal */
+    background: #1e1e2e !important;
 }
 
-/* Ocultar el botón de menú de hamburguesa y otros botones innecesarios */
+/* Quitar botones innecesarios para un look más limpio */
 #PanelUI-button, 
-#TabsToolbar .titlebar-buttonbox-container {
+#viewButton,
+#alltabs-button {
     display: none !important;
 }
 
-/* --- 3. AUTO-OCULTAR LA BARRA DE DIRECCIONES (Opcional, pero muy Senior) --- */
-/* Solo se muestra al pasar el ratón por la parte superior o al enfocarla (Ctrl+L) */
-/*
-#nav-bar {
-  margin-top: -40px !important;
-  transition: margin-top 0.2s ease-in-out !important;
-}
-
-#navigator-toolbox:hover #nav-bar,
-#nav-bar:focus-within {
-  margin-top: 0 !important;
-}
-*/
-
-/* --- 4. AJUSTES FINOS --- */
-/* Quitar la barra de scroll (opcional, para look total CLI) */
-/* * { scrollbar-width: none !important; } */
-
-/* Color de fondo de la ventana antes de cargar la página */
-#browser-privileged-address,
-#tabbrowser-tabpanels {
-    background-color: #282c34 !important;
+/* --- 3. INTEGRACIÓN CON SIDEBERY (Opcional) --- */
+/* Ocultar la barra lateral de Firefox (el título "Sidebery") para ganar espacio */
+#sidebar-header {
+    display: none;
 }
