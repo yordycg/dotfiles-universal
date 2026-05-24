@@ -5,7 +5,7 @@
 # =============================================================================
 set -euo pipefail
 
-{{ if not (or .isLaptop .isDesktop) -}}
+{{ if or .isServer (not (or .isLaptop .isDesktop)) -}}
 exit 0
 {{- end }}
 
