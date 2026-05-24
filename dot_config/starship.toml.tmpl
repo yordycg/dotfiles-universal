@@ -8,7 +8,7 @@ palette = 'default'
 # -- Prompt Format --
 format = """
 $os\
-{{ if .isServer }}$hostname [󰇙](fg:bright-black) {{ end }}\
+{{ if .isServer }}$hostname[󰇙](fg:bright-black){{ end }}\
 $username\
 $directory\
 $git_branch\
@@ -98,7 +98,7 @@ format = '[$user]($style) '
 [hostname]
 ssh_only = false
 style = "bold fg:color_hostname"
-format = '[$hostname]($style) '
+format = '[$hostname]($style)'
 
 [directory]
 style = "fg:color_directory"
