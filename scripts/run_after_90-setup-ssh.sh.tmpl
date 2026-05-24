@@ -49,12 +49,16 @@ if ! gh auth status &>/dev/null; then
     if [ -n "{{ .githubToken }}" ]; then
         log_info "No autenticado. Usando GITHUB_TOKEN proporcionado por Chezmoi..."
         echo "{{ .githubToken }}" | gh auth login --with-token
+        gh auth setup-git
         log_ok "Autenticación automática completada."
     else
         log_warn "No autenticado y no se encontró token. Iniciando flujo interactivo..."
         gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || log_err "Falló la autenticación."
+        gh auth setup-git
     fi
 else
+    # Asegurar que Git esté configurado incluso si ya estábamos logueados
+    gh auth setup-git
     log_ok "Autenticación activa en GitHub."
 fi
 
