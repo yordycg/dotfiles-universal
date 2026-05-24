@@ -62,22 +62,19 @@
 [url "git@github.com:"]
 	insteadOf = "gh:"					# ex: 'g clone gh:torvals/linux'
 
-# -- Multi-Git --------------
-{{ if eq .chezmoi.os "linux" }}
-# -- IPVG Identity (Linux) ----------
-[includeIf "gitdir:~/workspace/ipvg/**"]
-	path = ~/.gitconfig-ipvg
+# -- Multi-Git (Identidades Condicionales) --
+# Si estas en Linux
+{{ if eq .chezmoi.os "linux" -}}
+[includeIf "gitdir:~/workspace/ipvg/"]
+	path = ~/.config/git/identity-ipvg
+[includeIf "gitdir:~/workspace/work/"]
+	path = ~/.config/git/identity-work
+{{- end }}
 
-# -- WORK Identity (Linux) ----------
-[includeIf "gitdir:~/workspace/work/**"]
-	path = ~/.gitconfig-work
-{{ else if eq .chezmoi.os "windows" }}
-# -- IPVG Identity (Windows) --------
-[includeIf "gitdir/i:C:/Users/yordycg/workspace/ipvg/**"]
-	path = ~/.gitconfig-ipvg
-
-# -- WORK Identity (Windows) --------
-[includeIf "gitdir/i:C:/Users/yordycg/workspace/work/**"]
-	path = ~/.gitconfig-work
-{{ end }}
-
+# Si estas en Windows
+{{ if eq .chezmoi.os "windows" -}}
+[includeIf "gitdir/i:{{ .chezmoi.homeDir }}/workspace/ipvg/"]
+	path = ~/.config/git/identity-ipvg
+[includeIf "gitdir/i:{{ .chezmoi.homeDir }}/workspace/work/"]
+	path = ~/.config/git/identity-work
+{{- end }}

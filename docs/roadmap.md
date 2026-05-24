@@ -43,6 +43,7 @@ Configuración dual para máxima versatilidad:
 - [x] **Mejorar Starship**: Investigar preset `starship-cockpit`, eliminar la hora final, añadir hostname para diferenciar Nodos (Server vs Nodo N) y personalizar colores.
 - [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
 - [x] **Auditoría de Scripts**: Refactorización de funciones para soporte multiplataforma y roles (Server/Laptop).
+
 - [ ] **Optimizar Salida SSH/Tmux**: Eliminar el "doble exit" mediante un alias inteligente o flujo de detach.
 - [ ] **Browser Workflow (Firefox)**: Investigar alternativas a Surfingkeys (Vimium-C, Tridactyl) con mejor UI/UX.
 

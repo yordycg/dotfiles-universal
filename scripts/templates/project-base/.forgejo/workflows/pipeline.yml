@@ -1,0 +1,23 @@
+# Plantilla base para CI/CD con Forgejo Actions
+name: Project Validation CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest # Esto le dice a Forgejo que busque un runner genérico
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # En el futuro, aquí agregarás pasos como:
+      # - name: Run Tests
+      #   run: just test
+      
+      - name: Basic Syntax Validation
+        run: echo "El código ha llegado al servidor y está listo para ser validado."

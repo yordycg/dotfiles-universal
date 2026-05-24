@@ -1,0 +1,87 @@
+# Justfile -- Orquestador Global ({{ .chezmoi.hostname }})
+# Generado por Chezmoi: No editar manualmente en el HOME.
+
+# --- Variables de Entorno y Configuracion ---
+# Detecta automaticamente si usar podman o docker
+DOCKER := `if which podman >/dev/null 2>&1; then echo "podman"; else echo "docker"; fi`
+
+default:
+	@just --list
+
+# --- Comandos Universales (Dotfiles & Desarrollo) ---
+
+# Aplicar todos los dotfiles (Chezmoi)
+apply:
+	@sudo -v
+	chezmoi apply
+
+# Ver cambios pendientes
+diff:
+	chezmoi diff
+
+# Pull del repo + apply
+update:
+	chezmoi update
+
+# Crear un nuevo proyecto con la estructura estandar (Senior Blueprint)
+project-new NAME CATEGORY="personal":
+	@bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ "{{" }}NAME{{ "}}" }} {{ "{{" }}CATEGORY{{ "}}" }}
+
+# Editar un dotfile y aplicar
+edit FILE:
+	chezmoi edit {{ "{{" }}FILE{{ "}}" }} --apply
+
+# Instalar paquetes segun el distro actual
+install:
+	@if [ -f /etc/fedora-release ]; then \
+		bash scripts/packages/installers/fedora.sh; \
+	elif [ -f /etc/arch-release ]; then \
+		bash scripts/packages/installers/arch.sh; \
+	elif [ -f /etc/debian_version ]; then \
+		bash scripts/packages/installers/debian.sh; \
+	fi
+
+# Commit rapido del repo de dotfiles
+save MSG="feat: update dotfiles":
+	cd $(chezmoi source-path) && git add . && git commit -m "{{ "{{" }}MSG{{ "}}" }}" && git push
+
+# --- Comandos de Servidor / Infraestructura (Nodo 1) ---
+{{ if .isServer -}}
+# Ver estado de todos los contenedores del Homelab
+homelab-status:
+	cd $HOME/.local/share/homelab-infra && ./manage.sh status
+
+# Ver logs de un servicio especifico del Homelab
+homelab-logs SERVICE:
+	cd $HOME/.local/share/homelab-infra && {{ "{{" }}DOCKER{{ "}}" }} compose -f containers/{{ "{{" }}SERVICE{{ "}}" }}/compose.yaml logs -f
+
+# Actualizar y reiniciar la infraestructura
+homelab-update:
+	cd $HOME/.local/share/homelab-infra && ./deploy.sh
+{{- end }}
+
+# --- Utilidades Remotas ---
+
+# Desplegar dotfiles en un servidor remoto inyectando secretos desde Bitwarden
+deploy-remote host:
+    #!/usr/bin/env bash
+    echo "Iniciando despliegue remoto en {{ "{{" }}host{{ "}}" }}..."
+    if ! bw status | jq -e '.status == "unlocked"' >/dev/null; then
+        echo "Bitwarden bloqueado. Por favor, usa 'bwu' primero."
+        exit 1
+    fi
+    AGE_KEY=$(bw get item Dotfiles | jq -r .login.password)
+    GH_TOKEN=$(bw get item Dotfiles | jq -r '.fields[] | select(.name=="token") | .value')
+    if [ "$AGE_KEY" = "null" ] || [ "$GH_TOKEN" = "null" ]; then
+        echo "Error: No se pudieron obtener los secretos de Bitwarden. Verifica el item 'Dotfiles'."
+        exit 1
+    fi
+    ssh -t {{ "{{" }}host{{ "}}" }} "rm -rf \$HOME/.local/share/chezmoi \$HOME/.config/chezmoi && \
+                   CHEZMOI_AGE_KEY='$AGE_KEY' GITHUB_TOKEN='$GH_TOKEN' sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b \$HOME/bin init --apply https://\$GH_TOKEN@github.com/yordycg/dotfiles-universal.git"
+    echo "Despliegue en {{ "{{" }}host{{ "}}" }} finalizado."
+
+# --- Atajos de Utilidad ---
+
+# Desbloqueo rapido de Bitwarden (Zero-Touch)
+bwu:
+	@source $HOME/.config/shell/functions.sh && bwu

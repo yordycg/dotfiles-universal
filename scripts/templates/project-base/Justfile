@@ -1,0 +1,26 @@
+# Comandos locales del proyecto (Senior Standard)
+set dotenv-load := true
+
+# Lista los comandos disponibles
+default:
+    @just --list
+
+# Levantar infraestructura en segundo plano
+up:
+    docker compose up -d
+
+# Ver logs de la infraestructura
+logs:
+    docker compose logs -f
+
+# Detener infraestructura y limpiar contenedores (no borra la db)
+down:
+    docker compose down
+
+# Limpieza total (¡Peligro! Borra la base de datos local)
+clean: down
+    docker compose down -v --remove-orphans
+
+# (Placeholder) Ejecutar pruebas
+test:
+    @echo "Ejecutando pruebas... (Implementar comando real aquí)"
