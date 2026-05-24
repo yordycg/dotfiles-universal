@@ -11,12 +11,13 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-# -- Funciones de Logging --
-log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
-log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
-log_info() { echo -e "${CYAN}  → $1${RESET}"; }
-log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
-log_err()  { echo -e "${RED}  ✗ $1${RESET}"; }
+# -- Funciones de Logging (Senior UI) --
+# Uso: log_ok "texto" "icono_opcional"
+log_step() { echo -e "\n${CYAN}${BOLD}${2:-▶} $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}${2:-✓} $1${RESET}"; }
+log_info() { echo -e "${CYAN}${2:-→} $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}${2:-⚠} $1${RESET}"; }
+log_err()  { echo -e "${RED}${2:-✗} $1${RESET}"; }
 
 # -- Editores y Pager --
 export EDITOR="nvim"
@@ -26,6 +27,25 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 
 # -- Secretos y Seguridad --
 export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+
+# -- FZF Configuration (Senior Modern UI) --
+export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+export FZF_DEFAULT_OPTS=" \
+  --height 45% \
+  --layout=reverse \
+  --border=rounded \
+  --margin=0,1 \
+  --padding=0 \
+  --info=inline-right \
+  --prompt='󰭎 ' \
+  --pointer=' ' \
+  --marker='󰄲 ' \
+  --color='hl:#2dd4bf,hl+:#2dd4bf,pointer:#f43f5e,marker:#10b981,border:#334155,header:#64748b' \
+  --bind 'ctrl-u:preview-page-up,ctrl-d:preview-page-down' \
+"
 
 # -- Homelab SSL / Trust (Capa de Infraestructura) --
 {{ if eq .chezmoi.os "linux" -}}

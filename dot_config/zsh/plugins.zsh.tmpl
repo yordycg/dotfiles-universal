@@ -44,21 +44,15 @@ source "$ZPLUGINDIR/zsh-fzf-history-search/zsh-fzf-history-search.zsh" 2>/dev/nu
 # D. Syntax Highlighting (Debe ser el último en modificar ZLE)
 source "$ZPLUGINDIR/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
 
-# -- 3. MODO VIM NATIVO Y BINDINGS FINALES --
+# -- 3. MODO EMACS Y BINDINGS FINALES --
 
-bindkey -v              # Activar modo Vi nativo (sin plugins)
-export KEYTIMEOUT=1     # Lag de ESC a 10ms (instántaneo)
+bindkey -e              # Activar modo Emacs (estándar)
 
-# Re-vincular teclas en el mapa 'viins' (modo insertar)
-bindkey -M viins '^I' fzf-tab-complete      # TAB abre FZF
-bindkey -M viins '^ ' autosuggest-accept    # Ctrl+Space acepta sugerencia
-bindkey -M viins '^R' fzf_history_search    # Ctrl+R busca historial FZF
-
-# Re-vincular teclas en el mapa 'vicmd' (modo normal)
-bindkey -M vicmd '^R' fzf_history_search
+# Vincular teclas
+bindkey '^I' fzf-tab-complete      # TAB abre FZF
+bindkey '^f' autosuggest-accept    # Ctrl+f acepta sugerencia (evita conflicto con Tmux Ctrl+Space)
+bindkey '^R' fzf_history_search    # Ctrl+R busca historial FZF
 
 # Flechas para búsqueda de historial (substring-search)
 bindkey '^[[A' history-substring-search-up
 bindkey '^[[B' history-substring-search-down
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
