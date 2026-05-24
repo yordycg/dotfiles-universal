@@ -50,8 +50,8 @@ Configuración dual para máxima versatilidad:
 
 ### 2.1 Nodo 1 (Servidor Central)
 - [ ] Aplicar `chezmoi init` en Debian
-- [ ] **Tmux Persistente**: Configurar el flujo de auto-attach al hacer SSH para un workflow senior.
-- [ ] **Configurar Forgejo**: Completar el asistente web y vincular con Postgres (resolver bucle de ping).
+- [x] **Tmux Persistente**: Flujo de auto-attach configurado para workflow remoto sin interrupciones.
+- [x] **Configurar Forgejo**: Despliegue declarativo, puerto SSH (2222) habilitado y resolución DNS interna arreglada. Admin automatizado (`init-forgejo`).
 
 ### 2.2 Nodo 2 (Estación de Fuerza / Desktop)
 - [ ] Configurar `windows.ps1` o instalador Linux correspondiente

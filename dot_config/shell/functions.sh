@@ -57,40 +57,67 @@ dsync() {
 
 # --- Búsqueda e Interactividad (FZF) ---
 
-# Desbloquear y gestionar Bitwarden de forma inteligente
+# Desbloquear y gestionar Bitwarden de forma inteligente (Zero-Touch)
 bwu() {
     local vault_url="https://vault.home"
-    local status=$(bw status 2>/dev/null | jq -r '.status')
+    local bw_status
+    bw_status=$(bw status 2>/dev/null | jq -r '.status')
 
     # 1. Configurar servidor si es necesario
-    if [[ "$(bw config list | grep url)" != *"$vault_url"* ]]; then
+    if [[ "$(bw config server 2>/dev/null)" != "$vault_url" ]]; then
         echo "→ Configurando servidor a $vault_url..."
-        bw config server "$vault_url"
+        bw config server "$vault_url" >/dev/null
     fi
 
-    # 2. Gestionar estado según el reporte de BW
-    case "$status" in
-        "unauthenticated")
-            echo "→ No autenticado. Iniciando login..."
-            bw login
-            bwu # Re-ejecutar para desbloquear tras el login
-            ;;
-        "locked")
-            echo "🔐 Desbloqueando Bóveda..."
-            export BW_SESSION=$(bw unlock --raw)
-            if [ -n "$BW_SESSION" ]; then
-                echo "✓ Bóveda desbloqueada y sesión exportada."
-                bw sync
-            fi
-            ;;
-        "unlocked")
-            echo "✓ La bóveda ya está desbloqueada."
-            ;;
-        *)
-            echo "✗ Error: Estado de Bitwarden desconocido ($status)."
+    # Si ya está desbloqueado, salimos rápido
+    if [[ "$bw_status" == "unlocked" ]]; then
+        echo "✓ La bóveda ya está desbloqueada."
+        return 0
+    fi
+
+    echo "🔐 Inicializando cadena de confianza (Root of Trust)..."
+    
+    # Extraer credenciales seguras desencriptando el archivo .age directamente
+    local secrets_yaml
+    secrets_yaml=$(chezmoi decrypt "$HOME/.local/share/chezmoi/dot_config/homelab/private_secrets.yaml.age" 2>/dev/null)
+    
+    if [[ -z "$secrets_yaml" ]]; then
+        echo "✗ Error: No se pudo desencriptar private_secrets.yaml.age"
+        return 1
+    fi
+
+    # Parsear YAML en Bash (extracción rudimentaria pero efectiva para variables clave-valor simples)
+    local bw_client_id=$(echo "$secrets_yaml" | grep 'bw_client_id:' | awk -F'"' '{print $2}')
+    local bw_client_secret=$(echo "$secrets_yaml" | grep 'bw_client_secret:' | awk -F'"' '{print $2}')
+    local bw_password=$(echo "$secrets_yaml" | grep 'bw_password:' | awk -F'"' '{print $2}')
+
+    if [[ -z "$bw_client_id" || -z "$bw_password" ]]; then
+        echo "✗ Error: Credenciales incompletas en secrets.yaml"
+        return 1
+    fi
+
+    # 2. Login Zero-Touch (si no está autenticado)
+    if [[ "$bw_status" == "unauthenticated" ]]; then
+        echo "→ Autenticando vía API Keys..."
+        export BW_CLIENTID="$bw_client_id"
+        export BW_CLIENTSECRET="$bw_client_secret"
+        bw login --apikey >/dev/null 2>&1
+        bw_status="locked" # Avanzamos el estado manualmente
+    fi
+
+    # 3. Unlock Zero-Touch
+    if [[ "$bw_status" == "locked" ]]; then
+        echo "→ Desbloqueando Bóveda en memoria..."
+        export BW_SESSION=$(bw unlock "$bw_password" --raw)
+        if [[ -n "$BW_SESSION" ]]; then
+            echo "✓ Bóveda desbloqueada."
+            # Sincronizar en background para no bloquear la terminal
+            bw sync >/dev/null 2>&1 &
+        else
+            echo "✗ Error: Falló el desbloqueo automático."
             return 1
-            ;;
-    esac
+        fi
+    fi
 }
 
 # Buscar texto con ripgrep y abrir en nvim en la línea exacta
