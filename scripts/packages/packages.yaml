@@ -78,6 +78,7 @@ debian:
     - unzip
     - sqlite3
     - restic
+    - fontconfig
 
 arch:
   core:
