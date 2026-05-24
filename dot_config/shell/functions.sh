@@ -82,6 +82,11 @@ bwu() {
     secrets_yaml=$(chezmoi decrypt "$HOME/.local/share/chezmoi/dot_config/homelab/private_secrets.yaml.age" 2>/dev/null)
     
     if [[ -z "$secrets_yaml" ]]; then
+        # Reintento ignorando SSL si chezmoi está configurado para ello
+        secrets_yaml=$(chezmoi decrypt --no-check-certificate "$HOME/.local/share/chezmoi/dot_config/homelab/private_secrets.yaml.age" 2>/dev/null)
+    fi
+
+    if [[ -z "$secrets_yaml" ]]; then
         echo "✗ Error: No se pudo desencriptar private_secrets.yaml.age"
         return 1
     fi
@@ -95,6 +100,9 @@ bwu() {
         echo "✗ Error: Credenciales incompletas en secrets.yaml"
         return 1
     fi
+
+    # Configurar Node para que confíe en nuestra CA
+    export NODE_EXTRA_CA_CERTS="/usr/local/share/ca-certificates/homelab-caddy-ca.crt"
 
     # 2. Login Zero-Touch (si no está autenticado)
     if [[ "$bw_status" == "unauthenticated" ]]; then

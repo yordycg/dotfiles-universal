@@ -65,6 +65,7 @@ if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_DIR/root.crt" "$TRUST_STORE" &>/dev/n
 else
     log_info "Instalando nueva CA en el sistema..."
     sudo cp "$TEMP_DIR/root.crt" "$TRUST_STORE"
+    sudo chmod 644 "$TRUST_STORE"
     $UPDATE_CMD > /dev/null
     log_ok "Sistema actualizado con éxito."
 fi
