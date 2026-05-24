@@ -69,10 +69,18 @@ Configuración dual para máxima versatilidad:
 
 ## 🔧 Fase 3 — Contenedores y Proyectos (Host inmaculado)
 
-### 3.1 Entornos de Proyecto
-- [ ] Implementar `Dockerfile` y `compose.yaml` en todos los proyectos personales.
-- [ ] Estandarizar el uso de `Justfile` por proyecto para orquestación.
-- [ ] Configurar Forgejo Mirrors para redundancia de código local.
+### 3.1 Entornos de Proyecto (Scaffolding Senior)
+- [x] Implementar estructura de "Fábrica de Proyectos" con directorios estandarizados.
+- [x] Estandarizar el uso de `Justfile` y variables condicionales para orquestación.
+- [x] Consolidar el directorio `~/workspace` para todas las categorías (personal, work, ivpg).
+
+### 3.2 Infraestructura de Código y CI/CD
+- [ ] Configurar **Forgejo Mirrors** para mantener sincronización automática (Server <-> GitHub).
+- [ ] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código antes de los push.
+
+### 3.3 Migración Arquitectónica (Nodo 1)
+- [ ] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.
+- [ ] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
 
 ---
 ## 🔧 Fase 4 — Seguridad y secrets

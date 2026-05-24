@@ -51,11 +51,12 @@ install_section() {
     log_ok "Paquetes de $section instalados."
 
     # Fix específico para Debian 12: Actualizar podman-compose via pip3
-    if [ "$section" = "core" ] && command -v pip3 &>/dev/null; then
-        log_info "Actualizando podman-compose para soporte de IPs estáticas..."
-        sudo pip3 install --upgrade podman-compose --break-system-packages -q
-        log_ok "podman-compose actualizado."
-    fi
+    # (Comentado temporalmente por Migración a Docker Oficial)
+    # if command -v pip3 &> /dev/null; then
+    #     log_info "Actualizando podman-compose para soporte de IPs estáticas..."
+    #     sudo pip3 install --upgrade podman-compose --break-system-packages -q
+    #     log_ok "podman-compose actualizado."
+    # fi
 }
 
 # ── 4. Ejecución de Perfiles ─────────────────────────────────────────────────
