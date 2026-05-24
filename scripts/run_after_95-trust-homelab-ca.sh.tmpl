@@ -5,10 +5,6 @@
 # =============================================================================
 set -euo pipefail
 
-{{ if or .isServer (not (or .isLaptop .isDesktop)) -}}
-exit 0
-{{- end }}
-
 # Colores Homelab-Style
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -30,60 +26,45 @@ trap 'rm -rf "$TEMP_DIR"' EXIT
 
 log_step "Confianza SSL (Homelab PKI)"
 
-# ── 1. Verificación ──────────────────────────────────────────────────────────
-if ! ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
-    log_warn "${DOMAIN} no alcanzable. Saltando actualización SSL."
+# ── 1. Obtención de Certificado Raíz ─────────────────────────────────────────
+
+# RUTA LOCAL (Si estamos en el servidor, el archivo está aquí)
+LOCAL_CA_PATH="/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/root.crt"
+
+if [ -s "$LOCAL_CA_PATH" ]; then
+    log_info "Servidor detectado: Copiando certificado raíz localmente..."
+    cp "$LOCAL_CA_PATH" "$TEMP_DIR/root.crt"
+else
+    # FLUJO CLIENTE (Laptop/Desktop): Descargar vía Red
+    if ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
+        log_info "Cliente detectado: Descargando certificado desde ${DOMAIN}..."
+        curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$TEMP_DIR/root.crt" || true
+    fi
+fi
+
+# ── 2. Instalación en el Sistema ─────────────────────────────────────────────
+if [ ! -s "$TEMP_DIR/root.crt" ]; then
+    log_warn "No se pudo obtener el certificado raíz. Saltando confianza SSL."
     exit 0
 fi
 
-# ── 2. Obtención de Bundle ───────────────────────────────────────────────────
-# Root CA vía HTTP
-curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$TEMP_DIR/root.crt" || true
-
-# SSH Fallback si HTTP falla
-if [ ! -s "$TEMP_DIR/root.crt" ]; then
-    SERVER_IP=$(getent hosts "$DOMAIN" | awk '{print $1}')
-    REMOTE_PATH="/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/root.crt"
-    ssh -o BatchMode=yes -o ConnectTimeout=2 "yordycg@${SERVER_IP}" "cat ${REMOTE_PATH}" > "$TEMP_DIR/root.crt" 2>/dev/null || true
-fi
-
-# Intermediate CA (Handshake)
-openssl s_client -showcerts -connect "${DOMAIN}:443" </dev/null 2>/dev/null | \
-    awk -v dir="$TEMP_DIR" '/BEGIN CERTIFICATE/,/END CERTIFICATE/{ if(/BEGIN CERTIFICATE/){a++}; out=dir"/cert"a".crt"; print > out }'
-
-if [ -f "$TEMP_DIR/cert2.crt" ]; then
-    mv "$TEMP_DIR/cert2.crt" "$TEMP_DIR/intermediate.crt"
-fi
-
-# ── 3. Instalación ───────────────────────────────────────────────────────────
-# Crear bundle si tenemos ambos, o usar root
-if [ -s "$TEMP_DIR/root.crt" ] && [ -f "$TEMP_DIR/intermediate.crt" ]; then
-    cat "$TEMP_DIR/root.crt" "$TEMP_DIR/intermediate.crt" > "$TEMP_DIR/$CERT_NAME"
-elif [ -s "$TEMP_DIR/root.crt" ]; then
-    cp "$TEMP_DIR/root.crt" "$TEMP_DIR/$CERT_NAME"
-fi
-
-if [ ! -s "$TEMP_DIR/$CERT_NAME" ]; then
-    log_err "No se pudo obtener la cadena de confianza."
-fi
-
 # Detectar Distro y Store
-if [ -f /etc/fedora-release ]; then
-    TRUST_STORE="/etc/pki/ca-trust/source/anchors/${CERT_NAME}"
-    UPDATE_CMD="sudo update-ca-trust"
-elif [ -f /etc/debian_version ]; then
+if [ -f /etc/debian_version ]; then
     TRUST_STORE="/usr/local/share/ca-certificates/${CERT_NAME}"
     UPDATE_CMD="sudo update-ca-certificates"
+elif [ -f /etc/fedora-release ]; then
+    TRUST_STORE="/etc/pki/ca-trust/source/anchors/${CERT_NAME}"
+    UPDATE_CMD="sudo update-ca-trust"
 else
     log_err "SO no soportado."
 fi
 
 # Aplicar solo si hay cambios
-if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_DIR/$CERT_NAME" "$TRUST_STORE" &>/dev/null; then
+if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_DIR/root.crt" "$TRUST_STORE" &>/dev/null; then
     log_ok "Cadena de confianza sincronizada."
 else
     log_info "Instalando nueva CA en el sistema..."
-    sudo cp "$TEMP_DIR/$CERT_NAME" "$TRUST_STORE"
-    $UPDATE_CMD
+    sudo cp "$TEMP_DIR/root.crt" "$TRUST_STORE"
+    $UPDATE_CMD > /dev/null
     log_ok "Sistema actualizado con éxito."
 fi
