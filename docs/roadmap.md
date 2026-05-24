@@ -63,6 +63,10 @@ Configuración dual para máxima versatilidad:
 
 ### 2.3 Nodo N (Clientes Ligeros)
 - [x] Fedora Sway (Laptop) configurado
+- [ ] **Resiliencia de Red (Tailscale)**: Investigar y solucionar la pérdida de internet en Nodo N cuando el servidor central falla (Incidente post-migración Docker). 
+  - *Problema*: Dependencia crítica de DNS/Exit-node.
+  - *Solución temporal*: `sudo tailscale up --exit-node=`.
+  - *Tarea*: Crear script específico de instalación/configuración de Tailscale para Nodo N que asegure fallback de internet.
 - [ ] Refinar ahorro de energía y gestión de red
 
 ---
@@ -79,8 +83,8 @@ Configuración dual para máxima versatilidad:
 - [ ] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código antes de los push.
 
 ### 3.3 Migración Arquitectónica (Nodo 1)
-- [ ] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.
-- [ ] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
+- [x] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.
+- [x] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
 
 ---
 ## 🔧 Fase 4 — Seguridad y secrets
