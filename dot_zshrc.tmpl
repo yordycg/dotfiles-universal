@@ -62,9 +62,10 @@ setopt HIST_FIND_NO_DUPS
 
 # -- AUTO-TMUX EN SERVIDOR (Senior Workflow) ----------------------------------
 {{ if .isServer -}}
-if [[ -n "$SSH_CONNECTION" && -z "$TMUX" ]]; then
-    # Intentar hacer attach a la sesión 'main', si no existe, crearla
-    exec tmux attach -t main 2>/dev/null || exec tmux new -s main
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
+    # Intentar hacer attach a la sesión 'main', si no existe, crearla.
+    # Sin 'exec' para que si Tmux falla o se cierra, mantengas la shell de Zsh activa.
+    tmux attach -t main 2>/dev/null || tmux new -s main
 fi
 {{- end }}
 
