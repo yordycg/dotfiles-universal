@@ -8,8 +8,8 @@ palette = 'default'
 # -- Prompt Format --
 format = """
 $os\
+{{ if .isServer }}$hostname [󰇙](fg:bright-black) {{ end }}\
 $username\
-{{ if .isServer }}$hostname{{ end }}\
 $directory\
 $git_branch\
 $git_status\
@@ -79,7 +79,7 @@ symbol = " "
 [os]
 disabled = false
 style = "fg:color_os"
-format = '[$symbol]($style)'
+format = '[$symbol ]($style)'
 
 [os.symbols]
 Windows = "󰍲"
@@ -93,12 +93,12 @@ Linux = "󰌽"
 show_always = true
 style_user = "fg:color_username"
 style_root = "bold fg:color_danger"
-format = '[ $user]($style)'
+format = '[$user]($style) '
 
 [hostname]
 ssh_only = false
-style = "fg:color_hostname"
-format = '[@$hostname]($style) '
+style = "bold fg:color_hostname"
+format = '[$hostname]($style) '
 
 [directory]
 style = "fg:color_directory"

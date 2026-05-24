@@ -1,5 +1,5 @@
 # dotfiles-universal — Roadmap de implementación
-> Estado: Fase 1 en curso. Identidad SSH y Arquitectura base completadas.
+> Estado: Fase 3 en curso. Infraestructura central y Gestión de Secretos blindadas.
 
 ---
 
@@ -10,7 +10,7 @@
 - [x] GitHub autenticado y scopes de seguridad configurados
 - [x] Repo `dotfiles-universal` creado y sincronizado
 - [x] Estructura de directorios base modular
-- [x] `.chezmoi.yaml.tmpl` — detecta laptop/desktop/WSL
+- [x] `.chezmoi.yaml.tmpl` — detecta laptop/desktop/WSL/Server
 - [x] `packages.yaml` — organizado por distros (Fedora/Debian/Arch)
 - [x] `scripts/packages/installers/` — instaladores limpios por distro
 - [x] `run_once_after_setup-ssh.sh.tmpl` — automatización total de identidad SSH
@@ -18,6 +18,7 @@
 - [x] `dot_config/starship.toml` — prompt gestionado por mise
 - [x] `Justfile` — comandos principales (apply, diff, update, save)
 - [x] `docs/project-workflow.md` — estándar de arquitectura de 3 capas
+- [x] **Bitwarden Zero-Touch**: Desbloqueo automático con age/SOPS sin fricción.
 
 ---
 
@@ -41,7 +42,7 @@ Configuración dual para máxima versatilidad:
 ### 1.4 Refinamiento de Shell y Prompt
 - [x] **Mejorar Starship**: Investigar preset `starship-cockpit`, eliminar la hora final, añadir hostname para diferenciar Nodos (Server vs Nodo N) y personalizar colores.
 - [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
-- [ ] **Auditoría de Scripts**: Analizar funciones y scripts de `dotfiles-2024` y otras fuentes para reutilizarlos en el Dotfile Universal.
+- [x] **Auditoría de Scripts**: Refactorización de funciones para soporte multiplataforma y roles (Server/Laptop).
 
 ---
 
@@ -49,7 +50,7 @@ Configuración dual para máxima versatilidad:
 ## 🔧 Fase 2 — Instaladores y Nodos
 
 ### 2.1 Nodo 1 (Servidor Central)
-- [ ] Aplicar `chezmoi init` en Debian
+- [x] **Chezmoi Init**: Bootstrap completado en Debian 12.
 - [x] **Tmux Persistente**: Flujo de auto-attach configurado para workflow remoto sin interrupciones.
 - [x] **Configurar Forgejo**: Despliegue declarativo, puerto SSH (2222) habilitado y resolución DNS interna arreglada. Admin automatizado (`init-forgejo`).
 
@@ -68,9 +69,9 @@ Configuración dual para máxima versatilidad:
 ### 3.1 Entornos de Proyecto
 - [ ] Implementar `Dockerfile` y `compose.yaml` en todos los proyectos personales.
 - [ ] Estandarizar el uso de `Justfile` por proyecto para orquestación.
+- [ ] Configurar Forgejo Mirrors para redundancia de código local.
 
 ---
-
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
@@ -81,10 +82,11 @@ Configuración dual para máxima versatilidad:
 - [x] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, mise).
 - [x] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) nativamente y autenticación silenciosa de `gh`.
 - [x] **Detección de Nodos Inteligente**: Identificación automática del Nodo 1 (Notebook-Servidor) en plantillas.
-- [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descargar el Root+Intermediate bundle automáticamente.
+- [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descarga de CA local y confianza en el sistema.
+- [x] **Bitwarden Zero-Touch Unlock**: Desbloqueo automático vía API Keys y age en todos los nodos.
+- [x] **Rotación de Secretos**: Flujo simplificado mediante `private_secrets.yaml.age`.
 
 - [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
-
 ## 🔧 Fase 5 — Red y DNS (Completado)
 - [x] **Preparar Infraestructura**: Creado `containers/adguard/compose.yaml` y script de provisión `03-dns-setup.sh`.
 - [x] **DNS Interno (Configuración UI)**: AdGuard configurado con rewrites para `*.home` y upstream a Podman.
@@ -100,6 +102,7 @@ just apply        # Aplicar cambios pendientes
 just diff         # Ver qué va a cambiar
 just update       # git pull + apply
 just save         # commit + push rápido
+bwu               # Desbloqueo automático de Bitwarden (Zero-Touch)
 ```
 
 ---
@@ -119,7 +122,8 @@ dotfiles-universal/
 │   │   ├── aliases.sh      [OK]
 │   │   └── functions.sh    [OK]
 │   ├── homelab/
-│   │   └── backup.env      [OK] (Secretos)
+│   │   ├── backup.env      [OK] (Secretos)
+│   │   └── private_secrets.yaml.age [OK] (Bitwarden API Keys)
 │   ├── systemd/user/
 │   │   ├── homelab-backup.service [OK]
 │   │   └── homelab-backup.timer   [OK]
@@ -139,4 +143,4 @@ dotfiles-universal/
 
 ---
 
-> Actualizado: 22 de mayo de 2026 — Optimización de Caché y Zero-Touch consolidado
+> Actualizado: 23 de mayo de 2026 — Nodo 1 estabilizado y Bitwarden Zero-Touch completado
