@@ -55,7 +55,8 @@ if [ -z "${WSL_DISTRO_NAME:-}" ]; then
     if ! dnf repolist | grep -q "google-chrome"; then
         log_info "Configurando repositorio de Google Chrome..."
         sudo dnf install -y -q fedora-workstation-repositories
-        sudo dnf config-manager --set-enabled google-chrome
+        # Compatibilidad con DNF5 (Fedora 41+)
+        sudo dnf config-manager setopt google-chrome.enabled=1
     fi
 
     install_section "desktop"
