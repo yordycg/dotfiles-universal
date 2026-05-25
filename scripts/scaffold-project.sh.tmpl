@@ -53,6 +53,7 @@ cd "$TARGET_DIR"
 
 case "$LANGUAGE" in
     python)
+        sed -i 's/# export VIRTUAL_ENV=.venv/export VIRTUAL_ENV=.venv/' .envrc
         sed -i 's/# layout python python3/layout python python3/' .envrc
         sed -i 's/FROM alpine:latest/FROM python:3.12-slim/' Dockerfile
         echo "requirements.txt" >> .gitignore
