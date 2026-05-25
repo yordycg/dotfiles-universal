@@ -79,8 +79,9 @@ Configuración dual para máxima versatilidad:
 - [x] Consolidar el directorio `~/workspace` para todas las categorías (personal, work, ivpg).
 
 ### 3.2 Infraestructura de Código y CI/CD
-- [ ] Configurar **Forgejo Mirrors** para mantener sincronización automática (Server <-> GitHub).
-- [ ] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código antes de los push.
+- [x] Configurar **Forgejo Mirrors** para mantener sincronización automática (Server <-> GitHub).
+- [x] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código.
+- [ ] Implementar el primer flujo de CI/CD (ej. auto-deploy de `yordycg-portfolio`).
 
 ### 3.3 Migración Arquitectónica (Nodo 1)
 - [x] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.

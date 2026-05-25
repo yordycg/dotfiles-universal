@@ -53,7 +53,7 @@ git commit -m "chore: initial project scaffolding" > /dev/null
 
 # ── Integración con Forgejo ──────────────────────────────────────────────────
 FORGEJO_TOKEN="{{ .forgejoToken }}"
-FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+FORGEJO_URL="http://forgejo.home:3080/api/v1"
 
 if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then
     echo -e "${BLUE}Creando repositorio en Forgejo: $PROJECT_NAME...${NC}"
