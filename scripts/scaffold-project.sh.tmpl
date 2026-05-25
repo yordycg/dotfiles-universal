@@ -12,11 +12,13 @@ NC='\033[0m'
 
 # Validar argumentos
 PROJECT_NAME="$1"
-CATEGORY="${2:-personal}" # Por defecto a 'personal' si no se especifica
+CATEGORY="${2:-personal}"
+LANGUAGE="${3:-generic}"
 
 if [ -z "$PROJECT_NAME" ]; then
-    echo -e "${YELLOW}Uso: just project-new <nombre_del_proyecto> [categoria]${NC}"
-    echo -e "Categorías disponibles: personal, work, ivpg, assets"
+    echo -e "${YELLOW}Uso: just project-new <nombre_del_proyecto> [categoria] [lenguaje]${NC}"
+    echo -e "Categorías: personal, work, ivpg, assets"
+    echo -e "Lenguajes:  python, node, go, generic"
     exit 1
 fi
 
@@ -31,25 +33,51 @@ fi
 # Asegurar que la carpeta de la categoría existe
 mkdir -p "$HOME/workspace/$CATEGORY"
 
-echo -e "${BLUE}Creando proyecto $PROJECT_NAME en la categoría [$CATEGORY]...${NC}"
+echo -e "${BLUE}Creando proyecto $PROJECT_NAME ($LANGUAGE) en [$CATEGORY]...${NC}"
 
 # Obtener la ruta de las plantillas
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_DIR="$SCRIPT_DIR/templates/project-base"
 
-# Crear y copiar estructura
+# Crear y copiar estructura base
 mkdir -p "$TARGET_DIR"
 cp -r "$TEMPLATE_DIR/"* "$TARGET_DIR/"
 cp "$TEMPLATE_DIR/.editorconfig" "$TARGET_DIR/"
 cp "$TEMPLATE_DIR/.gitignore" "$TARGET_DIR/"
 cp "$TEMPLATE_DIR/.env.example" "$TARGET_DIR/"
+cp "$TEMPLATE_DIR/.envrc" "$TARGET_DIR/"
 cp -r "$TEMPLATE_DIR/.forgejo" "$TARGET_DIR/"
 
-# Inicializar Git
+# ── Personalización por Lenguaje ──────────────────────────────────────────────
 cd "$TARGET_DIR"
+
+case "$LANGUAGE" in
+    python)
+        sed -i 's/# layout python python3/layout python python3/' .envrc
+        sed -i 's/FROM alpine:latest/FROM python:3.12-slim/' Dockerfile
+        echo "requirements.txt" >> .gitignore
+        touch requirements.txt
+        ;;
+    node)
+        sed -i 's/# layout node/layout node/' .envrc
+        sed -i 's/FROM alpine:latest/FROM node:22-alpine/' Dockerfile
+        echo "node_modules/" >> .gitignore
+        ;;
+    go)
+        sed -i 's/# layout go/layout go/' .envrc
+        sed -i 's/FROM alpine:latest/FROM golang:1.22-alpine/' Dockerfile
+        ;;
+esac
+
+# Inicializar Git
 git init > /dev/null
 git add .
-git commit -m "chore: initial project scaffolding" > /dev/null
+git commit -m "chore: initial project scaffolding ($LANGUAGE)" > /dev/null
+
+# Autorizar direnv automáticamente
+if command -v direnv &>/dev/null; then
+    direnv allow .
+fi
 
 # ── Integración con Forgejo ──────────────────────────────────────────────────
 FORGEJO_TOKEN="{{ .forgejoToken }}"

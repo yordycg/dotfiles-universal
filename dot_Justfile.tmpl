@@ -24,8 +24,8 @@ update:
 	chezmoi update
 
 # Crear un nuevo proyecto con la estructura estandar (Senior Blueprint)
-project-new NAME CATEGORY="personal":
-	@bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ "{{" }}NAME{{ "}}" }} {{ "{{" }}CATEGORY{{ "}}" }}
+project-new NAME CATEGORY="personal" LANG="generic":
+	@bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ "{{" }}NAME{{ "}}" }} {{ "{{" }}CATEGORY{{ "}}" }} {{ "{{" }}LANG{{ "}}" }}
 
 # Editar un dotfile y aplicar
 edit FILE:

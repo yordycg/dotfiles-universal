@@ -47,6 +47,7 @@ source "$HOME/.config/zsh/fzf.zsh"
 if command -v mise &>/dev/null; then
     run_cached "mise" "mise activate zsh" "Mise"
 fi
+[[ -x $(command -v direnv) ]]  && run_cached "direnv" "direnv hook zsh" "Direnv"
 [[ -x $(command -v zoxide) ]]   && run_cached "zoxide" "zoxide init zsh" "Zoxide"
 [[ -x $(command -v starship) ]] && run_cached "starship" "starship init zsh" "Starship"
 
