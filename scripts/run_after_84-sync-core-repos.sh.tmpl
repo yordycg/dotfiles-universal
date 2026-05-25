@@ -5,11 +5,6 @@
 # =============================================================================
 set -euo pipefail
 
-# No ejecutar en el servidor (el servidor solo recibe, no gestiona remotes duales)
-{{ if .isServer -}}
-exit 0
-{{- end }}
-
 # Colores
 CYAN='\033[0;36m'
 GREEN='\033[0;32m'
@@ -25,12 +20,24 @@ setup_dual_remote() {
     local name=$2
     local forgejo_url=$3
 
+    {{ if .isServer -}}
+    # En el servidor, Forgejo está en localhost:2222
+    if [[ "$name" == "Chezmoi Source" ]]; then
+        forgejo_url="ssh://git@localhost:2222/yordycg/dotfiles-universal.git"
+    else
+        forgejo_url="ssh://git@localhost:2222/yordycg/homelab-infra.git"
+    fi
+    {{- end }}
+
     if [ -d "$path/.git" ]; then
         cd "$path"
         if ! git remote | grep -q "forgejo"; then
             log_info "Añadiendo remoto Forgejo a $name..."
             git remote add forgejo "$forgejo_url"
             log_ok "Remoto forgejo añadido a $name."
+        else
+            # Actualizar la URL por si acaso
+            git remote set-url forgejo "$forgejo_url"
         fi
         cd - > /dev/null
     fi
