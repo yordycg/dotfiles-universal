@@ -2,6 +2,11 @@
 {{- if not $githubToken -}}
 {{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
 {{- end -}}
+{{- $secretsPath := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- $forgejoToken := "" -}}
+{{- if stat $secretsPath -}}
+{{-   $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
+{{- end -}}
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
@@ -34,4 +39,4 @@ data:
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
   gitName: "yordycg"
   gitEmail: "yordy.carmona8@gmail.com"
-  forgejoToken: {{ (chezmoi "decrypt" (joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age") | fromYaml).forgejo_token | quote }}
+  forgejoToken: {{ $forgejoToken | quote }}
