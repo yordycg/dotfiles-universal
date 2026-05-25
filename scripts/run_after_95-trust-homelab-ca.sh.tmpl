@@ -35,40 +35,38 @@ fetch_certs() {
     local filename="${type}.crt"
     local dst="$TEMP_DIR/$filename"
 
-    # Método A: Docker Volumen (Servidor)
+    # Método A: Docker Volumen (Si estamos en el servidor)
     if command -v docker &>/dev/null && docker ps &>/dev/null && docker volume inspect reverse-proxy_caddy_data &>/dev/null; then
-        log_info "Buscando $filename en volumen Docker..."
+        log_info "Buscando $filename en volumen Docker local..."
         docker run --rm -v reverse-proxy_caddy_data:/data alpine cat "/data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
     fi
 
-    # Método B: Rutas Locales
+    # Método B: Rutas Locales (Legacy/Podman)
     if [ ! -s "$dst" ]; then
-        log_info "Buscando $filename en rutas locales..."
         local paths=(
             "/var/lib/docker/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename"
             "/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename"
         )
         for p in "${paths[@]}"; do
-            if [ -f "$p" ]; then 
-                log_info "  Encontrado en: $p"
-                cp "$p" "$dst" && break
-            elif sudo [ -f "$p" ] 2>/dev/null; then 
-                log_info "  Encontrado (con sudo) en: $p"
-                sudo cat "$p" > "$dst" && break
-            fi
+            if [ -f "$p" ]; then cp "$p" "$dst" && break; fi
         done
     fi
 
-    # Método C: Descarga Red (Cliente)
+    # Método C: SSH desde el Servidor (Para Nodos N)
+    if [ ! -s "$dst" ] && [ "{{ .isServer }}" != "true" ]; then
+        if ssh -o ConnectTimeout=2 -o BatchMode=yes homelab exit &>/dev/null; then
+            log_info "Extrayendo $filename desde el servidor vía SSH..."
+            ssh -q homelab "docker run --rm -v reverse-proxy_caddy_data:/data alpine cat /data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
+        fi
+    fi
+
+    # Método D: Descarga Red (Fallback)
     if [ ! -s "$dst" ]; then
         if ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
-            # Caddy solo expone el Root vía HTTP en /pki/ca/local por defecto
             if [[ "$type" == "root" ]]; then
                 log_info "Descargando Root CA desde https://${DOMAIN}/pki/ca/local..."
                 curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$dst" || true
             fi
-        else
-            log_warn "Host ${DOMAIN} no alcanzable para descargar $filename."
         fi
     fi
     

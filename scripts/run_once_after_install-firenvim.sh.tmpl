@@ -29,19 +29,20 @@ log_info "Instalando native manifest via Neovim..."
 # Asegurar que nvim esté disponible y los plugins cargados
 export NVIM_APPNAME="LazyVim"
 
-# Instalamos Firenvim (esto asume que lazy.nvim ya está configurado)
-log_info "Sincronizando plugins..."
-nvim --headless "+Lazy! sync" +qa 2>/dev/null || true
+log_info "Generando manifest de Firenvim (Firefox)..."
 
-log_info "Generando manifest de Firenvim..."
-# Forzar la carga del plugin antes de llamar a la función
-nvim --headless \
+# Usar Neovim de forma silenciosa para generar el manifest
+# Redirigimos stdout/stderr para evitar el 'ruido' de LazyVim
+if nvim --headless \
     -c "set runtimepath+=~/.local/share/LazyVim/lazy/firenvim" \
     -c "call firenvim#install(0)" \
-    -c "qa"
-
-if [[ -f "$FIRENVIM_MANIFEST" ]]; then
-    log_ok "Native manifest instalado exitosamente en $FIRENVIM_MANIFEST"
+    -c "qa" > /dev/null 2>&1; then
+    
+    if [[ -f "$FIRENVIM_MANIFEST" ]]; then
+        log_ok "Native manifest instalado correctamente."
+    else
+        log_warn "El manifest no se encontró en la ruta esperada."
+    fi
 else
-    log_warn "No se pudo generar el manifest automáticamente."
+    log_warn "Error durante la ejecución de Neovim para Firenvim."
 fi
