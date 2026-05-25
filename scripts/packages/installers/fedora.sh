@@ -51,6 +51,13 @@ install_section "core"
 
 # Perfil Desktop (Si no es WSL)
 if [ -z "${WSL_DISTRO_NAME:-}" ]; then
+    # Habilitar repositorio de Google Chrome (Standard Fedora)
+    if ! dnf repolist | grep -q "google-chrome"; then
+        log_info "Configurando repositorio de Google Chrome..."
+        sudo dnf install -y -q fedora-workstation-repositories
+        sudo dnf config-manager --set-enabled google-chrome
+    fi
+
     install_section "desktop"
     
     # Perfil Sway (Si se detecta el entorno)

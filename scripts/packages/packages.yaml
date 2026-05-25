@@ -29,6 +29,7 @@ fedora:
     - podman
     - flatpak
     - fontconfig
+    - google-chrome-stable
   sway:
     - waybar
     - wofi
