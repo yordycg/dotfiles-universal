@@ -32,20 +32,24 @@ fi
 if tailscale status &>/dev/null; then
     log_ok "Tailscale está activo y autenticado."
     
-    # --- MEJORA: Resiliencia de DNS ---
+    # --- MEJORA: Resiliencia de DNS (Solo para Clientes) ---
+    {{- if not .isServer }}
     log_info "Verificando salud del DNS (Homelab + Público)..."
     
     # Intentar subir con DNS por si estaba apagado
-    sudo tailscale set --accept-dns=true >/dev/null 2>&1
+    sudo tailscale set --accept-dns=true >/dev/null 2>&1 || true
 
     if ! host -W 2 google.com &>/dev/null; then
         log_warn "¡DNS Crítico! No se puede resolver dominios públicos a través de Tailscale."
         log_info "Activando Fallback: Desactivando DNS de Tailscale para recuperar internet..."
-        sudo tailscale set --accept-dns=false
-        log_ok "Internet recuperado (DNS local activo). Los dominios *.home podrían no funcionar."
+        sudo tailscale set --accept-dns=false >/dev/null 2>&1 || true
+        log_ok "Internet recuperado (DNS local activo)."
     else
         log_ok "DNS operando correctamente."
     fi
+    {{- else }}
+    log_info "Servidor detectado: Omitiendo fallback de DNS."
+    {{- end }}
 else
     log_warn "Tailscale no está autenticado. Iniciando proceso de unión..."
     # Ejecutamos 'up' inicial.
