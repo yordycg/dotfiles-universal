@@ -46,7 +46,12 @@ echo "$REPOS_JSON" | jq -c '.[]' | while read -r repo; do
     NAME=$(echo "$repo" | jq -r '.name')
     SSH_URL=$(echo "$repo" | jq -r '.ssh_url')
     
-    # Determinar categoría basada en el nombre o organización (por defecto ipvg si es de la u)
+    # Exclusiones (Repositorios core que se manejan en otro script)
+    if [[ "$NAME" == "dotfiles-universal" || "$NAME" == "homelab-infra" ]]; then
+        continue
+    fi
+
+    # Determinar categoría basada en el nombre
     # Aquí puedes añadir lógica para mapear repos a carpetas
     CATEGORY="ipvg" # Default para tus proyectos actuales
     

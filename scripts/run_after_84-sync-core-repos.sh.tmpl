@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_84-sync-core-repos.sh.tmpl
+# Gestión específica de Repositorios de Infraestructura (Doble Remote)
+# =============================================================================
+set -euo pipefail
+
+# No ejecutar en el servidor (el servidor solo recibe, no gestiona remotes duales)
+{{ if .isServer -}}
+exit 0
+{{- end }}
+
+# Colores
+CYAN='\033[0;36m'
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${BLUE}  → $1${RESET}"; }
+
+setup_dual_remote() {
+    local path=$1
+    local name=$2
+    local forgejo_url=$3
+
+    if [ -d "$path/.git" ]; then
+        cd "$path"
+        if ! git remote | grep -q "forgejo"; then
+            log_info "Añadiendo remoto Forgejo a $name..."
+            git remote add forgejo "$forgejo_url"
+            log_ok "Remoto forgejo añadido a $name."
+        fi
+        cd - > /dev/null
+    fi
+}
+
+log_step "Configurando Remotos de Infraestructura (GitHub + Forgejo)"
+
+# 1. Chezmoi Source (dotfiles-universal)
+setup_dual_remote "{{ .chezmoi.sourceDir }}" "Chezmoi Source" "git@forgejo.home:yordycg/dotfiles-universal.git"
+
+# 2. Homelab Infra (Solo si existe en el nodo actual)
+if [ -d "$HOME/.local/share/homelab-infra" ]; then
+    setup_dual_remote "$HOME/.local/share/homelab-infra" "Homelab Infra" "git@forgejo.home:yordycg/homelab-infra.git"
+elif [ -d "$HOME/homelab-infra" ]; then
+    setup_dual_remote "$HOME/homelab-infra" "Homelab Infra" "git@forgejo.home:yordycg/homelab-infra.git"
+fi
+
+log_ok "Configuración de remotes core finalizada."
