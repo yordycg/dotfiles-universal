@@ -68,8 +68,8 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
     local sessions=$(tmux list-sessions -F "#S" 2>/dev/null)
     
     if [[ -z "$sessions" ]]; then
-        log_info "Iniciando sesión principal..."
-        tmux new-s main
+        log_info "Iniciando sesión principal 'main'..."
+        tmux new -s main
     else
         echo -e "\n${CYAN}${BOLD}󰒄 Gestión de Sesiones Remotas${RESET}"
         echo -e "${WHITE}Selecciona una opción o presiona Ctrl+C para Zsh puro${RESET}\n"
