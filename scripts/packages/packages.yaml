@@ -24,6 +24,8 @@ fedora:
     - libffi-devel
     - unzip
     - sqlite
+    - socat
+    - fzf
   desktop:
     - distrobox
     - podman
@@ -80,6 +82,8 @@ debian:
     - sqlite3
     - restic
     - fontconfig
+    - socat
+    - fzf
 
 arch:
   core:
@@ -104,3 +108,5 @@ arch:
     - libffi
     - unzip
     - restic
+    - socat
+    - fzf
