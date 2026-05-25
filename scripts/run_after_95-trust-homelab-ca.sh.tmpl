@@ -20,52 +20,105 @@ log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
 DOMAIN="vault.home"
-CERT_NAME="homelab-caddy-ca.crt"
+ROOT_CERT_NAME="homelab-root-ca.crt"
+INT_CERT_NAME="homelab-intermediate-ca.crt"
+BUNDLE_NAME="homelab-ca-bundle.crt"
 TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
 log_step "Confianza SSL (Homelab PKI)"
 
-# ── 1. Obtención de Certificado Raíz ─────────────────────────────────────────
+# ── 1. Obtención de Certificados (Root e Intermediate) ───────────────────────
 
-# RUTA LOCAL (Si estamos en el servidor, el archivo está aquí)
-LOCAL_CA_PATH="/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/root.crt"
+fetch_certs() {
+    local type=$1 # "root" o "intermediate"
+    local filename="${type}.crt"
+    local dst="$TEMP_DIR/$filename"
 
-if [ -s "$LOCAL_CA_PATH" ]; then
-    log_info "Servidor detectado: Copiando certificado raíz localmente..."
-    cp "$LOCAL_CA_PATH" "$TEMP_DIR/root.crt"
-else
-    # FLUJO CLIENTE (Laptop/Desktop): Descargar vía Red
-    if ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
-        log_info "Cliente detectado: Descargando certificado desde ${DOMAIN}..."
-        curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$TEMP_DIR/root.crt" || true
+    # Método A: Docker Volumen (Servidor)
+    if command -v docker &>/dev/null && docker ps &>/dev/null && docker volume inspect reverse-proxy_caddy_data &>/dev/null; then
+        log_info "Buscando $filename en volumen Docker..."
+        docker run --rm -v reverse-proxy_caddy_data:/data alpine cat "/data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
     fi
+
+    # Método B: Rutas Locales
+    if [ ! -s "$dst" ]; then
+        log_info "Buscando $filename en rutas locales..."
+        local paths=(
+            "/var/lib/docker/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename"
+            "/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename"
+        )
+        for p in "${paths[@]}"; do
+            if [ -f "$p" ]; then 
+                log_info "  Encontrado en: $p"
+                cp "$p" "$dst" && break
+            elif sudo [ -f "$p" ] 2>/dev/null; then 
+                log_info "  Encontrado (con sudo) en: $p"
+                sudo cat "$p" > "$dst" && break
+            fi
+        done
+    fi
+
+    # Método C: Descarga Red (Cliente)
+    if [ ! -s "$dst" ]; then
+        if ping -c 1 -W 1 "$DOMAIN" &>/dev/null; then
+            # Caddy solo expone el Root vía HTTP en /pki/ca/local por defecto
+            if [[ "$type" == "root" ]]; then
+                log_info "Descargando Root CA desde https://${DOMAIN}/pki/ca/local..."
+                curl -k -s "https://${DOMAIN}/pki/ca/local" -o "$dst" || true
+            fi
+        else
+            log_warn "Host ${DOMAIN} no alcanzable para descargar $filename."
+        fi
+    fi
+    
+    if [ -s "$dst" ]; then
+        log_ok "Obtenido: $filename"
+    else
+        log_warn "No se pudo obtener $filename por ningún método."
+    fi
+}
+
+fetch_certs "root"
+fetch_certs "intermediate"
+
+# Crear Bundle si tenemos ambos
+if [[ -s "$TEMP_DIR/root.crt" && -s "$TEMP_DIR/intermediate.crt" ]]; then
+    log_info "Creando bundle de certificados..."
+    cat "$TEMP_DIR/root.crt" "$TEMP_DIR/intermediate.crt" > "$TEMP_DIR/bundle.crt"
+    log_ok "Bundle homelab-ca-bundle.crt generado."
 fi
 
 # ── 2. Instalación en el Sistema ─────────────────────────────────────────────
-if [ ! -s "$TEMP_DIR/root.crt" ]; then
-    log_warn "No se pudo obtener el certificado raíz. Saltando confianza SSL."
-    exit 0
-fi
 
-# Detectar Distro y Store
-if [ -f /etc/debian_version ]; then
-    TRUST_STORE="/usr/local/share/ca-certificates/${CERT_NAME}"
-    UPDATE_CMD="sudo update-ca-certificates"
-elif [ -f /etc/fedora-release ]; then
-    TRUST_STORE="/etc/pki/ca-trust/source/anchors/${CERT_NAME}"
-    UPDATE_CMD="sudo update-ca-trust"
-else
-    log_err "SO no soportado."
-fi
+install_cert() {
+    local src=$1
+    local name=$2
+    
+    if [ ! -s "$src" ]; then return; fi
 
-# Aplicar solo si hay cambios
-if [ -f "$TRUST_STORE" ] && diff -q "$TEMP_DIR/root.crt" "$TRUST_STORE" &>/dev/null; then
-    log_ok "Cadena de confianza sincronizada."
-else
-    log_info "Instalando nueva CA en el sistema..."
-    sudo cp "$TEMP_DIR/root.crt" "$TRUST_STORE"
-    sudo chmod 644 "$TRUST_STORE"
-    $UPDATE_CMD > /dev/null
-    log_ok "Sistema actualizado con éxito."
-fi
+    if [ -f /etc/debian_version ]; then
+        local store="/usr/local/share/ca-certificates/${name}"
+        [[ "$name" != *.crt ]] && store="${store}.crt"
+        local update_cmd="sudo update-ca-certificates"
+    elif [ -f /etc/fedora-release ]; then
+        local store="/etc/pki/ca-trust/source/anchors/${name}"
+        local update_cmd="sudo update-ca-trust"
+    else
+        return
+    fi
+
+    if [ -f "$store" ] && diff -q "$src" "$store" &>/dev/null; then
+        log_ok "Certificado $name ya sincronizado."
+    else
+        log_info "Instalando $name..."
+        sudo cp "$src" "$store"
+        sudo chmod 644 "$store"
+        $update_cmd > /dev/null
+        log_ok "$name instalado."
+    fi
+}
+
+install_cert "$TEMP_DIR/root.crt" "$ROOT_CERT_NAME"
+install_cert "$TEMP_DIR/intermediate.crt" "$INT_CERT_NAME"
+install_cert "$TEMP_DIR/bundle.crt" "$BUNDLE_NAME"

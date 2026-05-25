@@ -50,9 +50,9 @@ export FZF_DEFAULT_OPTS=" \
 # -- Homelab SSL / Trust (Capa de Infraestructura) --
 {{ if eq .chezmoi.os "linux" -}}
 {{   if eq .chezmoi.osRelease.id "fedora" -}}
-HOMELAB_CA="/etc/pki/ca-trust/source/anchors/homelab-caddy-ca.crt"
+HOMELAB_CA="/etc/pki/ca-trust/source/anchors/homelab-ca-bundle.crt"
 {{   else -}}
-HOMELAB_CA="/usr/local/share/ca-certificates/homelab-caddy-ca.crt"
+HOMELAB_CA="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
 {{   end -}}
 [ -f "$HOMELAB_CA" ] && export NODE_EXTRA_CA_CERTS="$HOMELAB_CA"
 {{ end -}}

@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_once_after_install-tridactyl-native.sh.tmpl
+# Instala el native messenger de Tridactyl
+# =============================================================================
+set -euo pipefail
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+BOLD='\033[1m'
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+
+NATIVE_DIR="$HOME/.local/share/tridactyl"
+
+log_step "Tridactyl Native Messenger"
+
+# Verificar si ya está instalado
+if [[ -f "$NATIVE_DIR/native_main" ]]; then
+  log_ok "Native messenger ya instalado, saltando..."
+  exit 0
+fi
+
+log_info "Instalando native messenger..."
+curl -fsSl \
+  https://raw.githubusercontent.com/tridactyl/native_messenger/master/installers/install.sh \
+  | bash
+
+log_ok "Instalación completada exitosamente."
