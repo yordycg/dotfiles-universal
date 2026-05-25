@@ -51,6 +51,30 @@ git init > /dev/null
 git add .
 git commit -m "chore: initial project scaffolding" > /dev/null
 
+# ── Integración con Forgejo ──────────────────────────────────────────────────
+FORGEJO_TOKEN="{{ .forgejoToken }}"
+FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+
+if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then
+    echo -e "${BLUE}Creando repositorio en Forgejo: $PROJECT_NAME...${NC}"
+    
+    RESPONSE=$(curl -s -X POST "$FORGEJO_URL/user/repos" \
+        -H "accept: application/json" \
+        -H "Authorization: token $FORGEJO_TOKEN" \
+        -H "Content-Type: application/json" \
+        -d "{
+            \"name\": \"$PROJECT_NAME\",
+            \"private\": true
+        }")
+
+    if echo "$RESPONSE" | jq -e '.name' >/dev/null; then
+        git remote add origin "git@forgejo.home:yordycg/$PROJECT_NAME.git"
+        echo -e "${GREEN}¡Repositorio creado en Forgejo y vinculado!${NC}"
+    else
+        echo -e "${YELLOW}Aviso: No se pudo crear el repo en Forgejo (¿Ya existe?).${NC}"
+    fi
+fi
+
 echo -e "${GREEN}¡Proyecto creado exitosamente en $TARGET_DIR!${NC}"
 echo ""
 eza --tree --icons --level=2 "$TARGET_DIR"

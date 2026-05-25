@@ -34,3 +34,4 @@ data:
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
   gitName: "yordycg"
   gitEmail: "yordy.carmona8@gmail.com"
+  forgejoToken: {{ (chezmoi "decrypt" (joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age") | fromYaml).forgejo_token | quote }}

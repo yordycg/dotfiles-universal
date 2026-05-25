@@ -94,7 +94,37 @@ else
     fi
 fi
 
-# ── 5. Configuración de Acceso ───────────────────────────────────────────────
+# ── 5. Sincronización con Forgejo ────────────────────────────────────────────
+log_step "Sincronización con Forgejo (Homelab)"
+
+FORGEJO_TOKEN="{{ .forgejoToken }}"
+FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+
+if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then
+    log_info "Servidor Forgejo detectado. Verificando llave..."
+    
+    # Verificar si la llave ya existe en Forgejo
+    KEY_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" | awk '{print $2}')
+    if curl -s -H "Authorization: token $FORGEJO_TOKEN" "$FORGEJO_URL/user/keys" | jq -e ".[] | select(.fingerprint == \"$KEY_FINGERPRINT\")" >/dev/null; then
+        log_ok "Esta llave ya está registrada en Forgejo."
+    else
+        log_info "Registrando llave en Forgejo con título: $KEY_TITLE"
+        curl -s -X POST "$FORGEJO_URL/user/keys" \
+            -H "accept: application/json" \
+            -H "Authorization: token $FORGEJO_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{
+                \"key\": \"$(cat "$SSH_KEY_PUB_PATH")\",
+                \"read_only\": false,
+                \"title\": \"$KEY_TITLE\"
+            }" > /dev/null
+        log_ok "Llave pública vinculada a Forgejo correctamente."
+    fi
+else
+    log_warn "Forgejo no alcanzable o token inválido. Saltando sincronización local."
+fi
+
+# ── 6. Configuración de Acceso ───────────────────────────────────────────────
 log_step "Configuración de SSH Config"
 
 if [[ ! -f "$SSH_CONFIG_FILE" ]] || ! grep -q "Host github.com" "$SSH_CONFIG_FILE"; then
