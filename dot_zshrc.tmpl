@@ -87,7 +87,8 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
             exec tmux attach -t "$target"
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
-            local name=$(basename "$target_dir")
+            # Generar nombre estilo 'categoria/proyecto' (ej. ipvg/arriendo-canchas)
+            local name=$(echo "$target_dir" | sed "s|$HOME/workspace/||")
             # Crear sesión limpia en el directorio del proyecto
             exec tmux new -A -s "$name" -c "$target_dir"
         fi
