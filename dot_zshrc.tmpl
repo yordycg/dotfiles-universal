@@ -78,9 +78,10 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
             projects=$(find "$HOME/workspace" -maxdepth 2 -type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         fi
         
-        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager" --prompt " Buscar: " --height=60% --border --info=inline)
+        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh puro)" --prompt " Buscar: " --height=60% --border --info=inline)
         
-        [[ -z "$selection" ]] && return
+        # Escape Hatch: Si el usuario cancela (Esc o Ctrl-C), sale a Zsh normal
+        [[ -z "$selection" ]] && return 0
         
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
