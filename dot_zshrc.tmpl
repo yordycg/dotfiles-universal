@@ -64,51 +64,40 @@ setopt HIST_FIND_NO_DUPS
 # -- AUTO-TMUX / SESSION MANAGER (Senior Workflow) ----------------------------
 if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
     {{ if .isServer -}}
-    # Intentar detectar sesiones activas
-    local sessions=$(tmux list-sessions -F "#S" 2>/dev/null)
-    
-    if [[ -z "$sessions" ]]; then
-        log_info "Iniciando sesión principal 'main'..."
-        tmux new -s main
-    else
-        echo -e "\n${CYAN}${BOLD}󰒄 Gestión de Sesiones Remotas${RESET}"
-        echo -e "${WHITE}Selecciona una opción o presiona Ctrl+C para Zsh puro${RESET}\n"
-        echo -e "  ${GREEN}[m]${RESET} Conectar a 'main'"
+    # Función para listar sesiones y proyectos
+    function s_manager() {
+        # 1. Obtener sesiones activas
+        local sessions=$(tmux list-sessions -F "󱓞 Session: #S" 2>/dev/null || echo "")
         
-        # Listar otras sesiones existentes
-        echo "$sessions" | grep -v "^main$" | while read -r s; do
-            echo -e "  ${BLUE}[$s]${RESET} Reanudar sesión"
-        done
+        # 2. Escanear workspace para encontrar proyectos reales (hasta 2 niveles)
+        # Usamos fd (o find como fallback)
+        local fd_cmd="fd"
+        [[ ! -x $(command -v fd) ]] && fd_cmd="fd-find" # Fix para Debian
+        [[ ! -x $(command -v $fd_cmd) ]] && fd_cmd="find"
         
-        echo -e "  ${YELLOW}[s]${RESET} Buscar proyecto (Zoxide + New Session)"
-        echo -e "  ${CYAN}[n]${RESET} Nueva sesión temporal"
+        local projects=""
+        if [[ "$fd_cmd" == "find" ]]; then
+            projects=$(find "$HOME/workspace" -maxdepth 2 -type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
+        else
+            projects=$($fd_cmd . "$HOME/workspace" --min-depth 1 --max-depth 2 --type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
+        fi
         
-        read -k 1 "opt?  󰋇 Opción: "
-        echo ""
+        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh)" --prompt "Seleccionar: " --height=40%)
+        
+        [[ -z "$selection" ]] && return
+        
+        if [[ "$selection" == 󱓞\ Session:* ]]; then
+            local target=$(echo "$selection" | sed 's/󱓞 Session: //')
+            tmux attach -t "$target"
+        else
+            local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
+            local name=$(basename "$target_dir")
+            # Crear sesión limpia en el directorio del proyecto
+            tmux new -A -s "$name" -c "$target_dir"
+        fi
+    }
 
-        case "$opt" in
-            m) tmux attach -t main ;;
-            s) 
-                local target=$(zoxide query -l | fzf --height=40% --reverse --header="Seleccionar proyecto para nueva sesión")
-                if [[ -n "$target" ]]; then
-                    local name=$(basename "$target")
-                    tmux new -s "$name" -c "$target"
-                fi
-                ;;
-            n) tmux new ;;
-            *) 
-                if echo "$sessions" | grep -q "^$opt$"; then
-                    tmux attach -t "$opt"
-                else
-                    # Si la tecla coincide con el inicio de una sesión, conectar
-                    local match=$(echo "$sessions" | grep "^$opt" | head -n 1)
-                    if [[ -n "$match" ]]; then
-                        tmux attach -t "$match"
-                    fi
-                fi
-                ;;
-        esac
-    fi
+    s_manager
     {{- end }}
 fi
 
