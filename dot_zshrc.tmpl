@@ -84,12 +84,12 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
         
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
-            tmux attach -t "$target"
+            exec tmux attach -t "$target"
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
             local name=$(basename "$target_dir")
             # Crear sesión limpia en el directorio del proyecto
-            tmux new -A -s "$name" -c "$target_dir"
+            exec tmux new -A -s "$name" -c "$target_dir"
         fi
     }
 
