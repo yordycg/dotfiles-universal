@@ -13,7 +13,7 @@ alias ws='cd ~/workspace'
 alias as='cd ~/workspace/assets'
 alias pr='cd ~/workspace/personal'
 alias wk='cd ~/workspace/work'
-alias iv='cd ~/workspace/ivpg'
+alias iv='cd ~/workspace/ipvg'
 
 # -- Reemplazos modernos -----------------------
 alias ls='eza --icons --group-directories-first'

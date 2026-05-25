@@ -76,7 +76,7 @@ Configuración dual para máxima versatilidad:
 ### 3.1 Entornos de Proyecto (Scaffolding Senior)
 - [x] Implementar estructura de "Fábrica de Proyectos" con directorios estandarizados.
 - [x] Estandarizar el uso de `Justfile` y variables condicionales para orquestación.
-- [x] Consolidar el directorio `~/workspace` para todas las categorías (personal, work, ivpg).
+- [x] Consolidar el directorio `~/workspace` para todas las categorías (personal, work, ipvg).
 
 ### 3.2 Infraestructura de Código y CI/CD
 - [x] Configurar **Forgejo Mirrors** para mantener sincronización automática (Server <-> GitHub).
