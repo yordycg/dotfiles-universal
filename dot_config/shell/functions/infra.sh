@@ -42,6 +42,7 @@ bwu() {
     local bw_status
     bw_status=$(bw status 2>/dev/null | jq -r '.status')
 
+    # 1. Configurar servidor si es necesario
     if [[ "$(bw config server 2>/dev/null)" != "$vault_url" ]]; then
         bw config server "$vault_url" >/dev/null
     fi
@@ -51,14 +52,30 @@ bwu() {
         return 0
     fi
 
-    log_info "Desbloqueando Bóveda..." "󰌿"
-    local secrets_yaml=$(chezmoi decrypt "$HOME/.local/share/chezmoi/dot_config/homelab/private_secrets.yaml.age" 2>/dev/null)
+    # 2. Obtener secretos
+    local secrets_yaml
+    secrets_yaml=$(chezmoi decrypt "$HOME/.local/share/chezmoi/dot_config/homelab/private_secrets.yaml.age" 2>/dev/null)
     
+    local client_id=$(echo "$secrets_yaml" | grep 'bw_client_id:' | awk -F'"' '{print $2}')
+    local client_secret=$(echo "$secrets_yaml" | grep 'bw_client_secret:' | awk -F'"' '{print $2}')
     local bw_password=$(echo "$secrets_yaml" | grep 'bw_password:' | awk -F'"' '{print $2}')
+
+    # 3. Login automático si no hay sesión
+    if [[ "$bw_status" == "unauthenticated" ]]; then
+        log_info "Autenticando con nuevas API Keys..." "󰈀"
+        export BW_CLIENTID="$client_id"
+        export BW_CLIENTSECRET="$client_secret"
+        bw login --apikey >/dev/null
+    fi
+
+    # 4. Desbloqueo
+    log_info "Desbloqueando Bóveda..." "󰌿"
     export BW_SESSION=$(bw unlock "$bw_password" --raw)
     
     if [[ -n "$BW_SESSION" ]]; then
         log_ok "Bóveda desbloqueada." "󰌾"
         bw sync >/dev/null 2>&1 &
+    else
+        log_err "Error crítico al desbloquear Bitwarden." "󰅙"
     fi
 }
