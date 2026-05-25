@@ -9,3 +9,10 @@ Host homelab
 	User yordycg
 	IdentityFile ~/.ssh/id_ed25519
 	ForwardAgent yes
+
+Host forgejo.home
+	HostName 192.168.18.99
+	User git
+	Port 2222
+	IdentityFile ~/.ssh/id_ed25519
+	IdentitiesOnly yes
