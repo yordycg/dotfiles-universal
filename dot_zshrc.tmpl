@@ -69,20 +69,16 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
         # 1. Obtener sesiones activas
         local sessions=$(tmux list-sessions -F "󱓞 Session: #S" 2>/dev/null || echo "")
         
-        # 2. Escanear workspace para encontrar proyectos reales (hasta 2 niveles)
-        # Usamos fd (o find como fallback)
-        local fd_cmd="fd"
-        [[ ! -x $(command -v fd) ]] && fd_cmd="fd-find" # Fix para Debian
-        [[ ! -x $(command -v $fd_cmd) ]] && fd_cmd="find"
+        # 2. Escanear workspace buscando directorios que tengan .git (Proyectos reales)
+        # Esto es mucho más rápido y preciso
+        local projects=$(fd -H -t d ".git$" "$HOME/workspace" 2>/dev/null | xargs -I{} dirname {} | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         
-        local projects=""
-        if [[ "$fd_cmd" == "find" ]]; then
+        # Fallback si fd falla o no hay .git (escanear directorios a profundidad 2)
+        if [[ -z "$projects" ]]; then
             projects=$(find "$HOME/workspace" -maxdepth 2 -type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
-        else
-            projects=$($fd_cmd . "$HOME/workspace" --min-depth 1 --max-depth 2 --type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         fi
         
-        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh)" --prompt "Seleccionar: " --height=40%)
+        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager" --prompt " Buscar: " --height=60% --border --info=inline)
         
         [[ -z "$selection" ]] && return
         
