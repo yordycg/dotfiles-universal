@@ -74,6 +74,18 @@ bwu() {
     
     if [[ -n "$BW_SESSION" ]]; then
         log_ok "Bóveda desbloqueada." "󰌾"
+        
+        # --- MEJORA: Clipboard Sync ---
+        if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+            if command -v wl-copy &>/dev/null; then
+                echo -n "$bw_password" | wl-copy
+                log_ok "Contraseña copiada al portapapeles (Wayland)." "󰅌"
+            elif command -v xclip &>/dev/null; then
+                echo -n "$bw_password" | xclip -selection clipboard
+                log_ok "Contraseña copiada al portapapeles (X11)." "󰅌"
+            fi
+        fi
+
         bw sync >/dev/null 2>&1 &
     else
         log_err "Error crítico al desbloquear Bitwarden." "󰅙"
