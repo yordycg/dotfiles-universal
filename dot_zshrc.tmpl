@@ -61,14 +61,56 @@ setopt HIST_IGNORE_SPACE
 setopt HIST_REDUCE_BLANKS
 setopt HIST_FIND_NO_DUPS
 
-# -- AUTO-TMUX EN SERVIDOR (Senior Workflow) ----------------------------------
-{{ if .isServer -}}
+# -- AUTO-TMUX / SESSION MANAGER (Senior Workflow) ----------------------------
 if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
-    # Intentar hacer attach a la sesión 'main', si no existe, crearla.
-    # Sin 'exec' para que si Tmux falla o se cierra, mantengas la shell de Zsh activa.
-    tmux attach -t main 2>/dev/null || tmux new -s main
+    {{ if .isServer -}}
+    # Intentar detectar sesiones activas
+    local sessions=$(tmux list-sessions -F "#S" 2>/dev/null)
+    
+    if [[ -z "$sessions" ]]; then
+        log_info "Iniciando sesión principal..."
+        tmux new-s main
+    else
+        echo -e "\n${CYAN}${BOLD}󰒄 Gestión de Sesiones Remotas${RESET}"
+        echo -e "${WHITE}Selecciona una opción o presiona Ctrl+C para Zsh puro${RESET}\n"
+        echo -e "  ${GREEN}[m]${RESET} Conectar a 'main'"
+        
+        # Listar otras sesiones existentes
+        echo "$sessions" | grep -v "^main$" | while read -r s; do
+            echo -e "  ${BLUE}[$s]${RESET} Reanudar sesión"
+        done
+        
+        echo -e "  ${YELLOW}[s]${RESET} Buscar proyecto (Zoxide + New Session)"
+        echo -e "  ${CYAN}[n]${RESET} Nueva sesión temporal"
+        
+        read -k 1 "opt?  󰋇 Opción: "
+        echo ""
+
+        case "$opt" in
+            m) tmux attach -t main ;;
+            s) 
+                local target=$(zoxide query -l | fzf --height=40% --reverse --header="Seleccionar proyecto para nueva sesión")
+                if [[ -n "$target" ]]; then
+                    local name=$(basename "$target")
+                    tmux new -s "$name" -c "$target"
+                fi
+                ;;
+            n) tmux new ;;
+            *) 
+                if echo "$sessions" | grep -q "^$opt$"; then
+                    tmux attach -t "$opt"
+                else
+                    # Si la tecla coincide con el inicio de una sesión, conectar
+                    local match=$(echo "$sessions" | grep "^$opt" | head -n 1)
+                    if [[ -n "$match" ]]; then
+                        tmux attach -t "$match"
+                    fi
+                fi
+                ;;
+        esac
+    fi
+    {{- end }}
 fi
-{{- end }}
 
 # -- FINALIZACIÓN -------------------------------------------------------------
 if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
