@@ -23,7 +23,7 @@ if [ -f "$PACKAGES_FILE" ]; then
         [[ "$pkg" =~ ^#.*$ ]] || [ -z "$pkg" ] && continue
         
         echo "  → Instalando/Actualizando: $pkg"
-        flatpak install --user --noninteractive --overwrite flathub "$pkg"
+        flatpak install --user --noninteractive flathub "$pkg" || echo "  ! $pkg ya está instalado o hubo un aviso."
     done < "$PACKAGES_FILE"
 fi
 
