@@ -98,16 +98,22 @@ ensure_markers() {
     
     mkdir -p "$(dirname "$file")"
     
+    # Comprobamos si el marcador EXACTO está presente (incluyendo el #)
     if [ ! -f "$file" ] || ! grep -q "# Start flavours" "$file"; then
         echo "→ Fixing markers in $file"
-        printf "%s\n%s\n" "$start_marker" "$end_marker" > "$file"
+        # Usamos printf para evitar problemas con saltos de línea
+        printf "%b\n%b\n" "$start_marker" "$end_marker" > "$file"
     fi
 }
 
+# Tmux, Kitty y Sway usan comentarios con '#' por lo que el marcador puede ir directo
 ensure_markers "$HOME/.config/tmux/colors.conf" "# Start flavours" "# End flavours"
 ensure_markers "$HOME/.config/kitty/colors.conf" "# Start flavours" "# End flavours"
 ensure_markers "$HOME/.config/sway/colors" "# Start flavours" "# End flavours"
-ensure_markers "$HOME/.config/waybar/colors.css" "/* # Start flavours */" "/* # End flavours */"
+
+# Waybar (CSS) REQUIERE que el marcador '# Start flavours' esté en su propia línea.
+# Lo envolvemos en un comentario multilínea de CSS para que sea válido.
+ensure_markers "$HOME/.config/waybar/colors.css" "/*\n# Start flavours" "# End flavours\n*/"
 
 flavours apply "$THEME"
 
