@@ -57,19 +57,38 @@ fi
 
 # ── 3. Configuración de Kvantum (Qt) ─────────────────────────────────────────
 KVANTUM_THEME="Catppuccin-Mocha-Blue"
-if [ ! -d "$HOME/.config/Kvantum/$KVANTUM_THEME" ]; then
+KVANTUM_DIR="$HOME/.config/Kvantum/$KVANTUM_THEME"
+
+# Si el archivo SVG es invalido (HTML 404), forzamos re-descarga
+if [ -f "$KVANTUM_DIR/$KVANTUM_THEME.svg" ] && ! grep -q "<svg" "$KVANTUM_DIR/$KVANTUM_THEME.svg"; then
+    log_warn "Detectado archivo Kvantum corrupto. Re-descargando..."
+    rm -rf "$KVANTUM_DIR"
+fi
+
+if [ ! -d "$KVANTUM_DIR" ]; then
     log_info "Configurando tema Kvantum: $KVANTUM_THEME..."
-    mkdir -p "$HOME/.config/Kvantum/$KVANTUM_THEME"
-    # Descargamos directamente los archivos de configuracion del repo oficial
-    curl -sL "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Blue/Catppuccin-Mocha-Blue.kvconfig" -o "$HOME/.config/Kvantum/$KVANTUM_THEME/$KVANTUM_THEME.kvconfig"
-    curl -sL "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Blue/Catppuccin-Mocha-Blue.svg" -o "$HOME/.config/Kvantum/$KVANTUM_THEME/$KVANTUM_THEME.svg"
+    mkdir -p "$KVANTUM_DIR"
+    # URLs actualizadas de la rama oficial
+    BASE_URL="https://raw.githubusercontent.com/catppuccin/kvantum/main/themes/mocha/Catppuccin-Mocha-Blue"
+    curl -sL "$BASE_URL/Catppuccin-Mocha-Blue.kvconfig" -o "$KVANTUM_DIR/$KVANTUM_THEME.kvconfig"
+    curl -sL "$BASE_URL/Catppuccin-Mocha-Blue.svg" -o "$KVANTUM_DIR/$KVANTUM_THEME.svg"
     
     # Activar el tema en Kvantum
     echo "theme=$KVANTUM_THEME" > "$HOME/.config/Kvantum/kvantum.kvconfig"
     log_ok "Tema Kvantum configurado."
 fi
 
-# ── 4. Sincronización de Colores (Flavours) ──────────────────────────────────
+# ── 4. Sincronización de GSettings (GTK Sync) ────────────────────────────────
+if command -v gsettings &>/dev/null; then
+    log_info "Sincronizando GSettings con el tema actual..."
+    gsettings set org.gnome.desktop.interface gtk-theme "$THEME_DIR_NAME"
+    gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark"
+    gsettings set org.gnome.desktop.interface font-name "JetBrainsMono Nerd Font 10"
+    gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+    log_ok "GSettings sincronizados (nwg-look actualizado)."
+fi
+
+# ── 5. Sincronización de Colores (Flavours) ──────────────────────────────────
 if command -v flavours &>/dev/null; then
     log_info "Sincronizando paleta de terminal con Flavours..."
     # Intentamos aplicar el esquema catppuccin-mocha si esta disponible
