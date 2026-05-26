@@ -111,9 +111,9 @@ ensure_markers "$HOME/.config/tmux/colors.conf" "# Start flavours" "# End flavou
 ensure_markers "$HOME/.config/kitty/colors.conf" "# Start flavours" "# End flavours"
 ensure_markers "$HOME/.config/sway/colors" "# Start flavours" "# End flavours"
 
-# Waybar (CSS) REQUIERE que el marcador '# Start flavours' esté en su propia línea.
-# Lo envolvemos en un comentario multilínea de CSS para que sea válido.
-ensure_markers "$HOME/.config/waybar/colors.css" "/*\n# Start flavours" "# End flavours\n*/"
+# Waybar (CSS) - Usamos marcadores limpios. 
+# La plantilla de Waybar ya genera comentarios válidos, así que no necesitamos envolverlos.
+ensure_markers "$HOME/.config/waybar/colors.css" "# Start flavours" "# End flavours"
 
 flavours apply "$THEME"
 
