@@ -87,6 +87,11 @@ Configuración dual para máxima versatilidad:
 - [x] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.
 - [x] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
 
+### 3.4 Gestión de Bases de Datos (Senior Database Workflow)
+- [ ] **Herramientas GUI**: Instalar y configurar Beekeeper Studio (visualización rápida) y DBeaver (ingeniería pesada).
+- [ ] **Database TUI (Multi-motor)**: Investigar e implementar `lazysql` o `usql` para gestión desde terminal/tmux.
+- [ ] **Neovim DB Integration**: Configurar `vim-dadbod` + `vim-dadbod-ui` en LazyVim para desarrollo fluido.
+
 ---
 ## 🔧 Fase 4 — Seguridad y secrets
 - [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).

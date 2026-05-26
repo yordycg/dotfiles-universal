@@ -1,0 +1,5 @@
+# Lista de aplicaciones Flatpak gestionadas por Chezmoi
+# Formato: ID_DEL_FLATPAK
+
+io.dbeaver.DBeaverCommunity
+io.beekeeperstudio.BeekeeperStudio

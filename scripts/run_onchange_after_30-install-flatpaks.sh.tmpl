@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+# {{ .chezmoi.sourceDir }}/scripts/run_onchange_after_30-install-flatpaks.sh.tmpl
+
+{{ if or .isLaptop .isDesktop -}}
+# Hash de la lista de paquetes: {{ include "dot_config/flatpak/packages.txt" | sha256sum }}
+
+if ! command -v flatpak &> /dev/null; then
+    echo "→ Flatpak no encontrado, saltando instalación de apps gráficas."
+    exit 0
+fi
+
+echo "→ Configurando Flatpak y aplicaciones gráficas..."
+
+# Añadir Flathub si no existe
+flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
+
+# Instalar paquetes desde la lista
+PACKAGES_FILE="{{ .chezmoi.homeDir }}/.config/flatpak/packages.txt"
+
+if [ -f "$PACKAGES_FILE" ]; then
+    while IFS= read -r pkg || [ -n "$pkg" ]; do
+        # Saltar comentarios y líneas vacías
+        [[ "$pkg" =~ ^#.*$ ]] || [ -z "$pkg" ] && continue
+        
+        echo "  → Instalando/Actualizando: $pkg"
+        flatpak install --user --noninteractive --overwrite flathub "$pkg"
+    done < "$PACKAGES_FILE"
+fi
+
+echo "✓ Aplicaciones Flatpak sincronizadas."
+{{ else -}}
+# Saltando instalación de Flatpaks: Este nodo no es Laptop ni Desktop.
+exit 0
+{{- end }}
