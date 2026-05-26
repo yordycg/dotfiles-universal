@@ -60,26 +60,26 @@ else
 fi
 
 # ── 3. Configuración de Kvantum (Qt) ─────────────────────────────────────────
-KVANTUM_THEME="Catppuccin-Mocha-Blue"
-KVANTUM_DIR="$HOME/.config/Kvantum/$KVANTUM_THEME"
+KVANTUM_THEME_NAME="catppuccin-mocha-blue"
+KVANTUM_DIR="$HOME/.config/Kvantum/$KVANTUM_THEME_NAME"
 
 # Si el archivo SVG es invalido (HTML 404), forzamos re-descarga
-if [ -f "$KVANTUM_DIR/$KVANTUM_THEME.svg" ] && ! grep -q "<svg" "$KVANTUM_DIR/$KVANTUM_THEME.svg"; then
+if [ -f "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg" ] && ! grep -q "<svg" "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"; then
     log_warn "Detectado archivo Kvantum corrupto. Re-descargando..."
     rm -rf "$KVANTUM_DIR"
 fi
 
 if [ ! -d "$KVANTUM_DIR" ]; then
-    log_info "Configurando tema Kvantum: $KVANTUM_THEME..."
+    log_info "Configurando tema Kvantum: $KVANTUM_THEME_NAME..."
     mkdir -p "$KVANTUM_DIR"
-    # URLs actualizadas de la rama oficial
-    BASE_URL="https://raw.githubusercontent.com/catppuccin/kvantum/main/themes/mocha/Catppuccin-Mocha-Blue"
-    curl -sL "$BASE_URL/Catppuccin-Mocha-Blue.kvconfig" -o "$KVANTUM_DIR/$KVANTUM_THEME.kvconfig"
-    curl -sL "$BASE_URL/Catppuccin-Mocha-Blue.svg" -o "$KVANTUM_DIR/$KVANTUM_THEME.svg"
+    # URLs corregidas (Repo: catppuccin/kvantum, Path: themes/catppuccin-mocha-blue/...)
+    BASE_URL="https://raw.githubusercontent.com/catppuccin/kvantum/main/themes/catppuccin-mocha-blue"
+    curl -sL "$BASE_URL/catppuccin-mocha-blue.kvconfig" -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.kvconfig"
+    curl -sL "$BASE_URL/catppuccin-mocha-blue.svg" -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"
     
     # Activar el tema en Kvantum
-    echo "theme=$KVANTUM_THEME" > "$HOME/.config/Kvantum/kvantum.kvconfig"
-    log_ok "Tema Kvantum configurado."
+    echo "theme=$KVANTUM_THEME_NAME" > "$HOME/.config/Kvantum/kvantum.kvconfig"
+    log_ok "Tema Kvantum configurado ($KVANTUM_THEME_NAME)."
 fi
 
 # ── 4. Sincronización de GSettings (GTK Sync) ────────────────────────────────
