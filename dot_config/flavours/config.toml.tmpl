@@ -1,10 +1,10 @@
 # {{ .chezmoi.sourceDir }}/dot_config/flavours/config.toml.tmpl
 # Donde viven los esquemas y plantillas descargados
-base_dir = "~/.local/share/flavours"
+base_dir = "{{ .chezmoi.homeDir }}/.local/share/flavours"
 
 # CLI Tools (siempre hablitados)
 [[items]]
-file = "~/.config/tmux/colors.conf"
+file = "{{ .chezmoi.homeDir }}/.config/tmux/colors.conf"
 template = "tmux"
 subtemplate = "base16"
 rewrite = true
@@ -12,19 +12,19 @@ rewrite = true
 {{ if not .isServer -}}
 # Graphical Apps (Solo Desktop/Laptop)
 [[items]]
-file = "~/.config/kitty/colors.conf"
+file = "{{ .chezmoi.homeDir }}/.config/kitty/colors.conf"
 template = "kitty"
 subtemplate = "default"
 rewrite = true
 
 [[items]]
-file = ~/.config/sway/colors"
+file = "{{ .chezmoi.homeDir }}/.config/sway/colors"
 template = "sway"
 subtemplate = "colors"
 rewrite = true
 
 [[items]]
-file = "~/.config/waybar/colors.css"
+file = "{{ .chezmoi.homeDir }}/.config/waybar/colors.css"
 template = "waybar"
 subtemplate = "default"
 rewrite = true
