@@ -56,7 +56,7 @@ if [ ! -d "$SCHEMES_DIR" ] || [ ! -d "$TEMPLATES_DIR" ]; then
     flavours update all || echo "⚠ Some updates failed, but we will fix critical ones manually."
 fi
 
-# 2. Fix Critical Templates (Manual setup if they are missing after update)
+# 2. Fix Critical Templates
 declare -A REQUIRED_TEMPLATES
 REQUIRED_TEMPLATES=(
     ["tmux"]="https://github.com/tinted-theming/base16-tmux"
@@ -73,14 +73,12 @@ for name in "${!REQUIRED_TEMPLATES[@]}"; do
     fi
 done
 
-# 3. Fix Catppuccin Scheme (Manual setup to ensure it works)
+# 3. Fix Catppuccin Scheme
 if [ ! -f "$SCHEMES_DIR/catppuccin-mocha/catppuccin-mocha.yaml" ]; then
     echo "→ Manually setting up Catppuccin Mocha scheme..."
     TEMP_CAT_DIR="/tmp/catppuccin-base16"
     rm -rf "$TEMP_CAT_DIR"
     git clone --depth 1 https://github.com/catppuccin/base16 "$TEMP_CAT_DIR"
-    
-    # flavours expects: schemes/<scheme_name>/<scheme_name>.yaml
     for flavor in latte frappe macchiato mocha; do
         mkdir -p "$SCHEMES_DIR/catppuccin-$flavor"
         cp "$TEMP_CAT_DIR/base16/$flavor.yaml" "$SCHEMES_DIR/catppuccin-$flavor/catppuccin-$flavor.yaml"
@@ -90,32 +88,39 @@ fi
 
 echo "→ Applying theme: $THEME"
 
-# Ensure all target directories exist so flavours can write to them
+# Ensure all target directories exist
 mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/.config/waybar"
-
 flavours apply "$THEME"
 
 {{ if not .isServer -}}
-# Reload Graphical Apps
-if pgrep -x sway > /dev/null; then
-  echo "→ Reloading Sway..."
-  swaymsg reload
-fi
-if pgrep -x waybar > /dev/null; then
-  echo "→ Reloading Waybar..."
-  pkill -SIGUSR2 waybar
-fi
-if pgrep -x kitty > /dev/null; then
-  echo "→ Reloading Kitty..."
-  pkill -SIGUSR1 kitty
+# --- GTK THEME (PRE-COMPILED) ---
+GTK_THEME_DIR="$HOME/.local/share/themes/Catppuccin-Mocha-Standard-Blue-dark"
+if [ ! -d "$GTK_THEME_DIR" ]; then
+    echo "→ Downloading pre-compiled Catppuccin GTK theme..."
+    mkdir -p "$HOME/.local/share/themes"
+    # Note: Using a direct release link for Mocha-Standard-Blue-Dark
+    URL="https://github.com/catppuccin/gtk/releases/download/v1.0.3/Catppuccin-Mocha-Standard-Blue-dark.zip"
+    curl -sL -o "/tmp/gtk-theme.zip" "$URL"
+    unzip -q "/tmp/gtk-theme.zip" -d "$HOME/.local/share/themes"
+    rm "/tmp/gtk-theme.zip"
 fi
 
-# GTK Theme (Solo en Desktop/Laptop)
-if [ ! -d "$HOME/.local/share/themes/catppuccin-mocha" ]; then
-  echo "→ Downloading Catppuccin GTK theme..."
-  mkdir -p "$HOME/.local/share/themes"
-  git clone --depth 1 https://github.com/catppuccin/gtk "$HOME/.local/share/themes/catppuccin-mocha" || true
+# --- KVANTUM THEME ---
+KVANTUM_DIR="$HOME/.config/Kvantum"
+if [ ! -d "$KVANTUM_DIR/Catppuccin-Mocha-Blue" ]; then
+    echo "→ Installing Catppuccin Kvantum theme..."
+    mkdir -p "$KVANTUM_DIR"
+    TEMP_KV_DIR="/tmp/catppuccin-kvantum"
+    rm -rf "$TEMP_KV_DIR"
+    git clone --depth 1 https://github.com/catppuccin/Kvantum "$TEMP_KV_DIR"
+    cp -r "$TEMP_KV_DIR/src/Catppuccin-Mocha-Blue" "$KVANTUM_DIR/"
+    rm -rf "$TEMP_KV_DIR"
 fi
+
+# Reload Graphical Apps
+pgrep -x sway > /dev/null && swaymsg reload
+pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
+pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
 {{- end }}
 
 # Reload Tmux
@@ -125,3 +130,6 @@ if [ -n "${TMUX:-}" ]; then
 fi
 
 echo "✓ Theme applied: $THEME"
+{{ if not .isServer -}}
+echo "→ NOTE: For GTK/Qt changes to take full effect, please log out and back in."
+{{- end }}
