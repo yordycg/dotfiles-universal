@@ -1,140 +1,70 @@
 #!/usr/bin/env bash
-# {{ .chezmoi.sourceDir }}/scripts/run_onchange_after_apply-theme.sh.tmpl
-# hash: {{ include "dot_config/flavours/config.toml.tmpl" | sha256sum }}
+# =============================================================================
+# scripts/run_onchange_after_apply-theme.sh.tmpl
+# Automatización de Temas (GTK, Kvantum, Qt) - Senior Logic
+# =============================================================================
+{{ if .isServer -}}
+# El servidor es headless, no aplicamos temas graficos
+exit 0
+{{- end }}
 
 set -euo pipefail
 
-THEME="catppuccin-mocha"
+# -- Trigger de Cambio --
+# Este script se ejecutara solo si cambia el config de flavours
+# Hash: {{ include "dot_config/flavours/config.toml.tmpl" | sha256sum }}
 
-echo "→ Checking theming dependencies..."
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
 
-# Ensure ~/.local/bin and ~/.cargo/bin are in PATH
-export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
 
-# Function to check if flavours is working
-is_flavours_valid() {
-    if command -v flavours &> /dev/null; then
-        if flavours --version &> /dev/null; then
-            return 0
-        fi
-    fi
-    return 1
-}
+# ── 1. Preparación de Directorios ───────────────────────────────────────────
+log_step "Configurando Entorno Gráfico (Themes)"
 
-# Ensure flavours is installed
-if ! is_flavours_valid; then
-    echo "→ Flavours not found or corrupted. Attempting installation..."
-    [ -f "$HOME/.local/bin/flavours" ] && rm -f "$HOME/.local/bin/flavours"
+mkdir -p "$HOME/.local/share/themes"
+mkdir -p "$HOME/.icons"
+mkdir -p "$HOME/.config/Kvantum"
+
+# ── 2. Instalación de Temas GTK (Catppuccin Mocha) ──────────────────────────
+THEME_NAME="Catppuccin-Mocha-Standard-Blue-Dark"
+if [ ! -d "$HOME/.local/share/themes/$THEME_NAME" ]; then
+    log_info "Instalando tema GTK: $THEME_NAME..."
+    # Usamos la version oficial compilada para evitar dependencias de compilacion
+    TEMP_DIR=$(mktemp -d)
+    curl -sL "https://github.com/catppuccin/gtk/releases/download/v1.0.3/Catppuccin-Mocha-Standard-Blue-Dark.zip" -o "$TEMP_DIR/theme.zip"
+    unzip -q "$TEMP_DIR/theme.zip" -d "$HOME/.local/share/themes/"
+    rm -rf "$TEMP_DIR"
+    log_ok "Tema GTK instalado."
+else
+    log_ok "Tema GTK ya presente."
+fi
+
+# ── 3. Configuración de Kvantum (Qt) ─────────────────────────────────────────
+KVANTUM_THEME="Catppuccin-Mocha-Blue"
+if [ ! -d "$HOME/.config/Kvantum/$KVANTUM_THEME" ]; then
+    log_info "Configurando tema Kvantum: $KVANTUM_THEME..."
+    mkdir -p "$HOME/.config/Kvantum/$KVANTUM_THEME"
+    # Descargamos directamente los archivos de configuracion del repo oficial
+    curl -sL "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Blue/Catppuccin-Mocha-Blue.kvconfig" -o "$HOME/.config/Kvantum/$KVANTUM_THEME/$KVANTUM_THEME.kvconfig"
+    curl -sL "https://raw.githubusercontent.com/catppuccin/Kvantum/main/src/Catppuccin-Mocha-Blue/Catppuccin-Mocha-Blue.svg" -o "$HOME/.config/Kvantum/$KVANTUM_THEME/$KVANTUM_THEME.svg"
     
-    if command -v cargo &> /dev/null; then
-        cargo install flavours
-    else
-        echo "→ Downloading flavours binary..."
-        mkdir -p "$HOME/.local/bin"
-        LATEST_TAG=$(curl -s https://api.github.com/repos/Misterio77/flavours/releases/latest | jq -r .tag_name)
-        ARCH=$(uname -m)
-        if [ "$ARCH" = "x86_64" ]; then
-            DOWNLOAD_URL="https://github.com/Misterio77/flavours/releases/download/${LATEST_TAG}/flavours-${LATEST_TAG}-x86_64-linux.tar.gz"
-            curl -sL -o "/tmp/flavours.tar.gz" "$DOWNLOAD_URL"
-            tar -xzf "/tmp/flavours.tar.gz" -C "/tmp"
-            mv "/tmp/flavours" "$HOME/.local/bin/flavours"
-            chmod +x "$HOME/.local/bin/flavours"
-            rm -f "/tmp/flavours.tar.gz"
-        else
-            echo "⚠ Architecture $ARCH not supported for direct binary download"
-            exit 0
-        fi
-    fi
+    # Activar el tema en Kvantum
+    echo "theme=$KVANTUM_THEME" > "$HOME/.config/Kvantum/kvantum.kvconfig"
+    log_ok "Tema Kvantum configurado."
 fi
 
-# 1. Update/Initialize Templates and Schemes
-SCHEMES_DIR="$HOME/.local/share/flavours/base16/schemes"
-TEMPLATES_DIR="$HOME/.local/share/flavours/base16/templates"
-
-if [ ! -d "$SCHEMES_DIR" ] || [ ! -d "$TEMPLATES_DIR" ]; then
-    echo "→ Initializing flavours schemes and templates..."
-    flavours update all || echo "⚠ Some updates failed, but we will fix critical ones manually."
+# ── 4. Sincronización de Colores (Flavours) ──────────────────────────────────
+if command -v flavours &>/dev/null; then
+    log_info "Sincronizando paleta de terminal con Flavours..."
+    # Intentamos aplicar el esquema catppuccin-mocha si esta disponible
+    flavours apply catppuccin-mocha || log_info "Flavours: Esquema no encontrado, omitiendo..."
+    log_ok "Colores de terminal actualizados."
 fi
 
-# 2. Fix Critical Templates
-declare -A REQUIRED_TEMPLATES
-REQUIRED_TEMPLATES=(
-    ["tmux"]="https://github.com/tinted-theming/base16-tmux"
-    ["kitty"]="https://github.com/kdrag0n/base16-kitty"
-    ["sway"]="https://github.com/rkubosz/base16-sway"
-    ["waybar"]="https://github.com/tinted-theming/base16-waybar"
-)
-
-mkdir -p "$TEMPLATES_DIR"
-for name in "${!REQUIRED_TEMPLATES[@]}"; do
-    if [ ! -d "$TEMPLATES_DIR/$name" ]; then
-        echo "→ Template '$name' missing, cloning manually..."
-        git clone --depth 1 "${REQUIRED_TEMPLATES[$name]}" "$TEMPLATES_DIR/$name" || true
-    fi
-done
-
-# 3. Fix Catppuccin Scheme
-if [ ! -f "$SCHEMES_DIR/catppuccin-mocha/catppuccin-mocha.yaml" ]; then
-    echo "→ Manually setting up Catppuccin Mocha scheme..."
-    TEMP_CAT_DIR="/tmp/catppuccin-base16"
-    rm -rf "$TEMP_CAT_DIR"
-    git clone --depth 1 https://github.com/catppuccin/base16 "$TEMP_CAT_DIR"
-    for flavor in latte frappe macchiato mocha; do
-        mkdir -p "$SCHEMES_DIR/catppuccin-$flavor"
-        cp "$TEMP_CAT_DIR/base16/$flavor.yaml" "$SCHEMES_DIR/catppuccin-$flavor/catppuccin-$flavor.yaml"
-    done
-    rm -rf "$TEMP_CAT_DIR"
-fi
-
-echo "→ Applying theme: $THEME"
-
-# Ensure all target directories exist
-mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/.config/waybar"
-flavours apply "$THEME"
-
-{{ if not .isServer -}}
-# --- GTK THEME (PRE-COMPILED) ---
-GTK_THEME_NAME="catppuccin-mocha-blue-standard+default"
-if [ ! -d "$HOME/.local/share/themes/$GTK_THEME_NAME" ]; then
-    echo "→ Downloading pre-compiled Catppuccin GTK theme..."
-    mkdir -p "$HOME/.local/share/themes"
-    URL="https://github.com/catppuccin/gtk/releases/download/v1.0.3/catppuccin-mocha-blue-standard%2Bdefault.zip"
-    curl -sL -o "/tmp/gtk-theme.zip" "$URL"
-    
-    if file "/tmp/gtk-theme.zip" | grep -q "Zip archive data"; then
-        unzip -q "/tmp/gtk-theme.zip" -d "$HOME/.local/share/themes"
-        echo "✓ GTK theme unzipped successfully."
-    else
-        echo "✗ Download failed or invalid ZIP. Skipping GTK theme installation."
-    fi
-    rm -f "/tmp/gtk-theme.zip"
-fi
-
-# --- KVANTUM THEME ---
-KVANTUM_DIR="$HOME/.config/Kvantum"
-if [ ! -d "$KVANTUM_DIR/catppuccin-mocha-blue" ]; then
-    echo "→ Installing Catppuccin Kvantum theme..."
-    mkdir -p "$KVANTUM_DIR"
-    TEMP_KV_DIR="/tmp/catppuccin-kvantum"
-    rm -rf "$TEMP_KV_DIR"
-    git clone --depth 1 https://github.com/catppuccin/Kvantum "$TEMP_KV_DIR"
-    cp -r "$TEMP_KV_DIR/themes/catppuccin-mocha-blue" "$KVANTUM_DIR/"
-    rm -rf "$TEMP_KV_DIR"
-fi
-
-# Reload Graphical Apps
-pgrep -x sway > /dev/null && swaymsg reload
-pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
-pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
-{{- end }}
-
-# Reload Tmux
-if [ -n "${TMUX:-}" ]; then
-  echo "→ Reloading Tmux colors..."
-  tmux source-file ~/.config/tmux/colors.conf
-fi
-
-echo "✓ Theme applied: $THEME"
-{{ if not .isServer -}}
-echo "→ NOTE: For GTK/Qt changes to take full effect, please log out and back in."
-{{- end }}
+log_ok "Personalización visual completada exitosamente."

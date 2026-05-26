@@ -4,6 +4,12 @@ hosts/
 scripts/
 docs/
 
+# Archivos generados dinamicamente (Themes/Flavours/Locales)
+.config/kitty/colors.conf
+.config/tmux/colors.conf
+.config/sway/colors
+.config/waybar/colors.css
+
 # Perfiles: solo aplicar el que corresponde
 {{ if not .isLaptop }}
 hosts/laptop/**
