@@ -30,6 +30,7 @@ direnv = "latest"
 node = "22"
 python = "3.12"
 lua = "5.1"
+rust = "latest"
 
 [settings]
 experimental = true

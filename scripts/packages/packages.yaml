@@ -32,6 +32,9 @@ fedora:
     - flatpak
     - fontconfig
     - google-chrome-stable
+    - nwg-look
+    - qt5ct
+    - qt6ct
   sway:
     - waybar
     - wofi

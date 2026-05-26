@@ -41,16 +41,8 @@ for_window [app_id="nm-connection-editor"] floating enable
 for_window [app_id="blueman-manager"] floating enable
 for_window [app_id="floating_shell"] floating enable, resize set 600 400
 
-# --- Colors (Gruvbox Dark) ---
-set $bg      #282828
-set $red     #cc241d
-set $green   #98971a
-set $yellow  #d79921
-set $blue    #458588
-set $purple  #b16286
-set $aqua    #689d6a
-set $gray    #a89984
-set $fg      #ebdbb2
+# --- Colors (Managed by flavours) ---
+include ~/.config/sway/colors
 
 # --- Font ---
 # Usando la fuente que instalamos con el script
@@ -162,17 +154,17 @@ gaps outer 0
 
 # Window Colors
 # class                 border  bground text    indicator child_border
-client.focused          $blue   $blue   $bg     $purple   $blue
-client.focused_inactive $bg     $bg     $gray   $bg       $bg
-client.unfocused        $bg     $bg     $gray   $bg       $bg
-client.urgent           $red    $red    $fg     $red      $red
+client.focused          $base0D $base0D $base00 $base0C $base0D
+client.focused_inactive $base02 $base02 $base05 $base03 $base02
+client.unfocused        $base01 $base01 $base04 $base01 $base01
+client.urgent           $base08 $base08 $base00 $base08 $base08
 
 # --- Autostart ---
 # Wallpaper
 exec_always swaybg -i ~/workspace/assets/wallpapers/macos-00.jpg -m fill
 
 # Lock screen shortcut
-bindsym $mod+Escape exec swaylock -c 282828
+bindsym $mod+Escape exec swaylock -c $base00
 
 # Status Bar (Waybar)
 exec waybar
@@ -190,8 +182,8 @@ exec gammastep
 exec swayidle -w \
     timeout 300 'swaymsg "output * dpms off"' \
     resume 'swaymsg "output * dpms on"' \
-    timeout 900 'swaylock -c 282828' \
-    before-sleep 'swaylock -c 282828'
+    timeout 900 'swaylock -c $base00' \
+    before-sleep 'swaylock -c $base00'
 
 # Configurar Temas e Iconos (GSettings)
 exec_always {

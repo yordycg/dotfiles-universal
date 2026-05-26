@@ -1,6 +1,14 @@
 /* =============================================================================
-   FIREFOX USERCHROME.CSS - AUTO-HIDE TABS (FAILSAFE DESIGN)
+   FIREFOX USERCHROME.CSS - Managed by variables
    ============================================================================= */
+
+:root {
+  --base00: #1e1e2e;
+  --base01: #181825;
+  --base02: #313244;
+  --base05: #cdd6f4;
+  --base0D: #89b4fa;
+}
 
 /* --- 1. BARRA DE PESTAÑAS AUTO-RETRÁCTIL --- */
 #TabsToolbar {
@@ -8,7 +16,7 @@
     display: block;
     top: 0;
     width: 100vw;
-    background: #282c34 !important;
+    background: var(--base01) !important;
     transition: transform 0.2s ease-in-out !important;
     transform: translateY(-100%); /* Escondida hacia arriba */
     z-index: 10;
@@ -29,7 +37,8 @@
 #nav-bar {
     border: none !important;
     box-shadow: none !important;
-    background: #1e1e2e !important;
+    background: var(--base00) !important;
+    color: var(--base05) !important;
 }
 
 /* Quitar botones innecesarios para un look más limpio */

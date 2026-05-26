@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+# {{ .chezmoi.sourceDir }}/dot_local/bin/executable_theme-switch.tmpl
+# Usage: theme-switch catppuccin-mocha
+
+# Ensure ~/.local/bin and ~/.cargo/bin are in PATH
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+THEME="${1:-}"
+
+# Si no se pasa tema, abrir fzf con la lista formateada (uno por línea)
+if [ -z "$THEME" ]; then
+    if ! command -v fzf &> /dev/null; then
+        echo "⚠ fzf no encontrado. Instálalo o pasa un tema como argumento."
+        exit 1
+    fi
+    
+    # flavours list devuelve todo en una línea, lo convertimos a lista vertical
+    THEME=$(flavours list | tr ' ' '\n' | grep -v '^$' | fzf --height 40% --reverse --header "Selecciona un tema base16:")
+fi
+
+# Salir si se canceló fzf o no se seleccionó nada
+if [ -z "$THEME" ]; then
+    echo "Operación cancelada."
+    exit 0
+fi
+
+echo "→ Switching to theme: $THEME"
+
+if ! command -v flavours &> /dev/null; then
+    echo "⚠ flavours not found. Make sure it is installed."
+    exit 1
+fi
+
+flavours apply "$THEME"
+
+{{ if not .isServer -}}
+# Reload Graphical Apps
+pgrep -x sway > /dev/null && swaymsg reload
+pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
+pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
+{{- end }}
+
+# Tmux (si hay sesión activa)
+if [ -n "${TMUX:-}" ]; then
+  echo "→ Reloading Tmux colors..."
+  tmux source-file ~/.config/tmux/colors.conf
+fi
+
+echo "✓ Theme applied: $THEME"
+{{ if not .isServer -}}
+echo "  (Neovim might require restart or :colorscheme catppuccin)"
+{{- end }}

@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# {{ .chezmoi.sourceDir }}/scripts/run_onchange_after_apply-theme.sh.tmpl
+# hash: {{ include "dot_config/flavours/config.toml.tmpl" | sha256sum }}
+
+set -euo pipefail
+
+THEME="catppuccin-mocha"
+
+echo "→ Checking theming dependencies..."
+
+# Ensure ~/.local/bin and ~/.cargo/bin are in PATH
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+
+# Function to check if flavours is working
+is_flavours_valid() {
+    if command -v flavours &> /dev/null; then
+        if flavours --version &> /dev/null; then
+            return 0
+        fi
+    fi
+    return 1
+}
+
+# Ensure flavours is installed
+if ! is_flavours_valid; then
+    echo "→ Flavours not found or corrupted. Attempting installation..."
+    [ -f "$HOME/.local/bin/flavours" ] && rm -f "$HOME/.local/bin/flavours"
+    
+    if command -v cargo &> /dev/null; then
+        cargo install flavours
+    else
+        echo "→ Downloading flavours binary..."
+        mkdir -p "$HOME/.local/bin"
+        LATEST_TAG=$(curl -s https://api.github.com/repos/Misterio77/flavours/releases/latest | jq -r .tag_name)
+        ARCH=$(uname -m)
+        if [ "$ARCH" = "x86_64" ]; then
+            DOWNLOAD_URL="https://github.com/Misterio77/flavours/releases/download/${LATEST_TAG}/flavours-${LATEST_TAG}-x86_64-linux.tar.gz"
+            curl -sL -o "/tmp/flavours.tar.gz" "$DOWNLOAD_URL"
+            tar -xzf "/tmp/flavours.tar.gz" -C "/tmp"
+            mv "/tmp/flavours" "$HOME/.local/bin/flavours"
+            chmod +x "$HOME/.local/bin/flavours"
+            rm -f "/tmp/flavours.tar.gz"
+        else
+            echo "⚠ Architecture $ARCH not supported for direct binary download"
+            exit 0
+        fi
+    fi
+fi
+
+# 1. Update/Initialize Templates and Schemes
+SCHEMES_DIR="$HOME/.local/share/flavours/base16/schemes"
+TEMPLATES_DIR="$HOME/.local/share/flavours/base16/templates"
+
+if [ ! -d "$SCHEMES_DIR" ] || [ ! -d "$TEMPLATES_DIR" ]; then
+    echo "→ Initializing flavours schemes and templates..."
+    flavours update all || echo "⚠ Some updates failed, but we will fix catppuccin manually if needed."
+fi
+
+# 2. Fix Catppuccin Scheme (Manual setup to ensure it works)
+if [ ! -f "$SCHEMES_DIR/catppuccin-mocha/catppuccin-mocha.yaml" ]; then
+    echo "→ Manually setting up Catppuccin Mocha scheme..."
+    TEMP_CAT_DIR="/tmp/catppuccin-base16"
+    rm -rf "$TEMP_CAT_DIR"
+    git clone --depth 1 https://github.com/catppuccin/base16 "$TEMP_CAT_DIR"
+    
+    # flavours expects: schemes/<scheme_name>/<scheme_name>.yaml
+    for flavor in latte frappe macchiato mocha; do
+        mkdir -p "$SCHEMES_DIR/catppuccin-$flavor"
+        cp "$TEMP_CAT_DIR/base16/$flavor.yaml" "$SCHEMES_DIR/catppuccin-$flavor/catppuccin-$flavor.yaml"
+    done
+    rm -rf "$TEMP_CAT_DIR"
+fi
+
+echo "→ Applying theme: $THEME"
+
+# Ensure all target files exist with markers so flavours can write to them
+mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/.config/waybar"
+[ ! -f "$HOME/.config/tmux/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/tmux/colors.conf"
+[ ! -f "$HOME/.config/kitty/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/kitty/colors.conf"
+[ ! -f "$HOME/.config/sway/colors" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/sway/colors"
+[ ! -f "$HOME/.config/waybar/colors.css" ] && printf "/* Start flavours */\n/* End flavours */" > "$HOME/.config/waybar/colors.css"
+
+flavours apply "$THEME"
+
+{{ if not .isServer -}}
+# Reload Graphical Apps
+if pgrep -x sway > /dev/null; then
+  echo "→ Reloading Sway..."
+  swaymsg reload
+fi
+if pgrep -x waybar > /dev/null; then
+  echo "→ Reloading Waybar..."
+  pkill -SIGUSR2 waybar
+fi
+if pgrep -x kitty > /dev/null; then
+  echo "→ Reloading Kitty..."
+  pkill -SIGUSR1 kitty
+fi
+{{- end }}
+
+# Reload Tmux
+if [ -n "${TMUX:-}" ]; then
+  echo "→ Reloading Tmux colors..."
+  tmux source-file ~/.config/tmux/colors.conf
+fi
+
+echo "✓ Theme applied: $THEME"
