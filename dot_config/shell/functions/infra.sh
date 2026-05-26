@@ -36,6 +36,34 @@ dsync() {
   log_ok "Sincronización finalizada en ambos nodos." "󰄲"
 }
 
+# Gestión de VPN (Tailscale) - Senior Workflow
+vpn-up() {
+    log_info "Levantando VPN (Modo Estándar)..." "󰒄"
+    sudo tailscale up --accept-dns=true
+    log_ok "VPN Activa. Split DNS habilitado para *.home" "󰄲"
+}
+
+vpn-down() {
+    log_info "Desconectando VPN..." "󱊚"
+    sudo tailscale down
+    log_ok "VPN Desconectada." "󰄲"
+}
+
+vpn-exit() {
+    local node=${1:-"homelab"}
+    log_info "Activando Nodo de Salida: $node..." "󰒄"
+    # Buscamos la IP del nodo de salida por su nombre
+    local exit_node_ip=$(tailscale status | grep "$node" | awk '{print $1}')
+    
+    if [[ -z "$exit_node_ip" ]]; then
+        log_err "No se encontró el nodo $node. ¿Está encendido?" "󰅙"
+        return 1
+    fi
+
+    sudo tailscale up --exit-node="$exit_node_ip" --accept-dns=true
+    log_ok "Todo el tráfico fluye ahora a través de $node." "󰄲"
+}
+
 # Desbloquear y gestionar Bitwarden de forma inteligente
 bwu() {
     local vault_url="https://vault.home"

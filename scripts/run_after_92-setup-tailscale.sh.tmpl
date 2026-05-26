@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_92-setup-tailscale.sh.tmpl
-# Automatización de Tailscale (VPN Mesh)
+# Automatización de Tailscale (VPN Mesh) - Versión Resiliente (Senior)
 # =============================================================================
 {{ if eq .chezmoi.os "linux" -}}
 set -euo pipefail
@@ -9,50 +9,39 @@ set -euo pipefail
 # Colores Homelab-Style
 GREEN='\033[0;32m'
 CYAN='\033[0;36m'
+YELLOW='\033[0;33m'
 RESET='\033[0m'
 
 log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
 log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ! $1${RESET}"; }
 
 if ! command -v tailscale &>/dev/null; then
     exit 0
 fi
 
-log_info "Verificando estado de Tailscale..."
+log_info "Configurando Tailscale (Arquitectura de Confianza)..."
 
-# 1. Asegurar que el servicio esté corriendo
+# 1. Asegurar que el daemon esté corriendo
 if systemctl list-unit-files tailscaled.service &>/dev/null; then
     if ! systemctl is-active --quiet tailscaled; then
-        log_info "Activando servicio tailscaled..."
+        log_info "Iniciando servicio tailscaled..."
         sudo systemctl enable --now tailscaled
     fi
 fi
 
-# 2. Verificar autenticación y DNS
+# 2. Gestión de estado de conexión
 if tailscale status &>/dev/null; then
-    log_ok "Tailscale está activo y autenticado."
+    log_ok "Tailscale ya está activo."
     
-    # --- MEJORA: Resiliencia de DNS (Solo para Clientes) ---
-    {{- if not .isServer }}
-    log_info "Verificando salud del DNS (Homelab + Público)..."
-    
-    # Intentar subir con DNS por si estaba apagado
+    # Aseguramos configuración óptima para Split DNS
+    # 'accept-dns=true' es necesario para que MagicDNS y Split DNS funcionen
     sudo tailscale set --accept-dns=true >/dev/null 2>&1 || true
-
-    if ! host -W 2 google.com &>/dev/null; then
-        log_warn "¡DNS Crítico! No se puede resolver dominios públicos a través de Tailscale."
-        log_info "Activando Fallback: Desactivando DNS de Tailscale para recuperar internet..."
-        sudo tailscale set --accept-dns=false >/dev/null 2>&1 || true
-        log_ok "Internet recuperado (DNS local activo)."
-    else
-        log_ok "DNS operando correctamente."
-    fi
-    {{- else }}
-    log_info "Servidor detectado: Omitiendo fallback de DNS."
-    {{- end }}
+    log_ok "Configuración de red sincronizada con el Panel Web."
 else
-    log_warn "Tailscale no está autenticado. Iniciando proceso de unión..."
-    # Ejecutamos 'up' inicial.
-    sudo tailscale up --accept-dns=true
+    log_warn "Tailscale no está autenticado."
+    log_info "Por favor, ejecuta 'sudo tailscale up' para vincular este nodo."
+    # No forzamos el 'up' aquí para evitar colgar el script de chezmoi 
+    # si no hay intervención manual inmediata.
 fi
 {{ end -}}
