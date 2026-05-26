@@ -29,6 +29,8 @@ export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
 
 # -- FZF Configuration (Senior Modern UI) --
+[ -f "$HOME/.config/shell/fzf_colors.sh" ] && source "$HOME/.config/shell/fzf_colors.sh"
+
 export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git "
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
@@ -43,9 +45,12 @@ export FZF_DEFAULT_OPTS=" \
   --prompt='󰭎 ' \
   --pointer=' ' \
   --marker='󰄲 ' \
-  --color='hl:#2dd4bf,hl+:#2dd4bf,pointer:#f43f5e,marker:#10b981,border:#334155,header:#64748b' \
+  \$FZF_COLORS \
   --bind 'ctrl-u:preview-page-up,ctrl-d:preview-page-down' \
 "
+
+# -- Direnv Configuration (Invisible Automation) --
+export DIRENV_LOG_FORMAT=""
 
 # -- Homelab SSL / Trust (Capa de Infraestructura) --
 {{ if eq .chezmoi.os "linux" -}}

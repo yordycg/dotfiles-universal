@@ -9,6 +9,11 @@ template = "tmux"
 subtemplate = "base16"
 rewrite = true
 
+[[items]]
+file = "{{ .chezmoi.homeDir }}/.config/shell/fzf_colors.sh"
+template = "fzf"
+rewrite = true
+
 {{ if not .isServer -}}
 # Graphical Apps (Solo Desktop/Laptop)
 [[items]]
