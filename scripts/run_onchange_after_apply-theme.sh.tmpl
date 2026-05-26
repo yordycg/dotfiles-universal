@@ -32,15 +32,25 @@ mkdir -p "$HOME/.icons"
 mkdir -p "$HOME/.config/Kvantum"
 
 # ── 2. Instalación de Temas GTK (Catppuccin Mocha) ──────────────────────────
-THEME_NAME="Catppuccin-Mocha-Standard-Blue-Dark"
-if [ ! -d "$HOME/.local/share/themes/$THEME_NAME" ]; then
-    log_info "Instalando tema GTK: $THEME_NAME..."
-    # Usamos la version oficial compilada para evitar dependencias de compilacion
+THEME_DIR_NAME="Catppuccin-Mocha-Standard-Blue-Dark"
+if [ ! -d "$HOME/.local/share/themes/$THEME_DIR_NAME" ]; then
+    log_info "Instalando tema GTK: Mocha Blue..."
     TEMP_DIR=$(mktemp -d)
-    curl -sL "https://github.com/catppuccin/gtk/releases/download/v1.0.3/Catppuccin-Mocha-Standard-Blue-Dark.zip" -o "$TEMP_DIR/theme.zip"
-    unzip -q "$TEMP_DIR/theme.zip" -d "$HOME/.local/share/themes/"
+    # URL corregida según los releases oficiales de Catppuccin
+    ZIP_URL="https://github.com/catppuccin/gtk/releases/download/v1.0.3/catppuccin-mocha-blue-standard+default.zip"
+    
+    if curl -sL "$ZIP_URL" -o "$TEMP_DIR/theme.zip"; then
+        # Verificar que sea un ZIP valido antes de intentar descomprimir
+        if file "$TEMP_DIR/theme.zip" | grep -q "Zip archive data"; then
+            unzip -q "$TEMP_DIR/theme.zip" -d "$HOME/.local/share/themes/"
+            log_ok "Tema GTK instalado correctamente."
+        else
+            log_warn "El archivo descargado no es un ZIP valido. Es posible que la URL haya cambiado."
+        fi
+    else
+        log_warn "Error al descargar el tema desde GitHub."
+    fi
     rm -rf "$TEMP_DIR"
-    log_ok "Tema GTK instalado."
 else
     log_ok "Tema GTK ya presente."
 fi
