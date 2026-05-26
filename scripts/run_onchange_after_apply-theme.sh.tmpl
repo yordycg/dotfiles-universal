@@ -112,13 +112,13 @@ fi
 
 # --- KVANTUM THEME ---
 KVANTUM_DIR="$HOME/.config/Kvantum"
-if [ ! -d "$KVANTUM_DIR/Catppuccin-Mocha-Blue" ]; then
+if [ ! -d "$KVANTUM_DIR/catppuccin-mocha-blue" ]; then
     echo "→ Installing Catppuccin Kvantum theme..."
     mkdir -p "$KVANTUM_DIR"
     TEMP_KV_DIR="/tmp/catppuccin-kvantum"
     rm -rf "$TEMP_KV_DIR"
     git clone --depth 1 https://github.com/catppuccin/Kvantum "$TEMP_KV_DIR"
-    cp -r "$TEMP_KV_DIR/src/Catppuccin-Mocha-Blue" "$KVANTUM_DIR/"
+    cp -r "$TEMP_KV_DIR/themes/catppuccin-mocha-blue" "$KVANTUM_DIR/"
     rm -rf "$TEMP_KV_DIR"
 fi
 
