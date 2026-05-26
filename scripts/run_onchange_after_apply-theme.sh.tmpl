@@ -95,7 +95,7 @@ mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/
 [ ! -f "$HOME/.config/tmux/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/tmux/colors.conf"
 [ ! -f "$HOME/.config/kitty/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/kitty/colors.conf"
 [ ! -f "$HOME/.config/sway/colors" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/sway/colors"
-[! -f "$HOME/.config/waybar/colors.css" ] && printf "/* # Start flavours */\n/* # End flavours */" > "$HOME/.config/waybar/colors.css"
+[ ! -f "$HOME/.config/waybar/colors.css" ] && printf "/* # Start flavours */\n/* # End flavours */" > "$HOME/.config/waybar/colors.css"
 
 flavours apply "$THEME"
 
