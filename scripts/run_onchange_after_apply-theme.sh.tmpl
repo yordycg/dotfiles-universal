@@ -90,30 +90,8 @@ fi
 
 echo "→ Applying theme: $THEME"
 
-# --- REFUERZO DE MARCADORES (Garantiza que existan aunque el archivo ya esté creado) ---
-ensure_markers() {
-    local file="$1"
-    local start_marker="$2"
-    local end_marker="$3"
-    
-    mkdir -p "$(dirname "$file")"
-    
-    # Comprobamos si el marcador EXACTO está presente (incluyendo el #)
-    if [ ! -f "$file" ] || ! grep -q "# Start flavours" "$file"; then
-        echo "→ Fixing markers in $file"
-        # Usamos printf para evitar problemas con saltos de línea
-        printf "%b\n%b\n" "$start_marker" "$end_marker" > "$file"
-    fi
-}
-
-# Tmux, Kitty y Sway usan comentarios con '#' por lo que el marcador puede ir directo
-ensure_markers "$HOME/.config/tmux/colors.conf" "# Start flavours" "# End flavours"
-ensure_markers "$HOME/.config/kitty/colors.conf" "# Start flavours" "# End flavours"
-ensure_markers "$HOME/.config/sway/colors" "# Start flavours" "# End flavours"
-
-# Waybar (CSS) - Usamos marcadores limpios. 
-# La plantilla de Waybar ya genera comentarios válidos, así que no necesitamos envolverlos.
-ensure_markers "$HOME/.config/waybar/colors.css" "# Start flavours" "# End flavours"
+# Ensure all target directories exist so flavours can write to them
+mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/.config/waybar"
 
 flavours apply "$THEME"
 
