@@ -59,3 +59,12 @@ HOMELAB_CA="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
 
 # -- Paths --
 export PATH="$HOME/.local/bin:$PATH"
+
+# -- Theming: GTK & Qt Integration (Senior UI Consistency) --
+{{ if eq .chezmoi.os "linux" -}}
+export QT_QPA_PLATFORMTHEME="qt5ct"
+export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
+export GDK_BACKEND="wayland,x11"
+export SDL_VIDEODRIVER="wayland"
+export CLUTTER_BACKEND="wayland"
+{{ end -}}

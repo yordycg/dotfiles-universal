@@ -35,6 +35,8 @@ fedora:
     - nwg-look
     - qt5ct
     - qt6ct
+    - kvantum
+    - qt5-qtstyleplugins
   sway:
     - waybar
     - wofi

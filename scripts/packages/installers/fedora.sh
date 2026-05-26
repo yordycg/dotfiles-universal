@@ -59,6 +59,12 @@ if [ -z "${WSL_DISTRO_NAME:-}" ]; then
         sudo dnf config-manager setopt google-chrome.enabled=1
     fi
 
+    # Habilitar COPR para nwg-look y herramientas de Sway modernas
+    if ! dnf copr list | grep -q "tofik/nwg-shell"; then
+        log_info "Habilitando COPR tofik/nwg-shell (para nwg-look)..."
+        sudo dnf copr enable -y tofik/nwg-shell
+    fi
+
     install_section "desktop"
     
     # Perfil Sway (Si se detecta el entorno)
