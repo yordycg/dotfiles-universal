@@ -53,10 +53,27 @@ TEMPLATES_DIR="$HOME/.local/share/flavours/base16/templates"
 
 if [ ! -d "$SCHEMES_DIR" ] || [ ! -d "$TEMPLATES_DIR" ]; then
     echo "→ Initializing flavours schemes and templates..."
-    flavours update all || echo "⚠ Some updates failed, but we will fix catppuccin manually if needed."
+    flavours update all || echo "⚠ Some updates failed, but we will fix critical ones manually."
 fi
 
-# 2. Fix Catppuccin Scheme (Manual setup to ensure it works)
+# 2. Fix Critical Templates (Manual setup if they are missing after update)
+declare -A REQUIRED_TEMPLATES
+REQUIRED_TEMPLATES=(
+    ["tmux"]="https://github.com/tinted-theming/base16-tmux"
+    ["kitty"]="https://github.com/tony/base16-kitty"
+    ["sway"]="https://github.com/rkubosz/base16-sway"
+    ["waybar"]="https://github.com/pujol/base16-waybar"
+)
+
+mkdir -p "$TEMPLATES_DIR"
+for name in "${!REQUIRED_TEMPLATES[@]}"; do
+    if [ ! -d "$TEMPLATES_DIR/$name" ]; then
+        echo "→ Template '$name' missing, cloning manually..."
+        git clone --depth 1 "${REQUIRED_TEMPLATES[$name]}" "$TEMPLATES_DIR/$name" || true
+    fi
+done
+
+# 3. Fix Catppuccin Scheme (Manual setup to ensure it works)
 if [ ! -f "$SCHEMES_DIR/catppuccin-mocha/catppuccin-mocha.yaml" ]; then
     echo "→ Manually setting up Catppuccin Mocha scheme..."
     TEMP_CAT_DIR="/tmp/catppuccin-base16"
@@ -95,6 +112,13 @@ fi
 if pgrep -x kitty > /dev/null; then
   echo "→ Reloading Kitty..."
   pkill -SIGUSR1 kitty
+fi
+
+# GTK Theme (Solo en Desktop/Laptop)
+if [ ! -d "$HOME/.local/share/themes/catppuccin-mocha" ]; then
+  echo "→ Downloading Catppuccin GTK theme..."
+  mkdir -p "$HOME/.local/share/themes"
+  git clone --depth 1 https://github.com/catppuccin/gtk "$HOME/.local/share/themes/catppuccin-mocha" || true
 fi
 {{- end }}
 
