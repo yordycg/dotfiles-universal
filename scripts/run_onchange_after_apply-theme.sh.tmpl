@@ -59,11 +59,20 @@ else
     log_ok "Tema GTK ya presente."
 fi
 
-# ── 3. Configuración de Kvantum (Qt) ─────────────────────────────────────────
-KVANTUM_THEME_NAME="catppuccin-mocha-blue"
+# ── 3. Configuración de Kvantum (Qt) ────────────────────────────────────────
+# IMPORTANTE: Kvantum espera el directorio con este nombre exacto (mayúsculas)
+KVANTUM_THEME_NAME="Catppuccin-Mocha-Blue"
 KVANTUM_DIR="$HOME/.config/Kvantum/$KVANTUM_THEME_NAME"
+# La URL del repo usa minúsculas, el directorio local usa mayúsculas
+KVANTUM_BASE_URL="https://raw.githubusercontent.com/catppuccin/kvantum/main/themes/catppuccin-mocha-blue"
 
-# Si el archivo SVG es invalido (HTML 404), forzamos re-descarga
+# Limpiar directorio con nombre incorrecto (minúsculas) si existe
+if [ -d "$HOME/.config/Kvantum/catppuccin-mocha-blue" ]; then
+    log_warn "Limpiando directorio Kvantum con nombre incorrecto..."
+    rm -rf "$HOME/.config/Kvantum/catppuccin-mocha-blue"
+fi
+
+# Si el SVG es inválido (404 u otro error), forzar re-descarga
 if [ -f "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg" ] && ! grep -q "<svg" "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"; then
     log_warn "Detectado archivo Kvantum corrupto. Re-descargando..."
     rm -rf "$KVANTUM_DIR"
@@ -72,17 +81,21 @@ fi
 if [ ! -d "$KVANTUM_DIR" ]; then
     log_info "Configurando tema Kvantum: $KVANTUM_THEME_NAME..."
     mkdir -p "$KVANTUM_DIR"
-    # URLs corregidas (Repo: catppuccin/kvantum, Path: themes/catppuccin-mocha-blue/...)
-    BASE_URL="https://raw.githubusercontent.com/catppuccin/kvantum/main/themes/catppuccin-mocha-blue"
-    curl -sL "$BASE_URL/catppuccin-mocha-blue.kvconfig" -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.kvconfig"
-    curl -sL "$BASE_URL/catppuccin-mocha-blue.svg" -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"
-    
-    # Activar el tema en Kvantum
+    curl -sL "$KVANTUM_BASE_URL/catppuccin-mocha-blue.kvconfig" -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.kvconfig"
+    curl -sL "$KVANTUM_BASE_URL/catppuccin-mocha-blue.svg"      -o "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"
+
+    # Verificar que la descarga fue exitosa
+    if ! grep -q "<svg" "$KVANTUM_DIR/$KVANTUM_THEME_NAME.svg"; then
+        log_err "Fallo la descarga del SVG de Kvantum. Verifica la URL."
+    fi
+
     echo "theme=$KVANTUM_THEME_NAME" > "$HOME/.config/Kvantum/kvantum.kvconfig"
     log_ok "Tema Kvantum configurado ($KVANTUM_THEME_NAME)."
+else
+    log_ok "Tema Kvantum ya presente."
 fi
 
-# ── 4. Sincronización de GSettings (GTK Sync) ────────────────────────────────
+# ── 4. Sincronización de GSettings (GTK Sync) ───────────────────────────────
 if command -v gsettings &>/dev/null; then
     log_info "Sincronizando GSettings con el tema actual..."
     gsettings set org.gnome.desktop.interface gtk-theme "$THEME_DIR_NAME"
