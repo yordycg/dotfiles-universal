@@ -2,4 +2,4 @@
 # Formato: ID_DEL_FLATPAK
 
 io.dbeaver.DBeaverCommunity
-io.beekeeperstudio.BeekeeperStudio
+io.beekeeperstudio.Studio
