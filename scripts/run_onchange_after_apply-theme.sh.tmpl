@@ -90,12 +90,24 @@ fi
 
 echo "→ Applying theme: $THEME"
 
-# Ensure all target files exist with markers so flavours can write to them
-mkdir -p "$HOME/.config/tmux" "$HOME/.config/kitty" "$HOME/.config/sway" "$HOME/.config/waybar"
-[ ! -f "$HOME/.config/tmux/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/tmux/colors.conf"
-[ ! -f "$HOME/.config/kitty/colors.conf" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/kitty/colors.conf"
-[ ! -f "$HOME/.config/sway/colors" ] && printf "# Start flavours\n# End flavours" > "$HOME/.config/sway/colors"
-[ ! -f "$HOME/.config/waybar/colors.css" ] && printf "/* # Start flavours */\n/* # End flavours */" > "$HOME/.config/waybar/colors.css"
+# --- REFUERZO DE MARCADORES (Garantiza que existan aunque el archivo ya esté creado) ---
+ensure_markers() {
+    local file="$1"
+    local start_marker="$2"
+    local end_marker="$3"
+    
+    mkdir -p "$(dirname "$file")"
+    
+    if [ ! -f "$file" ] || ! grep -q "# Start flavours" "$file"; then
+        echo "→ Fixing markers in $file"
+        printf "%s\n%s\n" "$start_marker" "$end_marker" > "$file"
+    fi
+}
+
+ensure_markers "$HOME/.config/tmux/colors.conf" "# Start flavours" "# End flavours"
+ensure_markers "$HOME/.config/kitty/colors.conf" "# Start flavours" "# End flavours"
+ensure_markers "$HOME/.config/sway/colors" "# Start flavours" "# End flavours"
+ensure_markers "$HOME/.config/waybar/colors.css" "/* # Start flavours */" "/* # End flavours */"
 
 flavours apply "$THEME"
 
