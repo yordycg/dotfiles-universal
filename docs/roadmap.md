@@ -114,6 +114,21 @@ Configuración dual para máxima versatilidad:
 - [x] **Estrategia Anti-Desastres**: Implementado script `restore.sh` y backups automáticos de volúmenes con Restic.
 - [x] **VPN Mesh (Tailscale Global)**: Nodo 1 configurado como Nameserver Global y automatización en Chezmoi.
 
+## 🔧 Fase 6 — Advanced Homelab Workflow (Senior Implementation)
+> El objetivo es lograr "Cero Contaminación" en el repo de infraestructura y "Aislamiento Total" en proyectos de estudio.
+
+### 6.1 Hardening y Autodiscovery (homelab-infra)
+- [ ] **Seguridad del Socket**: Implementar `tecnativa/docker-socket-proxy` para que Caddy no acceda directamente a `/var/run/docker.sock`.
+- [ ] **Caddy Docker Proxy**: Migrar a `lucaslorentz/caddy-docker-proxy` para permitir configuración de rutas mediante labels en los contenedores.
+- [ ] **Red Externa Persistente**: Definir una red Docker global (ej. `homelab-net`) para comunicación entre Caddy y los micro-proyectos de estudio.
+
+### 6.2 Senior Project Scaffolding (chezmoi/templates)
+- [ ] **Standard Templates**: Actualizar `templates/project-base/` con:
+    - `compose.override.yaml.example`: Plantilla para mapeo de puertos hacia Tailscale IP (Beekeeper access).
+    - `compose.yaml`: Configuración limpia con labels de Caddy comentados y red externa habilitada.
+    - `.gitignore`: Asegurar que `compose.override.yaml` nunca se suba al repo.
+- [ ] **Auto-Config AdGuard**: Documentar o automatizar el Wildcard DNS Rewrite (`*.home` -> Server IP) para que cualquier proyecto nuevo funcione instantáneamente sin tocar la infraestructura central.
+
 ---
 
 ## 📋 Comandos útiles del día a día
