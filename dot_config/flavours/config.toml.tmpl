@@ -12,6 +12,7 @@ rewrite = true
 [[items]]
 file = "{{ .chezmoi.homeDir }}/.config/shell/fzf_colors.sh"
 template = "fzf"
+subtemplate = "base16-default"
 rewrite = true
 
 {{ if not .isServer -}}
