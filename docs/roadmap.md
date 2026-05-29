@@ -129,6 +129,10 @@ Configuración dual para máxima versatilidad:
     - `.gitignore`: Asegurar que `compose.override.yaml` nunca se suba al repo.
 - [ ] **Auto-Config AdGuard**: Documentar o automatizar el Wildcard DNS Rewrite (`*.home` -> Server IP) para que cualquier proyecto nuevo funcione instantáneamente sin tocar la infraestructura central.
 
+### 6.3 Refinamiento de Gestión Docker (Remote Workflow)
+- [ ] **Eliminar `homestat`**: Migrar totalmente a `hdocker` para evitar duplicidad de herramientas.
+- [ ] **Aislamiento en `hdocker`**: Investigar e implementar una forma de separar la vista de infraestructura central (`homelab-infra`) de los proyectos de estudio en `hdocker` (evitar borrado accidental de volúmenes críticos).
+
 ---
 
 ## 📋 Comandos útiles del día a día
