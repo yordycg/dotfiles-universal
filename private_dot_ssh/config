@@ -1,3 +1,15 @@
+# -- Configuración Global (Optimización de Conexión) --
+Host *
+	AddKeysToAgent yes
+	IdentityFile ~/.ssh/id_ed25519
+	ServerAliveInterval 60
+	ServerAliveCountMax 3
+
+	# SSH Multiplexing (Conexión instantánea tras el primer apretón de manos)
+	ControlMaster auto
+	ControlPath ~/.ssh/cm-%r@%h:%p
+	ControlPersist 10m
+
 Host github.com
 	HostName github.com
 	User git
@@ -9,6 +21,15 @@ Host homelab
 	User yordycg
 	IdentityFile ~/.ssh/id_ed25519
 	ForwardAgent yes
+	Compression yes
+	
+	# Puertos de desarrollo forwarded automáticamente al conectar
+	LocalForward 3000 localhost:3000   # Node.js / React
+	LocalForward 5173 localhost:5173   # Vite
+	LocalForward 8080 localhost:8080   # APIs / Adminer
+	LocalForward 8000 localhost:8000   # Python / Django
+	LocalForward 4321 localhost:4321   # Astro
+	LocalForward 5432 localhost:5432   # PostgreSQL (loopback)
 
 Host forgejo.home
 	HostName 192.168.18.99

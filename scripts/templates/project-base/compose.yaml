@@ -7,7 +7,8 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS:-password}
       POSTGRES_DB: ${DB_NAME:-app_db}
     ports:
-      - "${DB_PORT:-5432}:5432"
+      # Exponer solo en 127.0.0.1 para acceso vía SSH Tunnel / Tailscale seguro
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

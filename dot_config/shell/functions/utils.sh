@@ -89,3 +89,36 @@ fsvc() {
 
     sudo systemctl "$action" "$service"
 }
+
+# --- SSH Agent Management ---
+
+# Iniciar ssh-agent y guardar variables de entorno
+_ssh_agent_start() {
+    local agent_env="$HOME/.ssh/agent_env"
+    
+    if [[ -f "$agent_env" ]]; then
+        source "$agent_env" > /dev/null
+    fi
+
+    # Si no hay socket o el proceso no responde, reiniciar
+    if [[ -z "$SSH_AUTH_SOCK" ]] || ! ps -p "$SSH_AGENT_PID" > /dev/null 2>&1; then
+        log_info "Iniciando ssh-agent..." "󰒄"
+        ssh-agent -s | sed 's/^echo/#echo/' > "$agent_env"
+        chmod 600 "$agent_env"
+        source "$agent_env" > /dev/null
+    fi
+
+    # Añadir llave por defecto si no hay llaves cargadas
+    if ! ssh-add -l > /dev/null 2>&1; then
+        if [[ -f "$HOME/.ssh/id_ed25519" ]]; then
+            ssh-add "$HOME/.ssh/id_ed25519" 2>/dev/null
+        fi
+    fi
+}
+
+# Solo ejecutar si no estamos en una sesión SSH (el agente ya debería venir forwarded)
+# O si estamos en el servidor (opcional, pero recomendado para el Nodo 1)
+if [[ -z "$SSH_CONNECTION" ]]; then
+    _ssh_agent_start
+fi
+

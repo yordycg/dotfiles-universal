@@ -3,9 +3,14 @@
 	email = {{ .gitEmail }}
 
 [core]
+{{- if eq .os "windows" }}
+	editor = "C:/Program Files/Neovim/bin/nvim.exe"
+	autocrlf = true
+{{- else }}
 	editor = nvim
-	pager = delta
 	autocrlf = input
+{{- end }}
+	pager = delta
 	compression = 9
 	whitespace = error
 	preloadindex = true
