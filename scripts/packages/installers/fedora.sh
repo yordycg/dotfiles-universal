@@ -65,6 +65,12 @@ if [ -z "${WSL_DISTRO_NAME:-}" ]; then
         sudo dnf copr enable -y tofik/nwg-shell
     fi
 
+    # Habilitar COPR solopasha/hyprland para swww y waypaper
+    if ! dnf copr list | grep -q "solopasha/hyprland"; then
+        log_info "Habilitando COPR solopasha/hyprland (swww + waypaper)..."
+        sudo dnf copr enable -y solopasha/hyprland
+    fi
+
     install_section "desktop"
     
     # Perfil Sway (Si se detecta el entorno)

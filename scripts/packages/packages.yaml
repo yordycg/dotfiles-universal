@@ -45,7 +45,6 @@ fedora:
     - grim
     - slurp
     - wl-clipboard
-    - swaybg
     - brightnessctl
     - pavucontrol
     - nm-connection-editor
@@ -57,6 +56,8 @@ fedora:
     - swayidle
     - swaylock
     - kitty
+    - swww
+    - waypaper
 
 debian:
   core:

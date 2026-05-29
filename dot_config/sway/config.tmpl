@@ -3,6 +3,10 @@
 # Base: Senior Modular Approach
 # Managed by Chezmoi
 
+{{ if or .isServer .isWSL -}}
+# Omitir configuración en servidores o WSL
+{{ else -}}
+
 # --- Variables ---
 set $mod Mod4
 set $term kitty
@@ -58,6 +62,9 @@ bindsym $mod+Shift+q kill
 
 # Start your launcher
 bindsym $mod+d exec $menu
+
+# Wallpaper picker (Waypaper)
+bindsym $mod+Mod1+w exec waypaper
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.
@@ -160,8 +167,10 @@ client.unfocused        $base01 $base01 $base04 $base01 $base01
 client.urgent           $base08 $base08 $base00 $base08 $base08
 
 # --- Autostart ---
-# Wallpaper
-exec_always swaybg -i ~/workspace/assets/wallpapers/macos-00.jpg -m fill
+# Wallpaper (swww para transiciones suaves)
+exec_always swww-daemon --format xrgb
+# Aplicar el último wallpaper (swww se encarga de recordar o aplicar uno por defecto)
+exec swww img ~/workspace/assets/wallpapers/macos-00.jpg --transition-type center
 
 # Lock screen shortcut
 bindsym $mod+Escape exec swaylock -c $base00
@@ -196,3 +205,4 @@ exec_always {
 
 # --- Include extra configs ---
 # include /etc/sway/config.d/*
+{{ end }}
