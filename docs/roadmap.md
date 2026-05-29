@@ -133,6 +133,11 @@ Configuración dual para máxima versatilidad:
 - [ ] **Eliminar `homestat`**: Migrar totalmente a `hdocker` para evitar duplicidad de herramientas.
 - [ ] **Aislamiento en `hdocker`**: Investigar e implementar una forma de separar la vista de infraestructura central (`homelab-infra`) de los proyectos de estudio en `hdocker` (evitar borrado accidental de volúmenes críticos).
 
+### 6.4 Estética y Personalización (Senior Theming)
+- [ ] **Investigación de Selectores**: Comparar `rofi-wayland` vs `wofi` para determinar cuál ofrece mejores scripts de comunidad y visualización de miniaturas (thumbnails).
+- [ ] **Wallpaper Picker "Reddit Style"**: Implementar un selector visual integrado en el sistema (grid de imágenes) eliminando la dependencia de GUIs externas.
+- [ ] **Theming Dinámico**: Integrar `wallust` o similar para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
+
 ---
 
 ## 📋 Comandos útiles del día a día
