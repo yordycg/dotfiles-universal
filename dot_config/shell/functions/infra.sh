@@ -8,11 +8,12 @@ REMOTE_PATH="export PATH=\$HOME/.local/share/mise/shims:\$HOME/.local/bin:\$PATH
 # Conexión principal al servidor (Nodo 1)
 homelab() {
   log_info "Conectando al servidor Homelab..." "󰒄"
-  # Inyectamos el PATH y luego intentamos tmux
-  ssh -t homelab "$REMOTE_PATH; tmux attach -t dev || tmux new -s dev"
+  # Simplemente entramos. El s_manager en el .zshrc del servidor se encargará
+  # de darnos el selector de sesiones de forma interactiva y con el PATH correcto.
+  ssh -t homelab
 }
 
-# Selector inteligente de sesiones Tmux
+# Selector inteligente de sesiones Tmux (Local)
 ts() {
   local session
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | \
@@ -35,13 +36,12 @@ dsync() {
   (cd $(chezmoi source-path) && just save "$msg")
   
   log_step "2. Conectando al Servidor (Homelab) para actualizar..." "󰒄"
-  # Inyectamos el PATH para que encuentre 'just'
   ssh -t homelab "$REMOTE_PATH; cd ~/.local/share/chezmoi && just update"
   
   log_ok "Sincronización finalizada en ambos nodos." "󰄲"
 }
 
-# Gestión de VPN (Tailscale) - Senior Workflow
+# Gestión de VPN (Tailscale)
 vpn-up() {
     log_info "Levantando VPN (Modo Estándar)..." "󰒄"
     sudo tailscale up --accept-dns=true
@@ -57,7 +57,6 @@ vpn-down() {
 vpn-exit() {
     local node=${1:-"homelab"}
     log_info "Activando Nodo de Salida: $node..." "󰒄"
-    # Buscamos la IP del nodo de salida por su nombre
     local exit_node_ip=$(tailscale status | grep "$node" | awk '{print $1}')
     if [[ -n "$exit_node_ip" ]]; then
         sudo tailscale up --exit-node="$exit_node_ip" --accept-dns=true
@@ -90,11 +89,17 @@ homestat() {
     log_info "Estado del Homelab: $host" "󰒄"
     echo -e "\n\e[1;34m=== Contenedores Activos ===\e[0m"
     
-    # Lógica avanzada para limpiar puertos duplicados (IPv4/IPv6)
+    # Lógica Senior para limpiar puertos duplicados e interfaces
     ssh "$host" "docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'" | \
-        sed 's/0.0.0.0://g; s/\[::\]://g; s/, / /g' | \
         awk -F'\t' '{
-            n=split($3, a, " ");
+            names=$1; status=$2; ports=$3;
+            # Limpiar comas y IPs
+            gsub(/0.0.0.0:/, "", ports);
+            gsub(/\[::\]:/, "", ports);
+            gsub(/,/, " ", ports);
+            
+            # Deduplicar
+            n=split(ports, a, " ");
             delete seen;
             res="";
             for (i=1; i<=n; i++) {
@@ -103,11 +108,11 @@ homestat() {
                     seen[a[i]]=1;
                 }
             }
-            printf "%-16s %-20s %s\n", $1, $2, res
+            printf "%-16s %-20s %s\n", names, status, res
         }' | sort
         
     echo -e "\n\e[1;34m=== Uso de Disco ===\e[0m"
-    ssh "$host" "df -h | grep -v tmpfs | grep -E 'Filesystem|/dev/'"
+    ssh "$host" "$REMOTE_PATH; df -h | grep -v tmpfs | grep -E 'Filesystem|/dev/'"
 }
 
 # Forward de un puerto ad-hoc
