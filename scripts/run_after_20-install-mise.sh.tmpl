@@ -25,7 +25,7 @@ mkdir -p "$CACHE_DIR"
 STATE_FILE="$CACHE_DIR/mise-state"
 
 # Hash de la configuración de Mise
-CURRENT_HASH="{{ include "dot_config/mise/config.toml" | sha256sum }}"
+CURRENT_HASH="{{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}"
 
 log_step "Gestión de Entornos (Mise)"
 
@@ -46,6 +46,7 @@ fi
 
 log_info "Sincronizando herramientas y CLIs globales..."
 "$MISE_BIN" install -y
+
 eval "$("$MISE_BIN" activate bash)"
 
 [ -x "$(command -v npm)" ] && npm install -g neovim @google/gemini-cli @bitwarden/cli --silent

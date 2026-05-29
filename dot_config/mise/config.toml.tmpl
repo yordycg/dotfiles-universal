@@ -1,5 +1,5 @@
 [tools]
-# Core Tools
+# --- Core CLI Tools (Universal) ---
 neovim = "latest"
 tmux = "latest"
 starship = "latest"
@@ -22,11 +22,9 @@ sops = "latest"
 delta = "latest"
 usage = "latest"
 tree-sitter = "latest"
-
-# Development tools managed via Mise
 direnv = "latest"
 
-# Runtimes for Neovim and Development
+# --- Runtimes ---
 node = "22"
 python = "3.12"
 lua = "5.1"
@@ -36,5 +34,4 @@ rust = "latest"
 experimental = true
 asdf_compat = true
 python.github_attestations = false
-# Automatizar la instalacion de herramientas faltantes al entrar en un directorio
 all_compile = false
