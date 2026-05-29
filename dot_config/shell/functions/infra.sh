@@ -9,8 +9,29 @@ REMOTE_PATH="export PATH=\$HOME/.local/share/mise/shims:\$HOME/.local/bin:\$PATH
 homelab() {
   log_info "Conectando al servidor Homelab..." "󰒄"
   # Simplemente entramos. El s_manager en el .zshrc del servidor se encargará
-  # de darnos el selector de sesiones de forma interactiva y con el PATH correcto.
+  # de darnos el selector de sesiones de forma interactiva.
   ssh -t homelab
+}
+
+# Dashboard Interactivo de Contenedores (Senior Workflow)
+homestat() {
+    local host="${1:-homelab}"
+    log_info "Abriendo Dashboard de Contenedores en $host..." "󰒄"
+    
+    # Ejecutamos FZF directamente en el servidor para máxima velocidad y preview nativo
+    ssh -t "$host" "$REMOTE_PATH; docker ps --format '{{.Names}}\t{{.Status}}' | \
+        fzf --reverse --header '󰒄 Homelab Dashboard (Enter: Logs | Esc: Salir)' \
+        --prompt ' Contenedor: ' \
+        --preview 'docker ps --filter name={1} --format \"table {{.Names}}\n{{.Status}}\n{{.Ports}}\"' \
+        --preview-window 'right:50%:wrap' \
+        --bind 'enter:execute(docker logs -f --tail=100 {1})'"
+}
+
+# Gestión avanzada de Docker vía Lazydocker (Requiere lazydocker en el servidor)
+hdocker() {
+    local host="${1:-homelab}"
+    log_info "Lanzando Lazydocker remoto..." "󰒄"
+    ssh -t "$host" "$REMOTE_PATH; lazydocker"
 }
 
 # Selector inteligente de sesiones Tmux (Local)
@@ -81,38 +102,6 @@ dexec() {
     local host="$1"; shift
     log_info "Ejecutando en contenedor remoto en $host..." "󰒄"
     ssh -t "$host" "$REMOTE_PATH; docker exec -it $*"
-}
-
-# Ver estado rápido del Homelab
-homestat() {
-    local host="${1:-homelab}"
-    log_info "Estado del Homelab: $host" "󰒄"
-    echo -e "\n\e[1;34m=== Contenedores Activos ===\e[0m"
-    
-    # Lógica Senior para limpiar puertos duplicados e interfaces
-    ssh "$host" "docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'" | \
-        awk -F'\t' '{
-            names=$1; status=$2; ports=$3;
-            # Limpiar comas y IPs
-            gsub(/0.0.0.0:/, "", ports);
-            gsub(/\[::\]:/, "", ports);
-            gsub(/,/, " ", ports);
-            
-            # Deduplicar
-            n=split(ports, a, " ");
-            delete seen;
-            res="";
-            for (i=1; i<=n; i++) {
-                if (a[i] != "" && !(a[i] in seen)) {
-                    res = res (res==""?"":" ") a[i];
-                    seen[a[i]]=1;
-                }
-            }
-            printf "%-16s %-20s %s\n", names, status, res
-        }' | sort
-        
-    echo -e "\n\e[1;34m=== Uso de Disco ===\e[0m"
-    ssh "$host" "$REMOTE_PATH; df -h | grep -v tmpfs | grep -E 'Filesystem|/dev/'"
 }
 
 # Forward de un puerto ad-hoc
