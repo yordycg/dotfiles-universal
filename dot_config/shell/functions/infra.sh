@@ -13,20 +13,6 @@ homelab() {
   ssh -t homelab
 }
 
-# Dashboard Interactivo de Contenedores (Senior Workflow)
-homestat() {
-    local host="${1:-homelab}"
-    log_info "Abriendo Dashboard de Contenedores en $host..." "󰒄"
-    
-    # Ejecutamos FZF directamente en el servidor para máxima velocidad y preview nativo
-    ssh -t "$host" "$REMOTE_PATH; docker ps --format '{{.Names}}\t{{.Status}}' | \
-        fzf --reverse --header '󰒄 Homelab Dashboard (Enter: Logs | Esc: Salir)' \
-        --prompt ' Contenedor: ' \
-        --preview 'docker ps --filter name={1} --format \"table {{.Names}}\n{{.Status}}\n{{.Ports}}\"' \
-        --preview-window 'right:50%:wrap' \
-        --bind 'enter:execute(docker logs -f --tail=100 {1})'"
-}
-
 # Gestión avanzada de Docker vía Lazydocker (Requiere lazydocker en el servidor)
 hdocker() {
     local host="${1:-homelab}"
