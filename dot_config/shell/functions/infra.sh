@@ -94,12 +94,14 @@ homestat() {
     ssh "$host" "docker ps --format '{{.Names}}\t{{.Status}}\t{{.Ports}}'" | \
         sed 's/0.0.0.0://g; s/\[::\]://g; s/, / /g' | \
         awk -F'\t' '{
-            split($3, a, " ");
+            n=split($3, a, " ");
             delete seen;
             res="";
-            for (i in a) if (!(a[i] in seen)) {
-                res = res (res==""?"":" ") a[i];
-                seen[a[i]]=1;
+            for (i=1; i<=n; i++) {
+                if (a[i] != "" && !(a[i] in seen)) {
+                    res = res (res==""?"":" ") a[i];
+                    seen[a[i]]=1;
+                }
             }
             printf "%-16s %-20s %s\n", $1, $2, res
         }' | sort
