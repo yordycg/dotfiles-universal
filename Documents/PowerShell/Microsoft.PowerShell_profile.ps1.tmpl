@@ -4,45 +4,52 @@
 # Gestionado por Chezmoi - Senior Windows Workflow
 # =============================================================================
 
-# -- 0. FIX PATH (Asegurar Scoop) ---------------------------------------------
-$ScoopPath = "$env:USERPROFILE\scoop\shims"
-if ($env:Path -notlike "*$ScoopPath*") {
-    $env:Path += ";$ScoopPath"
+# -- 0. FIX PATH (Asegurar binarios de Dotfiles) ------------------------------
+$PathsToAdd = @(
+    "$HOME\bin",
+    "$env:USERPROFILE\scoop\shims"
+)
+
+foreach ($p in $PathsToAdd) {
+    if (Test-Path $p -and $env:Path -notlike "*$p*") {
+        $env:Path = "$p;$env:Path"
+    }
 }
 
 # -- 1. VARIABLES DE ENTORNO --------------------------------------------------
 $env:STARSHIP_CONFIG = "$HOME\.config\starship.toml"
 
 # -- 2. INICIALIZACIÓN DE HERRAMIENTAS ----------------------------------------
-if (Get-Command starship -ErrorAction SilentlyContinue) {
+if (Get-Command starship.exe -ErrorAction SilentlyContinue) {
     Invoke-Expression (&starship init powershell)
 }
 
-if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+if (Get-Command zoxide.exe -ErrorAction SilentlyContinue) {
     Invoke-Expression (&zoxide init powershell)
 }
 
-# -- 3. FUNCIONES DE ORQUESTACIÓN (Reemplazo de Justfile) ----------------------
+# -- 3. FUNCIONES DE ORQUESTACIÓN (Native PowerShell) -------------------------
 
 # Aplicar dotfiles
 function apply {
     Write-Host "▶ Aplicando dotfiles..." -ForegroundColor Cyan
-    chezmoi apply
+    & chezmoi.exe apply --force
 }
 
 # Guardar cambios en el repo
 function save {
     param([string]$msg = "feat: update dotfiles")
     Write-Host "▶ Guardando cambios en el repo..." -ForegroundColor Cyan
-    chezmoi git add -- .
-    chezmoi git commit -- -m $msg
-    chezmoi git push
+    & chezmoi.exe git add -- .
+    & chezmoi.exe git commit -- -m $msg
+    & chezmoi.exe git push
 }
 
 # Bootstrap de WSL (Zero-Touch)
 function bootstrap-wsl {
     $script = "$HOME\.local\bin\bootstrap-wsl.ps1"
     if (Test-Path $script) {
+        Write-Host "▶ Iniciando bootstrap de WSL..." -ForegroundColor Cyan
         powershell.exe -NoProfile -ExecutionPolicy Bypass -File $script
     } else {
         Write-Error "Script de bootstrap no encontrado en $script"
@@ -68,7 +75,7 @@ if (Get-Module -ListAvailable -Name PSReadLine) {
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 }
 
-if (Get-Command starship -ErrorAction SilentlyContinue) {
+if (Get-Command starship.exe -ErrorAction SilentlyContinue) {
     Write-Host "󰇄  Entorno Windows Dotfiles Cargado" -ForegroundColor Cyan
 }
 {{- end -}}
