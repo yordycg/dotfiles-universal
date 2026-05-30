@@ -1,57 +1,74 @@
-# Directorios de organizacion interna - nunca van a $HOME
-home/
-hosts/
-scripts/
-docs/
+# .chezmoignore — Exclusión total por OS
+# Regla de oro: chezmoi evalúa este archivo con el motor de templates.
+# .chezmoi.os siempre está disponible — no necesita hasKey.
+# Las variables de data (isWSL, isServer, etc.) SÍ necesitan hasKey
+# porque en el primer run pueden no existir aún.
 
-# Archivos generados dinamicamente
-.config/kitty/colors.conf
-.config/tmux/colors.conf
-.config/sway/colors
-.config/waybar/colors.css
+# ── Directorios de organización interna ──────────────────────────
+# Nunca deben llegar a $HOME
+docs/**
+workspace/**
 
-# --- EXCLUSIONES POR OS ---
+# Scripts en carpeta scripts/ son ejecutados por el orchestrator,
+# no gestionados directamente por chezmoi como archivos de destino.
+scripts/**
 
+# ── EXCLUSIONES LINUX: ignorar todo lo de Windows ────────────────
+{{ if ne .chezmoi.os "windows" -}}
+# Scripts de bootstrap Windows
+run_once_before_01-clean-old-dotfiles.ps1.tmpl
+run_once_after_99-windows-bootstrap.ps1.tmpl
+
+# Paths de Windows que no existen en Linux
+AppData/**
+Documents/PowerShell/**
+{{ end -}}
+
+# ── EXCLUSIONES WINDOWS: ignorar todo lo de Linux ────────────────
 {{ if eq .chezmoi.os "windows" -}}
-# Windows: Ignorar scripts de Linux (evitar Win32 error)
-# Usamos patrones que capturan cualquier script de linux
+# CRÍTICO: estos scripts tienen prefijo run_/run_onchange_/run_once_ sin .ps1
+# chezmoi en Windows los intentaría ejecutar como Win32 → error fatal.
+# Renombrarlos a script-linux-* los saca del sistema de run_ de chezmoi,
+# pero este ignore es la red de seguridad definitiva.
 script-linux-*
+run_onchange_after_linux-orchestrator.sh.tmpl
 run_onchange_after_linux-orchestrator.sh
-.config/sway/**
-.config/waybar/**
-.config/mako/**
-.config/kitty/**
-.config/flavours/**
-.config/systemd/**
-.config/zsh/**
-.local/share/flavours/**
-{{- end }}
 
-{{ if eq .chezmoi.os "linux" -}}
-# Linux: Ignorar scripts de Windows
-run_once_*.ps1
-{{- end }}
+# Configuraciones exclusivas de Linux desktop
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/mako/**
+dot_config/kitty/**
+dot_config/flavours/**
+dot_config/systemd/**
+dot_config/zsh/**
+dot_local/share/flavours/**
 
-# Perfiles
-{{ if not (and (hasKey . "isLaptop") .isLaptop) }}
-hosts/laptop/**
-{{ end }}
-{{ if not (and (hasKey . "isDesktop") .isDesktop) }}
-hosts/desktop/**
-{{ end }}
+# Firefox — no aplica en Windows via chezmoi
+dot_mozilla/**
 
-# Sway: solo en Linux nativo
-{{ if eq .chezmoi.os "windows" }}
-home/profile_sway/**
-home/os_linux/**
-{{ end }}
+# Archivos de colores generados en Linux
+dot_config/kitty/colors.conf
+dot_config/tmux/colors.conf
+dot_config/sway/colors
+dot_config/waybar/colors.css
+{{ end -}}
 
-# WSL
-{{ if not (and (hasKey . "isWSL") .isWSL) }}
-home/profile_wsl/**
-{{ end }}
+# ── EXCLUSIONES WSL: subconjunto de Linux, sin GUI ───────────────
+{{ if and (ne .chezmoi.os "windows") (not (and (hasKey . "isWSL") .isWSL)) -}}
+# Estos solo van en WSL — ignorar en Linux nativo si no es WSL
+# (vacío por ahora — expandir si se agrega home/profile_wsl/)
+{{ end -}}
 
-# Windows
-{{ if ne .chezmoi.os "windows" }}
-home/os_windows/**
-{{ end }}
+# ── EXCLUSIONES SERVIDOR: sin GUI, sin configs de desktop ────────
+{{ if and (ne .chezmoi.os "windows") (not (and (hasKey . "isServer") .isServer)) -}}
+# Nada específico de servidor debe llegar a laptops/desktops
+# (expandir cuando se agregue carpeta hosts/server/)
+{{ end -}}
+
+# ── Archivos generados dinámicamente ─────────────────────────────
+# Chezmoi no debe gestionar estos, los generan los scripts
+dot_config/kitty/colors.conf
+dot_config/tmux/colors.conf
+dot_config/sway/colors
+dot_config/waybar/colors.css

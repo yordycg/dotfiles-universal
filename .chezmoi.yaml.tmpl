@@ -1,19 +1,43 @@
-{{- $githubToken := env "GITHUB_TOKEN" -}}
+{{/* ============================================================
+     .chezmoi.yaml.tmpl — Resiliente, Zero-Touch, Idempotente
+     Regla: NUNCA llamar decrypt si la key o el archivo no existe.
+     NUNCA llamar promptStringOnce si ya tenemos el valor.
+     ============================================================ */}}
+
+{{/* ── 1. GITHUB TOKEN ──────────────────────────────────────────
+     Orden de precedencia:
+       1. Env var GITHUB_TOKEN  (inyectada por bootstrap-wsl o CI)
+       2. Valor ya persistido en chezmoi data (re-ejecuciones)
+       3. gh CLI  (si está disponible y autenticado)
+       4. Prompt interactivo (único fallback humano)
+     ──────────────────────────────────────────────────────────── */}}
+{{- $githubToken := "" -}}
+{{- if env "GITHUB_TOKEN" -}}
+{{-   $githubToken = env "GITHUB_TOKEN" -}}
+{{- else if and (hasKey . "githubToken") .githubToken -}}
+{{-   $githubToken = .githubToken -}}
+{{- else -}}
+{{-   $ghCli := lookPath "gh" -}}
+{{-   if $ghCli -}}
+{{-     $out := output "gh" "auth" "token" | trim -}}
+{{-     if $out -}}
+{{-       $githubToken = $out -}}
+{{-     end -}}
+{{-   end -}}
+{{- end -}}
 {{- if not $githubToken -}}
 {{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
 {{- end -}}
-{{- $forgejoToken := "" -}}
-{{- $ageKeyFile := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
-{{- $secretsPath := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
-{{- if and (stat $ageKeyFile) (stat $secretsPath) -}}
-{{-   $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
-{{- end -}}
 
-{{- $isLaptop := false -}}
-{{- $isDesktop := false -}}
-{{- $isWSL := false -}}
-{{- $isServer := false -}}
+{{/* ── 2. DETECCIÓN DE ENTORNO ──────────────────────────────────
+     Orden importa: WSL debe detectarse ANTES que isDesktop genérico
+     porque en WSL, .chezmoi.os también es "linux".
+     ──────────────────────────────────────────────────────────── */}}
 {{- $isWindows := false -}}
+{{- $isWSL     := false -}}
+{{- $isLaptop  := false -}}
+{{- $isServer  := false -}}
+{{- $isDesktop := false -}}
 
 {{- if eq .chezmoi.os "windows" -}}
 {{-   $isWindows = true -}}
@@ -30,22 +54,51 @@
 {{-   end -}}
 {{- end -}}
 
+{{/* ── 3. FORGEJO TOKEN vía Age ─────────────────────────────────
+     CRÍTICO: solo intentar decrypt si:
+       a) El archivo key.txt existe en disco
+       b) El archivo .age de secretos existe en disco
+     Sin ambas condiciones, forgejoToken queda "" y no falla.
+     En Windows nunca hay age key → nunca se intenta.
+     ──────────────────────────────────────────────────────────── */}}
+{{- $forgejoToken := "" -}}
+{{- if not $isWindows -}}
+{{-   $ageKeyFile   := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
+{{-   $secretsPath  := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
+{{-   if and (stat $ageKeyFile) (stat $secretsPath) -}}
+{{-     $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
+{{-   end -}}
+{{- end -}}
+
+{{/* ── 4. CONFIGURACIÓN DE ENCRIPTACIÓN ─────────────────────────
+     Solo habilitar age si la key existe en disco.
+     En Windows o en primer bootstrap sin key, omitir el bloque
+     para no causar "encryption not configured".
+     ──────────────────────────────────────────────────────────── */}}
+{{- $ageKeyFile := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
+{{- $hasAgeKey  := and (not $isWindows) (stat $ageKeyFile | not | not) -}}
+
+{{/* ── OUTPUT YAML ──────────────────────────────────────────────*/}}
+{{ if $hasAgeKey -}}
 encryption: "age"
 age:
   identity: "~/.config/chezmoi/key.txt"
   recipient: "age1w93unwnu802h9vkygj2d4dxmu23yghw9kd39thwgc0susmsu7spscwp0wa"
+{{ end -}}
+
 bitwarden:
   base_url: "https://vault.home"
+
 data:
-  isLaptop: {{ $isLaptop }}
+  isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
-  isWSL: {{ $isWSL }}
-  isServer: {{ $isServer }}
+  isWSL:     {{ $isWSL }}
+  isServer:  {{ $isServer }}
   isWindows: {{ $isWindows }}
-  os: {{ .chezmoi.os }}
-  hostname: {{ .chezmoi.hostname }}
+  os:        {{ .chezmoi.os }}
+  hostname:  {{ .chezmoi.hostname }}
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
-  gitName: "yordycg"
-  gitEmail: "yordy.carmona8@gmail.com"
-  githubToken: {{ $githubToken | quote }}
+  gitName:   "yordycg"
+  gitEmail:  "yordy.carmona8@gmail.com"
+  githubToken:  {{ $githubToken | quote }}
   forgejoToken: {{ $forgejoToken | quote }}
