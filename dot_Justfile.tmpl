@@ -58,8 +58,8 @@ save MSG="feat: update dotfiles":
 # [WINDOWS ONLY] Configurar la nueva distro WSL con toda la identidad
 bootstrap-wsl:
 	@echo "==> Inyectando identidad en WSL Ubuntu-24.04..."
-	@powershell -Command "if (Test-Path ~/.config/chezmoi/key.txt) { wsl -d Ubuntu-24.04 -- bash -c 'mkdir -p ~/.config/chezmoi' ; cat ~/.config/chezmoi/key.txt | wsl -d Ubuntu-24.04 -- bash -c 'cat > ~/.config/chezmoi/key.txt' } else { Write-Host '⚠ No se encontró llave de Age en Windows. Se pedirá manualmente en WSL.' -ForegroundColor Yellow }"
-	@wsl -d Ubuntu-24.04 -- bash -ic "sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b ~/.local/bin init --apply yordycg"
+	@powershell -Command "if (Test-Path $HOME\.config\chezmoi\key.txt) { wsl -d Ubuntu-24.04 -- bash -c 'mkdir -p ~/.config/chezmoi'; Get-Content $HOME\.config\chezmoi\key.txt | wsl -d Ubuntu-24.04 -- bash -c 'cat > ~/.config/chezmoi/key.txt' }"
+	@wsl -d Ubuntu-24.04 -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin init --apply yordycg"
 {{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---
