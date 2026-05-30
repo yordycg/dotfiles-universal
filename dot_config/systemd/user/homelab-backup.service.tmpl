@@ -1,4 +1,4 @@
-{{- if .isServer -}}
+{{- if and (eq .chezmoi.os "linux") .isServer -}}
 [Unit]
 Description=Backup diario del Homelab (Restic)
 After=network-online.target

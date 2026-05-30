@@ -2,7 +2,7 @@
 #!/usr/bin/env bash
 # {{ .chezmoi.sourceDir }}/scripts/run_onchange_after_30-install-flatpaks.sh.tmpl
 
-{{ if or .isLaptop .isDesktop -}}
+{{ if and (eq .chezmoi.os "linux") (or .isLaptop .isDesktop) -}}
 # Hash de la lista de paquetes: {{ include "dot_config/flatpak/packages.txt" | sha256sum }}
 
 if ! command -v flatpak &> /dev/null; then

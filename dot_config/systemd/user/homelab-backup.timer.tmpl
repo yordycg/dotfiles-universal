@@ -1,4 +1,4 @@
-{{- if .isServer -}}
+{{- if and (eq .chezmoi.os "linux") .isServer -}}
 [Unit]
 Description=Ejecutar backup del Homelab cada madrugada
 
