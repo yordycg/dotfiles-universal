@@ -41,8 +41,11 @@ edit FILE:
 # Commit rápido del repo de dotfiles
 save MSG="feat: update dotfiles":
 {{ if eq .chezmoi.os "windows" -}}
-    $src = chezmoi source-path; git -C $src add .; git -C $src commit -m '{{ print "{{" }}MSG{{ print "}}" }}'; git -C $src push
+    git -C "$(chezmoi source-path)" add .
+    git -C "$(chezmoi source-path)" commit -m '{{ print "{{" }}MSG{{ print "}}" }}'
+    git -C "$(chezmoi source-path)" push
 {{- else -}}
+
     cd $(chezmoi source-path) && git add . && git commit -m "{{ print "{{" }}MSG{{ "}}" }}" && git push
 {{- end }}
 
