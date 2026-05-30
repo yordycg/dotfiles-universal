@@ -8,8 +8,8 @@ palette = 'default'
 # -- Prompt Format --
 format = """
 $os\
-{{ if .isServer }}$hostname[󰇙](fg:bright-black){{ end }}\
 $username\
+{{ if .isServer }}[󰇄 ](fg:color_hostname){{ end }}\
 $directory\
 $git_branch\
 $git_status\
@@ -24,7 +24,6 @@ $python\
 $package\
 $docker_context\
 $kubernetes\
-$shell\
 $container\
 $jobs\
 $cmd_duration\

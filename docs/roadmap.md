@@ -138,7 +138,7 @@ Configuración dual para máxima versatilidad:
 - [x] **UI Minimalista**: Configuración de temas e iconos Nerd Font (solo iconos en prompts y selectores).
 - [x] **Wallpaper Picker "Senior Grid"**: Selector visual integrado con generación de miniaturas y transiciones vía `swww`.
 - [x] **Integración de Sistema**: Scripts robustos para Portapapeles (`cliphist`), Menú de Apagado y Lanzador de Aplicaciones con rutas absolutas.
-- [ ] **Theming Dinámico**: Integrar `wallust` o similar para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
+- [x] **Theming Dinámico**: Integración de `wallust` para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
 
 ---
 
