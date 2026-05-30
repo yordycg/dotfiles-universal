@@ -4,18 +4,19 @@ hosts/
 scripts/
 docs/
 
-# Archivos generados dinamicamente (Themes/Flavours/Locales)
+# Archivos generados dinamicamente
 .config/kitty/colors.conf
 .config/tmux/colors.conf
 .config/sway/colors
 .config/waybar/colors.css
 
-# --- EXCLUSIONES POR OS (CRITICO PARA BOOTSTRAP) ---
+# --- EXCLUSIONES POR OS ---
 
 {{ if eq .chezmoi.os "windows" -}}
-# Windows: Ignorar scripts de Linux para evitar errores de Win32 Application
-run_*.sh
-run_*.sh.tmpl
+# Windows: Ignorar scripts de Linux (evitar Win32 error)
+# Usamos patrones que capturan cualquier script de linux
+script-linux-*
+run_onchange_after_linux-orchestrator.sh
 .config/sway/**
 .config/waybar/**
 .config/mako/**
@@ -28,11 +29,10 @@ run_*.sh.tmpl
 
 {{ if eq .chezmoi.os "linux" -}}
 # Linux: Ignorar scripts de Windows
-run_*.ps1
-run_*.ps1.tmpl
+run_once_*.ps1
 {{- end }}
 
-# Perfiles: solo aplicar el que corresponde
+# Perfiles
 {{ if not (and (hasKey . "isLaptop") .isLaptop) }}
 hosts/laptop/**
 {{ end }}
@@ -40,18 +40,18 @@ hosts/laptop/**
 hosts/desktop/**
 {{ end }}
 
-# Sway: solo en Linux nativo con entorno grafico
+# Sway: solo en Linux nativo
 {{ if eq .chezmoi.os "windows" }}
 home/profile_sway/**
 home/os_linux/**
 {{ end }}
 
-# WSL: solo cuando estemos en WSL
+# WSL
 {{ if not (and (hasKey . "isWSL") .isWSL) }}
 home/profile_wsl/**
 {{ end }}
 
-# Windows: solo en windows nativo
+# Windows
 {{ if ne .chezmoi.os "windows" }}
 home/os_windows/**
 {{ end }}

@@ -59,10 +59,14 @@ save MSG="feat: update dotfiles":
 {{- end }}
 
 {{ if eq .chezmoi.os "windows" -}}
-# [WINDOWS ONLY] Configurar la nueva distro WSL con toda la identidad (Zero-Touch)
+# [WINDOWS ONLY] Configurar la nueva distro WSL con toda la identidad
 bootstrap-wsl:
-	@echo "==> Inyectando identidad en WSL Ubuntu-24.04..."
-	@powershell -Command "$token = gh auth token; $key = Get-Content $HOME\.config\chezmoi\key.txt -Raw -ErrorAction SilentlyContinue; wsl -d Ubuntu-24.04 -- bash -c \"mkdir -p ~/.config/chezmoi; if [ -n '$key' ]; then echo '$key' > ~/.config/chezmoi/key.txt; fi; curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin; export GITHUB_TOKEN='$token'; ~/.local/bin/chezmoi init --apply --data githubToken='$token' yordycg\""
+	@echo "==> Inyectando identidad en WSL..."
+	@powershell -Command "$key = Get-Content $HOME\.config\chezmoi\key.txt -Raw -ErrorAction SilentlyContinue; if ($key) { wsl -d Ubuntu-24.04 -- bash -c \"mkdir -p ~/.config/chezmoi; echo '$key' > ~/.config/chezmoi/key.txt\" }"
+	@echo "==> Instalando chezmoi en WSL..."
+	@wsl -d Ubuntu-24.04 -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
+	@echo "==> Inicializando configuración..."
+	@wsl -d Ubuntu-24.04 -- bash -c "~/.local/bin/chezmoi init --apply --data githubToken=$(gh auth token) yordycg"
 {{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---

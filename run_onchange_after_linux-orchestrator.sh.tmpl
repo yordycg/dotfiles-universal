@@ -1,0 +1,24 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# Linux/WSL Master Orchestrator
+# =============================================================================
+set -e
+
+SCRIPTS_DIR="{{ .chezmoi.sourceDir }}"
+
+echo "▶ Iniciando Orquestador de Linux..."
+
+# Ejecutar scripts en orden lógico
+bash "$SCRIPTS_DIR/script-linux-before_00-install-packages.sh.tmpl"
+bash "$SCRIPTS_DIR/script-linux-after_10-install-fonts.sh.tmpl"
+bash "$SCRIPTS_DIR/script-linux-after_20-install-mise.sh.tmpl"
+bash "$SCRIPTS_DIR/script-linux-after_90-setup-ssh.sh.tmpl"
+
+{{ if .isWSL -}}
+echo "✓ Configuración de WSL completada."
+{{- else -}}
+echo "✓ Configuración de Linux nativo completada."
+{{- end }}
+
+{{- end }}
