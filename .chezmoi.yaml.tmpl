@@ -2,9 +2,10 @@
 {{- if not $githubToken -}}
 {{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
 {{- end -}}
-{{- $secretsPath := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
 {{- $forgejoToken := "" -}}
-{{- if stat $secretsPath -}}
+{{- $ageKeyFile := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
+{{- $secretsPath := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- if and (stat $ageKeyFile) (stat $secretsPath) -}}
 {{-   $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
 {{- end -}}
 {{- $isLaptop := false -}}
