@@ -8,11 +8,13 @@
 {{- if and (stat $ageKeyFile) (stat $secretsPath) -}}
 {{-   $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
 {{- end -}}
+
 {{- $isLaptop := false -}}
 {{- $isDesktop := false -}}
 {{- $isWSL := false -}}
 {{- $isServer := false -}}
 {{- $isWindows := false -}}
+
 {{- if eq .chezmoi.os "windows" -}}
 {{-   $isWindows = true -}}
 {{-   $isDesktop = true -}}
@@ -27,6 +29,7 @@
 {{-     $isDesktop = true -}}
 {{-   end -}}
 {{- end -}}
+
 encryption: "age"
 age:
   identity: "~/.config/chezmoi/key.txt"
@@ -34,7 +37,6 @@ age:
 bitwarden:
   base_url: "https://vault.home"
 data:
-  githubToken: {{ $githubToken | quote }}
   isLaptop: {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
   isWSL: {{ $isWSL }}
@@ -45,4 +47,5 @@ data:
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
   gitName: "yordycg"
   gitEmail: "yordy.carmona8@gmail.com"
+  githubToken: {{ $githubToken | quote }}
   forgejoToken: {{ $forgejoToken | quote }}
