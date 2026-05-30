@@ -33,7 +33,7 @@ fi
 
 flavours apply "$THEME"
 
-{{ if not .isServer -}}
+{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") (not .isServer) -}}
 # Reload Graphical Apps
 pgrep -x sway > /dev/null && swaymsg reload
 pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
@@ -47,6 +47,6 @@ if [ -n "${TMUX:-}" ]; then
 fi
 
 echo "✓ Theme applied: $THEME"
-{{ if not .isServer -}}
+{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") (not .isServer) -}}
 echo "  (Neovim might require restart or :colorscheme catppuccin)"
 {{- end }}

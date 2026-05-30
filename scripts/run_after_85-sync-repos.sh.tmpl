@@ -7,7 +7,7 @@
 set -euo pipefail
 
 # No ejecutar en el servidor
-{{ if .isServer -}}
+{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") .isServer -}}
 exit 0
 {{- end }}
 

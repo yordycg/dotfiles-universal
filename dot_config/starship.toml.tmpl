@@ -9,7 +9,7 @@ palette = 'default'
 format = """
 $os\
 $username\
-{{ if .isServer }}[󰇄 ](fg:color_hostname){{ end }}\
+{{ if and (hasKey . "isServer") .isServer }}[󰇄 ](fg:color_hostname){{ end }}\
 $directory\
 $git_branch\
 $git_status\

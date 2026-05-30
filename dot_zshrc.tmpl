@@ -63,7 +63,7 @@ setopt HIST_FIND_NO_DUPS
 
 # -- AUTO-TMUX / SESSION MANAGER (Senior Workflow) ----------------------------
 if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
-    {{ if .isServer -}}
+    {{ if and (eq .chezmoi.os "linux") .isServer -}}
     # Función para listar sesiones y proyectos
     function s_manager() {
         # 1. Obtener sesiones activas

@@ -21,7 +21,7 @@ setup_dual_remote() {
     local name=$2
     local forgejo_url=$3
 
-    {{ if .isServer -}}
+    {{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") .isServer -}}
     # En el servidor, Forgejo está en localhost:2222
     if [[ "$name" == "Chezmoi Source" ]]; then
         forgejo_url="ssh://git@localhost:2222/yordycg/dotfiles-universal.git"
