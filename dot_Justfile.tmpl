@@ -29,11 +29,14 @@ update:
 edit FILE:
     chezmoi edit {{ print "{{" }}FILE{{ print "}}" }} --apply
 
+# chezmoi git corre git dentro del source-path sin cd ni -C ni tokens ilegales.
 save MSG="feat: update dotfiles":
-{{ if eq .chezmoi.os "windows" -}}
-    Push-Location (chezmoi source-path); git add .; git commit -m '{{ print "{{" }}MSG{{ "}}" }}'; git push; Pop-Location
-{{- else -}}
+{{ if ne .chezmoi.os "windows" -}}
     cd $(chezmoi source-path) && git add . && git commit -m "{{ print "{{" }}MSG{{ "}}" }}" && git push
+{{- else -}}
+    chezmoi git add -- .
+    chezmoi git commit -- -m "{{ print "{{" }}MSG{{ "}}" }}"
+    chezmoi git push
 {{- end }}
 
 {{ if ne .chezmoi.os "windows" -}}
@@ -54,19 +57,16 @@ install:
 
 {{ if eq .chezmoi.os "windows" -}}
 # ── Windows Only ──────────────────────────────────────────────────
+# La logica PS compleja va en bootstrap-wsl.ps1 — el Justfile solo lo llama.
 
-bootstrap-wsl DISTRO="Ubuntu-24.04":
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "mkdir -p ~/.config/chezmoi ~/.local/bin"
-    if (Test-Path "$HOME\.config\chezmoi\key.txt") { Get-Content "$HOME\.config\chezmoi\key.txt" -Raw -Encoding UTF8 | wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "cat > ~/.config/chezmoi/key.txt && chmod 600 ~/.config/chezmoi/key.txt" }
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
-    $t = (gh auth token 2>$null); if (-not $t) { Write-Error "gh no autenticado"; exit 1 }
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "GITHUB_TOKEN=$t ~/.local/bin/chezmoi init --apply yordycg"
+bootstrap-wsl:
+    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$HOME\.local\bin\bootstrap-wsl.ps1"
 
-test-wsl-ssh DISTRO="Ubuntu-24.04":
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "ssh homelab 'echo OK'"
+test-wsl-ssh:
+    wsl -d Ubuntu-24.04 -- bash -c "ssh homelab 'echo OK'"
 
-hl SESSION="main" DISTRO="Ubuntu-24.04":
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -ic "~/.local/bin/hl {{ print "{{" }}SESSION{{ print "}}" }}"
+hl:
+    wsl -d Ubuntu-24.04 -- bash -ic "~/.local/bin/hl main"
 {{- end }}
 
 {{ if and (ne .chezmoi.os "windows") (hasKey . "isServer") .isServer -}}
