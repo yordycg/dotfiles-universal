@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_once_after_90-setup-ssh.sh.tmpl
@@ -152,3 +153,4 @@ if ssh -T git@github.com -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5
 else
     log_warn "La conexión falló o requiere intervención, pero la identidad está configurada."
 fi
+{{- end }}

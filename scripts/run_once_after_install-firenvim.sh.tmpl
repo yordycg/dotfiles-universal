@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_once_after_install-firenvim.sh.tmpl
@@ -46,3 +47,4 @@ if nvim --headless \
 else
     log_warn "Error durante la ejecución de Neovim para Firenvim."
 fi
+{{- end }}

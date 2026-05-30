@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_84-sync-core-repos.sh.tmpl
@@ -56,3 +57,4 @@ elif [ -d "$HOME/homelab-infra" ]; then
 fi
 
 log_ok "Configuración de remotes core finalizada."
+{{- end }}

@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_10-install-fonts.sh.tmpl
@@ -64,3 +65,4 @@ fc-cache -f > /dev/null
 # Guardar estado exitoso
 echo "$CURRENT_HASH" > "$STATE_FILE"
 log_ok "Fuentes instaladas y sincronizadas."
+{{- end }}

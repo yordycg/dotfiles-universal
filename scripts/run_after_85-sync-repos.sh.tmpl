@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/sync-forgejo-repos.sh.tmpl
@@ -82,3 +83,4 @@ echo "$REPOS_JSON" | jq -c '.[]' | while read -r repo; do
         cd - > /dev/null
     fi
 done
+{{- end }}

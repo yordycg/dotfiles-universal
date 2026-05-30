@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # {{ .chezmoi.sourceDir }}/scripts/run_onchange_after_30-install-flatpaks.sh.tmpl
 
@@ -31,4 +32,5 @@ echo "✓ Aplicaciones Flatpak sincronizadas."
 {{ else -}}
 # Saltando instalación de Flatpaks: Este nodo no es Laptop ni Desktop.
 exit 0
+{{- end }}
 {{- end }}

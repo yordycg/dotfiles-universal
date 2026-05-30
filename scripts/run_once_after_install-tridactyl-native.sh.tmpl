@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_once_after_install-tridactyl-native.sh.tmpl
@@ -31,3 +32,4 @@ curl -fsSl \
   | bash
 
 log_ok "Instalación completada exitosamente."
+{{- end }}

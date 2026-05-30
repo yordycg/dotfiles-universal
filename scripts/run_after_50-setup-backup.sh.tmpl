@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_50-setup-backup.sh.tmpl
@@ -40,3 +41,4 @@ if [ ! -f "/var/lib/systemd/linger/$USER" ]; then
 fi
 
 log_ok "Sincronización de backup completada."
+{{- end }}

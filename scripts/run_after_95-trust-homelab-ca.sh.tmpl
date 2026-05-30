@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_95-trust-homelab-ca.sh.tmpl
@@ -120,3 +121,4 @@ install_cert() {
 install_cert "$TEMP_DIR/root.crt" "$ROOT_CERT_NAME"
 install_cert "$TEMP_DIR/intermediate.crt" "$INT_CERT_NAME"
 install_cert "$TEMP_DIR/bundle.crt" "$BUNDLE_NAME"
+{{- end }}

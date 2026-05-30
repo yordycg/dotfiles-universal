@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_before_00-install-packages.sh.tmpl
@@ -64,3 +65,4 @@ fi
 # Guardar estado exitoso
 echo "$CURRENT_HASH" > "$STATE_FILE"
 log_ok "Instalación completada exitosamente."
+{{- end }}

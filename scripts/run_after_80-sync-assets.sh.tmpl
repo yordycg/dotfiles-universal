@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_80-sync-assets.sh.tmpl
@@ -70,3 +71,4 @@ sync_repo "git@github.com:yordycg/wallpapers.git" "git@forgejo.home:yordycg/wall
 sync_repo "git@github.com:yordycg/obsidian-notes.git" "git@forgejo.home:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian-notes" "Obsidian Notes"
 
 log_ok "Sincronización de assets finalizada."
+{{- end }}

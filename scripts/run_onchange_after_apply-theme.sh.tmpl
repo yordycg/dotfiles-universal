@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_onchange_after_apply-theme.sh.tmpl
@@ -114,3 +115,4 @@ if command -v flavours &>/dev/null; then
 fi
 
 log_ok "Personalización visual completada exitosamente."
+{{- end }}

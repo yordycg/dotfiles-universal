@@ -1,3 +1,4 @@
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_20-install-mise.sh.tmpl
@@ -55,3 +56,4 @@ eval "$("$MISE_BIN" activate bash)"
 # Guardar estado exitoso
 echo "$CURRENT_HASH" > "$STATE_FILE"
 log_ok "Entorno de desarrollo actualizado."
+{{- end }}
