@@ -10,9 +10,12 @@ docs/
 .config/sway/colors
 .config/waybar/colors.css
 
-# Windows: Exclusión AGRESIVA de todo lo que sea Linux
-{{- if eq .chezmoi.os "windows" }}
-scripts/linux/**
+# --- EXCLUSIONES POR OS (CRITICO PARA BOOTSTRAP) ---
+
+{{ if eq .chezmoi.os "windows" -}}
+# Windows: Ignorar scripts de Linux para evitar errores de Win32 Application
+run_*.sh
+run_*.sh.tmpl
 .config/sway/**
 .config/waybar/**
 .config/mako/**
@@ -23,16 +26,17 @@ scripts/linux/**
 .local/share/flavours/**
 {{- end }}
 
-# Linux: Exclusión de scripts de Windows
-{{- if eq .chezmoi.os "linux" }}
-scripts/windows/**
+{{ if eq .chezmoi.os "linux" -}}
+# Linux: Ignorar scripts de Windows
+run_*.ps1
+run_*.ps1.tmpl
 {{- end }}
 
 # Perfiles: solo aplicar el que corresponde
-{{ if not .isLaptop }}
+{{ if not (and (hasKey . "isLaptop") .isLaptop) }}
 hosts/laptop/**
 {{ end }}
-{{ if not .isDesktop }}
+{{ if not (and (hasKey . "isDesktop") .isDesktop) }}
 hosts/desktop/**
 {{ end }}
 
@@ -43,7 +47,7 @@ home/os_linux/**
 {{ end }}
 
 # WSL: solo cuando estemos en WSL
-{{ if not .isWSL }}
+{{ if not (and (hasKey . "isWSL") .isWSL) }}
 home/profile_wsl/**
 {{ end }}
 
