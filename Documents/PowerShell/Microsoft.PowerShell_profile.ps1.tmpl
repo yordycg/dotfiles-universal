@@ -11,7 +11,7 @@ $PathsToAdd = @(
 )
 
 foreach ($p in $PathsToAdd) {
-    if (Test-Path $p -and $env:Path -notlike "*$p*") {
+    if ((Test-Path $p) -and ($env:Path -notlike "*$p*")) {
         $env:Path = "$p;$env:Path"
     }
 }
@@ -21,11 +21,11 @@ $env:STARSHIP_CONFIG = "$HOME\.config\starship.toml"
 
 # -- 2. INICIALIZACIÓN DE HERRAMIENTAS ----------------------------------------
 if (Get-Command starship.exe -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&starship init powershell)
+    starship init powershell | Out-String | Invoke-Expression
 }
 
 if (Get-Command zoxide.exe -ErrorAction SilentlyContinue) {
-    Invoke-Expression (&zoxide init powershell)
+    zoxide init powershell | Out-String | Invoke-Expression
 }
 
 # -- 3. FUNCIONES DE ORQUESTACIÓN (Native PowerShell) -------------------------
