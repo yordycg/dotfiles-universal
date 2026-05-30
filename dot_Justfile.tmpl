@@ -13,7 +13,9 @@ default:
 
 # Aplicar todos los dotfiles (Chezmoi)
 apply:
-	{{ if ne .chezmoi.os "windows" -}}@sudo -v{{- end }}
+{{- if ne .chezmoi.os "windows" }}
+	@sudo -v
+{{- end }}
 	chezmoi apply
 
 # Ver cambios pendientes
@@ -46,11 +48,11 @@ install:
 
 # Commit rapido del repo de dotfiles
 save MSG="feat: update dotfiles":
-	{{ if eq .chezmoi.os "windows" -}}
+{{- if eq .chezmoi.os "windows" }}
 	powershell -Command "cd $(chezmoi source-path); git add .; git commit -m '{{ "{{" }}MSG{{ "}}" }}'; git push"
-	{{- else -}}
+{{- else }}
 	cd $(chezmoi source-path) && git add . && git commit -m "{{ "{{" }}MSG{{ "}}" }}" && git push
-	{{- end }}
+{{- end }}
 
 {{ if eq .chezmoi.os "windows" -}}
 # [WINDOWS ONLY] Configurar la nueva distro WSL con toda la identidad
@@ -61,8 +63,7 @@ bootstrap-wsl:
 {{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---
-{{- if ne .chezmoi.os "windows" }}
-{{- if and (ne .chezmoi.os "windows") .isServer }}
+{{- if and (ne .chezmoi.os "windows") (hasKey . "isServer") .isServer }}
 # Ver estado de todos los contenedores del Homelab
 homelab-status:
 	cd $HOME/.local/share/homelab-infra && ./manage.sh status
@@ -74,5 +75,4 @@ homelab-logs SERVICE:
 # Actualizar y reiniciar la infraestructura
 homelab-update:
 	cd $HOME/.local/share/homelab-infra && ./deploy.sh
-{{- end }}
 {{- end }}
