@@ -10,6 +10,22 @@ docs/
 .config/sway/colors
 .config/waybar/colors.css
 
+# Windows: Exclusiones específicas para evitar errores de templates de Linux
+{{- if eq .chezmoi.os "windows" }}
+.config/sway/**
+.config/waybar/**
+.config/mako/**
+.config/kitty/**
+.config/flavours/**
+.config/systemd/**
+.config/zsh/**
+.local/share/flavours/**
+scripts/run_after_92-setup-tailscale.sh.tmpl
+scripts/run_after_95-trust-homelab-ca.sh.tmpl
+scripts/run_after_50-setup-backup.sh.tmpl
+scripts/run_after_10-install-fonts.sh.tmpl
+{{- end }}
+
 # Perfiles: solo aplicar el que corresponde
 {{ if not .isLaptop }}
 hosts/laptop/**
@@ -19,7 +35,7 @@ hosts/desktop/**
 {{ end }}
 
 # Sway: solo en Linux nativo con entorno grafico
-{{ if eq .os "windows" }}
+{{ if eq .chezmoi.os "windows" }}
 home/profile_sway/**
 home/os_linux/**
 {{ end }}
@@ -30,6 +46,6 @@ home/profile_wsl/**
 {{ end }}
 
 # Windows: solo en windows nativo
-{{ if ne .os "windows" }}
+{{ if ne .chezmoi.os "windows" }}
 home/os_windows/**
 {{ end }}
