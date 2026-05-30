@@ -10,8 +10,9 @@ docs/
 .config/sway/colors
 .config/waybar/colors.css
 
-# Windows: Exclusiones específicas para evitar errores de templates de Linux
+# Windows: Exclusión AGRESIVA de todo lo que sea Linux
 {{- if eq .chezmoi.os "windows" }}
+scripts/linux/**
 .config/sway/**
 .config/waybar/**
 .config/mako/**
@@ -20,10 +21,11 @@ docs/
 .config/systemd/**
 .config/zsh/**
 .local/share/flavours/**
-scripts/run_after_92-setup-tailscale.sh.tmpl
-scripts/run_after_95-trust-homelab-ca.sh.tmpl
-scripts/run_after_50-setup-backup.sh.tmpl
-scripts/run_after_10-install-fonts.sh.tmpl
+{{- end }}
+
+# Linux: Exclusión de scripts de Windows
+{{- if eq .chezmoi.os "linux" }}
+scripts/windows/**
 {{- end }}
 
 # Perfiles: solo aplicar el que corresponde
