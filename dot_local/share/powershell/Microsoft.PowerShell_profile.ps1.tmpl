@@ -4,6 +4,12 @@
 # Gestionado por Chezmoi - Senior Windows Workflow
 # =============================================================================
 
+# -- 0. FIX PATH (Asegurar Scoop) ---------------------------------------------
+$ScoopPath = "$env:USERPROFILE\scoop\shims"
+if ($env:Path -notlike "*$ScoopPath*") {
+    $env:Path += ";$ScoopPath"
+}
+
 # -- 1. VARIABLES DE ENTORNO --------------------------------------------------
 $env:STARSHIP_CONFIG = "$HOME\.config\starship.toml"
 
