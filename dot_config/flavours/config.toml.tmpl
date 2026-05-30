@@ -15,8 +15,8 @@ template = "fzf"
 subtemplate = "base16-default"
 rewrite = true
 
-{{ if not .isServer -}}
-# Graphical Apps (Solo Desktop/Laptop)
+{{ if and (ne .chezmoi.os "windows") (not .isServer) -}}
+# Graphical Apps (Solo Desktop/Laptop Linux)
 [[items]]
 file = "{{ .chezmoi.homeDir }}/.config/kitty/colors.conf"
 template = "kitty"
