@@ -1,6 +1,10 @@
 # Justfile -- Orquestador Global ({{ .chezmoi.hostname }})
 # Generado por Chezmoi: No editar manualmente en el HOME.
 
+{{ if eq .chezmoi.os "windows" -}}
+set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
+{{- end }}
+
 # --- Variables de Entorno y Configuracion ---
 {{ if ne .chezmoi.os "windows" -}}
 DOCKER := `if which podman >/dev/null 2>&1; then echo "podman"; else echo "docker"; fi`
