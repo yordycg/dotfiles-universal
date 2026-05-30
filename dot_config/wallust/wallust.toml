@@ -1,0 +1,11 @@
+# wallust configuration - Senior Implementation
+backend = "kmeans"
+color_space = "lab"
+threshold = 20
+filter = "dark16"
+
+[templates]
+sway = { template = "sway.wl", target = "~/.config/sway/colors" }
+kitty = { template = "kitty.wl", target = "~/.config/kitty/colors.conf" }
+waybar = { template = "waybar.wl", target = "~/.config/waybar/colors.css" }
+fzf = { template = "fzf.wl", target = "~/.config/shell/fzf_colors.sh" }

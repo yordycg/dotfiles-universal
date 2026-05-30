@@ -41,8 +41,18 @@ selection=$(list_wallpapers | rofi -dmenu -i -p "󰸉 " -theme "$ROFI_THEME")
 if [ -n "$selection" ]; then
     full_path="$WALLPAPER_DIR/$selection"
     
-    # Apply with swww (already used in sway config)
+    # 1. Apply with swww (already used in sway config)
     swww img "$full_path" --transition-type grow --transition-pos center --transition-duration 1.5
+    
+    # 2. Update colors with wallust
+    if [ -x "$HOME/.cargo/bin/wallust" ]; then
+        $HOME/.cargo/bin/wallust run "$full_path"
+        
+        # 3. Reload apps to apply new colors
+        swaymsg reload
+        pkill -USR1 kitty   # Reload kitty config
+        pkill -USR2 waybar  # Reload waybar styles without restarting
+    fi
     
     # Save current wallpaper for persistence if needed
     echo "$full_path" > "$HOME/.cache/.current_wallpaper"
