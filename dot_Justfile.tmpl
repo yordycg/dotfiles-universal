@@ -36,16 +36,16 @@ update:
 
 # Editar un dotfile y aplicar inmediatamente
 edit FILE:
-    chezmoi edit {{FILE}} --apply
+    chezmoi edit {{ print "{{" }}FILE{{ print "}}" }} --apply
 
 # Commit rápido del repo de dotfiles
 save MSG="feat: update dotfiles":
 {{ if eq .chezmoi.os "windows" -}}
     git -C (chezmoi source-path) add .
-    git -C (chezmoi source-path) commit -m '{{MSG}}'
+    git -C (chezmoi source-path) commit -m '{{ print "{{" }}MSG{{ print "}}" }}'
     git -C (chezmoi source-path) push
 {{- else -}}
-    cd $(chezmoi source-path) && git add . && git commit -m "{{MSG}}" && git push
+    cd $(chezmoi source-path) && git add . && git commit -m "{{ print "{{" }}MSG{{ "}}" }}" && git push
 {{- end }}
 
 # ═════════════════════════════════════════════════════════════════
@@ -60,14 +60,14 @@ save MSG="feat: update dotfiles":
 #   - age key en ~/.config/chezmoi/key.txt (opcional, habilita secretos)
 bootstrap-wsl DISTRO="Ubuntu-24.04":
     # ── Paso 1: Crear directorio de chezmoi en WSL ───────────────
-    wsl -d {{DISTRO}} -- bash -c "mkdir -p ~/.config/chezmoi ~/.local/bin"
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "mkdir -p ~/.config/chezmoi ~/.local/bin"
 
     # ── Paso 2: Inyectar age key si existe ───────────────────────
     $keyFile = "$HOME\.config\chezmoi\key.txt"
     if (Test-Path $keyFile) {
         Write-Host "  -> Inyectando age key en WSL..." -ForegroundColor Cyan
         $keyContent = Get-Content $keyFile -Raw -Encoding UTF8
-        $keyContent | wsl -d {{DISTRO}} -- bash -c "cat > ~/.config/chezmoi/key.txt && chmod 600 ~/.config/chezmoi/key.txt"
+        $keyContent | wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "cat > ~/.config/chezmoi/key.txt && chmod 600 ~/.config/chezmoi/key.txt"
     } else {
         Write-Host "  -> Age key no encontrada, continuando sin secretos." -ForegroundColor Yellow
     }
@@ -82,24 +82,24 @@ bootstrap-wsl DISTRO="Ubuntu-24.04":
 
     # ── Paso 4: Instalar chezmoi en WSL ─────────────────────────
     Write-Host "  -> Instalando chezmoi en WSL..." -ForegroundColor Cyan
-    wsl -d {{DISTRO}} -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
 
     # ── Paso 5: Init + Apply (token inyectado vía env, sin prompt) ──
     # CRÍTICO: el token va en variable PS primero, sin comillas anidadas.
     Write-Host "  -> Inicializando chezmoi con identidad completa..." -ForegroundColor Cyan
     $initCmd = "GITHUB_TOKEN=$ghToken ~/.local/bin/chezmoi init --apply yordycg"
-    wsl -d {{DISTRO}} -- bash -c $initCmd
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c $initCmd
 
     Write-Host "`n  Listo. WSL configurado con chezmoi." -ForegroundColor Green
-    Write-Host "  Ejecuta: wsl -d {{DISTRO}} para entrar." -ForegroundColor Green
+    Write-Host "  Ejecuta: wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} para entrar." -ForegroundColor Green
 
 # [WIN] Verificar que WSL puede conectarse al homelab
 test-wsl-ssh DISTRO="Ubuntu-24.04":
-    wsl -d {{DISTRO}} -- bash -c "ssh homelab 'echo OK: conexion exitosa desde WSL'"
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "ssh homelab 'echo OK: conexion exitosa desde WSL'"
 
 # [WIN] Abrir sesión tmux en el homelab desde PowerShell
 hl SESSION="main" DISTRO="Ubuntu-24.04":
-    wsl -d {{DISTRO}} -- bash -ic "~/.local/bin/hl {{SESSION}}"
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -ic "~/.local/bin/hl {{ print "{{" }}SESSION{{ print "}}" }}"
 
 {{- end }}
 
@@ -110,7 +110,7 @@ hl SESSION="main" DISTRO="Ubuntu-24.04":
 
 # Crear nuevo proyecto con estructura estándar
 project-new NAME CATEGORY="personal" LANG="generic":
-    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{NAME}} {{CATEGORY}} {{LANG}}
+    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ print "{{" }}NAME{{ print "}}" }} {{ print "{{" }}CATEGORY{{ print "}}" }} {{ print "{{" }}LANG{{ print "}}" }}
 
 # Instalar paquetes del sistema según distro detectada
 install:
@@ -135,7 +135,7 @@ homelab-status:
 
 # Ver logs de un servicio específico
 homelab-logs SERVICE:
-    cd $HOME/.local/share/homelab-infra && {{DOCKER}} compose -f containers/{{SERVICE}}/compose.yaml logs -f
+    cd $HOME/.local/share/homelab-infra && {{ print "{{" }}DOCKER{{ print "}}" }} compose -f containers/{{ print "{{" }}SERVICE{{ print "}}" }}/compose.yaml logs -f
 
 # Actualizar y reiniciar toda la infraestructura
 homelab-update:
