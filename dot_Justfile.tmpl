@@ -53,7 +53,8 @@ save MSG="feat: update dotfiles":
 	{{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---
-{{ if .isServer -}}
+{{- if ne .chezmoi.os "windows" }}
+{{- if .isServer }}
 # Ver estado de todos los contenedores del Homelab
 homelab-status:
 	cd $HOME/.local/share/homelab-infra && ./manage.sh status
@@ -65,4 +66,5 @@ homelab-logs SERVICE:
 # Actualizar y reiniciar la infraestructura
 homelab-update:
 	cd $HOME/.local/share/homelab-infra && ./deploy.sh
-{{- end -}}
+{{- end }}
+{{- end }}
