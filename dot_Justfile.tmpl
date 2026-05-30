@@ -57,7 +57,6 @@ save MSG="feat: update dotfiles":
 # Ver estado de todos los contenedores del Homelab
 homelab-status:
 	cd $HOME/.local/share/homelab-infra && ./manage.sh status
-{{- end }}
 
 # Ver logs de un servicio especifico del Homelab
 homelab-logs SERVICE:
@@ -66,4 +65,4 @@ homelab-logs SERVICE:
 # Actualizar y reiniciar la infraestructura
 homelab-update:
 	cd $HOME/.local/share/homelab-infra && ./deploy.sh
-{{- end }}
+{{- end -}}
