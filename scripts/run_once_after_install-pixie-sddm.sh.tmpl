@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# {{ if eq .chezmoi.os "linux" }}
+# {{ if eq .chezmoi.osRelease.id "fedora" }}
+# =============================================================================
+# scripts/run_once_after_install-pixie-sddm.sh.tmpl
+# Instalación y configuración del tema Pixie para SDDM
+# =============================================================================
+set -euo pipefail
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+log_step "Configuración de Pixie SDDM"
+
+THEME_DIR="/usr/share/sddm/themes/pixie"
+REPO_URL="https://github.com/xCaptaiN09/pixie-sddm.git"
+
+# ── 1. Instalación del Tema ──────────────────────────────────────────────────
+if [ ! -f "$THEME_DIR/Main.qml" ]; then
+    log_info "Instalando pixie-sddm en $THEME_DIR..."
+    TMP_DIR=$(mktemp -d)
+    
+    if git clone --depth 1 "$REPO_URL" "$TMP_DIR"; then
+        if [ -f "$TMP_DIR/Main.qml" ]; then
+            sudo mkdir -p "$THEME_DIR"
+            sudo cp -ra "$TMP_DIR"/. "$THEME_DIR/"
+            log_ok "Archivos del tema copiados a $THEME_DIR."
+        else
+            log_err "El repositorio clonado no contiene Main.qml. Abortando."
+        fi
+        rm -rf "$TMP_DIR"
+    else
+        log_err "No se pudo clonar el repositorio del tema."
+    fi
+else
+    log_ok "El tema pixie-sddm ya está instalado y validado."
+fi
+
+# ── 2. Configuración de SDDM ─────────────────────────────────────────────────
+SDDM_CONF_DIR="/etc/sddm.conf.d"
+CONF_FILE="$SDDM_CONF_DIR/pixie.conf"
+
+log_info "Asegurando directorio de configuración $SDDM_CONF_DIR..."
+sudo mkdir -p "$SDDM_CONF_DIR"
+
+log_info "Configurando SDDM para usar el tema pixie..."
+sudo tee "$CONF_FILE" > /dev/null <<EOF
+[Theme]
+Current=pixie
+EOF
+
+log_ok "Configuración de SDDM aplicada en $CONF_FILE."
+
+# ── 3. Validación de Seguridad ───────────────────────────────────────────────
+log_warn "⚠️  IMPORTANTE: ¡PRUEBA EL TEMA ANTES DE REINICIAR! ⚠️"
+echo -e "${RESET}Ejecuta el siguiente comando para probar en VENTANA (no bloquea):"
+echo -e "\n    ${BOLD}sddm-greeter-qt6 --test-mode --theme $THEME_DIR --width 800 --height 600${RESET}\n"
+echo -e "${RESET}Si ves errores de archivos no encontrados, asegúrate de que el directorio"
+echo -e "$THEME_DIR contiene el archivo ${BOLD}theme.conf${RESET} o ${BOLD}Main.qml${RESET}."
+echo -e "Si el comando falla, borra la configuración: ${RED}sudo rm $CONF_FILE${RESET}"
+
+# {{ end }}
+# {{ end }}
