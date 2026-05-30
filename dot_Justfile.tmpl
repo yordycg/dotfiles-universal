@@ -19,8 +19,10 @@ default:
 apply:
 {{- if ne .chezmoi.os "windows" }}
 	@sudo -v
-{{- end }}
 	chezmoi apply
+{{- else }}
+	chezmoi apply
+{{- end }}
 
 # Ver cambios pendientes
 diff:
@@ -53,7 +55,9 @@ install:
 # Commit rapido del repo de dotfiles
 save MSG="feat: update dotfiles":
 {{- if eq .chezmoi.os "windows" }}
-	powershell -Command "cd $(chezmoi source-path); git add .; git commit -m '{{ "{{" }}MSG{{ "}}" }}'; git push"
+	git add .
+	git commit -m '{{ "{{" }}MSG{{ "}}" }}'
+	git push
 {{- else }}
 	cd $(chezmoi source-path) && git add . && git commit -m "{{ "{{" }}MSG{{ "}}" }}" && git push
 {{- end }}
@@ -61,12 +65,13 @@ save MSG="feat: update dotfiles":
 {{ if eq .chezmoi.os "windows" -}}
 # [WINDOWS ONLY] Configurar la nueva distro WSL con toda la identidad
 bootstrap-wsl:
-	@echo "==> Inyectando identidad en WSL..."
-	@powershell -Command "$key = Get-Content $HOME\.config\chezmoi\key.txt -Raw -ErrorAction SilentlyContinue; if ($key) { wsl -d Ubuntu-24.04 -- bash -c \"mkdir -p ~/.config/chezmoi; echo '$key' > ~/.config/chezmoi/key.txt\" }"
-	@echo "==> Instalando chezmoi en WSL..."
-	@wsl -d Ubuntu-24.04 -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
-	@echo "==> Inicializando configuración..."
-	@wsl -d Ubuntu-24.04 -- bash -c "~/.local/bin/chezmoi init --apply --data githubToken=$(gh auth token) yordycg"
+	Write-Host "==> Inyectando identidad en WSL..." -ForegroundColor Cyan
+	wsl -d Ubuntu-24.04 -- bash -c "mkdir -p ~/.config/chezmoi"
+	if (Test-Path "$HOME\.config\chezmoi\key.txt") { Get-Content "$HOME\.config\chezmoi\key.txt" -Raw | wsl -d Ubuntu-24.04 -- bash -c "cat > ~/.config/chezmoi/key.txt" }
+	Write-Host "==> Instalando chezmoi en WSL..." -ForegroundColor Cyan
+	wsl -d Ubuntu-24.04 -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
+	Write-Host "==> Inicializando configuración..." -ForegroundColor Cyan
+	wsl -d Ubuntu-24.04 -- bash -c "~/.local/bin/chezmoi init --apply --data githubToken=$(gh auth token) yordycg"
 {{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---
