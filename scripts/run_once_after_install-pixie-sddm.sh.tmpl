@@ -27,17 +27,31 @@ THEME_DIR="/usr/share/sddm/themes/pixie"
 REPO_URL="https://github.com/xCaptaiN09/pixie-sddm.git"
 
 # ── 1. Instalación del Tema ──────────────────────────────────────────────────
-if [ ! -f "$THEME_DIR/Main.qml" ]; then
+if [ ! -f "$THEME_DIR/main.qml" ]; then
     log_info "Instalando pixie-sddm en $THEME_DIR..."
     TMP_DIR=$(mktemp -d)
     
     if git clone --depth 1 "$REPO_URL" "$TMP_DIR"; then
+        # Normalizar nombres de archivos (algunos sistemas buscan main.qml en minúsculas)
         if [ -f "$TMP_DIR/Main.qml" ]; then
+            mv "$TMP_DIR/Main.qml" "$TMP_DIR/main.qml"
+            sed -i 's/MainScript=Main.qml/MainScript=main.qml/' "$TMP_DIR/metadata.desktop"
+        fi
+
+        if [ -f "$TMP_DIR/main.qml" ]; then
             sudo mkdir -p "$THEME_DIR"
             sudo cp -ra "$TMP_DIR"/. "$THEME_DIR/"
-            log_ok "Archivos del tema copiados a $THEME_DIR."
+            
+            # Asegurar permisos (crucial para que el usuario 'sddm' pueda leerlo)
+            log_info "Asegurando permisos correctos en $THEME_DIR..."
+            sudo chown -R root:root "$THEME_DIR"
+            sudo find "$THEME_DIR" -type d -exec chmod 755 {} +
+            sudo find "$THEME_DIR" -type f -exec chmod 644 {} +
+            sudo chmod +x "$THEME_DIR/install.sh" 2>/dev/null || true
+            
+            log_ok "Archivos del tema copiados y permisos configurados."
         else
-            log_err "El repositorio clonado no contiene Main.qml. Abortando."
+            log_err "El repositorio clonado no contiene main.qml. Abortando."
         fi
         rm -rf "$TMP_DIR"
     else
@@ -49,10 +63,16 @@ fi
 
 # ── 2. Configuración de SDDM ─────────────────────────────────────────────────
 SDDM_CONF_DIR="/etc/sddm.conf.d"
-CONF_FILE="$SDDM_CONF_DIR/pixie.conf"
+CONF_FILE="$SDDM_CONF_DIR/zz-pixie.conf"
+OLD_CONF="$SDDM_CONF_DIR/pixie.conf"
 
 log_info "Asegurando directorio de configuración $SDDM_CONF_DIR..."
 sudo mkdir -p "$SDDM_CONF_DIR"
+
+if [ -f "$OLD_CONF" ]; then
+    log_info "Limpiando configuración antigua..."
+    sudo rm -f "$OLD_CONF"
+fi
 
 log_info "Configurando SDDM para usar el tema pixie..."
 sudo tee "$CONF_FILE" > /dev/null <<EOF
