@@ -8,8 +8,13 @@
 $env:STARSHIP_CONFIG = "$HOME\.config\starship.toml"
 
 # -- 2. INICIALIZACIÓN DE HERRAMIENTAS ----------------------------------------
-Invoke-Expression (&starship init powershell)
-Invoke-Expression (&zoxide init powershell)
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&starship init powershell)
+}
+
+if (Get-Command zoxide -ErrorAction SilentlyContinue) {
+    Invoke-Expression (&zoxide init powershell)
+}
 
 # -- 3. ALIASES ---------------------------------------------------------------
 Set-Alias -Name vim -Value nvim -ErrorAction SilentlyContinue
@@ -26,5 +31,7 @@ if (Get-Module -ListAvailable -Name PSReadLine) {
     Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
 }
 
-Write-Host "󰇄  Entorno Windows Dotfiles Cargado" -ForegroundColor Cyan
+if (Get-Command starship -ErrorAction SilentlyContinue) {
+    Write-Host "󰇄  Entorno Windows Dotfiles Cargado" -ForegroundColor Cyan
+}
 {{- end -}}
