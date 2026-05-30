@@ -10,7 +10,7 @@
 # --- Variables ---
 set $mod Mod4
 set $term kitty
-set $menu wofi --show drun
+set $menu $HOME/.local/bin/rofi-launcher.sh
 
 # --- Input Configuration ---
 input "type:touchpad" {
@@ -60,11 +60,17 @@ bindsym $mod+Return exec $term
 bindsym $mod+q kill
 bindsym $mod+Shift+q kill
 
-# Start your launcher
+# --- Rofi Menus ---
+# App Launcher
 bindsym $mod+d exec $menu
-
-# Wallpaper picker (Waypaper)
-bindsym $mod+Mod1+w exec waypaper
+# Command Runner
+bindsym $mod+Shift+d exec rofi -show run -theme $HOME/.config/rofi/config.rasi
+# Clipboard History
+bindsym $mod+Shift+v exec $HOME/.local/bin/rofi-clipboard.sh
+# Power Menu
+bindsym $mod+BackSpace exec $HOME/.local/bin/rofi-powermenu.sh
+# Wallpaper picker (Senior Rofi version)
+bindsym $mod+Mod1+w exec $HOME/.local/bin/rofi-wallpaper.sh
 
 # Drag floating windows by holding down $mod and left mouse button.
 # Resize them with right mouse button + $mod.

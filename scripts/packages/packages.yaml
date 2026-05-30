@@ -39,7 +39,9 @@ fedora:
     - qt5-qtstyleplugins
   sway:
     - waybar
-    - wofi
+    - rofi-wayland
+    - cliphist
+    - ImageMagick
     - mako
     - imv
     - grim

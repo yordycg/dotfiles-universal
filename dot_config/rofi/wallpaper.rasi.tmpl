@@ -1,0 +1,105 @@
+/**
+ * Rofi Wallpaper Theme - Senior Grid
+ */
+
+configuration {
+    show-icons:                 true;
+    font:                        "JetBrainsMono Nerd Font 10";
+}
+
+@theme "/dev/null"
+
+* {
+    bg:                          #282828E6;
+    bg-alt:                      #3c3836E6;
+    fg:                          #ebdbb2;
+    accent:                      #458588;
+
+    background-color:            transparent;
+    text-color:                  @fg;
+}
+
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       1000px;
+    height:                      600px;
+    x-offset:                    0px;
+    y-offset:                    0px;
+
+    enabled:                     true;
+    border:                      2px solid;
+    border-radius:               12px;
+    border-color:                @accent;
+    background-color:            @bg;
+    cursor:                      "default";
+}
+
+mainbox {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     20px;
+    children:                    [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     10px;
+    border-radius:               8px;
+    background-color:            @bg-alt;
+    children:                    [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:                     true;
+}
+
+entry {
+    enabled:                     true;
+    placeholder:                 "Search wallpapers...";
+}
+
+listview {
+    enabled:                     true;
+    columns:                     3;
+    lines:                       2;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical;
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    
+    spacing:                     15px;
+    background-color:            transparent;
+}
+
+element {
+    enabled:                     true;
+    orientation:                 vertical;
+    spacing:                     10px;
+    padding:                     15px;
+    border-radius:               10px;
+    background-color:            transparent;
+    cursor:                      pointer;
+}
+
+element selected.normal {
+    background-color:            @bg-alt;
+    border:                      2px solid;
+    border-color:                @accent;
+}
+
+element-icon {
+    size:                        250px;
+    cursor:                      inherit;
+    horizontal-align:            0.5;
+}
+
+element-text {
+    enabled:                     false; /* Hide text to focus on thumbnails */
+}

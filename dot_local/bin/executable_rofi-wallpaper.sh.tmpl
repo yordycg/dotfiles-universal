@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+# Senior Rofi Wallpaper Picker
+# Scans wallpapers, generates thumbnails, and applies selection via swww.
+
+WALLPAPER_DIR="$HOME/workspace/assets/wallpapers"
+THUMB_DIR="$HOME/.cache/wallpaper-thumbnails"
+ROFI_THEME="$HOME/.config/rofi/wallpaper.rasi"
+
+mkdir -p "$THUMB_DIR"
+
+# 1. Generate thumbnails (optimized)
+for img in "$WALLPAPER_DIR"/*.{jpg,jpeg,png,webp}; do
+    [ -e "$img" ] || continue
+    filename=$(basename "$img")
+    thumb="$THUMB_DIR/$filename.png"
+    
+    if [ ! -f "$thumb" ]; then
+        # Use magick or ffmpeg for fast thumbnail generation
+        if command -v magick >/dev/null; then
+            magick "$img" -strip -thumbnail 250x150^ -gravity center -extent 250x150 "$thumb"
+        elif command -v ffmpeg >/dev/null; then
+            ffmpeg -i "$img" -vf "thumbnail,scale=250:150:force_original_aspect_ratio=increase,crop=250:150" -frames:v 1 "$thumb" -y >/dev/null 2>&1
+        fi
+    fi
+done
+
+# 2. Build list for Rofi (Entry\0icon\x1fThumbPath)
+list_wallpapers() {
+    for img in "$WALLPAPER_DIR"/*.{jpg,jpeg,png,webp}; do
+        [ -e "$img" ] || continue
+        filename=$(basename "$img")
+        thumb="$THUMB_DIR/$filename.png"
+        echo -en "$filename\0icon\x1f$thumb\n"
+    done
+}
+
+# 3. Launch Rofi
+selection=$(list_wallpapers | rofi -dmenu -i -p "󰸉 " -theme "$ROFI_THEME")
+
+if [ -n "$selection" ]; then
+    full_path="$WALLPAPER_DIR/$selection"
+    
+    # Apply with swww (already used in sway config)
+    swww img "$full_path" --transition-type grow --transition-pos center --transition-duration 1.5
+    
+    # Save current wallpaper for persistence if needed
+    echo "$full_path" > "$HOME/.cache/.current_wallpaper"
+fi

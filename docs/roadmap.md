@@ -44,8 +44,8 @@ Configuración dual para máxima versatilidad:
 - [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
 - [x] **Auditoría de Scripts**: Refactorización de funciones para soporte multiplataforma y roles (Server/Laptop).
 
-- [ ] **Optimizar Salida SSH/Tmux**: Eliminar el "doble exit" mediante un alias inteligente o flujo de detach.
-- [ ] **Browser Workflow (Firefox)**: Investigar alternativas a Surfingkeys (Vimium-C, Tridactyl) con mejor UI/UX.
+- [x] **Optimizar Salida SSH/Tmux**: Eliminar el "doble exit" mediante un alias inteligente o flujo de detach.
+- [x] **Browser Workflow (Firefox)**: Investigar alternativas a Surfingkeys (Vimium-C, Tridactyl) con mejor UI/UX.
 
 ---
 
@@ -134,8 +134,10 @@ Configuración dual para máxima versatilidad:
 - [ ] **Aislamiento en `hdocker`**: Investigar e implementar una forma de separar la vista de infraestructura central (`homelab-infra`) de los proyectos de estudio en `hdocker` (evitar borrado accidental de volúmenes críticos).
 
 ### 6.4 Estética y Personalización (Senior Theming)
-- [ ] **Investigación de Selectores**: Comparar `rofi-wayland` vs `wofi` para determinar cuál ofrece mejores scripts de comunidad y visualización de miniaturas (thumbnails).
-- [ ] **Wallpaper Picker "Reddit Style"**: Implementar un selector visual integrado en el sistema (grid de imágenes) eliminando la dependencia de GUIs externas.
+- [x] **Rofi-Wayland Suite**: Implementación de un ecosistema completo basado en `rofi-wayland`.
+- [x] **UI Minimalista**: Configuración de temas e iconos Nerd Font (solo iconos en prompts y selectores).
+- [x] **Wallpaper Picker "Senior Grid"**: Selector visual integrado con generación de miniaturas y transiciones vía `swww`.
+- [x] **Integración de Sistema**: Scripts robustos para Portapapeles (`cliphist`), Menú de Apagado y Lanzador de Aplicaciones con rutas absolutas.
 - [ ] **Theming Dinámico**: Integrar `wallust` o similar para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
 
 ---

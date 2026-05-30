@@ -73,10 +73,8 @@ if [ -z "${WSL_DISTRO_NAME:-}" ]; then
 
     install_section "desktop"
     
-    # Perfil Sway (Si se detecta el entorno)
-    if [ "${XDG_CURRENT_DESKTOP:-}" = "sway" ] || [ -n "${SWAYSOCK:-}" ]; then
-        install_section "sway"
-    fi
+    # Perfil Sway (Instalar si es desktop para asegurar disponibilidad)
+    install_section "sway"
 fi
 
 log_ok "Bootstrap de Fedora completado."
