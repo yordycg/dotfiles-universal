@@ -2,8 +2,9 @@
 # Generado por Chezmoi: No editar manualmente en el HOME.
 
 # --- Variables de Entorno y Configuracion ---
-# Detecta automaticamente si usar podman o docker
+{{ if ne .chezmoi.os "windows" -}}
 DOCKER := `if which podman >/dev/null 2>&1; then echo "podman"; else echo "docker"; fi`
+{{- end }}
 
 default:
 	@just --list
@@ -12,7 +13,7 @@ default:
 
 # Aplicar todos los dotfiles (Chezmoi)
 apply:
-	@sudo -v
+	{{ if ne .chezmoi.os "windows" -}}@sudo -v{{- end }}
 	chezmoi apply
 
 # Ver cambios pendientes
@@ -23,13 +24,14 @@ diff:
 update:
 	chezmoi update
 
-# Crear un nuevo proyecto con la estructura estandar (Senior Blueprint)
-project-new NAME CATEGORY="personal" LANG="generic":
-	@bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ "{{" }}NAME{{ "}}" }} {{ "{{" }}CATEGORY{{ "}}" }} {{ "{{" }}LANG{{ "}}" }}
-
 # Editar un dotfile y aplicar
 edit FILE:
 	chezmoi edit {{ "{{" }}FILE{{ "}}" }} --apply
+
+{{ if ne .chezmoi.os "windows" -}}
+# Crear un nuevo proyecto con la estructura estandar (Senior Blueprint)
+project-new NAME CATEGORY="personal" LANG="generic":
+	@bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ "{{" }}NAME{{ "}}" }} {{ "{{" }}CATEGORY{{ "}}" }} {{ "{{" }}LANG{{ "}}" }}
 
 # Instalar paquetes segun el distro actual
 install:
@@ -40,10 +42,15 @@ install:
 	elif [ -f /etc/debian_version ]; then \
 		bash scripts/packages/installers/debian.sh; \
 	fi
+{{- end }}
 
 # Commit rapido del repo de dotfiles
 save MSG="feat: update dotfiles":
+	{{ if eq .chezmoi.os "windows" -}}
+	powershell -Command "cd $(chezmoi source-path); git add .; git commit -m '{{ "{{" }}MSG{{ "}}" }}'; git push"
+	{{- else -}}
 	cd $(chezmoi source-path) && git add . && git commit -m "{{ "{{" }}MSG{{ "}}" }}" && git push
+	{{- end }}
 
 # --- Comandos de Servidor / Infraestructura (Nodo 1) ---
 {{ if .isServer -}}
@@ -59,29 +66,3 @@ homelab-logs SERVICE:
 homelab-update:
 	cd $HOME/.local/share/homelab-infra && ./deploy.sh
 {{- end }}
-
-# --- Utilidades Remotas ---
-
-# Desplegar dotfiles en un servidor remoto inyectando secretos desde Bitwarden
-deploy-remote host:
-    #!/usr/bin/env bash
-    echo "Iniciando despliegue remoto en {{ "{{" }}host{{ "}}" }}..."
-    if ! bw status | jq -e '.status == "unlocked"' >/dev/null; then
-        echo "Bitwarden bloqueado. Por favor, usa 'bwu' primero."
-        exit 1
-    fi
-    AGE_KEY=$(bw get item Dotfiles | jq -r .login.password)
-    GH_TOKEN=$(bw get item Dotfiles | jq -r '.fields[] | select(.name=="token") | .value')
-    if [ "$AGE_KEY" = "null" ] || [ "$GH_TOKEN" = "null" ]; then
-        echo "Error: No se pudieron obtener los secretos de Bitwarden. Verifica el item 'Dotfiles'."
-        exit 1
-    fi
-    ssh -t {{ "{{" }}host{{ "}}" }} "rm -rf \$HOME/.local/share/chezmoi \$HOME/.config/chezmoi && \
-                   CHEZMOI_AGE_KEY='$AGE_KEY' GITHUB_TOKEN='$GH_TOKEN' sh -c \"\$(curl -fsLS get.chezmoi.io)\" -- -b \$HOME/bin init --apply https://\$GH_TOKEN@github.com/yordycg/dotfiles-universal.git"
-    echo "Despliegue en {{ "{{" }}host{{ "}}" }} finalizado."
-
-# --- Atajos de Utilidad ---
-
-# Desbloqueo rapido de Bitwarden (Zero-Touch)
-bwu:
-	@source $HOME/.config/shell/functions.sh && bwu
