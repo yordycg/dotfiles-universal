@@ -1,0 +1,30 @@
+{{- if eq .chezmoi.os "windows" -}}
+# =============================================================================
+# Microsoft.PowerShell_profile.ps1
+# Gestionado por Chezmoi - Senior Windows Workflow
+# =============================================================================
+
+# -- 1. VARIABLES DE ENTORNO --------------------------------------------------
+$env:STARSHIP_CONFIG = "$HOME\.config\starship.toml"
+
+# -- 2. INICIALIZACIÓN DE HERRAMIENTAS ----------------------------------------
+Invoke-Expression (&starship init powershell)
+Invoke-Expression (&zoxide init powershell)
+
+# -- 3. ALIASES ---------------------------------------------------------------
+Set-Alias -Name vim -Value nvim -ErrorAction SilentlyContinue
+Set-Alias -Name ll -Value ls -ErrorAction SilentlyContinue
+
+# Acceso rápido al Homelab (Lanza WSL y conecta)
+function hl { wsl -d Ubuntu-24.04 -- bash -ic "hl $args" }
+function hls { wsl -d Ubuntu-24.04 -- bash -ic "hls" }
+
+# -- 4. POWERSHELL ENHANCEMENTS (PSReadLine) ----------------------------------
+if (Get-Module -ListAvailable -Name PSReadLine) {
+    Set-PSReadLineOption -PredictionSource History
+    Set-PSReadLineOption -PredictionViewStyle ListView
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+}
+
+Write-Host "󰇄  Entorno Windows Dotfiles Cargado" -ForegroundColor Cyan
+{{- end -}}

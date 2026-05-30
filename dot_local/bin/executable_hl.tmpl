@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# Conecta al homelab y restaura (o crea) sesión tmux nombrada
+
+SESSION="${1:-main}"
+
+# Colores Senior
+CYAN='\033[0;36m'
+RESET='\033[0m'
+
+echo -e "${CYAN}▶ Conectando a Homelab (Sesión: $SESSION)...${RESET}"
+
+# Intentar conectar via SSH con Tmux Attach automático
+ssh homelab -t "tmux new-session -A -s $SESSION"

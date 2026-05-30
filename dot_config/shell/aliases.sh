@@ -65,6 +65,11 @@ alias py='python3'
 alias va='source .venv/bin/activate'
 alias vd='deactivate'
 
+# -- Homelab Aliases ---------------------------
+alias hl='hl'
+alias hls='ssh homelab tmux ls'
+alias hlk='ssh homelab tmux kill-session -t'
+
 # -- Sistema (Continuación) -------------------
 alias logout='loginctl terminate-user $USER'
 alias shutdown='sudo shutdown now'
