@@ -1,120 +1,47 @@
 # Justfile -- Orquestador Global ({{ .chezmoi.hostname }})
-# Generado por Chezmoi — no editar el archivo en $HOME directamente.
-# Fuente: chezmoi source-path → dot_Justfile.tmpl
+# Generado por Chezmoi — no editar en $HOME directamente.
 
 {{ if eq .chezmoi.os "windows" -}}
 set windows-shell := ["powershell.exe", "-NoProfile", "-NoLogo", "-NonInteractive", "-Command"]
 {{- end }}
 
-# ── Variables (solo Linux/WSL) ────────────────────────────────────
 {{ if ne .chezmoi.os "windows" -}}
 DOCKER := `if command -v podman >/dev/null 2>&1; then echo "podman"; else echo "docker"; fi`
 {{- end }}
 
-# ── Default: listar recetas disponibles ──────────────────────────
 default:
     @just --list
 
-# ═════════════════════════════════════════════════════════════════
-# DOTFILES — Universales (todos los OS)
-# ═════════════════════════════════════════════════════════════════
+# ── Universales ───────────────────────────────────────────────────
 
-# Aplicar todos los dotfiles
 apply:
 {{ if ne .chezmoi.os "windows" -}}
     @sudo -v
 {{ end -}}
     chezmoi apply
 
-# Ver cambios pendientes sin aplicar
 diff:
     chezmoi diff
 
-# Pull del repo remoto + apply
 update:
     chezmoi update
 
-# Editar un dotfile y aplicar inmediatamente
 edit FILE:
     chezmoi edit {{ print "{{" }}FILE{{ print "}}" }} --apply
 
-# Commit rápido del repo de dotfiles
 save MSG="feat: update dotfiles":
 {{ if eq .chezmoi.os "windows" -}}
-    git -C "$(chezmoi source-path)" add .
-    git -C "$(chezmoi source-path)" commit -m '{{ print "{{" }}MSG{{ print "}}" }}'
-    git -C "$(chezmoi source-path)" push
+    Push-Location (chezmoi source-path); git add .; git commit -m '{{ print "{{" }}MSG{{ "}}" }}'; git push; Pop-Location
 {{- else -}}
-
     cd $(chezmoi source-path) && git add . && git commit -m "{{ print "{{" }}MSG{{ "}}" }}" && git push
 {{- end }}
 
-
-# ═════════════════════════════════════════════════════════════════
-# WINDOWS ONLY
-# ═════════════════════════════════════════════════════════════════
-{{ if eq .chezmoi.os "windows" -}}
-
-# [WIN] Bootstrap Zero-Touch de WSL Ubuntu-24.04
-# Prerrequisitos en Windows:
-#   - gh.exe autenticado (winget install GitHub.cli && gh auth login)
-#   - wsl --install -d Ubuntu-24.04 (ya ejecutado, primer login hecho)
-#   - age key en ~/.config/chezmoi/key.txt (opcional, habilita secretos)
-bootstrap-wsl DISTRO="Ubuntu-24.04":
-    # ── Paso 1: Crear directorio de chezmoi en WSL ───────────────
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "mkdir -p ~/.config/chezmoi ~/.local/bin"
-
-    # ── Paso 2: Inyectar age key si existe ───────────────────────
-    $keyFile = "$HOME\.config\chezmoi\key.txt"
-    if (Test-Path $keyFile) {
-        Write-Host "  -> Inyectando age key en WSL..." -ForegroundColor Cyan
-        $keyContent = Get-Content $keyFile -Raw -Encoding UTF8
-        $keyContent | wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "cat > ~/.config/chezmoi/key.txt && chmod 600 ~/.config/chezmoi/key.txt"
-    } else {
-        Write-Host "  -> Age key no encontrada, continuando sin secretos." -ForegroundColor Yellow
-    }
-
-    # ── Paso 3: Obtener GitHub token desde gh CLI ────────────────
-    Write-Host "  -> Obteniendo GitHub token..." -ForegroundColor Cyan
-    $ghToken = (gh auth token 2>$null)
-    if (-not $ghToken) {
-        Write-Error "ERROR: gh CLI no autenticado. Ejecuta: gh auth login"
-        exit 1
-    }
-
-    # ── Paso 4: Instalar chezmoi en WSL ─────────────────────────
-    Write-Host "  -> Instalando chezmoi en WSL..." -ForegroundColor Cyan
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
-
-    # ── Paso 5: Init + Apply (token inyectado vía env, sin prompt) ──
-    # CRÍTICO: el token va en variable PS primero, sin comillas anidadas.
-    Write-Host "  -> Inicializando chezmoi con identidad completa..." -ForegroundColor Cyan
-    $initCmd = "GITHUB_TOKEN=$ghToken ~/.local/bin/chezmoi init --apply yordycg"
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c $initCmd
-
-    Write-Host "`n  Listo. WSL configurado con chezmoi." -ForegroundColor Green
-    Write-Host "  Ejecuta: wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} para entrar." -ForegroundColor Green
-
-# [WIN] Verificar que WSL puede conectarse al homelab
-test-wsl-ssh DISTRO="Ubuntu-24.04":
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "ssh homelab 'echo OK: conexion exitosa desde WSL'"
-
-# [WIN] Abrir sesión tmux en el homelab desde PowerShell
-hl SESSION="main" DISTRO="Ubuntu-24.04":
-    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -ic "~/.local/bin/hl {{ print "{{" }}SESSION{{ print "}}" }}"
-
-{{- end }}
-
-# ═════════════════════════════════════════════════════════════════
-# LINUX / WSL — Desarrollo y scaffolding
-# ═════════════════════════════════════════════════════════════════
 {{ if ne .chezmoi.os "windows" -}}
+# ── Linux / WSL ───────────────────────────────────────────────────
 
-# Crear nuevo proyecto con estructura estándar
 project-new NAME CATEGORY="personal" LANG="generic":
-    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ print "{{" }}NAME{{ print "}}" }} {{ print "{{" }}CATEGORY{{ print "}}" }} {{ print "{{" }}LANG{{ print "}}" }}
+    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ print "{{" }}NAME{{ print "}}" }} {{ print "{{" }}CATEGORY{{ print "}}" }} {{ print "{{" }}LANG{{ "}}" }}
 
-# Instalar paquetes del sistema según distro detectada
 install:
     @if [ -f /etc/fedora-release ]; then \
         bash $(chezmoi source-path)/scripts/packages/installers/fedora.sh; \
@@ -123,24 +50,34 @@ install:
     elif [ -f /etc/debian_version ]; then \
         bash $(chezmoi source-path)/scripts/packages/installers/debian.sh; \
     fi
-
 {{- end }}
 
-# ═════════════════════════════════════════════════════════════════
-# SERVIDOR / HOMELAB — Solo en isServer
-# ═════════════════════════════════════════════════════════════════
-{{ if and (ne .chezmoi.os "windows") (hasKey . "isServer") .isServer -}}
+{{ if eq .chezmoi.os "windows" -}}
+# ── Windows Only ──────────────────────────────────────────────────
 
-# Ver estado de todos los contenedores
+bootstrap-wsl DISTRO="Ubuntu-24.04":
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "mkdir -p ~/.config/chezmoi ~/.local/bin"
+    if (Test-Path "$HOME\.config\chezmoi\key.txt") { Get-Content "$HOME\.config\chezmoi\key.txt" -Raw -Encoding UTF8 | wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "cat > ~/.config/chezmoi/key.txt && chmod 600 ~/.config/chezmoi/key.txt" }
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bin"
+    $t = (gh auth token 2>$null); if (-not $t) { Write-Error "gh no autenticado"; exit 1 }
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "GITHUB_TOKEN=$t ~/.local/bin/chezmoi init --apply yordycg"
+
+test-wsl-ssh DISTRO="Ubuntu-24.04":
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -c "ssh homelab 'echo OK'"
+
+hl SESSION="main" DISTRO="Ubuntu-24.04":
+    wsl -d {{ print "{{" }}DISTRO{{ print "}}" }} -- bash -ic "~/.local/bin/hl {{ print "{{" }}SESSION{{ print "}}" }}"
+{{- end }}
+
+{{ if and (ne .chezmoi.os "windows") (hasKey . "isServer") .isServer -}}
+# ── Homelab ───────────────────────────────────────────────────────
+
 homelab-status:
     cd $HOME/.local/share/homelab-infra && ./manage.sh status
 
-# Ver logs de un servicio específico
 homelab-logs SERVICE:
-    cd $HOME/.local/share/homelab-infra && {{ print "{{" }}DOCKER{{ print "}}" }} compose -f containers/{{ print "{{" }}SERVICE{{ print "}}" }}/compose.yaml logs -f
+    cd $HOME/.local/share/homelab-infra && {{ print "{{" }}DOCKER{{ print "}}" }} compose -f containers/{{ print "{{" }}SERVICE{{ "}}" }}/compose.yaml logs -f
 
-# Actualizar y reiniciar toda la infraestructura
 homelab-update:
     cd $HOME/.local/share/homelab-infra && ./deploy.sh
-
 {{- end }}
