@@ -65,7 +65,7 @@ log_ok "Configuración de SDDM aplicada en $CONF_FILE."
 # ── 3. Validación de Seguridad ───────────────────────────────────────────────
 log_warn "⚠️  IMPORTANTE: ¡PRUEBA EL TEMA ANTES DE REINICIAR! ⚠️"
 echo -e "${RESET}Ejecuta el siguiente comando para probar en VENTANA (no bloquea):"
-echo -e "\n    ${BOLD}sddm-greeter-qt6 --test-mode --theme $THEME_DIR --width 800 --height 600${RESET}\n"
+echo -e "\n    ${BOLD}sddm-greeter-qt6 --test-mode --theme $THEME_DIR --qwindowgeometry 800x600${RESET}\n"
 echo -e "${RESET}Si ves errores de archivos no encontrados, asegúrate de que el directorio"
 echo -e "$THEME_DIR contiene el archivo ${BOLD}theme.conf${RESET} o ${BOLD}Main.qml${RESET}."
 echo -e "Si el comando falla, borra la configuración: ${RED}sudo rm $CONF_FILE${RESET}"
