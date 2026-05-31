@@ -55,9 +55,15 @@ fetch_certs() {
 
     # Método C: SSH desde el Servidor (Para Nodos N)
     if [ ! -s "$dst" ] && [ "{{ if (hasKey . "isServer") }}{{ .isServer }}{{ else }}false{{ end }}" != "true" ]; then
-        if ssh -o ConnectTimeout=2 -o BatchMode=yes homelab exit &>/dev/null; then
+        # Usar opciones que acepten la llave automáticamente si es nueva
+        SSH_OPTS="-o ConnectTimeout=3 -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
+        if ssh $SSH_OPTS homelab exit &>/dev/null; then
             log_info "Extrayendo $filename desde el servidor vía SSH..."
-            ssh -q homelab "docker run --rm -v reverse-proxy_caddy_data:/data alpine cat /data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
+            # Intentar extracción vía docker en el remoto
+            if ! ssh -q $SSH_OPTS homelab "docker run --rm -v reverse-proxy_caddy_data:/data alpine cat /data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null; then
+                # Fallback: intentar ruta directa en el servidor si docker falla
+                ssh -q $SSH_OPTS homelab "cat /var/lib/docker/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
+            fi
         fi
     fi
 
