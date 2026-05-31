@@ -1,5 +1,6 @@
 # .chezmoignore
-# REGLA: patrones usan nombres del SOURCE (con dot_), no del destino
+# REGLA: scripts usan nombre TARGET (sin run_/run_once_/etc., sin .tmpl)
+# Archivos normales usan nombre SOURCE (con dot_ si aplica)
 
 # ── Siempre ignorados ─────────────────────────────────────────────
 docs/**
@@ -7,14 +8,35 @@ workspace/**
 home/**
 hosts/**
 scripts/**
+os/linux/.chezmoiroot
+os/windows/.chezmoiroot
 
-# ── WINDOWS: ignora toda la carpeta de Linux ─────────────────────
+# ── WINDOWS: ignorar scripts de Linux en .chezmoiscripts/ ────────
 {{ if eq .chezmoi.os "windows" -}}
 
-os/linux/**
-os/wsl/**
+# Scripts de Linux — target name = nombre sin prefijo run_*/run_once_*/etc. y sin .tmpl
+.chezmoiscripts/before_00-install-packages.sh
+.chezmoiscripts/after_10-install-fonts.sh
+.chezmoiscripts/after_20-install-mise.sh
+.chezmoiscripts/after_50-setup-backup.sh
+.chezmoiscripts/after_80-sync-assets.sh
+.chezmoiscripts/after_84-sync-core-repos.sh
+.chezmoiscripts/after_85-sync-repos.sh
+.chezmoiscripts/after_90-setup-ssh.sh
+.chezmoiscripts/after_92-setup-tailscale.sh
+.chezmoiscripts/after_95-trust-homelab-ca.sh
+.chezmoiscripts/after_99-change-shell.sh
+.chezmoiscripts/after_install-firenvim.sh
+.chezmoiscripts/after_install-pixie-sddm.sh
+.chezmoiscripts/after_install-tridactyl-native.sh
+.chezmoiscripts/after_30-install-flatpaks.sh
+.chezmoiscripts/after_apply-theme.sh
+.chezmoiscripts/after_linux-orchestrator.sh
 
-# Archivos generados por Linux que pudieran quedar en raíz
+# Carpeta os/linux completa (configs de GUI)
+os/linux/**
+
+# Archivos generados por Linux
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf
 dot_config/waybar/colors.css
@@ -22,24 +44,37 @@ dot_config/sway/colors
 
 {{ end -}}
 
-# ── LINUX nativo y WSL: ignora toda la carpeta de Windows ────────
+# ── LINUX nativo y WSL: ignorar archivos de Windows ──────────────
 {{ if ne .chezmoi.os "windows" -}}
 
 os/windows/**
+AppData/**
+Documents/**
 
 {{ end -}}
 
-# ── WSL: headless, ignora scripts y configs de GUI de Linux ──────
+# ── WSL: headless, ignorar scripts de GUI de Linux ───────────────
 {{ if and (hasKey . "isWSL") .isWSL -}}
 
-os/linux/**
+.chezmoiscripts/after_10-install-fonts.sh
+.chezmoiscripts/after_30-install-flatpaks.sh
+.chezmoiscripts/after_apply-theme.sh
+.chezmoiscripts/after_install-firenvim.sh
+.chezmoiscripts/after_install-pixie-sddm.sh
+.chezmoiscripts/after_install-tridactyl-native.sh
+.chezmoiscripts/after_92-setup-tailscale.sh
 
 {{ end -}}
 
 # ── SERVER: igual que WSL ─────────────────────────────────────────
 {{ if and (hasKey . "isServer") .isServer -}}
 
-os/linux/**
+.chezmoiscripts/after_10-install-fonts.sh
+.chezmoiscripts/after_30-install-flatpaks.sh
+.chezmoiscripts/after_apply-theme.sh
+.chezmoiscripts/after_install-firenvim.sh
+.chezmoiscripts/after_install-pixie-sddm.sh
+.chezmoiscripts/after_install-tridactyl-native.sh
 
 {{ end -}}
 
