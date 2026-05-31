@@ -46,19 +46,21 @@ log_ok "Dependencias verificadas."
 # ── 2. Autenticación con GitHub ──────────────────────────────────────────────
 log_step "Autenticación de GitHub CLI"
 
-{{- $githubToken := "" -}}
-{{- $forgejoToken := "" -}}
-{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
-{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
-{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
-{{-   $githubToken = $secrets.github_token -}}
-{{-   $forgejoToken = $secrets.forgejo_token -}}
-{{- end }}
+# Extraer tokens bajo demanda (Runtime Decryption)
+SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+GITHUB_TOKEN=""
+FORGEJO_TOKEN=""
+
+if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
+    DECRYPTED=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null || echo "")
+    GITHUB_TOKEN=$(echo "$DECRYPTED" | grep "github_token:" | awk '{print $2}' | tr -d '"' || echo "")
+    FORGEJO_TOKEN=$(echo "$DECRYPTED" | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
+fi
 
 if ! gh auth status &>/dev/null; then
-    if [ -n "{{ $githubToken }}" ]; then
+    if [ -n "$GITHUB_TOKEN" ]; then
         log_info "No autenticado. Usando GITHUB_TOKEN extraído de secretos..."
-        echo "{{ $githubToken }}" | gh auth login --with-token
+        echo "$GITHUB_TOKEN" | gh auth login --with-token
         gh auth setup-git
         log_ok "Autenticación automática completada."
     else
@@ -67,12 +69,11 @@ if ! gh auth status &>/dev/null; then
         gh auth setup-git
     fi
 else
-    # Asegurar que Git esté configurado incluso si ya estábamos logueados
     gh auth setup-git
     log_ok "Autenticación activa en GitHub."
 fi
 
-# ── 3. Generación de Llaves ──────────────────────────────────────────────────
+# ── 3. Gestión de Llaves SSH ──────────────────────────────────────────────────
 log_step "Gestión de Llaves SSH"
 
 mkdir -p "$SSH_DIR"
@@ -107,13 +108,10 @@ fi
 # ── 5. Sincronización con Forgejo ────────────────────────────────────────────
 log_step "Sincronización con Forgejo (Homelab)"
 
-FORGEJO_TOKEN="{{ $forgejoToken }}"
 FORGEJO_URL="http://192.168.18.99:3080/api/v1"
 
 if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then
     log_info "Servidor Forgejo detectado. Verificando llave..."
-    
-    # Verificar si la llave ya existe en Forgejo
     KEY_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" | awk '{print $2}')
     if curl -s -H "Authorization: token $FORGEJO_TOKEN" "$FORGEJO_URL/user/keys" | jq -e ".[] | select(.fingerprint == \"$KEY_FINGERPRINT\")" >/dev/null; then
         log_ok "Esta llave ya está registrada en Forgejo."
@@ -131,7 +129,7 @@ if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-t
         log_ok "Llave pública vinculada a Forgejo correctamente."
     fi
 else
-    log_warn "Forgejo no alcanzable o token inválido. Saltando sincronización local."
+    log_warn "Forgejo no alcanzable o token inválido en secretos. Saltando sincronización local."
 fi
 
 # ── 6. Configuración de Acceso ───────────────────────────────────────────────
@@ -153,7 +151,7 @@ else
     log_ok "La configuración de GitHub ya existe en $SSH_CONFIG_FILE."
 fi
 
-# ── 6. Verificación Final ────────────────────────────────────────────────────
+# ── 7. Verificación Final ────────────────────────────────────────────────────
 log_step "Verificación de Conexión"
 
 log_info "Probando conexión SSH con git@github.com..."
