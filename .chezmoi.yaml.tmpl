@@ -1,26 +1,28 @@
 {{/* ══════════════════════════════════════════════════════════════
      .chezmoi.yaml.tmpl
-     Detección limpia de 7 escenarios. Sin decrypt si no hay key.
+     REPOSITORIO EXCLUSIVO PARA LINUX (Desktop, Server, WSL)
      ══════════════════════════════════════════════════════════════ */}}
 
-{{/* ── PASO 1: Variables base (mutuamente excluyentes) ────────── */}}
-{{- $isWindows := eq .chezmoi.os "windows" -}}
-{{- $isWSL     := and (not $isWindows) (env "WSL_DISTRO_NAME" | not | not) -}}
-{{- $isServer  := and (not $isWindows) (not $isWSL)
+{{- if eq .chezmoi.os "windows" -}}
+{{-   fail "Este repositorio es exclusivo para entornos Linux. Usa dotfiles-2024 para Windows." -}}
+{{- end -}}
+
+{{/* ── PASO 1: Variables base ────────────────────────────────── */}}
+{{- $isWSL    := env "WSL_DISTRO_NAME" | not | not -}}
+{{- $isServer := and (not $isWSL)
       (or (eq .chezmoi.hostname "homelab")
           (eq .chezmoi.hostname "servidor")
           (eq .chezmoi.hostname "vault")) -}}
-{{- $isLaptop  := and (not $isWindows) (not $isWSL) (not $isServer)
+{{- $isLaptop := and (not $isWSL) (not $isServer)
       (stat "/sys/class/power_supply/BAT0" | not | not) -}}
-{{- $isDesktop := and (not $isWindows) (not $isWSL)
-      (not $isServer) (not $isLaptop) -}}
+{{- $isDesktop := and (not $isWSL) (not $isServer) (not $isLaptop) -}}
 
-{{/* ── PASO 2: Variables derivadas (semántica de alto nivel) ───── */}}
+{{/* ── PASO 2: Variables derivadas ───────────────────────────── */}}
 {{- $isNativeLinux := or $isLaptop $isDesktop -}}
-{{- $isGUI         := or $isNativeLinux $isWindows -}}
+{{- $isGUI         := $isNativeLinux -}}
 {{- $isHeadless    := or $isServer $isWSL -}}
 
-{{/* ── PASO 3: GitHub token — cadena de precedencia segura ─────── */}}
+{{/* ── PASO 3: GitHub token ──────────────────────────────────── */}}
 {{- $ghToken := "" -}}
 {{- if env "GITHUB_TOKEN" -}}
 {{-   $ghToken = env "GITHUB_TOKEN" -}}
@@ -38,7 +40,7 @@
 {{- if not (stat $keyPath) -}}
 {{-   $keyPath = joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
 {{- end -}}
-{{- $hasKey  := and (not $isWindows) (stat $keyPath | not | not) -}}
+{{- $hasKey := stat $keyPath | not | not -}}
 
 {{/* ── PASO 5: Forgejo token — SOLO si key + archivo .age existen  */}}
 {{- $forgejoToken := "" -}}
@@ -62,14 +64,13 @@ bitwarden:
   base_url: "https://vaultwarden.tudominio.local"
 
 data:
-  # ── Variables base (5 escenarios mutuamente excluyentes) ──
-  isWindows: {{ $isWindows }}
+  # ── Escenarios ──
   isWSL:     {{ $isWSL }}
   isServer:  {{ $isServer }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
 
-  # ── Variables derivadas (para templates más legibles) ──────
+  # ── Semántica ──
   isNativeLinux: {{ $isNativeLinux }}
   isGUI:         {{ $isGUI }}
   isHeadless:    {{ $isHeadless }}
