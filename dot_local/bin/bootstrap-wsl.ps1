@@ -1,7 +1,7 @@
 # bootstrap-wsl.ps1 — Zero-Touch provisioning de WSL Ubuntu-24.04
 # Prerrequisitos:
-#   - key.txt en $HOME\.config\chezmoi\key.txt
-#   - SSH keys en $HOME\.ssh\
+#   - key.txt en Windows: $HOME\.config\age\key.txt o $HOME\.config\chezmoi\key.txt
+#   - SSH keys en Windows: $HOME\.ssh\
 #   - gh auth login ejecutado en Windows
 #   - wsl --install -d Ubuntu-24.04 hecho y primer login completado
 
@@ -19,29 +19,35 @@ if (-not $t) {
 }
 
 Write-Host "==> [3/3] Inicializando dotfiles en WSL..." -ForegroundColor Cyan
-# WSL copia key.txt desde el mount de Windows (/mnt/c/...)
-# Todo ocurre dentro de bash — sin tuberías cross-OS, sin comillas anidadas
+# WSL hereda la identidad desde el filesystem Windows montado en /mnt/c/...
 wsl -d $DISTRO -- bash -c @"
 set -euo pipefail
 
-# Crear directorios
-mkdir -p ~/.config/chezmoi ~/.local/bin ~/.ssh
+# Crear directorios base
+mkdir -p ~/.config/chezmoi ~/.config/age ~/.local/bin ~/.ssh
 
-# Copiar key.txt desde el filesystem Windows montado en WSL
+# Intentar copiar key.txt desde las rutas conocidas de Windows
 WIN_USER=\$(cmd.exe /c 'echo %USERNAME%' 2>/dev/null | tr -d '\r\n')
-KEY_SRC="/mnt/c/Users/\$WIN_USER/.config/chezmoi/key.txt"
-if [ -f "\$KEY_SRC" ]; then
-    cp "\$KEY_SRC" ~/.config/chezmoi/key.txt
-    chmod 600 ~/.config/chezmoi/key.txt
-    echo "  age key.txt copiada."
+# Probar ruta preferida (age) primero, luego chezmoi
+KEY_AGE="/mnt/c/Users/\$WIN_USER/.config/age/key.txt"
+KEY_CHEZMOI="/mnt/c/Users/\$WIN_USER/.config/chezmoi/key.txt"
+
+if [ -f "\$KEY_AGE" ]; then
+    cp "\$KEY_AGE" ~/.config/age/key.txt
+    chmod 600 ~/.config/age/key.txt
+    echo "  ✓ age key.txt copiada desde .config/age"
+elif [ -f "\$KEY_CHEZMOI" ]; then
+    cp "\$KEY_CHEZMOI" ~/.config/age/key.txt
+    chmod 600 ~/.config/age/key.txt
+    echo "  ✓ age key.txt copiada desde .config/chezmoi"
 else
-    echo "  Sin age key, continuando sin secretos."
+    echo "  ⚠ Sin age key encontrada en Windows, continuando sin secretos."
 fi
 
-# Inicializar chezmoi con token inyectado via variable de entorno
-# La variable nunca toca el historial de shell
+# Inicializar chezmoi con el token de Windows
+# La variable GITHUB_TOKEN permite a chezmoi clonar el repo privado sin prompts
 GITHUB_TOKEN=$t ~/.local/bin/chezmoi init --apply yordycg
 "@
 
-Write-Host "`n==> Listo. Entra con: wsl -d $DISTRO" -ForegroundColor Green
-Write-Host "    Luego ejecuta 'bwu' para desbloquear Vaultwarden." -ForegroundColor Green
+Write-Host "`n==> WSL configurado exitosamente." -ForegroundColor Green
+Write-Host "    Entra con: wsl -d $DISTRO" -ForegroundColor Green

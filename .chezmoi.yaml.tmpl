@@ -1,44 +1,53 @@
-{{/* ── Detección de entorno ────────────────────────────────────── */}}
+{{/* ══════════════════════════════════════════════════════════════
+     .chezmoi.yaml.tmpl
+     Detección limpia de 7 escenarios. Sin decrypt si no hay key.
+     Sin prompt si ya tenemos el token.
+     ══════════════════════════════════════════════════════════════ */}}
+
+{{/* ── PASO 1: Variables base (mutuamente excluyentes) ────────── */}}
 {{- $isWindows := eq .chezmoi.os "windows" -}}
 {{- $isWSL     := and (not $isWindows) (env "WSL_DISTRO_NAME" | not | not) -}}
 {{- $isServer  := and (not $isWindows) (not $isWSL)
       (or (eq .chezmoi.hostname "homelab")
-          (eq .chezmoi.hostname "servidor")) -}}
+          (eq .chezmoi.hostname "servidor")
+          (eq .chezmoi.hostname "vault")) -}}
 {{- $isLaptop  := and (not $isWindows) (not $isWSL) (not $isServer)
       (stat "/sys/class/power_supply/BAT0" | not | not) -}}
 {{- $isDesktop := and (not $isWindows) (not $isWSL)
       (not $isServer) (not $isLaptop) -}}
 
-{{/* ── GitHub token — cadena de precedencia, nunca en historial ── */}}
+{{/* ── PASO 2: Variables derivadas (semántica de alto nivel) ───── */}}
+{{- $isNativeLinux := or $isLaptop $isDesktop -}}
+{{- $isGUI         := or $isNativeLinux $isWindows -}}
+{{- $isHeadless    := or $isServer $isWSL -}}
+
+{{/* ── PASO 3: GitHub token — cadena de precedencia segura ─────── */}}
 {{- $ghToken := "" -}}
 {{- if env "GITHUB_TOKEN" -}}
 {{-   $ghToken = env "GITHUB_TOKEN" -}}
 {{- else if and (hasKey . "githubToken") .githubToken -}}
 {{-   $ghToken = .githubToken -}}
-{{- else -}}
-{{-   $cli := lookPath "gh" -}}
-{{-   if $cli -}}
-{{-     $ghToken = (output "gh" "auth" "token" | trim) -}}
-{{-   end -}}
+{{- else if lookPath "gh" -}}
+{{-   $ghToken = (output "gh" "auth" "token" | trim) -}}
 {{- end -}}
 {{- if not $ghToken -}}
 {{-   $ghToken = promptStringOnce . "githubToken" "GitHub token" -}}
 {{- end -}}
 
-{{/* ── Age encryption — SOLO si key.txt existe en disco ────────── */}}
+{{/* ── PASO 4: Age encryption — SOLO si key.txt existe ─────────── */}}
 {{- $keyPath := joinPath .chezmoi.homeDir ".config/age/key.txt" -}}
 {{- if not (stat $keyPath) -}}
 {{-   $keyPath = joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
 {{- end -}}
-{{- $hasKey := and (not $isWindows) (stat $keyPath | not | not) -}}
+{{- $hasKey  := and (not $isWindows) (stat $keyPath | not | not) -}}
 
-{{/* ── Forgejo token — SOLO si existen key.txt Y el .age ─────── */}}
+{{/* ── PASO 5: Forgejo token — SOLO si key + archivo .age existen  */}}
 {{- $forgejoToken := "" -}}
 {{- if $hasKey -}}
-{{-   $secretsFile := joinPath .chezmoi.sourceDir
+{{-   $ageFile := joinPath .chezmoi.sourceDir
         "dot_config/homelab/private_secrets.yaml.age" -}}
-{{-   if stat $secretsFile -}}
-{{-     $forgejoToken = (include $secretsFile | decrypt | fromYaml).forgejo_token -}}
+{{-   if stat $ageFile -}}
+{{-     $forgejoToken = (include $ageFile | decrypt | fromYaml).forgejo_token -}}
 {{-   end -}}
 {{- end -}}
 
@@ -54,13 +63,25 @@ bitwarden:
   base_url: "https://vaultwarden.tudominio.local"
 
 data:
+  # ── Variables base (5 escenarios mutuamente excluyentes) ──
   isWindows: {{ $isWindows }}
   isWSL:     {{ $isWSL }}
+  isServer:  {{ $isServer }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
-  isServer:  {{ $isServer }}
-  hostname:  {{ .chezmoi.hostname }}
+
+  # ── Variables derivadas (para templates más legibles) ──────
+  isNativeLinux: {{ $isNativeLinux }}
+  isGUI:         {{ $isGUI }}
+  isHeadless:    {{ $isHeadless }}
+
+  # ── Metadata ───────────────────────────────────────────────
+  os:       {{ .chezmoi.os }}
+  hostname: {{ .chezmoi.hostname }}
+  fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
+
+  # ── Identidad ──────────────────────────────────────────────
+  gitName:      "yordycg"
+  gitEmail:     "yordy.carmona8@gmail.com"
   githubToken:  {{ $ghToken | quote }}
   forgejoToken: {{ $forgejoToken | quote }}
-  gitName: "yordycg"
-  gitEmail: "yordy.carmona8@gmail.com"

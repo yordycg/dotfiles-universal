@@ -1,37 +1,113 @@
-# Directorios de organización interna — nunca van a $HOME
+# .chezmoignore
+# REGLA CRÍTICA: los patrones deben usar nombres del SOURCE (con dot_),
+# no del destino. dot_config/sway ✓  —  .config/sway ✗
+
+# ── Siempre ignorados (no van a $HOME en ningún OS) ──────────────
 docs/**
 workspace/**
+home/**
+hosts/**
 scripts/**
 
-# Exclusiones Linux: ignorar archivos de Windows
-{{ if ne .chezmoi.os "windows" -}}
-run_once_before_01-clean-old-dotfiles.ps1.tmpl
-run_once_after_99-windows-bootstrap.ps1.tmpl
-AppData/**
-Documents/PowerShell/**
-{{ end -}}
-
-# Exclusiones Windows: ignorar todo lo de Linux
+# ── WINDOWS: ignorar todo lo que es Linux ────────────────────────
 {{ if eq .chezmoi.os "windows" -}}
+
+# Scripts de Linux (evitar error Win32)
 script-linux-*
 run_onchange_after_linux-orchestrator.sh.tmpl
 run_onchange_after_linux-orchestrator.sh
+
+# Configs de GUI Linux — NOTA: usar dot_config/, NO .config/
 dot_config/sway/**
 dot_config/waybar/**
 dot_config/mako/**
+dot_config/rofi/**
 dot_config/kitty/**
+dot_config/alacritty/**
+dot_config/foot/**
 dot_config/flavours/**
 dot_config/systemd/**
 dot_config/zsh/**
-dot_local/share/flavours/**
+dot_config/dunst/**
+dot_config/picom/**
+dot_config/polybar/**
+dot_config/i3/**
+dot_config/hypr/**
+
+# Firefox — solo en Linux nativo
 dot_mozilla/**
+
+# Fuentes — las gestiona Windows nativo, no chezmoi
+dot_local/share/fonts/**
+
+# Archivos generados por scripts de Linux
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf
-dot_config/sway/colors
 dot_config/waybar/colors.css
+
 {{ end -}}
 
-# Archivos generados dinámicamente por scripts
+# ── LINUX (nativo y WSL): ignorar todo lo de Windows ─────────────
+{{ if ne .chezmoi.os "windows" -}}
+
+# Scripts de bootstrap Windows
+run_once_before_01-clean-old-dotfiles.ps1.tmpl
+run_once_after_99-windows-bootstrap.ps1.tmpl
+
+# Paths de Windows — no existen en Linux
+AppData/**
+Documents/**
+
+{{ end -}}
+
+# ── SERVER y WSL: headless, sin GUI ──────────────────────────────
+{{ if or (and (hasKey . "isServer") .isServer)
+         (and (hasKey . "isWSL") .isWSL) -}}
+
+# Sin Wayland/X11
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/mako/**
+dot_config/rofi/**
+dot_config/kitty/**
+dot_config/alacritty/**
+dot_config/foot/**
+dot_config/dunst/**
+dot_config/picom/**
+dot_config/polybar/**
+dot_config/i3/**
+dot_config/hypr/**
+dot_config/flavours/**
+
+# Sin Firefox
+dot_mozilla/**
+
+# Sin fuentes de escritorio
+dot_local/share/fonts/**
+
+# Sin scripts de GUI
+script-linux-once_after_install-firenvim.sh.tmpl
+script-linux-once_after_install-pixie-sddm.sh.tmpl
+script-linux-once_after_install-tridactyl-native.sh.tmpl
+script-linux-onchange_after_apply-theme.sh.tmpl
+script-linux-onchange_after_30-install-flatpaks.sh.tmpl
+script-linux-after_10-install-fonts.sh.tmpl
+script-linux-after_80-sync-assets.sh.tmpl
+
+{{ end -}}
+
+# ── SERVER: sin herramientas de usuario ──────────────────────────
+{{ if and (hasKey . "isServer") .isServer -}}
+
+# Sin configuración de usuario interactivo que no aplica al server
+script-linux-after_50-setup-backup.sh.tmpl
+script-linux-after_84-sync-core-repos.sh.tmpl
+script-linux-after_85-sync-repos.sh.tmpl
+script-linux-after_92-setup-tailscale.sh.tmpl
+
+{{ end -}}
+
+# ── Archivos generados dinámicamente (todos los OS) ──────────────
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf
 dot_config/sway/colors
