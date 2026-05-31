@@ -13,8 +13,9 @@ scripts/**
 {{ if eq .chezmoi.os "windows" -}}
 
 # Scripts de Linux (Ignorar patrones run_ para evitar error Win32)
-run_*.sh
-run_*.sh.tmpl
+# Usando patrón de cobertura total como red de seguridad
+*.sh.tmpl
+*.sh
 
 # Configs de GUI Linux
 dot_config/sway/**
@@ -32,6 +33,7 @@ dot_config/picom/**
 dot_config/polybar/**
 dot_config/i3/**
 dot_config/hypr/**
+dot_local/share/flavours/**
 
 # Otros de Linux
 dot_mozilla/**
@@ -50,6 +52,30 @@ run_once_*.ps1
 run_once_*.ps1.tmpl
 AppData/**
 Documents/**
+{{ end -}}
+
+# ── Headless (WSL + Server): sin GUI ─────────────────────────────
+{{ if or (and (hasKey . "isWSL") .isWSL)
+         (and (hasKey . "isServer") .isServer) -}}
+
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/mako/**
+dot_config/rofi/**
+dot_config/kitty/**
+dot_config/hypr/**
+dot_config/flavours/**
+dot_mozilla/**
+dot_local/share/fonts/**
+
+# Scripts de GUI que no aplican en headless
+run_once_after_install-firenvim.sh.tmpl
+run_once_after_install-pixie-sddm.sh.tmpl
+run_once_after_install-tridactyl-native.sh.tmpl
+run_onchange_after_apply-theme.sh.tmpl
+run_onchange_after_30-install-flatpaks.sh.tmpl
+run_after_10-install-fonts.sh.tmpl
+
 {{ end -}}
 
 # ── Archivos generados dinámicamente ─────────────────────────────
