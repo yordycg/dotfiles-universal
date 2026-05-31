@@ -63,7 +63,8 @@ HOMELAB_CA="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
 {{ end -}}
 
 # -- Paths --
-export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$PATH"
+# Precedencia: Mise Shims > Binarios de Usuario (bin, .local/bin) > Sistema
+export PATH="$HOME/.local/share/mise/shims:$HOME/bin:$HOME/.local/bin:$PATH"
 
 # -- Theming: GTK & Qt Integration (Senior UI Consistency) --
 {{ if eq .chezmoi.os "linux" -}}
