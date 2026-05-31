@@ -9,15 +9,35 @@ SCRIPTS_DIR="{{ .chezmoi.sourceDir }}"
 
 echo "▶ Iniciando Orquestador de Linux..."
 
-# Ejecutar scripts en orden lógico
-bash "$SCRIPTS_DIR/script-linux-before_00-install-packages.sh.tmpl"
-bash "$SCRIPTS_DIR/script-linux-after_10-install-fonts.sh.tmpl"
-bash "$SCRIPTS_DIR/script-linux-after_20-install-mise.sh.tmpl"
-bash "$SCRIPTS_DIR/script-linux-after_90-setup-ssh.sh.tmpl"
+# Función para ejecutar si el archivo existe (procesado por chezmoi)
+run_script() {
+    local name="$1"
+    # Chezmoi remueve el sufijo .tmpl al procesar, pero aquí estamos en el sourceDir
+    # así que buscamos el archivo procesado en la carpeta de destino temporal o usamos el source.
+    # Como los archivos script-linux-* están ignorados en el destino, debemos ejecutarlos desde el source.
+    local target="$SCRIPTS_DIR/script-linux-$name.sh.tmpl"
+    if [ -f "$target" ]; then
+        echo "  → Ejecutando: $name"
+        # Usamos bash directamente porque los .tmpl no tienen permisos de ejecución
+        bash "$target"
+    fi
+}
+
+# 1. Paquetes Base (Crucial)
+run_script "before_00-install-packages"
+
+# 2. Identidad y SSH
+run_script "after_90-setup-ssh"
+
+# 3. Herramientas Dev
+run_script "after_20-install-mise"
 
 {{ if .isWSL -}}
 echo "✓ Configuración de WSL completada."
 {{- else -}}
+# 4. GUI y Fuentes (Solo Linux Nativo)
+run_script "after_10-install-fonts"
+run_script "onchange_after_apply-theme"
 echo "✓ Configuración de Linux nativo completada."
 {{- end }}
 
