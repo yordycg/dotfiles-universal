@@ -26,8 +26,11 @@
 {{- end -}}
 
 {{/* ── Age encryption — SOLO si key.txt existe en disco ────────── */}}
-{{- $keyPath := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
-{{- $hasKey  := and (not $isWindows) (stat $keyPath | not | not) -}}
+{{- $keyPath := joinPath .chezmoi.homeDir ".config/age/key.txt" -}}
+{{- if not (stat $keyPath) -}}
+{{-   $keyPath = joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
+{{- end -}}
+{{- $hasKey := and (not $isWindows) (stat $keyPath | not | not) -}}
 
 {{/* ── Forgejo token — SOLO si existen key.txt Y el .age ─────── */}}
 {{- $forgejoToken := "" -}}
