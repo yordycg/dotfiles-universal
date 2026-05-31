@@ -4,6 +4,8 @@
 fedora:
   core:
     - tailscale
+    - age
+    - tmux
     - git
     - curl
     - wget
@@ -70,6 +72,8 @@ fedora:
 debian:
   core:
     - tailscale
+    - age
+    - tmux
     - git
     - curl
     - wget
@@ -102,6 +106,8 @@ debian:
 arch:
   core:
     - tailscale
+    - age
+    - tmux
     - git
     - curl
     - wget

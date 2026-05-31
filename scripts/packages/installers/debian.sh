@@ -22,11 +22,35 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PACKAGES_FILE="$SCRIPT_DIR/../packages.yaml"
 
 # ── 1. Preparación del Gestor de Paquetes ────────────────────────────────────
-log_info "Actualizando índices de repositorios APT..."
+log_info "Instalando dependencias de transporte y detección..."
+sudo apt-get update -y -qq
+sudo apt-get install -y -qq curl gpg wget lsb-release
+
+CODENAME=$(lsb_release -cs)
+DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+
+# ── 2. Añadir Repositorios de Terceros (Tailscale, GitHub CLI) ───────────────
+if ! command -v tailscale &>/dev/null; then
+    log_info "Añadiendo repositorio de Tailscale para $DISTRO $CODENAME..."
+    curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.noarmor.gpg" | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
+    curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.tailscale-keyring.list" | sudo tee /etc/apt/sources.list.d/tailscale.list
+    log_ok "Repo Tailscale añadido."
+fi
+
+if ! command -v gh &>/dev/null; then
+    log_info "Añadiendo repositorio de GitHub CLI..."
+    sudo mkdir -p -m 755 /etc/apt/keyrings
+    wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    log_ok "Repo GitHub CLI añadido."
+fi
+
+log_info "Actualizando índices con nuevos repositorios..."
 sudo apt-get update -y -qq
 log_ok "Índices actualizados."
 
-# ── 2. Dependencias del Instalador ───────────────────────────────────────────
+# ── 3. Dependencias del Instalador ───────────────────────────────────────────
 if ! command -v yq &>/dev/null; then
     log_info "Instalando yq (Procesador YAML) vía binario..."
     sudo wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
