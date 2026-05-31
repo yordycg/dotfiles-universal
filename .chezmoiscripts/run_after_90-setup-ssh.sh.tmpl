@@ -46,14 +46,23 @@ log_ok "Dependencias verificadas."
 # ── 2. Autenticación con GitHub ──────────────────────────────────────────────
 log_step "Autenticación de GitHub CLI"
 
+{{- $githubToken := "" -}}
+{{- $forgejoToken := "" -}}
+{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
+{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
+{{-   $githubToken = $secrets.github_token -}}
+{{-   $forgejoToken = $secrets.forgejo_token -}}
+{{- end }}
+
 if ! gh auth status &>/dev/null; then
-    if [ -n "{{ .githubToken }}" ]; then
-        log_info "No autenticado. Usando GITHUB_TOKEN proporcionado por Chezmoi..."
-        echo "{{ .githubToken }}" | gh auth login --with-token
+    if [ -n "{{ $githubToken }}" ]; then
+        log_info "No autenticado. Usando GITHUB_TOKEN extraído de secretos..."
+        echo "{{ $githubToken }}" | gh auth login --with-token
         gh auth setup-git
         log_ok "Autenticación automática completada."
     else
-        log_warn "No autenticado y no se encontró token. Iniciando flujo interactivo..."
+        log_warn "No autenticado y no se encontró token en secretos. Iniciando flujo interactivo..."
         gh auth login --hostname github.com --scopes "admin:public_key,admin:ssh_signing_key" --web || log_err "Falló la autenticación."
         gh auth setup-git
     fi
@@ -98,7 +107,7 @@ fi
 # ── 5. Sincronización con Forgejo ────────────────────────────────────────────
 log_step "Sincronización con Forgejo (Homelab)"
 
-FORGEJO_TOKEN="{{ .forgejoToken }}"
+FORGEJO_TOKEN="{{ $forgejoToken }}"
 FORGEJO_URL="http://192.168.18.99:3080/api/v1"
 
 if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then

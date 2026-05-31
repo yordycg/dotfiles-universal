@@ -22,45 +22,12 @@
 {{- $isGUI         := $isNativeLinux -}}
 {{- $isHeadless    := or $isServer $isWSL -}}
 
-{{/* ── PASO 3: Tokens (GitHub / Forgejo) ───────────────────────── */}}
-{{- $ghToken := "" -}}
-{{- $forgejoToken := "" -}}
-
-{{/* Intentar obtener token de GitHub del entorno o CLI como fallback rápido */}}
-{{- if env "GITHUB_TOKEN" -}}
-{{-   $ghToken = env "GITHUB_TOKEN" -}}
-{{- else if and (hasKey . "githubToken") .githubToken -}}
-{{-   $ghToken = .githubToken -}}
-{{- else if lookPath "gh" -}}
-{{-   $ghToken = (output "gh" "auth" "token" | trim) -}}
-{{- end -}}
-
-{{/* ── PASO 4: Age encryption — SOLO si key.txt existe ─────────── */}}
+{{/* ── PASO 3: Identificar llave de Age ──────────────────────── */}}
 {{- $keyPath := joinPath .chezmoi.homeDir ".config/age/key.txt" -}}
 {{- if not (stat $keyPath) -}}
 {{-   $keyPath = joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
 {{- end -}}
 {{- $hasKey := stat $keyPath | not | not -}}
-
-{{/* ── PASO 5: Extraer Secretos de Age si la llave existe ──────── */}}
-{{- if $hasKey -}}
-{{-   $ageFile := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
-{{-   if stat $ageFile -}}
-{{-     $secretsOutput := "" -}}
-{{-     if lookPath "age" -}}
-{{-       $secretsOutput = output "age" "--decrypt" "-i" $keyPath $ageFile -}}
-{{-     else -}}
-{{-       $secretsOutput = include $ageFile | decrypt -}}
-{{-     end -}}
-{{-     if $secretsOutput -}}
-{{-       $secrets := $secretsOutput | fromYaml -}}
-{{-       $forgejoToken = $secrets.forgejo_token -}}
-{{-       if not $ghToken -}}
-{{-         $ghToken = $secrets.github_token -}}
-{{-       end -}}
-{{-     end -}}
-{{-   end -}}
-{{- end -}}
 
 {{/* ── OUTPUT YAML ─────────────────────────────────────────────── */}}
 {{ if $hasKey -}}
@@ -69,7 +36,7 @@ age:
   identity: {{ $keyPath | quote }}
   recipient: "age1w93unwnu802h9vkygj2d4dxmu23yghw9kd39thwgc0susmsu7spscwp0wa"
 {{- else -}}
-# Encryption not configured: age key not found at {{ $keyPath }}
+# Encryption not configured: age key not found
 {{- end }}
 
 bitwarden:
@@ -95,7 +62,6 @@ data:
   # ── Identidad ──────────────────────────────────────────────
   gitName:      "yordycg"
   gitEmail:     "yordy.carmona8@gmail.com"
-  githubToken:  {{ $ghToken | quote }}
-  forgejoToken: {{ $forgejoToken | quote }}
   homelab_ip:   "192.168.18.99"
   adguard_ip:   "192.168.18.99"
+  # Los tokens se extraen bajo demanda en los templates que los necesiten

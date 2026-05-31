@@ -26,17 +26,25 @@ log_info() { echo -e "${BLUE}  → $1${RESET}"; }
 log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
-FORGEJO_URL="http://forgejo.home:3080/api/v1"
-FORGEJO_TOKEN="{{ .forgejoToken }}"
+# ── Extracción de Secretos ───────────────────────────────────────────────────
+{{- $forgejoToken := "" -}}
+{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
+{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
+{{-   $forgejoToken = $secrets.forgejo_token -}}
+{{- end }}
+
+FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+FORGEJO_TOKEN="{{ $forgejoToken }}"
 
 if [ -z "$FORGEJO_TOKEN" ]; then
-    log_warn "Forgejo Token no encontrado. Saltando sincronización de repositorios."
+    log_warn "Forgejo Token no encontrado en secretos. Saltando sincronización de repositorios."
     exit 0
 fi
 
 # Verificar conexión con Forgejo
 if ! curl -s --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" >/dev/null; then
-    log_warn "Servidor Forgejo no alcanzable. Saltando sincronización."
+    log_warn "Servidor Forgejo no alcanzable en $FORGEJO_URL. Saltando sincronización."
     exit 0
 fi
 
@@ -56,8 +64,7 @@ echo "$REPOS_JSON" | jq -c '.[]' | while read -r repo; do
     fi
 
     # Determinar categoría basada en el nombre
-    # Aquí puedes añadir lógica para mapear repos a carpetas
-    CATEGORY="ipvg" # Default para tus proyectos actuales
+    CATEGORY="ipvg" 
     
     # Excepciones
     if [[ "$NAME" == "wallpapers" || "$NAME" == "obsidian-notes" ]]; then
@@ -76,7 +83,6 @@ echo "$REPOS_JSON" | jq -c '.[]' | while read -r repo; do
     else
         log_info "$NAME ya existe, actualizando..."
         cd "$TARGET_PATH"
-        # Pull silencioso si no hay cambios
         if git diff-index --quiet HEAD --; then
             git pull -q --rebase
             log_ok "$NAME actualizado."
