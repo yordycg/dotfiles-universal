@@ -46,10 +46,18 @@
 {{- if $hasKey -}}
 {{-   $ageFile := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
 {{-   if stat $ageFile -}}
-{{-     $secrets := include $ageFile | decrypt | fromYaml -}}
-{{-     $forgejoToken = $secrets.forgejo_token -}}
-{{-     if not $ghToken -}}
-{{-       $ghToken = $secrets.github_token -}}
+{{-     $secretsOutput := "" -}}
+{{-     if lookPath "age" -}}
+{{-       $secretsOutput = output "age" "--decrypt" "-i" $keyPath $ageFile -}}
+{{-     else -}}
+{{-       $secretsOutput = include $ageFile | decrypt -}}
+{{-     end -}}
+{{-     if $secretsOutput -}}
+{{-       $secrets := $secretsOutput | fromYaml -}}
+{{-       $forgejoToken = $secrets.forgejo_token -}}
+{{-       if not $ghToken -}}
+{{-         $ghToken = $secrets.github_token -}}
+{{-       end -}}
 {{-     end -}}
 {{-   end -}}
 {{- end -}}
