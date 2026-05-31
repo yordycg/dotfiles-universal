@@ -36,8 +36,8 @@ mkdir -p "$HOME/workspace/$CATEGORY"
 echo -e "${BLUE}Creando proyecto $PROJECT_NAME ($LANGUAGE) en [$CATEGORY]...${NC}"
 
 # Obtener la ruta de las plantillas
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEMPLATE_DIR="$SCRIPT_DIR/templates/project-base"
+{{- $sourceDir := .chezmoi.sourceDir }}
+TEMPLATE_DIR="{{ $sourceDir }}/scripts/templates/project-base"
 
 # Crear y copiar estructura base
 mkdir -p "$TARGET_DIR"
@@ -81,7 +81,14 @@ if command -v direnv &>/dev/null; then
 fi
 
 # ── Integración con Forgejo ──────────────────────────────────────────────────
-FORGEJO_TOKEN="{{ .forgejoToken }}"
+{{- $forgejoToken := "" -}}
+{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
+{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
+{{-   $forgejoToken = $secrets.forgejo_token -}}
+{{- end }}
+
+FORGEJO_TOKEN="{{ $forgejoToken }}"
 FORGEJO_URL="http://forgejo.home:3080/api/v1"
 
 if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then

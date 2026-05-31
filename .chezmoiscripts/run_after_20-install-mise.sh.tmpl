@@ -36,7 +36,15 @@ if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && comm
 fi
 
 # ── 2. Instalación/Sincronización ────────────────────────────────────────────
-export GITHUB_TOKEN={{ .githubToken | quote }}
+
+{{- $githubToken := "" -}}
+{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
+{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
+{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
+{{-   $githubToken = $secrets.github_token -}}
+{{- end }}
+
+export GITHUB_TOKEN="{{ $githubToken }}"
 export MISE_PYTHON_GITHUB_ATTESTATIONS=false
 MISE_BIN="$HOME/.local/bin/mise"
 
