@@ -13,7 +13,7 @@ set -euo pipefail
 
 # -- Trigger de Cambio --
 # Este script se ejecutara solo si cambia el config de flavours
-# Hash: {{ include "dot_config/flavours/config.toml.tmpl" | sha256sum }}
+# Hash: {{ include "os/linux/dot_config/flavours/config.toml.tmpl" | sha256sum }}
 
 # Colores Homelab-Style
 GREEN='\033[0;32m'
