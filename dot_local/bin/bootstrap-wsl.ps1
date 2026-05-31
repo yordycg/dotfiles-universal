@@ -14,7 +14,6 @@ wsl -d $DISTRO -- bash -c "curl -fsLS get.chezmoi.io | bash -s -- -b ~/.local/bi
 
 Write-Host "==> [2/3] Sincronizando identidad..." -ForegroundColor Cyan
 if ($WinKeyPath) {
-    # Convertir ruta Windows a ruta WSL automáticamente
     $WslKeyPath = wsl -d $DISTRO -- wslpath $WinKeyPath
     wsl -d $DISTRO -- bash -c "mkdir -p ~/.config/age; cp '$WslKeyPath' ~/.config/age/key.txt; chmod 600 ~/.config/age/key.txt"
     Write-Host "    ✓ age key.txt inyectada desde $WinKeyPath" -ForegroundColor Green
@@ -23,14 +22,15 @@ if ($WinKeyPath) {
 }
 
 Write-Host "==> [3/3] Inicializando dotfiles en WSL..." -ForegroundColor Cyan
-$t = gh auth token 2>$null
-if (-not $t) {
+$ghToken = (gh auth token 2>$null)
+if (-not $ghToken) {
     Write-Error "gh CLI no autenticado. Ejecuta: gh auth login"
     exit 1
 }
 
-# Ejecutar init inyectando el token
-wsl -d $DISTRO -- bash -c "GITHUB_TOKEN=$t ~/.local/bin/chezmoi init --apply yordycg"
+# Usar variable explícita para evitar errores de interpolación en PowerShell
+$InitBashCmd = "export GITHUB_TOKEN='${ghToken}'; ~/.local/bin/chezmoi init --apply yordycg"
+wsl -d $DISTRO -- bash -c $InitBashCmd
 
 Write-Host "`n==> WSL configurado exitosamente." -ForegroundColor Green
 Write-Host "    Entra con: wsl -d $DISTRO" -ForegroundColor Green
