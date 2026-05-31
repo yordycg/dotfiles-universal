@@ -1,84 +1,49 @@
 # .chezmoignore
-# REGLA CRÍTICA: los patrones deben usar nombres del SOURCE (con dot_),
-# no del destino. dot_config/sway ✓  —  .config/sway ✗
+# REGLA: patrones usan nombres del SOURCE (con dot_), no del destino
 
-# ── Siempre ignorados ──────────────────────────────────────────
+# ── Siempre ignorados ─────────────────────────────────────────────
 docs/**
 workspace/**
 home/**
 hosts/**
 scripts/**
 
-# ── WINDOWS: ignorar todo lo que es Linux ────────────────────────
+# ── WINDOWS: ignora toda la carpeta de Linux ─────────────────────
 {{ if eq .chezmoi.os "windows" -}}
 
-# Scripts de Linux (Ignorar patrones run_ para evitar error Win32)
-# Usando patrón de cobertura total como red de seguridad
-*.sh.tmpl
-*.sh
+os/linux/**
+os/wsl/**
 
-# Configs de GUI Linux
-dot_config/sway/**
-dot_config/waybar/**
-dot_config/mako/**
-dot_config/rofi/**
-dot_config/kitty/**
-dot_config/alacritty/**
-dot_config/foot/**
-dot_config/flavours/**
-dot_config/systemd/**
-dot_config/zsh/**
-dot_config/dunst/**
-dot_config/picom/**
-dot_config/polybar/**
-dot_config/i3/**
-dot_config/hypr/**
-dot_local/share/flavours/**
-
-# Otros de Linux
-dot_mozilla/**
-dot_local/share/fonts/**
-
-# Archivos generados
+# Archivos generados por Linux que pudieran quedar en raíz
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf
 dot_config/waybar/colors.css
+dot_config/sway/colors
 
 {{ end -}}
 
-# ── LINUX (nativo y WSL): ignorar Windows ───────────────────────
+# ── LINUX nativo y WSL: ignora toda la carpeta de Windows ────────
 {{ if ne .chezmoi.os "windows" -}}
-run_once_*.ps1
-run_once_*.ps1.tmpl
-AppData/**
-Documents/**
-{{ end -}}
 
-# ── Headless (WSL + Server): sin GUI ─────────────────────────────
-{{ if or (and (hasKey . "isWSL") .isWSL)
-         (and (hasKey . "isServer") .isServer) -}}
-
-dot_config/sway/**
-dot_config/waybar/**
-dot_config/mako/**
-dot_config/rofi/**
-dot_config/kitty/**
-dot_config/hypr/**
-dot_config/flavours/**
-dot_mozilla/**
-dot_local/share/fonts/**
-
-# Scripts de GUI que no aplican en headless
-run_once_after_install-firenvim.sh.tmpl
-run_once_after_install-pixie-sddm.sh.tmpl
-run_once_after_install-tridactyl-native.sh.tmpl
-run_onchange_after_apply-theme.sh.tmpl
-run_onchange_after_30-install-flatpaks.sh.tmpl
-run_after_10-install-fonts.sh.tmpl
+os/windows/**
 
 {{ end -}}
 
-# ── Archivos generados dinámicamente ─────────────────────────────
+# ── WSL: headless, ignora scripts y configs de GUI de Linux ──────
+{{ if and (hasKey . "isWSL") .isWSL -}}
+
+os/linux/**
+
+{{ end -}}
+
+# ── SERVER: igual que WSL ─────────────────────────────────────────
+{{ if and (hasKey . "isServer") .isServer -}}
+
+os/linux/**
+
+{{ end -}}
+
+# ── Archivos generados dinámicamente (todos los OS) ───────────────
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf
 dot_config/sway/colors
