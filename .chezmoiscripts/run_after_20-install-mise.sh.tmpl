@@ -37,14 +37,15 @@ fi
 
 # ── 2. Instalación/Sincronización ────────────────────────────────────────────
 
-{{- $githubToken := "" -}}
-{{- $secretsFile := "dot_config/homelab/private_secrets.yaml.age" -}}
-{{- if stat (joinPath .chezmoi.sourceDir $secretsFile) -}}
-{{-   $secrets := (include $secretsFile | decrypt | fromYaml) -}}
-{{-   $githubToken = $secrets.github_token -}}
-{{- end }}
+# Extraer token bajo demanda (Runtime Decryption)
+SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+GITHUB_TOKEN=""
 
-export GITHUB_TOKEN="{{ $githubToken }}"
+if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
+    GITHUB_TOKEN=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null | grep "github_token:" | awk '{print $2}' | tr -d '"' || echo "")
+fi
+
+export GITHUB_TOKEN="$GITHUB_TOKEN"
 export MISE_PYTHON_GITHUB_ATTESTATIONS=false
 MISE_BIN="$HOME/.local/bin/mise"
 
