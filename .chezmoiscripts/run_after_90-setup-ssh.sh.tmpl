@@ -105,13 +105,16 @@ else
     fi
 fi
 
-# ── 5. Sincronización con Forgejo ────────────────────────────────────────────
+# ── 5. Sincronización con Forgejo (Homelab) ────────────────────────────────────
 log_step "Sincronización con Forgejo (Homelab)"
 
 FORGEJO_URL="http://192.168.18.99:3080/api/v1"
 
-if [ -n "$FORGEJO_TOKEN" ] && curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" | grep -q "200"; then
-    log_info "Servidor Forgejo detectado. Verificando llave..."
+# Verificar vida del servidor (401/405/200 son señales de vida)
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" || echo "000")
+
+if [ -n "$FORGEJO_TOKEN" ] && [[ "$HTTP_STATUS" != "000" ]]; then
+    log_info "Servidor Forgejo detectado en $FORGEJO_URL. Verificando llave..."
     KEY_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" | awk '{print $2}')
     if curl -s -H "Authorization: token $FORGEJO_TOKEN" "$FORGEJO_URL/user/keys" | jq -e ".[] | select(.fingerprint == \"$KEY_FINGERPRINT\")" >/dev/null; then
         log_ok "Esta llave ya está registrada en Forgejo."

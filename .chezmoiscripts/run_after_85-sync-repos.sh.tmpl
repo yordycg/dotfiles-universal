@@ -33,16 +33,18 @@ FORGEJO_TOKEN=""
 if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
     FORGEJO_TOKEN=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
 fi
-
 FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+FORGEJO_TOKEN="{{ $forgejoToken }}"
 
 if [ -z "$FORGEJO_TOKEN" ]; then
     log_warn "Forgejo Token no encontrado en secretos. Saltando sincronización de repositorios."
     exit 0
 fi
 
-# Verificar conexión con Forgejo
-if ! curl -s --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" >/dev/null; then
+# Verificar conexión con Forgejo (Aceptamos 401/405 como 'servidor vivo')
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" -H "Authorization: token $FORGEJO_TOKEN" || echo "000")
+
+if [[ "$HTTP_STATUS" == "000" ]]; then
     log_warn "Servidor Forgejo no alcanzable en $FORGEJO_URL. Saltando sincronización."
     exit 0
 fi
