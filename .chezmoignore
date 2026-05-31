@@ -1,59 +1,38 @@
-# Directorios de organizacion interna - nunca van a $HOME
-home/
-hosts/
-scripts/
-docs/
+# Directorios de organización interna — nunca van a $HOME
+docs/**
+workspace/**
+scripts/**
 
-# Archivos generados dinamicamente
-.config/kitty/colors.conf
-.config/tmux/colors.conf
-.config/sway/colors
-.config/waybar/colors.css
+# Exclusiones Linux: ignorar archivos de Windows
+{{ if ne .chezmoi.os "windows" -}}
+run_once_before_01-clean-old-dotfiles.ps1.tmpl
+run_once_after_99-windows-bootstrap.ps1.tmpl
+AppData/**
+Documents/PowerShell/**
+{{ end -}}
 
-# --- EXCLUSIONES POR OS ---
-
+# Exclusiones Windows: ignorar todo lo de Linux
 {{ if eq .chezmoi.os "windows" -}}
-# Windows Only: Ignorar Justfile y scripts de Linux
-Justfile
-dot_Justfile
-dot_Justfile.tmpl
 script-linux-*
+run_onchange_after_linux-orchestrator.sh.tmpl
 run_onchange_after_linux-orchestrator.sh
-.config/sway/**
-.config/waybar/**
-.config/mako/**
-.config/kitty/**
-.config/flavours/**
-.config/systemd/**
-.config/zsh/**
-.local/share/flavours/**
-{{- end }}
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/mako/**
+dot_config/kitty/**
+dot_config/flavours/**
+dot_config/systemd/**
+dot_config/zsh/**
+dot_local/share/flavours/**
+dot_mozilla/**
+dot_config/kitty/colors.conf
+dot_config/tmux/colors.conf
+dot_config/sway/colors
+dot_config/waybar/colors.css
+{{ end -}}
 
-{{ if eq .chezmoi.os "linux" -}}
-# Linux: Ignorar scripts de Windows
-run_once_*.ps1
-{{- end }}
-
-# Perfiles
-{{ if not (and (hasKey . "isLaptop") .isLaptop) }}
-hosts/laptop/**
-{{ end }}
-{{ if not (and (hasKey . "isDesktop") .isDesktop) }}
-hosts/desktop/**
-{{ end }}
-
-# Sway: solo en Linux nativo
-{{ if eq .chezmoi.os "windows" }}
-home/profile_sway/**
-home/os_linux/**
-{{ end }}
-
-# WSL
-{{ if not (and (hasKey . "isWSL") .isWSL) }}
-home/profile_wsl/**
-{{ end }}
-
-# Windows
-{{ if ne .chezmoi.os "windows" }}
-home/os_windows/**
-{{ end }}
+# Archivos generados dinámicamente por scripts
+dot_config/kitty/colors.conf
+dot_config/tmux/colors.conf
+dot_config/sway/colors
+dot_config/waybar/colors.css

@@ -99,6 +99,28 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
     {{- end }}
 fi
 
+# -- SSH agent bridge Windows → WSL (solo en WSL) -----------------
+{{- if .isWSL }}
+export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+
+_start_agent_bridge() {
+    if ! ss -a 2>/dev/null | grep -q "$SSH_AUTH_SOCK"; then
+        rm -f "$SSH_AUTH_SOCK"
+        ( setsid socat \
+            UNIX-LISTEN:"$SSH_AUTH_SOCK",fork \
+            EXEC:"npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork \
+          & ) >/dev/null 2>&1
+    fi
+}
+_start_agent_bridge
+{{- end }}
+
+# -- Vaultwarden — desbloqueo sin exponer master password ---------
+bwu() {
+    export BW_SESSION="$(bw unlock --raw)"
+    echo "Vaultwarden desbloqueado."
+}
+
 # -- FINALIZACIÓN -------------------------------------------------------------
 if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
     fastfetch

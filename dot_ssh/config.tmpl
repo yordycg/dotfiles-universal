@@ -1,0 +1,23 @@
+Host homelab
+    HostName {{ .homelab_ip | default "192.168.18.99" }}
+    User yordycg
+    Port 22
+    IdentityFile ~/.ssh/id_ed25519
+    AddKeysToAgent yes
+    ForwardAgent yes
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+    Compression yes
+
+Host forgejo.home
+    HostName 192.168.18.99
+    User git
+    Port 2222
+    IdentityFile ~/.ssh/id_ed25519
+    IdentitiesOnly yes
+
+Host github.com
+	HostName github.com
+	User git
+	IdentityFile ~/.ssh/id_ed25519
+	IdentitiesOnly yes

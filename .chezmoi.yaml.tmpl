@@ -1,104 +1,63 @@
-{{/* ============================================================
-     .chezmoi.yaml.tmpl — Resiliente, Zero-Touch, Idempotente
-     Regla: NUNCA llamar decrypt si la key o el archivo no existe.
-     NUNCA llamar promptStringOnce si ya tenemos el valor.
-     ============================================================ */}}
+{{/* ── Detección de entorno ────────────────────────────────────── */}}
+{{- $isWindows := eq .chezmoi.os "windows" -}}
+{{- $isWSL     := and (not $isWindows) (env "WSL_DISTRO_NAME" | not | not) -}}
+{{- $isServer  := and (not $isWindows) (not $isWSL)
+      (or (eq .chezmoi.hostname "homelab")
+          (eq .chezmoi.hostname "servidor")) -}}
+{{- $isLaptop  := and (not $isWindows) (not $isWSL) (not $isServer)
+      (stat "/sys/class/power_supply/BAT0" | not | not) -}}
+{{- $isDesktop := and (not $isWindows) (not $isWSL)
+      (not $isServer) (not $isLaptop) -}}
 
-{{/* ── 1. GITHUB TOKEN ──────────────────────────────────────────
-     Orden de precedencia:
-       1. Env var GITHUB_TOKEN  (inyectada por bootstrap-wsl o CI)
-       2. Valor ya persistido en chezmoi data (re-ejecuciones)
-       3. gh CLI  (si está disponible y autenticado)
-       4. Prompt interactivo (único fallback humano)
-     ──────────────────────────────────────────────────────────── */}}
-{{- $githubToken := "" -}}
+{{/* ── GitHub token — cadena de precedencia, nunca en historial ── */}}
+{{- $ghToken := "" -}}
 {{- if env "GITHUB_TOKEN" -}}
-{{-   $githubToken = env "GITHUB_TOKEN" -}}
+{{-   $ghToken = env "GITHUB_TOKEN" -}}
 {{- else if and (hasKey . "githubToken") .githubToken -}}
-{{-   $githubToken = .githubToken -}}
+{{-   $ghToken = .githubToken -}}
 {{- else -}}
-{{-   $ghCli := lookPath "gh" -}}
-{{-   if $ghCli -}}
-{{-     $out := output "gh" "auth" "token" | trim -}}
-{{-     if $out -}}
-{{-       $githubToken = $out -}}
-{{-     end -}}
+{{-   $cli := lookPath "gh" -}}
+{{-   if $cli -}}
+{{-     $ghToken = (output "gh" "auth" "token" | trim) -}}
 {{-   end -}}
 {{- end -}}
-{{- if not $githubToken -}}
-{{-   $githubToken = promptStringOnce . "githubToken" "GitHub Personal Access Token" -}}
+{{- if not $ghToken -}}
+{{-   $ghToken = promptStringOnce . "githubToken" "GitHub token" -}}
 {{- end -}}
 
-{{/* ── 2. DETECCIÓN DE ENTORNO ──────────────────────────────────
-     Orden importa: WSL debe detectarse ANTES que isDesktop genérico
-     porque en WSL, .chezmoi.os también es "linux".
-     ──────────────────────────────────────────────────────────── */}}
-{{- $isWindows := false -}}
-{{- $isWSL     := false -}}
-{{- $isLaptop  := false -}}
-{{- $isServer  := false -}}
-{{- $isDesktop := false -}}
+{{/* ── Age encryption — SOLO si key.txt existe en disco ────────── */}}
+{{- $keyPath := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
+{{- $hasKey  := and (not $isWindows) (stat $keyPath | not | not) -}}
 
-{{- if eq .chezmoi.os "windows" -}}
-{{-   $isWindows = true -}}
-{{-   $isDesktop = true -}}
-{{- else if eq .chezmoi.os "linux" -}}
-{{-   if env "WSL_DISTRO_NAME" -}}
-{{-     $isWSL = true -}}
-{{-   else if or (eq .chezmoi.hostname "servidor") (eq .chezmoi.hostname "vault") (eq .chezmoi.hostname "homelab") -}}
-{{-     $isServer = true -}}
-{{-   else if stat "/sys/class/power_supply/BAT0" -}}
-{{-     $isLaptop = true -}}
-{{-   else -}}
-{{-     $isDesktop = true -}}
-{{-   end -}}
-{{- end -}}
-
-{{/* ── 3. FORGEJO TOKEN vía Age ─────────────────────────────────
-     CRÍTICO: solo intentar decrypt si:
-       a) El archivo key.txt existe en disco
-       b) El archivo .age de secretos existe en disco
-     Sin ambas condiciones, forgejoToken queda "" y no falla.
-     En Windows nunca hay age key → nunca se intenta.
-     ──────────────────────────────────────────────────────────── */}}
+{{/* ── Forgejo token — SOLO si existen key.txt Y el .age ─────── */}}
 {{- $forgejoToken := "" -}}
-{{- if not $isWindows -}}
-{{-   $ageKeyFile   := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
-{{-   $secretsPath  := joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age" -}}
-{{-   if and (stat $ageKeyFile) (stat $secretsPath) -}}
-{{-     $forgejoToken = (include $secretsPath | decrypt | fromYaml).forgejo_token -}}
+{{- if $hasKey -}}
+{{-   $secretsFile := joinPath .chezmoi.sourceDir
+        "dot_config/homelab/private_secrets.yaml.age" -}}
+{{-   if stat $secretsFile -}}
+{{-     $forgejoToken = (include $secretsFile | decrypt | fromYaml).forgejo_token -}}
 {{-   end -}}
 {{- end -}}
 
-{{/* ── 4. CONFIGURACIÓN DE ENCRIPTACIÓN ─────────────────────────
-     Solo habilitar age si la key existe en disco.
-     En Windows o en primer bootstrap sin key, omitir el bloque
-     para no causar "encryption not configured".
-     ──────────────────────────────────────────────────────────── */}}
-{{- $ageKeyFile := joinPath .chezmoi.homeDir ".config/chezmoi/key.txt" -}}
-{{- $hasAgeKey  := and (not $isWindows) (stat $ageKeyFile | not | not) -}}
-
-{{/* ── OUTPUT YAML ──────────────────────────────────────────────*/}}
-{{ if $hasAgeKey -}}
+{{/* ── OUTPUT YAML ─────────────────────────────────────────────── */}}
+{{ if $hasKey -}}
 encryption: "age"
 age:
-  identity: "~/.config/chezmoi/key.txt"
+  identity: {{ $keyPath | quote }}
   recipient: "age1w93unwnu802h9vkygj2d4dxmu23yghw9kd39thwgc0susmsu7spscwp0wa"
 {{ end -}}
 
 bitwarden:
-  base_url: "https://vault.home"
+  base_url: "https://vaultwarden.tudominio.local"
 
 data:
+  isWindows: {{ $isWindows }}
+  isWSL:     {{ $isWSL }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
-  isWSL:     {{ $isWSL }}
   isServer:  {{ $isServer }}
-  isWindows: {{ $isWindows }}
-  os:        {{ .chezmoi.os }}
   hostname:  {{ .chezmoi.hostname }}
-  fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
-  gitName:   "yordycg"
-  gitEmail:  "yordy.carmona8@gmail.com"
-  githubToken:  {{ $githubToken | quote }}
+  githubToken:  {{ $ghToken | quote }}
   forgejoToken: {{ $forgejoToken | quote }}
+  gitName: "yordycg"
+  gitEmail: "yordy.carmona8@gmail.com"
