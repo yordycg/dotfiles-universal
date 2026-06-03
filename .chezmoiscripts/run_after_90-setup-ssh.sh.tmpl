@@ -108,7 +108,7 @@ fi
 # ── 5. Sincronización con Forgejo (Homelab) ────────────────────────────────────
 log_step "Sincronización con Forgejo (Homelab)"
 
-FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+FORGEJO_URL="http://{{ .homelab_ip }}:3080/api/v1"
 
 # Verificar vida del servidor (401/405/200 son señales de vida)
 HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" || echo "000")

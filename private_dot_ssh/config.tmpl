@@ -10,7 +10,7 @@ Host homelab
     Compression yes
 
 Host forgejo.home
-    HostName 192.168.18.99
+    HostName {{ .homelab_ip }}
     User git
     Port 2222
     IdentityFile ~/.ssh/id_ed25519

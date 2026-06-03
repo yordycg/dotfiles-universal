@@ -33,7 +33,7 @@ FORGEJO_TOKEN=""
 if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
     FORGEJO_TOKEN=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
 fi
-FORGEJO_URL="http://192.168.18.99:3080/api/v1"
+FORGEJO_URL="http://{{ .homelab_ip }}:3080/api/v1"
 
 if [ -z "$FORGEJO_TOKEN" ]; then
     log_warn "Forgejo Token no encontrado en secretos. Saltando sincronización de repositorios."
