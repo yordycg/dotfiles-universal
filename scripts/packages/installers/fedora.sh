@@ -59,6 +59,13 @@ if [ -z "${WSL_DISTRO_NAME:-}" ]; then
         sudo dnf config-manager setopt google-chrome.enabled=1
     fi
 
+    # Habilitar repositorio de VS Code (Microsoft)
+    if ! dnf repolist | grep -q "code"; then
+        log_info "Configurando repositorio de VS Code..."
+        sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+        sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
+    fi
+
     # Habilitar COPR para nwg-look y herramientas de Sway modernas
     if ! dnf copr list | grep -q "tofik/nwg-shell"; then
         log_info "Habilitando COPR tofik/nwg-shell (para nwg-look)..."
