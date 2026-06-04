@@ -1,0 +1,6 @@
+// This configuration file allows you to pass permanent command line arguments to VS Code.
+{
+    "enable-crash-reporter": false,
+    "locale": "en",
+    "password-store": "gnome-libsecret"
+}

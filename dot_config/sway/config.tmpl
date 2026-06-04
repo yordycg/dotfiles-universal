@@ -173,6 +173,12 @@ client.unfocused        $base01 $base01 $base04 $base01 $base01
 client.urgent           $base08 $base08 $base00 $base08 $base08
 
 # --- Autostart ---
+# Keyring and DBus session activation (Essential for VS Code Settings Sync)
+exec dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP GNOME_KEYRING_CONTROL SSH_AUTH_SOCK
+exec gnome-keyring-daemon --start --components=pkcs11,secrets,ssh
+# Polkit Agent (For authentication prompts)
+exec /usr/libexec/polkit-mate-authentication-agent-1
+
 # Wallpaper (swww para transiciones suaves)
 exec_always swww-daemon --format xrgb
 # Aplicar el último wallpaper (swww se encarga de recordar o aplicar uno por defecto)

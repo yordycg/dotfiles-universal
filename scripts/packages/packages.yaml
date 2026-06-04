@@ -35,6 +35,8 @@ fedora:
     - fontconfig
     - google-chrome-stable
     - code
+    - gnome-keyring
+    - libsecret
     - nwg-look
     - qt5ct
     - qt6ct
@@ -50,6 +52,7 @@ fedora:
     - waybar
     - rofi-wayland
     - cliphist
+    - mate-polkit
     - ImageMagick
     - mako
     - imv
