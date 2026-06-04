@@ -1,3 +1,12 @@
+# -- Configuración Global de Multiplexación (Acelera conexiones secundarias) --
+Host *
+    ControlMaster auto
+    ControlPath ~/.ssh/master-%r@%h:%p
+    ControlPersist 10m
+    ServerAliveInterval 60
+    ServerAliveCountMax 3
+
+# -- Servidor Homelab --
 Host homelab
     {{- if .isDesktop }}
     HostName {{ .homelab_ip_local }}
@@ -9,10 +18,9 @@ Host homelab
     IdentityFile ~/.ssh/id_ed25519
     AddKeysToAgent yes
     ForwardAgent yes
-    ServerAliveInterval 60
-    ServerAliveCountMax 3
     Compression yes
 
+# -- Repositorio Local (Forgejo) --
 Host forgejo.home
     {{- if .isDesktop }}
     HostName {{ .homelab_ip_local }}
@@ -24,6 +32,7 @@ Host forgejo.home
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
 
+# -- GitHub --
 Host github.com
 	HostName github.com
 	User git

@@ -28,6 +28,7 @@ fedora:
     - sqlite
     - socat
     - fzf
+    - mosh
   desktop:
     - distrobox
     - podman
@@ -106,6 +107,7 @@ debian:
     - fontconfig
     - socat
     - fzf
+    - mosh
 
 arch:
   core:
@@ -134,3 +136,4 @@ arch:
     - restic
     - socat
     - fzf
+    - mosh
