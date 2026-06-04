@@ -7,13 +7,23 @@ workspace/**
 home/**
 hosts/**
 scripts/**
-os/linux/.chezmoiroot
 
 # ── Headless (WSL + Server): ignorar scripts y configs de GUI ─────
 {{ if or .isWSL .isServer -}}
 
 # Configs de GUI (Desktop/Laptop only)
-os/linux/**
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/rofi/**
+dot_config/wofi/**
+dot_config/mako/**
+dot_config/kitty/**
+dot_config/gammastep/**
+dot_config/wallust/**
+dot_config/flavours/**
+dot_config/gtk-3.0/**
+dot_config/gtk-4.0/**
+dot_mozilla/**
 
 # Scripts de GUI que no aplican en headless
 .chezmoiscripts/after_10-install-fonts.sh
