@@ -1,5 +1,9 @@
 Host homelab
-    HostName {{ .homelab_ip | default "192.168.18.99" }}
+    {{- if .isDesktop }}
+    HostName {{ .homelab_ip_local }}
+    {{- else }}
+    HostName {{ .homelab_ip_ts }}
+    {{- end }}
     User yordycg
     Port 22
     IdentityFile ~/.ssh/id_ed25519
@@ -10,7 +14,11 @@ Host homelab
     Compression yes
 
 Host forgejo.home
-    HostName {{ .homelab_ip }}
+    {{- if .isDesktop }}
+    HostName {{ .homelab_ip_local }}
+    {{- else }}
+    HostName {{ .homelab_ip_ts }}
+    {{- end }}
     User git
     Port 2222
     IdentityFile ~/.ssh/id_ed25519
