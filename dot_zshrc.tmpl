@@ -62,36 +62,52 @@ setopt HIST_REDUCE_BLANKS
 setopt HIST_FIND_NO_DUPS
 
 # -- AUTO-TMUX / SESSION MANAGER (Senior Workflow) ----------------------------
-if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) ]]; then
+if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(command -v fzf) ]]; then
     {{ if and (eq .chezmoi.os "linux") .isServer -}}
     # Función para listar sesiones y proyectos
     function s_manager() {
         # 1. Obtener sesiones activas
         local sessions=$(tmux list-sessions -F "󱓞 Session: #S" 2>/dev/null || echo "")
         
+        # 2. Si no hay sesiones y no estamos en un terminal interactivo complejo, crear 'main'
+        if [[ -z "$sessions" && -z "$projects" ]]; then
+             # Intentar crear/adjuntar a 'main' por defecto si todo lo demás falla
+             # Pero primero dejamos que el usuario elija proyectos si existen
+             :
+        fi
+
         # 2. Escanear workspace buscando directorios que tengan .git (Proyectos reales)
-        # Esto es mucho más rápido y preciso
         local projects=$(fd -H -t d ".git$" "$HOME/workspace" 2>/dev/null | xargs -I{} dirname {} | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         
-        # Fallback si fd falla o no hay .git (escanear directorios a profundidad 2)
+        # Fallback si fd falla o no hay .git
         if [[ -z "$projects" ]]; then
             projects=$(find "$HOME/workspace" -maxdepth 2 -type d 2>/dev/null | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         fi
         
+        # Añadir opción '󱓞 Session: main' si no existe en la lista para estandarizar
+        if [[ ! "$sessions" =~ "Session: main" ]]; then
+            sessions=$(echo -e "󱓞 Session: main\n$sessions" | sed '/^$/d')
+        fi
+
         local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh puro)" --prompt " Buscar: " --height=60% --border --info=inline)
         
         # Escape Hatch: Si el usuario cancela (Esc o Ctrl-C), sale a Zsh normal
         [[ -z "$selection" ]] && return 0
         
+        # Compatibilidad de Terminal (Fix para 'open terminal failed: not a terminal')
+        local tmux_term=$TERM
+        [[ "$TERM" == "xterm-kitty" ]] && tmux_term="xterm-256color"
+
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
-            exec tmux attach -t "$target"
+            TERM=$tmux_term tmux new-session -A -s "$target"
+            exit
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
-            # Generar nombre estilo 'categoria/proyecto' (ej. ipvg/arriendo-canchas)
+            # Generar nombre estilo 'categoria/proyecto'
             local name=$(echo "$target_dir" | sed "s|$HOME/workspace/||")
-            # Crear sesión limpia en el directorio del proyecto
-            exec tmux new -A -s "$name" -c "$target_dir"
+            TERM=$tmux_term tmux new -A -s "$name" -c "$target_dir"
+            exit
         fi
     }
 
