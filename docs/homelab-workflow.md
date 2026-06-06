@@ -15,9 +15,8 @@ El objetivo es mantener a los Nodos N fríos, con batería y sin archivos residu
 
 1. Se abre el Nodo N (ej. Laptop en un café).
 2. Se ejecuta la conexión hacia el Nodo 1: `ssh homelab`
-3. Automáticamente se adjunta (o crea) una sesión persistente:
-   `ssh -t yordycg@192.168.18.99 "tmux attach -t dev || tmux new -s dev"`
-4. **Resultado:** El usuario está dentro del Nodo 1. La sesión de Neovim y los procesos en ejecución consumen la RAM y CPU del Servidor. 
+3. Automáticamente se adjunta (o crea) una sesión persistente mediante el Session Manager.
+4. **Resultado:** El usuario está dentro del Nodo 1.
 
 ## 3. La Regla de Tmux (Persistencia)
 Trabajar mediante SSH tiene un peligro: la inestabilidad de red. Tmux soluciona esto garantizando **Persistencia Total**. Si el Nodo N pierde conexión, la sesión sigue viva en el Servidor. Al reconectarse, el estado del editor, los logs y los paneles se recuperan intactos.
