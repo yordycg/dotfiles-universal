@@ -84,7 +84,7 @@ Configuración dual para máxima versatilidad:
 - [ ] Implementar el primer flujo de CI/CD (ej. auto-deploy de `yordycg-portfolio`).
 
 ### 3.3 Migración Arquitectónica (Nodo 1)
-- [x] Migrar el Nodo 1 (Servidor) de **Podman a Docker Oficial** para máxima compatibilidad con Compose.
+- [x] Migrar el Nodo 1 (Servidor) a **Docker Oficial** para máxima compatibilidad con Compose.
 - [x] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
 
 ### 3.4 Gestión de Bases de Datos (Senior Database Workflow)
@@ -110,7 +110,7 @@ Configuración dual para máxima versatilidad:
 - [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 ## 🔧 Fase 5 — Red y DNS (Completado)
 - [x] **Preparar Infraestructura**: Creado `containers/adguard/compose.yaml` y script de provisión `03-dns-setup.sh`.
-- [x] **DNS Interno (Configuración UI)**: AdGuard configurado con rewrites para `*.home` y upstream a Podman.
+- [x] **DNS Interno (Configuración UI)**: AdGuard configurado con rewrites para `*.home` y upstream a Docker.
 - [x] **Estrategia Anti-Desastres**: Implementado script `restore.sh` y backups automáticos de volúmenes con Restic.
 - [x] **VPN Mesh (Tailscale Global)**: Nodo 1 configurado como Nameserver Global y automatización en Chezmoi.
 
