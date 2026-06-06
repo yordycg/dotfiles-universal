@@ -5,12 +5,10 @@
 # Variable interna para el PATH remoto (asegura encontrar mise, just, tmux, etc.)
 REMOTE_PATH="export PATH=\$HOME/.local/share/mise/shims:\$HOME/.local/bin:\$PATH:/usr/local/bin:/usr/bin:/bin"
 
-# Conexión principal al servidor (Nodo 1)
+# Conexión principal al servidor (Nodo 1) - Acceso rápido a Shell
 homelab() {
-  log_info "Conectando al servidor Homelab..." "󰒄"
-  # Entramos directamente a la sesión 'main'. 
-  # El selector de sesiones ahora se gestiona dentro de Tmux con SessionX (prefix + s)
-  ssh -t homelab "tmux new-session -A -s main"
+  log_info "Conectando al servidor Homelab (Shell)..." "󰒄"
+  ssh -t homelab
 }
 
 # Gestión avanzada de Docker vía Lazydocker (Requiere lazydocker en el servidor)
