@@ -66,18 +66,16 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
     {{ if and (eq .chezmoi.os "linux") .isServer -}}
     # Función para listar sesiones y proyectos
     function s_manager() {
-        # 1. Obtener sesiones activas
-        local sessions=$(tmux list-sessions -F "󱓞 Session: #S" 2>/dev/null || echo "")
-        
-        # 2. Si no hay sesiones y no estamos en un terminal interactivo complejo, crear 'main'
-        if [[ -z "$sessions" && -z "$projects" ]]; then
-             # Intentar crear/adjuntar a 'main' por defecto si todo lo demás falla
-             # Pero primero dejamos que el usuario elija proyectos si existen
-             :
-        fi
+        # Verificar que estamos en un TTY real antes de hacer nada
+        [[ ! -t 0 ]] && return 0
 
+        local sessions projects tmpfile selection
+
+        # 1. Obtener sesiones activas
+        sessions=$(tmux list-sessions -F "󱓞 Session: #S" 2>/dev/null || echo "")
+        
         # 2. Escanear workspace buscando directorios que tengan .git (Proyectos reales)
-        local projects=$(fd -H -t d ".git$" "$HOME/workspace" 2>/dev/null | xargs -I{} dirname {} | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
+        projects=$(fd -H -t d ".git$" "$HOME/workspace" 2>/dev/null | xargs -I{} dirname {} | sed "s|$HOME/|~/|g" | sed 's/^/󰚝 Project: /')
         
         # Fallback si fd falla o no hay .git
         if [[ -z "$projects" ]]; then
@@ -89,29 +87,41 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
             sessions=$(echo -e "󱓞 Session: main\n$sessions" | sed '/^$/d')
         fi
 
-        local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh puro)" --prompt " Buscar: " --height=60% --border --info=inline)
+        # --- SOLUCIÓN CLAUDE: Archivo temporal para liberar el TTY ---
+        tmpfile=$(mktemp /tmp/s_manager.XXXXXX)
+        trap "rm -f $tmpfile" EXIT INT TERM
 
-        # Escape Hatch: Si el usuario cancela (Esc o Ctrl-C), sale a Zsh normal
+        # fzf escribe al archivo, no a stdout - el TTY queda intacto
+        { echo "$sessions"; echo "$projects"; } \
+            | grep -v "^$" \
+            | fzf --reverse \
+                  --header "󰒄 Homelab Session Manager (Esc para Zsh puro)" \
+                  --prompt " Buscar: " \
+                  --height=60% \
+                  --border \
+                  --info=inline \
+            > "$tmpfile"
+
+        selection=$(cat "$tmpfile")
+        rm -f "$tmpfile"
+        trap - EXIT INT TERM
+
         [[ -z "$selection" ]] && return 0
 
-        # --- FIX: Recuperar el Terminal tras fzf ---
-        # 1. Resetear el estado del terminal
-        stty sane 2>/dev/null
-
-        # 2. Definir terminal compatible
-        local tmux_term=$TERM
-        [[ "$TERM" == "xterm-kitty" ]] && tmux_term="xterm-256color"
+        # Resetear estado del terminal antes de tmux
+        stty sane 2>/dev/null || true
+        clear
 
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
-            # 3. Exec forzando stdin desde /dev/tty
-            exec env TERM=$tmux_term tmux new-session -A -s "$target" < /dev/tty
+            exec tmux new-session -A -s "$target"
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
+            # Generar nombre estilo 'categoria/proyecto'
             local name=$(echo "$target_dir" | sed "s|$HOME/workspace/||")
-            exec env TERM=$tmux_term tmux new-session -A -s "$name" -c "$target_dir" < /dev/tty
+            exec tmux new-session -A -s "$name" -c "$target_dir"
         fi
-        }
+    }
 
     s_manager
     {{- end }}
