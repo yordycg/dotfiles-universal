@@ -6,10 +6,17 @@ Host *
     ServerAliveInterval 60
     ServerAliveCountMax 3
 
+{{- if not .isServer }}
+# -- Detección Dinámica de Red (Local vs Tailscale) --
+# Si el ping a la IP local tiene éxito, usamos la ruta más rápida.
+Match host homelab,forgejo.home exec "ping -c 1 -W 1 {{ .homelab_ip_local }} >/dev/null 2>&1"
+    HostName {{ .homelab_ip_local }}
+{{- end }}
+
 # -- Servidor Homelab --
 Host homelab
-    {{- if .isDesktop }}
-    HostName {{ .homelab_ip_local }}
+    {{- if .isServer }}
+    HostName 127.0.0.1
     {{- else }}
     HostName {{ .homelab_ip_ts }}
     {{- end }}
@@ -22,13 +29,14 @@ Host homelab
 
 # -- Repositorio Local (Forgejo) --
 Host forgejo.home
-    {{- if .isDesktop }}
-    HostName {{ .homelab_ip_local }}
+    {{- if .isServer }}
+    HostName 127.0.0.1
+    Port 2222
     {{- else }}
     HostName {{ .homelab_ip_ts }}
+    Port 2222
     {{- end }}
     User git
-    Port 2222
     IdentityFile ~/.ssh/id_ed25519
     IdentitiesOnly yes
 

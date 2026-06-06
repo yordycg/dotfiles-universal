@@ -39,15 +39,15 @@ age:
 # Encryption not configured: age key not found
 {{- end }}
 
-bitwarden:
-  base_url: "https://vaultwarden.tudominio.local"
-
 data:
   # ── Escenarios ──
   isWSL:     {{ $isWSL }}
   isServer:  {{ $isServer }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
+
+  # ── Bitwarden ──
+  vault_url: "https://vault.home"
 
   # ── Semántica ──
   isNativeLinux: {{ $isNativeLinux }}
@@ -64,5 +64,5 @@ data:
   gitEmail:     "yordy.carmona8@gmail.com"
   homelab_ip_ts:   "100.110.207.73"
   homelab_ip_local: "192.168.18.99"
-  adguard_ip:      "100.110.207.73"
+  adguard_ip:      {{ if .isHeadless }}"100.110.207.73"{{ else }}"192.168.18.99"{{ end }}
   # Los tokens se extraen bajo demanda en los templates que los necesiten
