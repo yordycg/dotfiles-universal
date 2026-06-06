@@ -100,16 +100,23 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
 
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
-            TERM=$tmux_term tmux new-session -A -s "$target"
+            # Intentar ejecutar con sh -c y redirigir stderr para diagnóstico si falla
+            TERM=$tmux_term tmux new-session -A -s "$target" || {
+                echo "DEBUG: tmux failed with TERM=$tmux_term and target=$target"
+                sleep 2
+            }
             exit
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
             # Generar nombre estilo 'categoria/proyecto'
             local name=$(echo "$target_dir" | sed "s|$HOME/workspace/||")
-            TERM=$tmux_term tmux new -A -s "$name" -c "$target_dir"
+            TERM=$tmux_term tmux new-session -A -s "$name" -c "$target_dir" || {
+                echo "DEBUG: tmux project failed with TERM=$tmux_term"
+                sleep 2
+            }
             exit
         fi
-    }
+        }
 
     s_manager
     {{- end }}
