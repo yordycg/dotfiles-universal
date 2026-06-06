@@ -1,104 +1,101 @@
 # 󰒄 Guía de Workflow Remoto: Nodo N ➔ Nodo 1
-> **Estado:** Implementado (Mayo 2026) · **Arquitectura:** Remote-First
+> **Estado:** Actualizado (Junio 2026) · **Arquitectura:** Remote-First (Senior Lean)
 
-Esta guía detalla cómo trabajar en múltiples proyectos alojados en el **Servidor (Nodo 1)** desde tu **Laptop/Desktop (Nodo N)** de forma transparente, segura y con latencia cero.
-
----
-
-## 1. Conexión Instantánea e Inteligente
-
-Gracias al **SSH Multiplexing** y al **Session Manager**, la conexión es el centro de todo.
-
-- **Comando principal:** `homelab`
-- **Qué sucede tras bambalinas:**
-    1. Se abre un socket persistente (`ControlMaster`). Las siguientes terminales conectarán en <50ms.
-    2. Se activan automáticamente los túneles para puertos web (3000, 5173, 8080, etc.).
-    3. Se lanza el **Smart Session Manager**:
-        - Listará tus sesiones de Tmux activas.
-        - Escaneará `~/workspace` en el servidor buscando proyectos reales (`.git`).
-        - Puedes filtrar con `fzf` y saltar directo al código.
+Esta guía detalla cómo trabajar en múltiples proyectos alojados en el **Servidor (Nodo 1)** desde tu **Laptop/Desktop (Nodo N)** de forma transparente, segura y eficiente.
 
 ---
 
-## 2. Desarrollo con Live Reload (Port Forwarding)
+## 1. Conexión Instantánea (El Comando Maestro: `hl`)
 
-No necesitas configurar nada. El archivo `~/.ssh/config` gestiona los puertos por ti.
+Olvida el comando `ssh` tradicional. Usamos un wrapper inteligente que gestiona sesiones de `tmux` automáticamente.
 
-1. **En el Servidor:** Inicias tu app (ej. `npm run dev` en el puerto 5173).
-2. **En tu Laptop:** Abre el navegador en `http://localhost:5173`.
-3. **Resultado:** Verás la aplicación corriendo en el servidor como si fuera local.
-
-**Puertos pre-configurados:**
-- `3000`: Node/React
-- `5173`: Vite/Frontend
-- `8000`: Python/FastAPI
-- `8080`: APIs/Admin
-- `4321`: Astro
-- `5432`: PostgreSQL (Acceso directo desde DBeaver local)
+- **Comando:** `hl [sesion]`
+- **Qué hace:**
+    - Conecta al servidor.
+    - Si existe la sesión de tmux, se acopla (`attach`).
+    - Si no existe, la crea.
+    - Por defecto usa la sesión `main`.
+- **Otros comandos de sesión:**
+    - `hls`: Lista sesiones de tmux activas en el servidor.
+    - `hlk [sesion]`: Mata una sesión específica.
 
 ---
 
-## 3. Gestión de Contenedores desde Local
+## 2. Desarrollo con Live Reload (Localhost en Remoto)
 
-Hemos inyectado funciones en tu shell para que no tengas que entrar al servidor para tareas rutinarias de Docker:
+Para ver tu aplicación (web, API, etc.) en tu navegador local como si estuviera corriendo en tu laptop, tienes tres niveles de poder:
+
+### Nivel 1: Puertos Automáticos (SSH Config)
+Muchos puertos comunes (3000, 5173, 8080) ya se forwardean automáticamente al ejecutar `hl`.
+
+### Nivel 2: Comando Rápido (`lab-open`)
+Si necesitas abrir un puerto que no está en la config de SSH:
+```bash
+lab-open 8080        # Abre el 8080 del servidor en tu 8080 local
+lab-open 8080 3000   # Abre el 8080 del servidor en tu 3000 local
+```
+
+### Nivel 3: Función de Shell (`sshfwd`)
+Para un túnel silencioso en segundo plano:
+```bash
+sshfwd 5000          # Crea el túnel y se queda escuchando
+```
+
+- **Ver estado:** Usa `sshports` para listar todos los puertos que tienes redirigidos actualmente hacia tu laptop.
+
+---
+
+## 3. Gestión de Contenedores y Logs
+
+No necesitas navegar por carpetas en el servidor para ver qué pasa con tus servicios.
 
 | Comando | Acción |
 | :--- | :--- |
-| `homestat` | Reporte rápido de qué contenedores están vivos y cuánto disco queda. |
+| `lps` | (Lab Status) Lista qué contenedores están corriendo y sus puertos. |
 | `dlogs <app>` | Ver los logs en tiempo real (follow) de un contenedor remoto. |
 | `dexec <app> bash` | Entrar interactivamente a un contenedor en el servidor. |
-| `sshports` | Listar qué puertos están actualmente redirigidos a tu laptop. |
-| `sshfwd <port>` | ¿Necesitas un puerto extra? Mapealo al instante sin reiniciar SSH. |
 
 ---
 
-## 4. Bases de Datos: El patrón de Seguridad
+## 4. Navegación Veloz (Workspace Aliases)
 
-Por seguridad, nuestras bases de datos en el servidor solo escuchan en `127.0.0.1` (loopback).
+Hemos estandarizado los directorios de trabajo para que llegues en 1 segundo:
 
-### Para conectar con DBeaver/Beekeeper:
-1. Crea una conexión a `localhost` puerto `5432`.
-2. **Importante:** Asegúrate de tener una sesión SSH abierta con el servidor (`homelab`).
-3. El túnel SSH automático se encargará de conectar tu herramienta local con el contenedor "oculto" en el servidor.
-
----
-
-## 5. Gestión de Secretos y SSH-Agent
-
-El flujo de llaves es automático:
-- Al abrir tu terminal local, el `ssh-agent` se inicia y carga tu identidad.
-- Al conectar al servidor, tu identidad se **reenvía (ForwardAgent)**.
-- **Resultado:** Puedes hacer `git push/pull` dentro del servidor usando las llaves de tu laptop, sin necesidad de copiar llaves privadas al servidor.
+- `ws`: Ir a la raíz del workspace (`~/workspace`).
+- `wk`: Proyectos de **Trabajo** (Work).
+- `pr`: Proyectos **Personales**.
+- `iv`: Proyectos de **IPVG**.
+- `as`: Directorio de **Assets**.
 
 ---
 
-## 6. Sincronización de Entorno
-
-Si haces un cambio en tus alias o configuración de Neovim:
-1. En tu laptop: `dots` (alias para entrar a la carpeta de chezmoi) -> Editas -> `just save`.
-2. El comando `dsync` se encarga de:
-    - Guardar y subir tus cambios a GitHub.
-    - Conectar al servidor y ejecutar `just update` automáticamente.
-3. **Tu entorno es idéntico en todas las máquinas al instante.**
-
----
-
-## Resumen del Flujo Diario
+## 5. El Flujo Diario Ideal
 
 ```bash
-# 1. Empieza el día
-homelab              # Eliges tu proyecto -> Entras a Tmux+Nvim
+# 1. Conexión al servidor (Inicia el día)
+hl                   # Entras a tu sesión principal de tmux
 
-# 2. Lanzas el entorno (dentro de Tmux)
-npm run dev          # App corriendo en puerto 5173
+# 2. Ir al proyecto
+wk                   # Vas a la carpeta de trabajo
+cd mi-proyecto
+v.                   # Abres Neovim en el directorio actual
 
-# 3. Trabajas desde local
-# Navegador en localhost:5173
-# DBeaver conectado a localhost:5432
+# 3. Levantar servicio (dentro de Neovim o Tmux)
+npm run dev          # Supongamos que corre en puerto 5173
 
-# 4. Revisas logs desde otra terminal en tu Laptop
-dlogs mi-app-web
+# 4. Ver en el navegador (en tu laptop)
+# Abrir http://localhost:5173
 
-# 5. Guardas todo
-dsync "feat: mejoras en el workflow"
+# 5. Si necesitas ver la DB (Beekeeper/DBeaver)
+# Conectar a localhost:5432 (el túnel ya está activo por el SSH Config o lab-open)
+
+# 6. Sincronizar cambios de configuración
+dsync "chore: update aliases"
 ```
+
+---
+
+## 6. Secretos y Seguridad
+
+- **Bitwarden:** Usa `bwu` (Bitwarden Unlock) para desbloquear tu bóveda y copiar la contraseña maestra al portapapeles automáticamente.
+- **SSH Agent:** Tu llave privada nunca sale de tu laptop. Se reenvía al servidor mediante `ForwardAgent` para que puedas hacer `git push` de forma segura.

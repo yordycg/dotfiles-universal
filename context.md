@@ -20,10 +20,11 @@ El objetivo es centralizar el desarrollo en el **Nodo 1** para garantizar persis
     - Llave pública generada para encriptación de secretos.
     - Automatización SSH configurada con registro automático en GitHub.
     - **SOPS** configurado e integrado con `age` para gestión de secretos.
+- [x] **Remote-First Workflow:** Implementado el comando maestro `hl` y herramientas de túneles (`lab-open`, `sshfwd`) para una experiencia transparente servidor-cliente.
 - [x] **Blindaje (Hardening):** Gestionado vía `homelab-infra` (SSH, Firewall, Podman).
 
 ## 📋 Próximos Pasos (Inmediatos)
 1. **Sincronización:** Ejecutar `chezmoi init` en el Nodo 1 para compartir entorno.
 
 ---
-*Última actualización: 21 de mayo de 2026*
+*Última actualización: 06 de junio de 2026*

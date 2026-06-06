@@ -1,13 +1,7 @@
 # Justfile -- Orquestador Global ({{ .chezmoi.hostname }})
 # Generado por Chezmoi — no editar en $HOME directamente.
 
-{{ if eq .chezmoi.os "windows" -}}
-set windows-shell := ["powershell.exe", "-NoProfile", "-NoLogo", "-NonInteractive", "-Command"]
-{{- end }}
-
-{{ if ne .chezmoi.os "windows" -}}
 DOCKER := `if command -v podman >/dev/null 2>&1; then echo "podman"; else echo "docker"; fi`
-{{- end }}
 
 default:
     @just --list
@@ -15,9 +9,7 @@ default:
 # ── Universales ───────────────────────────────────────────────────
 
 apply:
-{{ if ne .chezmoi.os "windows" -}}
     @sudo -v
-{{ end -}}
     chezmoi apply
 
 diff:
@@ -27,23 +19,16 @@ update:
     chezmoi update
 
 edit FILE:
-    chezmoi edit {{ print "{{" }}FILE{{ print "}}" }} --apply
+    chezmoi edit {{`{{FILE}}` }} --apply
 
 # chezmoi git corre git dentro del source-path sin cd ni -C ni tokens ilegales.
 save MSG="feat: update dotfiles":
-{{ if ne .chezmoi.os "windows" -}}
-    cd $(chezmoi source-path) && git add . && git commit -m "{{ print "{{" }}MSG{{ "}}" }}" && git push
-{{- else -}}
-    chezmoi git add -- .
-    chezmoi git commit -- -m "{{ print "{{" }}MSG{{ "}}" }}"
-    chezmoi git push
-{{- end }}
+    cd $(chezmoi source-path) && git add . && git commit -m "{{`{{MSG}}`}}" && git push
 
-{{ if ne .chezmoi.os "windows" -}}
-# ── Linux / WSL ───────────────────────────────────────────────────
+# ── Linux / Workspace ──────────────────────────────────────────────
 
 project-new NAME CATEGORY="personal" LANG="generic":
-    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{ print "{{" }}NAME{{ print "}}" }} {{ print "{{" }}CATEGORY{{ print "}}" }} {{ print "{{" }}LANG{{ "}}" }}
+    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{`{{NAME}}` }} {{`{{CATEGORY}}` }} {{`{{LANG}}` }}
 
 install:
     @if [ -f /etc/fedora-release ]; then \
@@ -53,31 +38,16 @@ install:
     elif [ -f /etc/debian_version ]; then \
         bash $(chezmoi source-path)/scripts/packages/installers/debian.sh; \
     fi
-{{- end }}
 
-{{ if eq .chezmoi.os "windows" -}}
-# ── Windows Only ──────────────────────────────────────────────────
-# La logica PS compleja va en bootstrap-wsl.ps1 — el Justfile solo lo llama.
-
-bootstrap-wsl:
-    powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$HOME\.local\bin\bootstrap-wsl.ps1"
-
-test-wsl-ssh:
-    wsl -d Ubuntu-24.04 -- bash -c "ssh homelab 'echo OK'"
-
-hl:
-    wsl -d Ubuntu-24.04 -- bash -ic "~/.local/bin/hl main"
-{{- end }}
-
-{{ if and (ne .chezmoi.os "windows") (hasKey . "isServer") .isServer -}}
+{{ if and (hasKey . "isServer") .isServer }}
 # ── Homelab ───────────────────────────────────────────────────────
 
 homelab-status:
     cd $HOME/.local/share/homelab-infra && ./manage.sh status
 
 homelab-logs SERVICE:
-    cd $HOME/.local/share/homelab-infra && {{ print "{{" }}DOCKER{{ print "}}" }} compose -f containers/{{ print "{{" }}SERVICE{{ "}}" }}/compose.yaml logs -f
+    cd $HOME/.local/share/homelab-infra && {{`{{DOCKER}}` }} compose -f containers/{{`{{SERVICE}}` }}/compose.yaml logs -f
 
 homelab-update:
     cd $HOME/.local/share/homelab-infra && ./deploy.sh
-{{- end }}
+{{ end }}
