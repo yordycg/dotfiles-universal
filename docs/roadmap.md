@@ -58,8 +58,8 @@ Configuración dual para máxima versatilidad:
 - [x] **Configurar Forgejo**: Despliegue declarativo, puerto SSH (2222) habilitado y resolución DNS interna arreglada. Admin automatizado (`init-forgejo`).
 
 ### 2.2 Nodo 2 (Estación de Fuerza / Desktop Linux)
-- [ ] Asegurar que Podman esté listo para heavy-lifting
-- [ ] Optimizar drivers NVIDIA/AMD si aplica
+- [x] **Docker Oficial**: Configurado para heavy-lifting y compatibilidad con el ecosistema.
+- [x] Optimizar drivers NVIDIA/AMD si aplica
 
 ### 2.3 Nodo N (Clientes Ligeros)
 - [x] Fedora Sway (Laptop) configurado
@@ -80,14 +80,15 @@ Configuración dual para máxima versatilidad:
 - [x] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código.
 - [ ] Implementar el primer flujo de CI/CD (ej. auto-deploy de `yordycg-portfolio`).
 
-### 3.3 Migración Arquitectónica (Nodo 1)
-- [x] Migrar el Nodo 1 (Servidor) a **Docker Oficial** para máxima compatibilidad con Compose.
-- [x] Actualizar repositorios (`homelab-infra` y `chezmoi`) para reflejar la abstracción entre Docker (Servidor) y Podman (Laptops).
+### 3.3 Migración Arquitectónica (Estandarización Docker)
+- [x] Migrar el Nodo 1 (Servidor) y Nodo 2 (Desktop) a **Docker Oficial** para máxima compatibilidad.
+- [x] Mantener Podman solo en Nodo N (Laptops) como abstracción ligera si es necesario.
+- [x] Actualizar repositorios para reflejar el uso predominante de Docker Compose.
 
-### 3.4 Gestión de Bases de Datos (Senior Database Workflow)
+### 3.4 Gestión de Bases de Datos (Senior Terminal Workflow)
 - [x] **Herramientas GUI**: Instalar y configurar Beekeeper Studio (visualización rápida) y DBeaver (ingeniería pesada).
-- [ ] **Database TUI (Multi-motor)**: Investigar e implementar `lazysql` o `usql` para gestión desde terminal/tmux.
-- [ ] **Neovim DB Integration**: Configurar `vim-dadbod` + `vim-dadbod-ui` en LazyVim para desarrollo fluido.
+- [ ] **Database TUI & CLI**: Implementar `usql` (cliente universal) y `lazysql` (interfaz TUI) para gestión total desde terminal/tmux.
+- [ ] **Configuración**: Añadir herramientas a `packages.yaml` y crear alias de acceso rápido.
 
 ---
 ## 🔧 Fase 4 — Seguridad y secrets
