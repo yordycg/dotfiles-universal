@@ -10,10 +10,10 @@
 - [x] GitHub autenticado y scopes de seguridad configurados
 - [x] Repo `dotfiles-universal` creado y sincronizado
 - [x] Estructura de directorios base modular
-- [x] `.chezmoi.yaml.tmpl` — detecta laptop/desktop/WSL/Server
+- [x] `.chezmoi.yaml.tmpl` — detecta laptop/desktop/Server (Linux Only)
 - [x] `packages.yaml` — organizado por distros (Fedora/Debian/Arch)
 - [x] `scripts/packages/installers/` — instaladores limpios por distro
-- [x] `run_once_after_setup-ssh.sh.tmpl` — automatización total de identidad SSH
+- [x] `run_once_after_setup-ssh.sh.tmpl` — automatización de identidad SSH (tras siembra manual)
 - [x] `dot_config/shell/` — aliases y funciones modernas
 - [x] `dot_config/starship.toml` — prompt gestionado por mise
 - [x] `Justfile` — comandos principales (apply, diff, update, save)
@@ -27,7 +27,7 @@
 ### 1.1 Gestionar ~/.ssh/config con Chezmoi
 - [x] Unificar identidad en `id_ed25519`
 - [x] Configurar SSH Agent Forwarding para Nodo 1
-- [x] Automatización total de identidad SSH (Zero-Touch) 
+- [x] Automatización de identidad SSH (Manual Seeding + Script)
 
 ### 1.2 Neovim (Estrategia Dual) 
 Configuración dual para máxima versatilidad:
@@ -57,9 +57,9 @@ Configuración dual para máxima versatilidad:
 - [x] **Tmux Persistente**: Flujo de auto-attach configurado para workflow remoto sin interrupciones.
 - [x] **Configurar Forgejo**: Despliegue declarativo, puerto SSH (2222) habilitado y resolución DNS interna arreglada. Admin automatizado (`init-forgejo`).
 
-### 2.2 Nodo 2 (Estación de Fuerza / Desktop)
-- [ ] Configurar `windows.ps1` o instalador Linux correspondiente
+### 2.2 Nodo 2 (Estación de Fuerza / Desktop Linux)
 - [ ] Asegurar que Podman esté listo para heavy-lifting
+- [ ] Optimizar drivers NVIDIA/AMD si aplica
 
 ### 2.3 Nodo N (Clientes Ligeros)
 - [x] Fedora Sway (Laptop) configurado
@@ -94,7 +94,7 @@ Configuración dual para máxima versatilidad:
 
 ---
 ## 🔧 Fase 4 — Seguridad y secrets
-- [x] **age**: Instalar y generar llave de encriptación (`~/.config/chezmoi/key.txt`).
+- [x] **age**: Uso de llave de encriptación (`~/.config/chezmoi/key.txt`). *Nota: Siembra manual desde USB en nuevos nodos.*
 - [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
 - [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal. 
 - [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas. 
@@ -139,6 +139,19 @@ Configuración dual para máxima versatilidad:
 - [x] **Wallpaper Picker "Senior Grid"**: Selector visual integrado con generación de miniaturas y transiciones vía `swww`.
 - [x] **Integración de Sistema**: Scripts robustos para Portapapeles (`cliphist`), Menú de Apagado y Lanzador de Aplicaciones con rutas absolutas.
 - [x] **Theming Dinámico**: Integración de `wallust` para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
+
+---
+
+## 📋 Protocolo de Bootstrap (New Node)
+
+Para cualquier máquina nueva, el proceso de identidad es manual para máxima seguridad:
+1.  **Siembra de Identidad**: Copiar desde USB seguro:
+    *   `age` key -> `~/.config/chezmoi/key.txt` (o ruta configurada en `private_secrets.yaml.age`).
+    *   SSH key -> `~/.ssh/id_ed25519` y `~/.ssh/id_ed25519.pub`.
+2.  **Chezmoi Init**:
+    ```bash
+    chezmoi init --apply yordycg
+    ```
 
 ---
 
@@ -190,4 +203,4 @@ dotfiles-universal/
 
 ---
 
-> Actualizado: 23 de mayo de 2026 — Nodo 1 estabilizado y Bitwarden Zero-Touch completado
+> Actualizado: 5 de junio de 2026 — Estrategia Linux-Only y Bootstrap Manual de Identidad.
