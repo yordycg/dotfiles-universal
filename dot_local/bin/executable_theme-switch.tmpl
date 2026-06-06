@@ -5,9 +5,17 @@
 # Ensure ~/.local/bin and ~/.cargo/bin are in PATH
 export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
+# --- 1. Verificación de Entorno ---
+# Si no hay flavours, no podemos generar ni listar temas.
+if ! command -v flavours &> /dev/null; then
+    echo "🎨 En este entorno (WSL/Servidor), los colores son gestionados por la terminal anfitriona."
+    echo "   Para cambiar el tema del Homelab, ejecútalo desde tu Laptop principal."
+    exit 0
+fi
+
 THEME="${1:-}"
 
-# Si no se pasa tema, abrir fzf con la lista formateada (uno por línea)
+# --- 2. Selección de Tema ---
 if [ -z "$THEME" ]; then
     if ! command -v fzf &> /dev/null; then
         echo "⚠ fzf no encontrado. Instálalo o pasa un tema como argumento."
@@ -26,17 +34,11 @@ fi
 
 echo "→ Switching to theme: $THEME"
 
-# Verificar si flavours está instalado antes de proceder
-if ! command -v flavours &> /dev/null; then
-    echo "🎨 En este entorno (WSL/Servidor), los colores son gestionados por la terminal anfitriona."
-    echo "   Para cambiar el tema del Homelab, ejecútalo desde tu Laptop principal."
-    exit 0
-fi
-
+# --- 3. Aplicar Tema Local ---
 flavours apply "$THEME"
 
 {{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
-# Propagar tema al servidor Homelab para consistencia visual
+# --- 4. Propagación Remota (Homelab) ---
 if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
     echo "→ Propagando tema al servidor Homelab..."
     # Crear directorios remotos si no existen
@@ -48,19 +50,19 @@ if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
     ssh homelab "tmux source-file ~/.config/tmux/colors.conf" >/dev/null 2>&1
 fi
 
-# Reload Graphical Apps locales
+# --- 5. Reload de Apps Gráficas Locales ---
 pgrep -x sway > /dev/null && swaymsg reload
 pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
 pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
 {{- end }}
 
-# Tmux (si hay sesión activa)
+# --- 6. Reload de Tmux Local ---
 if [ -n "${TMUX:-}" ]; then
   echo "→ Reloading Tmux colors..."
   tmux source-file ~/.config/tmux/colors.conf
 fi
 
 echo "✓ Theme applied: $THEME"
-{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") (not .isServer) -}}
+{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
 echo "  (Neovim might require restart or :colorscheme catppuccin)"
 {{- end }}
