@@ -1,5 +1,7 @@
 # Estructura de paquetes organizada por Distribución
 # Evita conflictos de nombres entre gestores de paquetes (dnf vs apt)
+# Responsabilidad: entorno de trabajo del desarrollador únicamente.
+# Infraestructura del servidor (Docker, etc.) → homelab-infra/
 
 fedora:
   core:
@@ -26,7 +28,6 @@ fedora:
     - libffi-devel
     - unzip
     - sqlite
-    - socat
     - fzf
     - mosh
   desktop:
@@ -73,9 +74,6 @@ fedora:
     - kitty
     - swww
     - waypaper
-  server:
-    - docker-ce
-    - docker-compose-plugin
 
 debian:
   core:
@@ -101,19 +99,12 @@ debian:
     - libncurses5-dev
     - libncursesw5-dev
     - xz-utils
-    - tk-dev
     - libffi-dev
     - liblzma-dev
     - unzip
     - sqlite3
-    - restic
-    - fontconfig
-    - socat
     - fzf
     - mosh
-  server:
-    - docker-ce
-    - docker-compose-plugin
 
 arch:
   core:
@@ -139,7 +130,5 @@ arch:
     - xz
     - libffi
     - unzip
-    - restic
-    - socat
     - fzf
     - mosh
