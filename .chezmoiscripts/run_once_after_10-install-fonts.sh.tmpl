@@ -1,5 +1,8 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
+{{ if not .needsFonts -}}
+exit 0
+{{- end }}
 # =============================================================================
 # scripts/run_after_10-install-fonts.sh.tmpl
 # Instalación de Nerd Fonts
@@ -30,7 +33,7 @@ mkdir -p "$CACHE_DIR"
 STATE_FILE="$CACHE_DIR/fonts-state"
 
 # Hash del propio script para detectar cambios en la lista de fuentes
-CURRENT_HASH="{{ include ".chezmoiscripts/run_after_10-install-fonts.sh.tmpl" | sha256sum }}"
+CURRENT_HASH="{{ include ".chezmoiscripts/run_once_after_10-install-fonts.sh.tmpl" | sha256sum }}"
 
 log_step "Tipografías (Nerd Fonts)"
 

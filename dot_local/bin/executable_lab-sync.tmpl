@@ -1,0 +1,152 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# ~/.local/bin/lab-sync
+# Sincronización manual de repositorios de Forgejo hacia ~/workspace/
+# Uso: lab-sync [--force] [--dry-run]
+# =============================================================================
+set -euo pipefail
+
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+
+FORCE=false
+DRY_RUN=false
+
+for arg in "$@"; do
+    case $arg in
+        --force)   FORCE=true ;;
+        --dry-run) DRY_RUN=true ;;
+    esac
+done
+
+# ── Throttle (omitido con --force) ───────────────────────────────────────────
+CACHE_DIR="$HOME/.cache/chezmoi-scripts"
+mkdir -p "$CACHE_DIR"
+SYNC_STATE="$CACHE_DIR/lab-sync-last"
+
+if [ "$FORCE" = "false" ] && [ -f "$SYNC_STATE" ]; then
+    LAST=$(cat "$SYNC_STATE")
+    NOW=$(date +%s)
+    DIFF=$(( NOW - LAST ))
+    if [ "$DIFF" -lt 3600 ]; then
+        MINS=$(( (3600 - DIFF) / 60 ))
+        echo "Sincronizado hace menos de 1h. Próxima sync disponible en ${MINS}m."
+        echo "Usa --force para sincronizar ahora."
+        exit 0
+    fi
+fi
+
+# ── Extraer token de Forgejo ─────────────────────────────────────────────────
+SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+FORGEJO_TOKEN=""
+
+if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
+    DECRYPTED=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null || echo "")
+    if [ -n "$DECRYPTED" ]; then
+        FORGEJO_TOKEN=$(echo "$DECRYPTED" | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
+    fi
+fi
+
+if [ -z "$FORGEJO_TOKEN" ]; then
+    log_err "Forgejo token no encontrado en secrets. Verifica tu llave Age."
+fi
+
+# ── Detectar URL de Forgejo ───────────────────────────────────────────────────
+FORGEJO_URL="http://{{ .homelab_ip_local }}:3080/api/v1"
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" \
+    -H "Authorization: token $FORGEJO_TOKEN" || echo "000")
+
+if [ "$HTTP_STATUS" = "000" ]; then
+    FORGEJO_URL="http://{{ .homelab_ip_ts }}:3080/api/v1"
+    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 3 "$FORGEJO_URL/user" \
+        -H "Authorization: token $FORGEJO_TOKEN" || echo "000")
+fi
+
+if [ "$HTTP_STATUS" = "000" ]; then
+    log_err "Servidor Forgejo no alcanzable (local ni Tailscale). Verifica la conexión."
+fi
+
+log_step "Sincronizando repositorios desde Forgejo"
+
+# ── Categorización de repos ───────────────────────────────────────────────────
+get_category() {
+    local name=$1
+    case "$name" in
+        wallpapers|obsidian-notes) echo "assets" ;;
+        *portfolio*)               echo "personal" ;;
+        *)                         echo "ipvg" ;;
+    esac
+}
+
+# ── Repos excluidos (gestionados por chezmoi directamente) ───────────────────
+EXCLUDED=("dotfiles-universal" "homelab-infra")
+
+is_excluded() {
+    local name=$1
+    for ex in "${EXCLUDED[@]}"; do
+        [ "$name" = "$ex" ] && return 0
+    done
+    return 1
+}
+
+# ── Sincronización ────────────────────────────────────────────────────────────
+REPOS_JSON=$(curl -s \
+    -H "Authorization: token $FORGEJO_TOKEN" \
+    "$FORGEJO_URL/user/repos?limit=50")
+
+CLONED=0
+UPDATED=0
+SKIPPED=0
+
+while IFS= read -r repo; do
+    NAME=$(echo "$repo" | jq -r '.name')
+    SSH_URL=$(echo "$repo" | jq -r '.ssh_url')
+
+    is_excluded "$NAME" && continue
+
+    CATEGORY=$(get_category "$NAME")
+    TARGET_PATH="$HOME/workspace/$CATEGORY/$NAME"
+
+    if [ "$DRY_RUN" = "true" ]; then
+        echo "  [dry-run] $CATEGORY/$NAME → $TARGET_PATH"
+        continue
+    fi
+
+    if [ ! -d "$TARGET_PATH/.git" ]; then
+        log_info "Clonando $NAME → workspace/$CATEGORY/"
+        mkdir -p "$(dirname "$TARGET_PATH")"
+        git clone -q "$SSH_URL" "$TARGET_PATH"
+        log_ok "$NAME clonado."
+        CLONED=$(( CLONED + 1 ))
+    else
+        cd "$TARGET_PATH"
+        if git diff-index --quiet HEAD -- 2>/dev/null; then
+            git pull -q --rebase 2>/dev/null && \
+                log_ok "$NAME actualizado." || \
+                log_warn "$NAME: pull falló, revisa manualmente."
+            UPDATED=$(( UPDATED + 1 ))
+        else
+            log_warn "$NAME tiene cambios locales — saltando pull."
+            SKIPPED=$(( SKIPPED + 1 ))
+        fi
+        cd - > /dev/null
+    fi
+done < <(echo "$REPOS_JSON" | jq -c '.[]')
+
+if [ "$DRY_RUN" = "false" ]; then
+    date +%s > "$SYNC_STATE"
+    echo ""
+    log_ok "Sync completo — Clonados: $CLONED | Actualizados: $UPDATED | Saltados: $SKIPPED"
+fi
+{{- end }}

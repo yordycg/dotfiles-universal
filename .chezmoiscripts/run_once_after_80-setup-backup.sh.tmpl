@@ -6,8 +6,8 @@
 # =============================================================================
 set -euo pipefail
 
-{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") (not .isServer) -}}
-exit 0
+{{ if not .isServer -}}
+exit 0  # Solo corre en el servidor
 {{- end }}
 
 # Colores Homelab-Style
@@ -19,6 +19,10 @@ RESET='\033[0m'
 log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
 log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
 log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+
+if systemctl --user is-enabled homelab-backup.timer &>/dev/null; then
+    exit 0  # Timer ya activo — silencio absoluto
+fi
 
 log_step "Configuración de Backup Automático"
 
@@ -33,7 +37,6 @@ else
     log_ok "El temporizador de backup ya está activo."
 fi
 
-# Habilitar Lingering si no lo está
 if [ ! -f "/var/lib/systemd/linger/$USER" ]; then
     log_info "Habilitando lingering para ejecución persistente en background..."
     sudo loginctl enable-linger "$USER"

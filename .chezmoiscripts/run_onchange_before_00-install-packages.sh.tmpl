@@ -21,33 +21,23 @@ log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
 # ── 1. Gestión de Estado (Caché Senior) ──────────────────────────────────────
-CACHE_DIR="$HOME/.cache/chezmoi-scripts"
-mkdir -p "$CACHE_DIR"
-STATE_FILE="$CACHE_DIR/packages-state"
-
-# Hashes de dependencias
-CURRENT_HASH="{{ include "scripts/packages/packages.yaml" | sha256sum }} {{ include "scripts/packages/installers/fedora.sh" | sha256sum }} {{ include "scripts/packages/installers/debian.sh" | sha256sum }}"
+# Hashes de dependencias para forzar ejecución en cambios:
+# {{ include "scripts/packages/packages.yaml" | sha256sum }} {{ include "scripts/packages/installers/fedora.sh" | sha256sum }} {{ include "scripts/packages/installers/debian.sh" | sha256sum }}
 
 log_step "Paquetes del Sistema"
 
-# Senior Check: Si el estado coincide Y restic está instalado, saltamos.
-if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && command -v restic &>/dev/null; then
-    log_ok "Todos los paquetes base están al día."
-    exit 0
-fi
-
 # ── 2. Bootstrap de Secretos (Age) ───────────────────────────────────────────
 log_info "Configurando Secretos (Age)..."
-AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
+AGE_KEY_FILE="$HOME/.config/age/key.txt"
 
 if [ -z "${CHEZMOI_AGE_KEY:-}" ]; then
-    log_info "Sin llave en entorno. Usando archivo local si existe."
+    log_info "Sin llave en entorno. Usando archivo local en $AGE_KEY_FILE"
 else
     if [ ! -f "$AGE_KEY_FILE" ]; then
         mkdir -p "$(dirname "$AGE_KEY_FILE")"
         echo "$CHEZMOI_AGE_KEY" > "$AGE_KEY_FILE"
         chmod 600 "$AGE_KEY_FILE"
-        log_ok "Llave age inyectada."
+        log_ok "Llave age inyectada en $AGE_KEY_FILE"
     fi
 fi
 
@@ -69,6 +59,5 @@ fi
 
 
 # Guardar estado exitoso
-echo "$CURRENT_HASH" > "$STATE_FILE"
 log_ok "Instalación completada exitosamente."
 {{- end }}

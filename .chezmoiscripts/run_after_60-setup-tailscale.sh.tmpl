@@ -4,6 +4,12 @@
 # Automatización de Tailscale (VPN Mesh) - Versión Resiliente (Senior)
 # =============================================================================
 {{ if eq .chezmoi.os "linux" -}}
+# Check silencioso — si tailscale ya está activo, salir sin output
+if command -v tailscale &>/dev/null && tailscale status &>/dev/null 2>&1; then
+    sudo tailscale set --accept-dns=true >/dev/null 2>&1 || true
+    exit 0
+fi
+
 set -euo pipefail
 
 # Colores Homelab-Style
@@ -45,7 +51,5 @@ if tailscale status &>/dev/null; then
 else
     log_warn "Tailscale no está autenticado."
     log_info "Por favor, ejecuta 'sudo tailscale up' para vincular este nodo."
-    # No forzamos el 'up' aquí para evitar colgar el script de chezmoi 
-    # si no hay intervención manual inmediata.
 fi
 {{ end -}}

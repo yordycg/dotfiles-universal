@@ -4,8 +4,7 @@
 # scripts/run_onchange_after_apply-theme.sh.tmpl
 # Automatización de Temas (GTK, Kvantum, Qt) - Senior Logic
 # =============================================================================
-{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") .isServer -}}
-# El servidor es headless, no aplicamos temas graficos
+{{ if not .hasGUI -}}
 exit 0
 {{- end }}
 

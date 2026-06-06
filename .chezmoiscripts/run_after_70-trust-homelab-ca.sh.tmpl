@@ -4,6 +4,12 @@
 # scripts/run_after_95-trust-homelab-ca.sh.tmpl
 # Confianza SSL e Infraestructura PKI
 # =============================================================================
+
+# El servidor ES la fuente de los certificados, no necesita instalarlos
+{{ if .isServer -}}
+exit 0
+{{- end }}
+
 set -euo pipefail
 
 # Colores Homelab-Style
@@ -27,6 +33,28 @@ BUNDLE_NAME="homelab-ca-bundle.crt"
 TEMP_DIR=$(mktemp -d)
 trap 'rm -rf "$TEMP_DIR"' EXIT
 
+# ── Caché: evitar SSH al servidor si el cert no cambió ───────────────────────
+CACHE_DIR="$HOME/.cache/chezmoi-scripts"
+mkdir -p "$CACHE_DIR"
+CA_STATE_FILE="$CACHE_DIR/homelab-ca-state"
+
+# Determinar ruta del bundle instalado según distro
+INSTALLED_BUNDLE=""
+if [ -f /etc/debian_version ]; then
+    INSTALLED_BUNDLE="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
+elif [ -f /etc/fedora-release ]; then
+    INSTALLED_BUNDLE="/etc/pki/ca-trust/source/anchors/homelab-ca-bundle.crt"
+fi
+
+# Si el bundle existe y el hash coincide con el guardado → salir en silencio
+if [ -f "$INSTALLED_BUNDLE" ] && [ -f "$CA_STATE_FILE" ]; then
+    CURRENT_HASH=$(sha256sum "$INSTALLED_BUNDLE" | awk '{print $1}')
+    CACHED_HASH=$(cat "$CA_STATE_FILE")
+    if [ "$CURRENT_HASH" = "$CACHED_HASH" ]; then
+        exit 0  # Certificado sin cambios — silencio absoluto
+    fi
+fi
+
 log_step "Confianza SSL (Homelab PKI)"
 
 # ── 1. Obtención de Certificados (Root e Intermediate) ───────────────────────
@@ -49,19 +77,16 @@ fetch_certs() {
             "/home/yordycg/.local/share/containers/storage/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename"
         )
         for p in "${paths[@]}"; do
-            if [ -f "$p" ]; then cp "$p" "$dst" && break; fi
+            if [ -f "$p" ]; then cp "$p" "$dst" && break; break; fi
         done
     fi
 
     # Método C: SSH desde el Servidor (Para Nodos N)
     if [ ! -s "$dst" ] && [ "{{ if (hasKey . "isServer") }}{{ .isServer }}{{ else }}false{{ end }}" != "true" ]; then
-        # Usar opciones que acepten la llave automáticamente si es nueva
         SSH_OPTS="-o ConnectTimeout=3 -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
         if ssh $SSH_OPTS homelab exit &>/dev/null; then
             log_info "Extrayendo $filename desde el servidor vía SSH..."
-            # Intentar extracción vía docker en el remoto
             if ! ssh -q $SSH_OPTS homelab "docker run --rm -v reverse-proxy_caddy_data:/data alpine cat /data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null; then
-                # Fallback: intentar ruta directa en el servidor si docker falla
                 ssh -q $SSH_OPTS homelab "cat /var/lib/docker/volumes/reverse-proxy_caddy_data/_data/caddy/pki/authorities/local/$filename" > "$dst" 2>/dev/null || true
             fi
         fi
@@ -127,4 +152,9 @@ install_cert() {
 install_cert "$TEMP_DIR/root.crt" "$ROOT_CERT_NAME"
 install_cert "$TEMP_DIR/intermediate.crt" "$INT_CERT_NAME"
 install_cert "$TEMP_DIR/bundle.crt" "$BUNDLE_NAME"
+
+# Guardar hash del bundle recién instalado
+if [ -f "$INSTALLED_BUNDLE" ]; then
+    sha256sum "$INSTALLED_BUNDLE" | awk '{print $1}' > "$CA_STATE_FILE"
+fi
 {{- end }}
