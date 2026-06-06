@@ -8,9 +8,9 @@ REMOTE_PATH="export PATH=\$HOME/.local/share/mise/shims:\$HOME/.local/bin:\$PATH
 # Conexión principal al servidor (Nodo 1)
 homelab() {
   log_info "Conectando al servidor Homelab..." "󰒄"
-  # Simplemente entramos. El s_manager en el .zshrc del servidor se encargará
-  # de darnos el selector de sesiones de forma interactiva.
-  ssh -t homelab
+  # Entramos directamente a la sesión 'main'. 
+  # El selector de sesiones ahora se gestiona dentro de Tmux con SessionX (prefix + s)
+  ssh -t homelab "tmux new-session -A -s main"
 }
 
 # Gestión avanzada de Docker vía Lazydocker (Requiere lazydocker en el servidor)
