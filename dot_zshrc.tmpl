@@ -66,6 +66,12 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
     {{ if and (eq .chezmoi.os "linux") .isServer -}}
     # Función para listar sesiones y proyectos
     function s_manager() {
+        # DIAGNÓSTICO CLAUDE
+        echo "DEBUG TTY: $(tty)"
+        echo "DEBUG TERM: $TERM"
+        echo "DEBUG SSH_TTY: $SSH_TTY"
+        ls -la /proc/$$/fd/0 /proc/$$/fd/1 /proc/$$/fd/2 2>/dev/null
+        
         # Verificar que estamos en un TTY real antes de hacer nada
         [[ ! -t 0 ]] && return 0
 
