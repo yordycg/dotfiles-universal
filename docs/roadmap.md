@@ -63,10 +63,7 @@ Configuración dual para máxima versatilidad:
 
 ### 2.3 Nodo N (Clientes Ligeros)
 - [x] Fedora Sway (Laptop) configurado
-- [ ] **Resiliencia de Red (Tailscale)**: Investigar y solucionar la pérdida de internet en Nodo N cuando el servidor central falla (Incidente post-migración Docker). 
-  - *Problema*: Dependencia crítica de DNS/Exit-node.
-  - *Solución temporal*: `sudo tailscale up --exit-node=`.
-  - *Tarea*: Crear script específico de instalación/configuración de Tailscale para Nodo N que asegure fallback de internet.
+- [x] **Resiliencia de Red (Tailscale)**: Implementada mediante Split DNS y configuración sin Exit-node forzado. El Nodo N mantiene internet incluso si el servidor central falla.
 - [ ] Refinar ahorro de energía y gestión de red
 
 ---
