@@ -54,6 +54,11 @@ fi
 # ── 3. Instalación de Paquetes ───────────────────────────────────────────────
 log_info "Detectando sistema y sincronizando paquetes..."
 
+# Inyectar capacidades para los instaladores
+export NODE_HAS_GUI="{{ .hasGUI }}"
+export NODE_IS_SERVER="{{ .isServer }}"
+export NODE_IS_WSL="{{ .isWSL }}"
+
 if [ -f /etc/fedora-release ]; then
     bash "{{ .chezmoi.sourceDir }}/scripts/packages/installers/fedora.sh"
 elif [ -f /etc/debian_version ]; then
@@ -61,6 +66,7 @@ elif [ -f /etc/debian_version ]; then
 else
     log_warn "SO no soportado para instalación automática."
 fi
+
 
 # Guardar estado exitoso
 echo "$CURRENT_HASH" > "$STATE_FILE"

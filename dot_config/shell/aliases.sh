@@ -69,6 +69,8 @@ alias vd='deactivate'
 alias hl='hl'
 alias hls='ssh homelab tmux ls'
 alias hlk='ssh homelab tmux kill-session -t'
+alias lab-forward='ssh -N -L'
+alias lps='lab-status'
 
 # -- Sistema (Continuación) -------------------
 alias logout='loginctl terminate-user $USER'

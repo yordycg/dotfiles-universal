@@ -49,8 +49,13 @@ install_section() {
 # Perfil Core (Siempre)
 install_section "core"
 
-# Perfil Desktop (Si no es WSL)
-if [ -z "${WSL_DISTRO_NAME:-}" ]; then
+# Perfil Server (Si aplica)
+if [ "${NODE_IS_SERVER:-}" = "true" ]; then
+    install_section "server"
+fi
+
+# Perfil Desktop (Si aplica)
+if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     # Habilitar repositorio de Google Chrome (Standard Fedora)
     if ! dnf repolist | grep -q "google-chrome"; then
         log_info "Configurando repositorio de Google Chrome..."

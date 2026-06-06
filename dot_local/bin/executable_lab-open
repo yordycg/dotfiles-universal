@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Abre un puerto del servidor en localhost sin pensar
+# Uso: lab-open 8080
+# Uso con puerto local diferente: lab-open 8080 3000
+
+REMOTE_PORT=${1:?uso: lab-open <puerto_servidor> [puerto_local]}
+LOCAL_PORT=${2:-$REMOTE_PORT}
+
+echo "Forwarding localhost:${LOCAL_PORT} → homelab:${REMOTE_PORT}"
+echo "Ctrl+C para cerrar"
+ssh -N -L "${LOCAL_PORT}:localhost:${REMOTE_PORT}" homelab

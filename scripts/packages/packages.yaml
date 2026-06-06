@@ -73,6 +73,9 @@ fedora:
     - kitty
     - swww
     - waypaper
+  server:
+    - docker-ce
+    - docker-compose-plugin
 
 debian:
   core:
@@ -108,6 +111,9 @@ debian:
     - socat
     - fzf
     - mosh
+  server:
+    - docker-ce
+    - docker-compose-plugin
 
 arch:
   core:

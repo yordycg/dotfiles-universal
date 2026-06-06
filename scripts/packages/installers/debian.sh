@@ -87,10 +87,16 @@ install_section() {
 # Perfil Core (Siempre)
 install_section "core"
 
+# Perfil Server (Si aplica)
+if [ "${NODE_IS_SERVER:-}" = "true" ]; then
+    install_section "server"
+fi
+
 # Perfil Desktop (Opcional en Debian)
-if [ -n "${DISPLAY:-}" ] || [ -n "${WAYLAND_DISPLAY:-}" ]; then
-    log_info "Entorno gráfico detectado. Buscando sección desktop..."
+if [ "${NODE_HAS_GUI:-}" = "true" ]; then
+    log_info "Capacidad GUI detectada. Buscando sección desktop..."
     # install_section "desktop" # Reservado para futuras ampliaciones
 fi
+
 
 log_ok "Bootstrap de Debian completado."

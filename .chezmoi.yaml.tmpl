@@ -8,19 +8,27 @@
 {{- end -}}
 
 {{/* ── PASO 1: Variables base ────────────────────────────────── */}}
-{{- $isWSL    := env "WSL_DISTRO_NAME" | not | not -}}
-{{- $isServer := and (not $isWSL)
-      (or (eq .chezmoi.hostname "homelab")
-          (eq .chezmoi.hostname "servidor")
-          (eq .chezmoi.hostname "vault")) -}}
-{{- $isLaptop := and (not $isWSL) (not $isServer)
-      (stat "/sys/class/power_supply/BAT0" | not | not) -}}
-{{- $isDesktop := and (not $isWSL) (not $isServer) (not $isLaptop) -}}
+{{- $roleFile := "/etc/chezmoi-role" -}}
+{{- $nodeRole := "" -}}
+{{- if stat $roleFile -}}
+{{-   $nodeRole = include $roleFile | trim -}}
+{{- end -}}
+
+{{- $isWSL     := env "WSL_DISTRO_NAME" | not | not -}}
+{{- $isServer  := or (eq $nodeRole "server") -}}
+{{- $hasBattery := stat "/sys/class/power_supply/BAT0" | not | not -}}
+{{- $isLaptop  := and (not $isWSL) (not $isServer) $hasBattery -}}
+{{- $isDesktop := and (not $isWSL) (not $isServer) (not $hasBattery) -}}
 
 {{/* ── PASO 2: Variables derivadas ───────────────────────────── */}}
 {{- $isNativeLinux := or $isLaptop $isDesktop -}}
 {{- $isGUI         := $isNativeLinux -}}
 {{- $isHeadless    := or $isServer $isWSL -}}
+
+{{- $hasGUI      := or $isLaptop $isDesktop -}}
+{{- $hasDocker   := $isServer -}}
+{{- $needsSSHcfg := not $isServer -}}
+{{- $needsFonts  := $hasGUI -}}
 
 {{/* ── PASO 3: Identificar llave de Age ──────────────────────── */}}
 {{- $keyPath := joinPath .chezmoi.homeDir ".config/age/key.txt" -}}
@@ -46,6 +54,12 @@ data:
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
 
+  # ── Capacidades ──
+  hasGUI:      {{ $hasGUI }}
+  hasDocker:   {{ $hasDocker }}
+  needsSSHcfg: {{ $needsSSHcfg }}
+  needsFonts:  {{ $needsFonts }}
+
   # ── Bitwarden ──
   vault_url: "https://vault.home"
 
@@ -64,5 +78,5 @@ data:
   gitEmail:     "yordy.carmona8@gmail.com"
   homelab_ip_ts:   "100.110.207.73"
   homelab_ip_local: "192.168.18.99"
-  adguard_ip:      {{ if .isHeadless }}"100.110.207.73"{{ else }}"192.168.18.99"{{ end }}
+  adguard_ip:      {{ if or $isServer $isWSL }}"100.110.207.73"{{ else }}"192.168.18.99"{{ end }}
   # Los tokens se extraen bajo demanda en los templates que los necesiten
