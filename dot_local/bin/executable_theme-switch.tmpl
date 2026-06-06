@@ -26,9 +26,11 @@ fi
 
 echo "→ Switching to theme: $THEME"
 
+# Verificar si flavours está instalado antes de proceder
 if ! command -v flavours &> /dev/null; then
-    echo "⚠ flavours not found. Make sure it is installed."
-    exit 1
+    echo "🎨 En este entorno (WSL/Servidor), los colores son gestionados por la terminal anfitriona."
+    echo "   Para cambiar el tema del Homelab, ejecútalo desde tu Laptop principal."
+    exit 0
 fi
 
 flavours apply "$THEME"
