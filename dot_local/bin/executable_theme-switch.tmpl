@@ -33,8 +33,20 @@ fi
 
 flavours apply "$THEME"
 
-{{ if and (eq .chezmoi.os "linux") (hasKey . "isServer") (not .isServer) -}}
-# Reload Graphical Apps
+{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
+# Propagar tema al servidor Homelab para consistencia visual
+if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
+    echo "→ Propagando tema al servidor Homelab..."
+    # Crear directorios remotos si no existen
+    ssh homelab "mkdir -p ~/.config/tmux ~/.config/shell"
+    # Copiar archivos de colores generados por flavours
+    scp "$HOME/.config/tmux/colors.conf" "homelab:~/.config/tmux/colors.conf" >/dev/null 2>&1
+    scp "$HOME/.config/shell/fzf_colors.sh" "homelab:~/.config/shell/fzf_colors.sh" >/dev/null 2>&1
+    # Recargar tmux en el servidor
+    ssh homelab "tmux source-file ~/.config/tmux/colors.conf" >/dev/null 2>&1
+fi
+
+# Reload Graphical Apps locales
 pgrep -x sway > /dev/null && swaymsg reload
 pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
 pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
