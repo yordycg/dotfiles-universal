@@ -1,5 +1,5 @@
 # dotfiles-universal — Roadmap de implementación
-> Estado: Fase 3 en curso. Infraestructura central y Gestión de Secretos blindadas.
+> Estado: Fase 6 en curso. Refinamiento de arquitectura y workflow senior.
 
 ---
 
@@ -10,8 +10,8 @@
 - [x] GitHub autenticado y scopes de seguridad configurados
 - [x] Repo `dotfiles-universal` creado y sincronizado
 - [x] Estructura de directorios base modular
-- [x] `.chezmoi.yaml.tmpl` — detecta laptop/desktop/Server (Linux Only)
-- [x] `packages.yaml` — organizado por distros (Fedora/Debian/Arch)
+- [x] `.chezmoi.yaml.tmpl` — Detección Senior por archivo centinela (Linux Only)
+- [x] `packages.yaml` — organizado por distros e inyección de capacidades
 - [x] `scripts/packages/installers/` — instaladores limpios por distro
 - [x] `run_once_after_setup-ssh.sh.tmpl` — automatización de identidad SSH (tras siembra manual)
 - [x] `dot_config/shell/` — aliases y funciones modernas
@@ -28,6 +28,7 @@
 - [x] Unificar identidad en `id_ed25519`
 - [x] Configurar SSH Agent Forwarding para Nodo 1
 - [x] Automatización de identidad SSH (Manual Seeding + Script)
+- [x] **Robustez SSH**: Añadido `ConnectTimeout`, `ServerAliveInterval` y optimización de reconexión.
 
 ### 1.2 Neovim (Estrategia Dual) 
 Configuración dual para máxima versatilidad:
@@ -43,6 +44,7 @@ Configuración dual para máxima versatilidad:
 - [x] **Mejorar Starship**: Implementado prompt minimalista, eliminación de hora y distinción de Nodos (Hostname).
 - [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
 - [x] **Auditoría de Scripts**: Refactorización de funciones para soporte multiplataforma y roles (Server/Laptop).
+- [x] **Workflow Helpers**: Creados scripts `lab-open` (Port Forwarding) y `lab-status` (Docker info).
 
 - [x] **Optimizar Salida SSH/Tmux**: Eliminar el "doble exit" mediante un alias inteligente o flujo de detach.
 - [x] **Browser Workflow (Firefox)**: Investigar alternativas a Surfingkeys (Vimium-C, Tridactyl) con mejor UI/UX.
@@ -116,9 +118,10 @@ Configuración dual para máxima versatilidad:
 > El objetivo es lograr "Cero Contaminación" en el repo de infraestructura y "Aislamiento Total" en proyectos de estudio.
 
 ### 6.1 Hardening y Autodiscovery (homelab-infra)
+- [x] **Detección Senior**: Implementada lógica por archivo centinela `/etc/chezmoi-role` para eliminar hardcodeo de hostnames.
+- [x] **Aislamiento de Red**: Bases de datos aisladas en redes internas (`internal_networks`) en los proyectos core.
 - [ ] **Seguridad del Socket**: Implementar `tecnativa/docker-socket-proxy` para que Caddy no acceda directamente a `/var/run/docker.sock`.
 - [ ] **Caddy Docker Proxy**: Migrar a `lucaslorentz/caddy-docker-proxy` para permitir configuración de rutas mediante labels en los contenedores.
-- [ ] **Red Externa Persistente**: Definir una red Docker global (ej. `homelab-net`) para comunicación entre Caddy y los micro-proyectos de estudio.
 
 ### 6.2 Senior Project Scaffolding (chezmoi/templates)
 - [ ] **Standard Templates**: Actualizar `templates/project-base/` con:
@@ -161,6 +164,8 @@ just diff         # Ver qué va a cambiar
 just update       # git pull + apply
 just save         # commit + push rápido
 bwu               # Desbloqueo automático de Bitwarden (Zero-Touch)
+lab-open          # Port forward instantáneo del servidor
+lps               # Ver estado de contenedores remotos
 ```
 
 ---
@@ -201,4 +206,4 @@ dotfiles-universal/
 
 ---
 
-> Actualizado: 5 de junio de 2026 — Estrategia Linux-Only y Bootstrap Manual de Identidad.
+> Actualizado: 5 de junio de 2026 — Estrategia Linux-Only y Mejoras Senior Phase 1.
