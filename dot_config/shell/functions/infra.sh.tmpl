@@ -106,7 +106,7 @@ sshports() {
 
 # Desbloquear Bitwarden
 bwu() {
-    local vault_url="https://vault.home"
+    local vault_url="{{ .vault_url }}"
     local bw_status
     bw_status=$(bw status 2>/dev/null | jq -r '.status')
 
