@@ -90,31 +90,26 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
         fi
 
         local selection=$( (echo "$sessions"; echo "$projects") | grep -v "^$" | fzf --reverse --header "󰒄 Homelab Session Manager (Esc para Zsh puro)" --prompt " Buscar: " --height=60% --border --info=inline)
-        
+
         # Escape Hatch: Si el usuario cancela (Esc o Ctrl-C), sale a Zsh normal
         [[ -z "$selection" ]] && return 0
-        
-        # Compatibilidad de Terminal (Fix para 'open terminal failed: not a terminal')
+
+        # --- FIX: Recuperar el Terminal tras fzf ---
+        # 1. Resetear el estado del terminal
+        stty sane 2>/dev/null
+
+        # 2. Definir terminal compatible
         local tmux_term=$TERM
         [[ "$TERM" == "xterm-kitty" ]] && tmux_term="xterm-256color"
 
         if [[ "$selection" == 󱓞\ Session:* ]]; then
             local target=$(echo "$selection" | sed 's/󱓞 Session: //')
-            # Intentar ejecutar con sh -c y redirigir stderr para diagnóstico si falla
-            TERM=$tmux_term tmux new-session -A -s "$target" || {
-                echo "DEBUG: tmux failed with TERM=$tmux_term and target=$target"
-                sleep 2
-            }
-            exit
+            # 3. Exec forzando stdin desde /dev/tty
+            exec env TERM=$tmux_term tmux new-session -A -s "$target" < /dev/tty
         else
             local target_dir=$(echo "$selection" | sed 's/󰚝 Project: //' | sed "s|~|$HOME|")
-            # Generar nombre estilo 'categoria/proyecto'
             local name=$(echo "$target_dir" | sed "s|$HOME/workspace/||")
-            TERM=$tmux_term tmux new-session -A -s "$name" -c "$target_dir" || {
-                echo "DEBUG: tmux project failed with TERM=$tmux_term"
-                sleep 2
-            }
-            exit
+            exec env TERM=$tmux_term tmux new-session -A -s "$name" -c "$target_dir" < /dev/tty
         fi
         }
 
