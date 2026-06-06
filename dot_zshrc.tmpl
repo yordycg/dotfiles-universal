@@ -66,12 +66,6 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
     {{ if and (eq .chezmoi.os "linux") .isServer -}}
     # Función para listar sesiones y proyectos
     function s_manager() {
-        # DIAGNÓSTICO CLAUDE
-        echo "DEBUG TTY: $(tty)"
-        echo "DEBUG TERM: $TERM"
-        echo "DEBUG SSH_TTY: $SSH_TTY"
-        ls -la /proc/$$/fd/0 /proc/$$/fd/1 /proc/$$/fd/2 2>/dev/null
-        
         # Verificar que estamos en un TTY real antes de hacer nada
         [[ ! -t 0 ]] && return 0
 
@@ -93,7 +87,7 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
             sessions=$(echo -e "󱓞 Session: main\n$sessions" | sed '/^$/d')
         fi
 
-        # --- SOLUCIÓN CLAUDE: Archivo temporal para liberar el TTY ---
+        # --- SOLUCIÓN ROBUSTA: Archivo temporal para liberar el TTY ---
         tmpfile=$(mktemp /tmp/s_manager.XXXXXX)
         trap "rm -f $tmpfile" EXIT INT TERM
 
@@ -129,7 +123,14 @@ if [[ -n "$SSH_CONNECTION" && -z "$TMUX" && -x $(command -v tmux) && -x $(comman
         fi
     }
 
-    s_manager
+    # FIX TTY: No llamar a s_manager directamente en el .zshrc
+    # Usar un hook precmd que se ejecuta cuando el shell ya está listo para el primer prompt
+    function _s_manager_once() {
+        # Eliminar el hook después de ejecutarse una vez para no repetirse al salir de tmux
+        precmd_functions=("${precmd_functions[@]/_s_manager_once/}")
+        s_manager
+    }
+    precmd_functions+=(_s_manager_once)
     {{- end }}
 fi
 
