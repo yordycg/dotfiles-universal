@@ -59,8 +59,14 @@ log_info "Sincronizando herramientas y CLIs globales..."
 
 eval "$("$MISE_BIN" activate bash)"
 
-[ -x "$(command -v npm)" ] && npm install -g neovim @google/gemini-cli @bitwarden/cli --silent
+[ -x "$(command -v npm)" ] && npm install -g neovim @bitwarden/cli --silent
 [ -x "$(command -v pip)" ] && pip install pynvim --quiet
+
+# ── 3. Antigravity CLI (Sustituto de Gemini) ──────────────────────────────────
+if ! command -v agy &>/dev/null; then
+    log_info "Instalando Antigravity CLI..."
+    curl -fsSL https://antigravity.google/cli/install.sh | bash
+fi
 
 # Guardar estado exitoso
 echo "$CURRENT_HASH" > "$STATE_FILE"
