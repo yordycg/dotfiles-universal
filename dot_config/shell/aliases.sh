@@ -72,6 +72,9 @@ alias hlk='ssh homelab tmux kill-session -t'
 alias lab-forward='ssh -N -L'
 alias lps='lab-status'
 
+# -- Bases de Datos ----------------------------
+alias lsql='lazysql'
+
 # -- Sistema (Continuación) -------------------
 alias logout='loginctl terminate-user $USER'
 alias shutdown='sudo shutdown now'

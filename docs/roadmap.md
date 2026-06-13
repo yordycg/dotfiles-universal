@@ -28,8 +28,8 @@
 
 ### 2.2 Gestión de Bases de Datos (Senior Terminal Workflow)
 
-- [ ] **Database TUI & CLI**: Implementar `usql` (cliente universal) y `lazysql` (interfaz TUI) para gestión total desde terminal/tmux.
-- [ ] **Configuración**: Añadir herramientas a `packages.yaml` y crear alias de acceso rápido.
+- [x] **Database TUI & CLI**: Implementar `usql` (cliente universal) y `lazysql` (interfaz TUI) para gestión total desde terminal/tmux.
+- [x] **Configuración**: Añadir herramientas a `packages.yaml` y crear alias de acceso rápido.
 
 ---
 
