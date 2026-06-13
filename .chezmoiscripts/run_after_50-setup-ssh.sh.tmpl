@@ -62,9 +62,15 @@ log_ok "Llave SSH encontrada: $SSH_KEY_PATH"
 GITHUB_TOKEN=""
 FORGEJO_TOKEN=""
 
-if command -v passage &>/dev/null; then
-    GITHUB_TOKEN=$(passage chezmoi/github_token 2>/dev/null || echo "")
-    FORGEJO_TOKEN=$(passage chezmoi/forgejo_token 2>/dev/null || echo "")
+# Buscar passage de forma robusta
+PASSAGE_CMD="passage"
+if [ -f "$HOME/.local/bin/passage" ]; then
+    PASSAGE_CMD="$HOME/.local/bin/passage"
+fi
+
+if command -v "$PASSAGE_CMD" &>/dev/null; then
+    GITHUB_TOKEN=$("$PASSAGE_CMD" chezmoi/github_token 2>/dev/null || echo "")
+    FORGEJO_TOKEN=$("$PASSAGE_CMD" chezmoi/forgejo_token 2>/dev/null || echo "")
 elif command -v pass &>/dev/null; then
     GITHUB_TOKEN=$(pass chezmoi/github_token 2>/dev/null || echo "")
     FORGEJO_TOKEN=$(pass chezmoi/forgejo_token 2>/dev/null || echo "")
