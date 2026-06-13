@@ -14,4 +14,7 @@ REMOTE_TERM=$TERM
 [[ "$TERM" == "xterm-kitty" ]] && REMOTE_TERM="xterm-256color"
 
 # Intentar conectar via SSH con Tmux Attach automático
-ssh homelab -t "TERM=$REMOTE_TERM tmux new-session -A -s $SESSION"
+ssh homelab -t "
+  pgrep -u \$(id -u) -x tmux &>/dev/null || rm -rf /tmp/tmux-\$(id -u)/
+  TERM=$REMOTE_TERM tmux new-session -A -s $SESSION
+"
