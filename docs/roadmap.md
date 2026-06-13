@@ -6,8 +6,8 @@
 
 ### 1.1 Neovim (Estrategia Dual)
 
-- [ ] **Workflow de Notas en Neovim**: Integrar y configurar Neovim (usando `obsidian.nvim` o similar) como editor principal para el Second Brain, reemplazando la aplicación gráfica de Obsidian.
-- [ ] **Sesión de Tmux para Notas**: Crear una configuración y alias de Tmux dedicado para abrir el directorio de notas directamente en una sesión aislada y enfocada.
+- [x] **Workflow de Notas en Neovim**: Integrar y configurar Neovim (usando `obsidian.nvim` o similar) como editor principal para el Second Brain, reemplazando la aplicación gráfica de Obsidian.
+- [x] **Sesión de Tmux para Notas**: Crear una configuración y alias de Tmux dedicado para abrir el directorio de notas directamente en una sesión aislada y enfocada.
 
 ### 1.2 Tmux
 

@@ -75,6 +75,26 @@ fenv() {
 # Editar dotfiles rápido
 dots() { cd $(chezmoi source-path) && nvim .; }
 
+# Workflow de Notas en Tmux + Neovim
+notes() {
+    local notes_dir="$HOME/workspace/assets/obsidian-notes"
+    if [ ! -d "$notes_dir" ]; then
+        echo -e "\033[0;31m  ✗ El directorio de notas no existe: $notes_dir\033[0m"
+        return 1
+    fi
+    
+    if ! command -v tmux &>/dev/null; then
+        (cd "$notes_dir" && lv)
+        return 0
+    fi
+
+    if ! tmux has-session -t notes 2>/dev/null; then
+        tmux new-session -d -s notes -c "$notes_dir"
+        tmux send-keys -t notes "lv" C-m
+    fi
+    tmux attach-session -t notes
+}
+
 # Gestor interactivo de servicios Systemd
 fsvc() {
     local service
