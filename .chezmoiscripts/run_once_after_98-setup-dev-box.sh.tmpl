@@ -1,4 +1,3 @@
-{{ if not .isServer -}}
 #!/usr/bin/env bash
 # =============================================================================
 # .chezmoiscripts/run_once_after_98-setup-dev-box.sh.tmpl
@@ -64,5 +63,3 @@ if distrobox enter dev-box -- sh -c "$INSTALL_CMD"; then
 else
     echo -e "${YELLOW}  ⚠ Falló el aprovisionamiento de paquetes dentro de dev-box. Podrás instalar los paquetes manualmente ejecutando 'distrobox enter dev-box'.${RESET}"
 fi
-
-{{- end }}

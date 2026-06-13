@@ -53,7 +53,11 @@ alias czu='chezmoi update'
 alias czs='chezmoi source-path'
 
 # -- Editores ----------------------------------
-alias lv='distrobox enter dev-box -- env NVIM_APPNAME=LazyVim nvim'
+if command -v distrobox &>/dev/null && distrobox list | grep -Fw "dev-box" &>/dev/null; then
+    alias lv='distrobox enter dev-box -- env NVIM_APPNAME=LazyVim nvim'
+else
+    alias lv='NVIM_APPNAME=LazyVim nvim'
+fi
 alias nv='NVIM_APPNAME=nvim-personal nvim'
 alias v='nv'
 alias v.='nv .'
