@@ -48,17 +48,17 @@ Estos scripts garantizan que las herramientas de usuario se configuren correctam
 
 1.  **`run_once_after_10-install-fonts.sh.tmpl`**:
     *   Instala fuentes tipográficas (Nerd Fonts) para el shell y editores con sistema de caché.
-2.  **`run_once_after_20-install-mise.sh.tmpl`**:
-    *   Instala `mise` (gestor de entornos) y sincroniza herramientas de desarrollo (`node`, `python`, `usql`, `lazysql`, etc.).
-    *   Extrae robustamente el `GITHUB_TOKEN` usando `passage` (o cae a `pass`) para evitar límites de API en las descargas.
-3.  **`run_onchange_after_30-install-flatpaks.sh.tmpl`**:
-    *   Asegura la instalación de paquetes flatpak del usuario en entornos de escritorio.
-4.  **`run_once_after_35-setup-password-store.sh.tmpl`**:
+2.  **`run_once_after_15-setup-password-store.sh.tmpl`**:
     *   **Bootstrap de Secretos (Age/Passage):**
         1. Si la llave de `age` se encuentra en la ruta temporal de chezmoi (`~/.config/chezmoi/key.txt`), la estandariza copiándola a `~/.config/age/key.txt`.
         2. Crea el enlace simbólico de la identidad de `passage` a la llave de `age` (`~/.passage/identities` -> `~/.config/age/key.txt`).
         3. Genera el destinatario por defecto `~/.passage/store/.age-recipients` usando la llave pública de `age`.
         4. Clona tu repositorio de contraseñas privado (`passage-store.git` con fallback a `password-store.git`).
+3.  **`run_once_after_20-install-mise.sh.tmpl`**:
+    *   Instala `mise` (gestor de entornos) y sincroniza herramientas de desarrollo (`node`, `python`, `usql`, `lazysql`, etc.).
+    *   Extrae robustamente el `GITHUB_TOKEN` usando `passage` (o cae a `pass`) para evitar límites de API en las descargas.
+4.  **`run_onchange_after_30-install-flatpaks.sh.tmpl`**:
+    *   Asegura la instalación de paquetes flatpak del usuario en entornos de escritorio.
 5.  **`run_onchange_after_40-apply-theme.sh.tmpl`**:
     *   Aplica temas y personalizaciones visuales del sistema del usuario (Kvantum, GTK, Qt).
 6.  **`run_after_50-setup-ssh.sh.tmpl`**:
