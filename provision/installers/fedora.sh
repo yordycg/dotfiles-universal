@@ -89,4 +89,10 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     install_section "sway"
 fi
 
+# Instalar distrobox en clientes (WSL, PC, Laptop)
+if [ "${NODE_IS_SERVER:-}" != "true" ]; then
+    log_info "Instalando herramientas de desarrollo aislado (distrobox)..."
+    sudo dnf install -y -q --skip-unavailable distrobox
+fi
+
 log_ok "Aprovisionamiento de paquetes Fedora completado."

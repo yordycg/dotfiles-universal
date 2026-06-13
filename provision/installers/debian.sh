@@ -90,4 +90,10 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     # install_section "desktop" # Reservado para futuras ampliaciones
 fi
 
+# Instalar distrobox en clientes (WSL, PC, Laptop)
+if [ "${NODE_IS_SERVER:-}" != "true" ]; then
+    log_info "Instalando herramientas de desarrollo aislado (distrobox)..."
+    sudo apt-get install -y -qq distrobox
+fi
+
 log_ok "Aprovisionamiento de paquetes Debian completado."
