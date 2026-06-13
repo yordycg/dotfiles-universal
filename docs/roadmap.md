@@ -114,4 +114,17 @@ dotfiles-universal/
 
 ---
 
-> Actualizado: 5 de junio de 2026 — Estrategia Linux-Only y Mejoras Senior Phase 1.
+## 🔧 Fase 5 — Desacoplamiento de Sudo y Unificación de Secretos
+
+> El objetivo es lograr que Chezmoi corra 100% en espacio de usuario ($HOME) sin requerir `sudo` en su día a día, y unificar el llavero de seguridad bajo una única llave de Age.
+
+### 5.1 Desacoplamiento de Sudo (Espacio de Sistema)
+- [ ] **Extraer scripts de sistema:** Mover scripts que requieren `sudo` (ej: `run_after_70-trust-homelab-ca.sh.tmpl`, `run_once_after_97-install-pixie-sddm.sh.tmpl` y el instalador de paquetes) a un directorio independiente `provision/` (o playbooks de Ansible) fuera de Chezmoi.
+- [ ] **Asegurar fallback de Wallpaper en Sway:** Añadir un fondo de pantalla básico y ligero dentro del repo de Chezmoi para que Sway no inicie en blanco si la carpeta de assets externa no se ha sincronizado.
+
+### 5.2 Unificación de Secretos (Age)
+- [ ] **Migración a `pass-age`:** Reemplazar la encriptación GPG del llavero `pass` por `pass-age`, permitiendo usar tu llave única de `age` para SOPS, Chezmoi y contraseñas de terminal, reduciendo la necesidad de sembrar llaves GPG.
+
+---
+
+> Actualizado: 13 de junio de 2026 — Estrategia Sudo-less y Limpieza.
