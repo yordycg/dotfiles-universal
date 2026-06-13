@@ -1,15 +1,8 @@
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_after_92-setup-tailscale.sh.tmpl
+# provision/system/setup-tailscale.sh
 # Automatización de Tailscale (VPN Mesh) - Versión Resiliente (Senior)
 # =============================================================================
-{{ if eq .chezmoi.os "linux" -}}
-# Check silencioso — si tailscale ya está activo, salir sin output
-if command -v tailscale &>/dev/null && tailscale status &>/dev/null 2>&1; then
-    sudo tailscale set --accept-dns=true >/dev/null 2>&1 || true
-    exit 0
-fi
-
 set -euo pipefail
 
 # Colores Homelab-Style
@@ -26,7 +19,15 @@ log_info() { echo -e "${CYAN}  → $1${RESET}"; }
 log_warn() { echo -e "${YELLOW}  ! $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
+# Check silencioso — si tailscale ya está activo, salir sin output
+if command -v tailscale &>/dev/null && tailscale status &>/dev/null 2>&1; then
+    sudo tailscale set --accept-dns=true >/dev/null 2>&1 || true
+    log_ok "Tailscale ya está activo y configurado."
+    exit 0
+fi
+
 if ! command -v tailscale &>/dev/null; then
+    log_warn "Tailscale no está instalado. Saltando configuración."
     exit 0
 fi
 
@@ -52,4 +53,3 @@ else
     log_warn "Tailscale no está autenticado."
     log_info "Por favor, ejecuta 'sudo tailscale up' para vincular este nodo."
 fi
-{{ end -}}

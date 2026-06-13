@@ -1,16 +1,14 @@
-{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_after_95-trust-homelab-ca.sh.tmpl
+# provision/system/trust-homelab-ca.sh
 # Confianza SSL e Infraestructura PKI
 # =============================================================================
+set -euo pipefail
 
 # El servidor ES la fuente de los certificados, no necesita instalarlos
-{{ if .isServer -}}
-exit 0
-{{- end }}
-
-set -euo pipefail
+if [ "${NODE_IS_SERVER:-}" = "true" ]; then
+    exit 0
+fi
 
 # Colores Homelab-Style
 GREEN='\033[0;32m'
@@ -82,7 +80,7 @@ fetch_certs() {
     fi
 
     # Método C: SSH desde el Servidor (Para Nodos N)
-    if [ ! -s "$dst" ] && [ "{{ if (hasKey . "isServer") }}{{ .isServer }}{{ else }}false{{ end }}" != "true" ]; then
+    if [ ! -s "$dst" ] && [ "${NODE_IS_SERVER:-}" != "true" ]; then
         SSH_OPTS="-o ConnectTimeout=3 -o StrictHostKeyChecking=accept-new -o BatchMode=yes"
         if ssh $SSH_OPTS homelab exit &>/dev/null; then
             log_info "Extrayendo $filename desde el servidor vía SSH..."
@@ -157,4 +155,3 @@ install_cert "$TEMP_DIR/bundle.crt" "$BUNDLE_NAME"
 if [ -f "$INSTALLED_BUNDLE" ]; then
     sha256sum "$INSTALLED_BUNDLE" | awk '{print $1}' > "$CA_STATE_FILE"
 fi
-{{- end }}

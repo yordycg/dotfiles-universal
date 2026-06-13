@@ -1,10 +1,14 @@
-{{ if and (eq .chezmoi.os "linux") (eq .chezmoi.osRelease.id "fedora") (not .isServer) -}}
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_once_after_install-pixie-sddm.sh.tmpl
+# provision/system/setup-sddm-theme.sh
 # Instalación y configuración del tema Pixie para SDDM
 # =============================================================================
 set -euo pipefail
+
+# Solo aplica en Fedora Desktop nativo
+if [ ! -f /etc/fedora-release ] || [ "${NODE_HAS_GUI:-}" != "true" ] || [ "${NODE_IS_SERVER:-}" = "true" ] || [ "${NODE_IS_WSL:-}" = "true" ]; then
+    exit 0
+fi
 
 # Colores Homelab-Style
 GREEN='\033[0;32m'
@@ -14,13 +18,9 @@ CYAN='\033[0;36m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
 log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
 log_info() { echo -e "${CYAN}  → $1${RESET}"; }
-log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
-
-log_step "Configuración de Pixie SDDM"
 
 THEME_DIR="/usr/share/sddm/themes/pixie"
 REPO_URL="https://github.com/xCaptaiN09/pixie-sddm.git"
@@ -41,7 +41,7 @@ if [ ! -f "$THEME_DIR/main.qml" ]; then
             sudo chown -R root:root "$THEME_DIR"
             sudo find "$THEME_DIR" -type d -exec chmod 755 {} +
             sudo find "$THEME_DIR" -type f -exec chmod 644 {} +
-            log_ok "Archivos del tema copiados."
+            log_ok "Archivos del tema SDDM Pixie copiados."
         fi
         rm -rf "$TMP_DIR"
     fi
@@ -56,5 +56,4 @@ sudo tee "$CONF_FILE" > /dev/null <<EOF
 Current=pixie
 EOF
 
-log_ok "Configuración de SDDM aplicada."
-{{- end }}
+log_ok "Configuración de SDDM Pixie aplicada."
