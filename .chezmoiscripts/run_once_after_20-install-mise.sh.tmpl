@@ -66,13 +66,23 @@ log_info "Sincronizando herramientas y CLIs globales..."
 
 eval "$("$MISE_BIN" activate bash)"
 
-[ -x "$(command -v npm)" ] && npm install -g neovim @bitwarden/cli --silent
-[ -x "$(command -v pip)" ] && pip install pynvim --quiet
+# Instalar paquetes globales de Node/Python solo si los runtimes están configurados y activos
+if command -v npm &>/dev/null && npm --version &>/dev/null; then
+    log_info "Instalando paquetes globales de Node..."
+    npm install -g neovim @bitwarden/cli --silent || true
+fi
+
+if command -v pip &>/dev/null && pip --version &>/dev/null; then
+    log_info "Instalando paquetes globales de Python..."
+    pip install pynvim --quiet || true
+fi
 
 # ── 3. Antigravity CLI (Sustituto de Gemini) ──────────────────────────────────
 if command -v gemini &>/dev/null; then
     log_info "Eliminando Gemini CLI legacy..."
-    npm uninstall -g @google/gemini-cli --silent || true
+    if command -v npm &>/dev/null && npm --version &>/dev/null; then
+        npm uninstall -g @google/gemini-cli --silent || true
+    fi
 fi
 
 if ! command -v agy &>/dev/null; then
