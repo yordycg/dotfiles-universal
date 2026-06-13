@@ -43,7 +43,7 @@ if distrobox list | grep -Fw "dev-box" &>/dev/null; then
     echo -e "${GREEN}  ✓ El contenedor dev-box ya existe.${RESET}"
 else
     echo -e "${BLUE}  → Creando contenedor dev-box (Arch Linux)... (esto puede tardar unos minutos)${RESET}"
-    if distrobox create -n dev-box -i archlinux --yes; then
+    if distrobox create -n dev-box -i docker.io/library/archlinux:latest --yes; then
         echo -e "${GREEN}  ✓ Contenedor dev-box creado exitosamente.${RESET}"
     else
         echo -e "${YELLOW}  ⚠ Falló la creación del contenedor de distrobox. Saltando.${RESET}"
