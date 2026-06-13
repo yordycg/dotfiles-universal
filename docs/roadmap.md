@@ -38,12 +38,16 @@ Configuración dual para máxima versatilidad:
 
 - **LazyVim (`lv`)**: Para proyectos grandes/gigantes.
 - **Personal (`nv`)**: Para modificaciones rápidas y experimentación.
+- [ ] **Workflow de Notas en Neovim**: Integrar y configurar Neovim (usando `obsidian.nvim` o similar) como editor principal para el Second Brain, reemplazando la aplicación gráfica de Obsidian.
+- [ ] **Sesión de Tmux para Notas**: Crear una configuración y alias de Tmux dedicado para abrir el directorio de notas directamente en una sesión aislada y enfocada.
 
 ### 1.3 Tmux
 
 - [x] Prefijo `Ctrl+Space` configurado.
 - [x] Navegación Vim-style y soporte para Popups (lazygit, yazi).
 - [x] Gestión automática de plugins con TPM.
+- [ ] **Preservar Atajos Estándar**: Evitar modificar excesivamente los atajos (keybindings) por defecto de Tmux para mantener la memoria muscular intacta al operar en servidores externos u otros equipos.
+- [ ] **Investigación de LazyApps**: Evaluar la integración de otras herramientas TUI de la familia *Lazy* (como `lazydocker` para docker, `lazysql` para BDs u otras) en la configuración de la terminal y los atajos de Tmux.
 
 ### 1.4 Refinamiento de Shell y Prompt
 
@@ -122,6 +126,7 @@ Configuración dual para máxima versatilidad:
 - [x] **Rotación de Secretos**: Flujo simplificado mediante `private_secrets.yaml.age`.
 
 - [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
+- [ ] **Investigar `pass` como Gestor Alternativo**: Evaluar `pass` (the standard unix password manager) y compararlo con el stack actual (Bitwarden/Vaultwarden) para determinar si vale la pena la migración hacia una solución más nativa de terminal y ligera en recursos.
 
 ## 🔧 Fase 5 — Red y DNS (Completado)
 
@@ -140,6 +145,9 @@ Configuración dual para máxima versatilidad:
 - [x] **Aislamiento de Red**: Bases de datos aisladas en redes internas (`internal_networks`) en los proyectos core.
 - [ ] **Seguridad del Socket**: Implementar `tecnativa/docker-socket-proxy` para que Caddy no acceda directamente a `/var/run/docker.sock`.
 - [ ] **Caddy Docker Proxy**: Migrar a `lucaslorentz/caddy-docker-proxy` para permitir configuración de rutas mediante labels en los contenedores.
+- [ ] **Robustez de Respaldos (homelab-infra)**: Cargar `configs/backup.env` en `manage.sh` para garantizar que la copia de seguridad con Restic tenga acceso al entorno configurado.
+- [ ] **Unificación SSH (chezmoi)**: Eliminar la inyección manual de `github.com` al final de `~/.ssh/config` en `run_after_50-setup-ssh.sh.tmpl` para centralizar la configuración en `private_dot_ssh/config.tmpl`.
+- [ ] **Bot de Notificación de Backups (homelab-infra & chezmoi)**: Investigar e implementar un bot (Telegram, WhatsApp, o alternativas de notificaciones abiertas como NTFY/Apprise) para alertar sobre el estado de los backups automáticos del servidor, con potencial para reportar métricas del sistema, bloqueos de Fail2ban y alertas críticas de contenedores.
 
 ### 6.2 Senior Project Scaffolding (chezmoi/templates)
 
