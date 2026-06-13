@@ -19,6 +19,11 @@ log_info() { echo -e "${CYAN}${2:-→} $1${RESET}"; }
 log_warn() { echo -e "${YELLOW}${2:-⚠} $1${RESET}"; }
 log_err()  { echo -e "${RED}${2:-✗} $1${RESET}"; }
 
+# -- Terminal Compatibility Fix (Kitty Fallback) --
+if [[ "$TERM" == "xterm-kitty" ]] && ! infocmp xterm-kitty >/dev/null 2>&1; then
+    export TERM="xterm-256color"
+fi
+
 # -- Editores y Pager --
 export EDITOR="nvim"
 export VISUAL="nvim"
