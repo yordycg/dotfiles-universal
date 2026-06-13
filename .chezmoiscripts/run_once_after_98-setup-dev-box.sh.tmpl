@@ -54,9 +54,8 @@ fi
 # ── 3. Aprovisionar dependencias de desarrollo dentro de dev-box ────────────
 echo -e "${BLUE}  → Actualizando e instalando SDKs de desarrollo dentro del contenedor...${RESET}"
 
-# Comando de instalación no interactivo usando sudo dentro de Arch Linux
-# Instala: nodejs, npm, python, python-pip, dotnet-sdk (C#), git, y base-devel (compiladores de C/C++)
-INSTALL_CMD="sudo pacman -Syu --noconfirm nodejs npm python python-pip dotnet-sdk git base-devel"
+# Instala: neovim, nodejs, npm, python, python-pip, dotnet-sdk (C#), git, y base-devel (compiladores de C/C++), ripgrep, fd, unzip, zip, curl, wget
+INSTALL_CMD="sudo pacman -Syu --noconfirm neovim nodejs npm python python-pip dotnet-sdk git base-devel ripgrep fd unzip zip curl wget"
 
 if distrobox enter dev-box -- sh -c "$INSTALL_CMD"; then
     echo -e "${GREEN}  ✓ Runtimes (Node, Python, .NET SDK y GCC) listos y aislados dentro de dev-box.${RESET}"
