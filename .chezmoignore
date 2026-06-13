@@ -26,13 +26,11 @@ dot_config/gtk-4.0/**
 dot_mozilla/**
 
 # Scripts de GUI que no aplican en headless
-.chezmoiscripts/after_10-install-fonts.sh
-.chezmoiscripts/after_30-install-flatpaks.sh
-.chezmoiscripts/after_apply-theme.sh
-.chezmoiscripts/after_install-firenvim.sh
-.chezmoiscripts/after_install-pixie-sddm.sh
-.chezmoiscripts/after_install-tridactyl-native.sh
-.chezmoiscripts/after_92-setup-tailscale.sh
+.chezmoiscripts/run_once_after_10-install-fonts.sh.tmpl
+.chezmoiscripts/run_onchange_after_30-install-flatpaks.sh.tmpl
+.chezmoiscripts/run_onchange_after_40-apply-theme.sh.tmpl
+.chezmoiscripts/run_once_after_97-install-pixie-sddm.sh.tmpl
+.chezmoiscripts/run_after_60-setup-tailscale.sh.tmpl
 
 {{ end -}}
 
