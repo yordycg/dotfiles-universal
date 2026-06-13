@@ -11,7 +11,7 @@
 
 ### 1.2 Tmux
 
-- [ ] **Preservar Atajos Estándar**: Evitar modificar excesivamente los atajos (keybindings) por defecto de Tmux para mantener la memoria muscular intacta al operar en servidores externos u otros equipos.
+- [x] **Preservar Atajos Estándar**: Evitar modificar excesivamente los atajos (keybindings) por defecto de Tmux para mantener la memoria muscular intacta al operar en servidores externos u otros equipos.
 - [ ] **Investigación de LazyApps**: Evaluar la integración de otras herramientas TUI de la familia *Lazy* (como `lazydocker` para docker, `lazysql` para BDs u otras) en la configuración de la terminal y los atajos de Tmux.
 
 ---
@@ -39,8 +39,6 @@
 
 ### 4.1 Hardening y Autodiscovery (homelab-infra)
 
-- [ ] **Seguridad del Socket**: Implementar `tecnativa/docker-socket-proxy` para que Caddy no acceda directamente a `/var/run/docker.sock`.
-- [ ] **Caddy Docker Proxy**: Migrar a `lucaslorentz/caddy-docker-proxy` para permitir configuración de rutas mediante labels en los contenedores.
 - [ ] **Robustez de Respaldos (homelab-infra)**: Cargar `configs/backup.env` en `manage.sh` para garantizar que la copia de seguridad con Restic tenga acceso al entorno configurado.
 - [ ] **Unificación SSH (chezmoi)**: Eliminar la inyección manual de `github.com` al final de `~/.ssh/config` en `run_after_50-setup-ssh.sh.tmpl` para centralizar la configuración en `private_dot_ssh/config.tmpl`.
 - [ ] **Bot de Notificación de Backups (homelab-infra & chezmoi)**: Investigar e implementar un bot (Telegram, WhatsApp, o alternativas de notificaciones abiertas como NTFY/Apprise) para alertar sobre el estado de los backups automáticos del servidor, con potencial para reportar métricas del sistema, bloqueos de Fail2ban y alertas críticas de contenedores.
