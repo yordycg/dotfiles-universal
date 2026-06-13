@@ -54,8 +54,8 @@ fi
 # ── 3. Aprovisionar dependencias de desarrollo dentro de dev-box ────────────
 echo -e "${BLUE}  → Actualizando e instalando SDKs de desarrollo dentro del contenedor...${RESET}"
 
-# Instala: neovim, nodejs, npm, python, python-pip, dotnet-sdk (C#), git, y base-devel (compiladores de C/C++), ripgrep, fd, unzip, zip, curl, wget
-INSTALL_CMD="sudo pacman -Syu --noconfirm neovim nodejs npm python python-pip dotnet-sdk git base-devel ripgrep fd unzip zip curl wget"
+# Instala: neovim, nodejs, npm, python, python-pip, python-pynvim, tree-sitter-cli, dotnet-sdk (C#), git, y base-devel (compiladores de C/C++), ripgrep, fd, unzip, zip, curl, wget
+INSTALL_CMD="sudo pacman -Syu --noconfirm neovim nodejs npm python python-pip python-pynvim tree-sitter-cli dotnet-sdk git base-devel ripgrep fd unzip zip curl wget && sudo npm install -g neovim"
 
 if distrobox enter dev-box -- sh -c "$INSTALL_CMD"; then
     echo -e "${GREEN}  ✓ Runtimes (Node, Python, .NET SDK y GCC) listos y aislados dentro de dev-box.${RESET}"
