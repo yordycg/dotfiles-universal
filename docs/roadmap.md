@@ -1,174 +1,49 @@
 # dotfiles-universal — Roadmap de implementación
 
-> Estado: Fase 6 en curso. Refinamiento de arquitectura y workflow senior.
-
----
-
-## Completado
-
-- [x] Fedora actualizado y bootstrap mínimo (git, curl, gh, chezmoi, zsh, just)
-- [x] Shell cambiado a Zsh automáticamente
-- [x] GitHub autenticado y scopes de seguridad configurados
-- [x] Repo `dotfiles-universal` creado y sincronizado
-- [x] Estructura de directorios base modular
-- [x] `.chezmoi.yaml.tmpl` — Detección Senior por archivo centinela (Linux Only)
-- [x] `packages.yaml` — organizado por distros e inyección de capacidades
-- [x] `scripts/packages/installers/` — instaladores limpios por distro
-- [x] `run_once_after_setup-ssh.sh.tmpl` — automatización de identidad SSH (tras siembra manual)
-- [x] `dot_config/shell/` — aliases y funciones modernas
-- [x] `dot_config/starship.toml` — prompt gestionado por mise
-- [x] `Justfile` — comandos principales (apply, diff, update, save)
-- [x] `docs/project-workflow.md` — estándar de arquitectura de 3 capas
-- [x] **Bitwarden Zero-Touch**: Desbloqueo automático con age/SOPS sin fricción.
-
 ---
 
 ## 🔧 Fase 1 — Dotfiles y Editor
 
-### 1.1 Gestionar ~/.ssh/config con Chezmoi
+### 1.1 Neovim (Estrategia Dual)
 
-- [x] Unificar identidad en `id_ed25519`
-- [x] Configurar SSH Agent Forwarding para Nodo 1
-- [x] Automatización de identidad SSH (Manual Seeding + Script)
-- [x] **Robustez SSH**: Añadido `ConnectTimeout`, `ServerAliveInterval` y optimización de reconexión.
-
-### 1.2 Neovim (Estrategia Dual)
-
-Configuración dual para máxima versatilidad:
-
-- **LazyVim (`lv`)**: Para proyectos grandes/gigantes.
-- **Personal (`nv`)**: Para modificaciones rápidas y experimentación.
 - [ ] **Workflow de Notas en Neovim**: Integrar y configurar Neovim (usando `obsidian.nvim` o similar) como editor principal para el Second Brain, reemplazando la aplicación gráfica de Obsidian.
 - [ ] **Sesión de Tmux para Notas**: Crear una configuración y alias de Tmux dedicado para abrir el directorio de notas directamente en una sesión aislada y enfocada.
 
-### 1.3 Tmux
+### 1.2 Tmux
 
-- [x] Prefijo `Ctrl+Space` configurado.
-- [x] Navegación Vim-style y soporte para Popups (lazygit, yazi).
-- [x] Gestión automática de plugins con TPM.
 - [ ] **Preservar Atajos Estándar**: Evitar modificar excesivamente los atajos (keybindings) por defecto de Tmux para mantener la memoria muscular intacta al operar en servidores externos u otros equipos.
 - [ ] **Investigación de LazyApps**: Evaluar la integración de otras herramientas TUI de la familia *Lazy* (como `lazydocker` para docker, `lazysql` para BDs u otras) en la configuración de la terminal y los atajos de Tmux.
 
-### 1.4 Refinamiento de Shell y Prompt
-
-- [x] **Mejorar Starship**: Implementado prompt minimalista, eliminación de hora y distinción de Nodos (Hostname).
-- [x] **Optimizar Zshrc**: Análisis comparativo y unificación de 3 configuraciones (`chezmoi/`, `dotfiles-2024/` y `radleylewis/zsh`).
-- [x] **Auditoría de Scripts**: Refactorización de funciones para soporte multiplataforma y roles (Server/Laptop).
-- [x] **Workflow Helpers**: Creados scripts `lab-open` (Port Forwarding) y `lab-status` (Docker info).
-
-- [x] **Optimizar Salida SSH/Tmux**: Eliminar el "doble exit" mediante un alias inteligente o flujo de detach.
-- [x] **Browser Workflow (Firefox)**: Investigar alternativas a Surfingkeys (Vimium-C, Tridactyl) con mejor UI/UX.
-
 ---
 
-## 🔧 Fase 2 — Instaladores y Nodos
+## 🔧 Fase 2 — Contenedores y Proyectos (Host inmaculado)
 
-### 2.1 Nodo 1 (Servidor Central)
+### 2.1 Infraestructura de Código y CI/CD
 
-- [x] **Chezmoi Init**: Bootstrap completado en Debian 12.
-- [x] **Tmux Persistente**: Flujo de auto-attach configurado para workflow remoto sin interrupciones.
-- [x] **Configurar Forgejo**: Despliegue declarativo, puerto SSH (2222) habilitado y resolución DNS interna arreglada. Admin automatizado (`init-forgejo`).
-
-### 2.2 Nodo 2 (Estación de Fuerza / Desktop Linux)
-
-- [x] **Docker Oficial**: Configurado para heavy-lifting y compatibilidad con el ecosistema.
-- [x] Optimizar drivers NVIDIA/AMD si aplica
-
-### 2.3 Nodo N (Clientes Ligeros)
-
-- [x] Fedora Sway (Laptop) configurado
-- [x] **Resiliencia de Red (Tailscale)**: Implementada mediante Split DNS y configuración sin Exit-node forzado. El Nodo N mantiene internet incluso si el servidor central falla.
-- [ ] Refinar ahorro de energía y gestión de red
-
----
-
-## 🔧 Fase 3 — Contenedores y Proyectos (Host inmaculado)
-
-### 3.1 Entornos de Proyecto (Scaffolding Senior)
-
-- [x] Implementar estructura de "Fábrica de Proyectos" con directorios estandarizados.
-- [x] Estandarizar el uso de `Justfile` y variables condicionales para orquestación.
-- [x] Consolidar el directorio `~/workspace` para todas las categorías (personal, work, ipvg).
-
-### 3.2 Infraestructura de Código y CI/CD
-
-- [x] Configurar **Forgejo Mirrors** para mantener sincronización automática (Server <-> GitHub).
-- [x] Desplegar **Forgejo Runner** local (CI/CD) para automatizar validación de código.
 - [ ] Implementar el primer flujo de CI/CD (ej. auto-deploy de `yordycg-portfolio`).
 
-### 3.3 Migración Arquitectónica (Estandarización Docker)
+### 2.2 Gestión de Bases de Datos (Senior Terminal Workflow)
 
-- [x] Migrar el Nodo 1 (Servidor) y Nodo 2 (Desktop) a **Docker Oficial** para máxima compatibilidad.
-- [x] Mantener Podman solo en Nodo N (Laptops) como abstracción ligera si es necesario.
-- [x] Actualizar repositorios para reflejar el uso predominante de Docker Compose.
-
-### 3.4 Gestión de Bases de Datos (Senior Terminal Workflow)
-
-- [x] **Herramientas GUI**: Instalar y configurar Beekeeper Studio (visualización rápida) y DBeaver (ingeniería pesada).
 - [ ] **Database TUI & CLI**: Implementar `usql` (cliente universal) y `lazysql` (interfaz TUI) para gestión total desde terminal/tmux.
 - [ ] **Configuración**: Añadir herramientas a `packages.yaml` y crear alias de acceso rápido.
 
 ---
 
-## 🔧 Fase 4 — Seguridad y secrets
+## 🔧 Fase 3 — Seguridad y secrets
 
-- [x] **age**: Uso de llave de encriptación (`~/.config/chezmoi/key.txt`). _Nota: Siembra manual desde USB en nuevos nodos._
-- [x] **SOPS**: Implementado y configurado en `dot_zshrc.tmpl` para cifrado de secretos.
-- [x] **Vaultwarden**: Desplegado en Nodo 1 como gestor de secretos principal.
-- [x] **Integración Chezmoi**: Uso nativo de la función `bitwarden` en plantillas.
-- [x] **Estandarización de Scripts**: Refactorizar scripts de Chezmoi usando la estructura de `homelab-infra` (funciones `ok`, `info`, `warn`, `err`).
-- [x] **Limpieza Visual**: Eliminar iconos y emojis de todos los scripts para un look más minimalista y profesional.
-- [x] **Optimización de Ejecución (Cache)**: Implementar `run_onchange_` con hashes para evitar ejecuciones redundantes (paquetes, fuentes, mise).
-- [x] **Gestor de Secretos (Senior)**: Integrar Bitwarden CLI (`bw`) nativamente y autenticación silenciosa de `gh`.
-- [x] **Detección de Nodos Inteligente**: Identificación automática del Nodo 1 (Notebook-Servidor) en plantillas.
-- [x] **Automatización SSL (Bundle)**: Mejorar script `run_after_95` para descarga de CA local y confianza en el sistema.
-- [x] **Bitwarden Zero-Touch Unlock**: Desbloqueo automático vía API Keys y age en todos los nodos.
-- [x] **Rotación de Secretos**: Flujo simplificado mediante `private_secrets.yaml.age`.
-
-- [x] **Backup de Secretos**: Implementar script de respaldo automático para el volumen de Vaultwarden.
 - [ ] **Investigar `pass` como Gestor Alternativo**: Evaluar `pass` (the standard unix password manager) y compararlo con el stack actual (Bitwarden/Vaultwarden) para determinar si vale la pena la migración hacia una solución más nativa de terminal y ligera en recursos.
 
-## 🔧 Fase 5 — Red y DNS (Completado)
-
-- [x] **Preparar Infraestructura**: Creado `containers/adguard/compose.yaml` y script de provisión `03-dns-setup.sh`.
-- [x] **DNS Interno (Configuración UI)**: AdGuard configurado con rewrites para `*.home` y upstream a Docker.
-- [x] **Estrategia Anti-Desastres**: Implementado script `restore.sh` y backups automáticos de volúmenes con Restic.
-- [x] **VPN Mesh (Tailscale Global)**: Nodo 1 configurado como Nameserver Global y automatización en Chezmoi.
-
-## 🔧 Fase 6 — Advanced Homelab Workflow (Senior Implementation)
+## 🔧 Fase 4 — Advanced Homelab Workflow (Senior Implementation)
 
 > El objetivo es lograr "Cero Contaminación" en el repo de infraestructura y "Aislamiento Total" en proyectos de estudio.
 
-### 6.1 Hardening y Autodiscovery (homelab-infra)
+### 4.1 Hardening y Autodiscovery (homelab-infra)
 
-- [x] **Detección Senior**: Implementada lógica por archivo centinela `/etc/chezmoi-role` para eliminar hardcodeo de hostnames.
-- [x] **Aislamiento de Red**: Bases de datos aisladas en redes internas (`internal_networks`) en los proyectos core.
 - [ ] **Seguridad del Socket**: Implementar `tecnativa/docker-socket-proxy` para que Caddy no acceda directamente a `/var/run/docker.sock`.
 - [ ] **Caddy Docker Proxy**: Migrar a `lucaslorentz/caddy-docker-proxy` para permitir configuración de rutas mediante labels en los contenedores.
 - [ ] **Robustez de Respaldos (homelab-infra)**: Cargar `configs/backup.env` en `manage.sh` para garantizar que la copia de seguridad con Restic tenga acceso al entorno configurado.
 - [ ] **Unificación SSH (chezmoi)**: Eliminar la inyección manual de `github.com` al final de `~/.ssh/config` en `run_after_50-setup-ssh.sh.tmpl` para centralizar la configuración en `private_dot_ssh/config.tmpl`.
 - [ ] **Bot de Notificación de Backups (homelab-infra & chezmoi)**: Investigar e implementar un bot (Telegram, WhatsApp, o alternativas de notificaciones abiertas como NTFY/Apprise) para alertar sobre el estado de los backups automáticos del servidor, con potencial para reportar métricas del sistema, bloqueos de Fail2ban y alertas críticas de contenedores.
-
-### 6.2 Senior Project Scaffolding (chezmoi/templates)
-
-- [ ] **Standard Templates**: Actualizar `templates/project-base/` con:
-  - `compose.override.yaml.example`: Plantilla para mapeo de puertos hacia Tailscale IP (Beekeeper access).
-  - `compose.yaml`: Configuración limpia con labels de Caddy comentados y red externa habilitada.
-  - `.gitignore`: Asegurar que `compose.override.yaml` nunca se suba al repo.
-- [ ] **Auto-Config AdGuard**: Documentar o automatizar el Wildcard DNS Rewrite (`*.home` -> Server IP) para que cualquier proyecto nuevo funcione instantáneamente sin tocar la infraestructura central.
-
-### 6.3 Refinamiento de Gestión Docker (Remote Workflow)
-
-- [ ] **Eliminar `homestat`**: Migrar totalmente a `hdocker` para evitar duplicidad de herramientas.
-- [ ] **Aislamiento en `hdocker`**: Investigar e implementar una forma de separar la vista de infraestructura central (`homelab-infra`) de los proyectos de estudio en `hdocker` (evitar borrado accidental de volúmenes críticos).
-
-### 6.4 Estética y Personalización (Senior Theming)
-
-- [x] **Rofi-Wayland Suite**: Implementación de un ecosistema completo basado en `rofi-wayland`.
-- [x] **UI Minimalista**: Configuración de temas e iconos Nerd Font (solo iconos en prompts y selectores).
-- [x] **Wallpaper Picker "Senior Grid"**: Selector visual integrado con generación de miniaturas y transiciones vía `swww`.
-- [x] **Integración de Sistema**: Scripts robustos para Portapapeles (`cliphist`), Menú de Apagado y Lanzador de Aplicaciones con rutas absolutas.
-- [x] **Theming Dinámico**: Integración de `wallust` para que la paleta de colores de todo el sistema (Sway, Waybar, Kitty) cambie automáticamente según el wallpaper elegido.
 
 ---
 
