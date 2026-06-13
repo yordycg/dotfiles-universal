@@ -1,0 +1,68 @@
+{{ if not .isServer -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_98-setup-dev-box.sh.tmpl
+# Aprovisionamiento del contenedor de desarrollo aislado (Distrobox)
+# =============================================================================
+set -euo pipefail
+
+# Colores Homelab-Style
+GREEN='\033[0;32m'
+BLUE='\033[0;34m'
+YELLOW='\033[1;33m'
+RESET='\033[0m'
+
+echo -e "\n${BLUE}▶ Configurando contenedor de desarrollo aislado (dev-box)...${RESET}"
+
+# ── 1. Verificar dependencias en el Host ─────────────────────────────────────
+if ! command -v distrobox &>/dev/null; then
+    echo -e "${YELLOW}  ⚠ distrobox no está instalado en el host. Saltando creación de dev-box.${RESET}"
+    exit 0
+fi
+
+# Detectar motor de contenedores activo
+CONTAINER_ENGINE=""
+if command -v podman &>/dev/null; then
+    CONTAINER_ENGINE="podman"
+elif command -v docker &>/dev/null; then
+    CONTAINER_ENGINE="docker"
+fi
+
+if [ -z "$CONTAINER_ENGINE" ]; then
+    echo -e "${YELLOW}  ⚠ No se encontró podman ni docker en el host. Saltando creación de dev-box.${RESET}"
+    exit 0
+fi
+
+# Verificar si el motor de contenedores responde (permisos/socket activo)
+if ! "$CONTAINER_ENGINE" info &>/dev/null; then
+    echo -e "${YELLOW}  ⚠ El motor de contenedores ($CONTAINER_ENGINE) no responde. ¿Usuario fuera del grupo docker/podman? Saltando.${RESET}"
+    exit 0
+fi
+
+# ── 2. Crear Contenedor si no existe ─────────────────────────────────────────
+if distrobox list | grep -Fw "dev-box" &>/dev/null; then
+    echo -e "${GREEN}  ✓ El contenedor dev-box ya existe.${RESET}"
+else
+    echo -e "${BLUE}  → Creando contenedor dev-box (Arch Linux)... (esto puede tardar unos minutos)${RESET}"
+    if distrobox create -n dev-box -i archlinux --yes; then
+        echo -e "${GREEN}  ✓ Contenedor dev-box creado exitosamente.${RESET}"
+    else
+        echo -e "${YELLOW}  ⚠ Falló la creación del contenedor de distrobox. Saltando.${RESET}"
+        exit 0
+    fi
+fi
+
+# ── 3. Aprovisionar dependencias de desarrollo dentro de dev-box ────────────
+echo -e "${BLUE}  → Actualizando e instalando SDKs de desarrollo dentro del contenedor...${RESET}"
+
+# Comando de instalación no interactivo usando sudo dentro de Arch Linux
+# Instala: nodejs, npm, python, python-pip, dotnet-sdk (C#), git, y base-devel (compiladores de C/C++)
+INSTALL_CMD="sudo pacman -Syu --noconfirm nodejs npm python python-pip dotnet-sdk git base-devel"
+
+if distrobox enter dev-box -- sh -c "$INSTALL_CMD"; then
+    echo -e "${GREEN}  ✓ Runtimes (Node, Python, .NET SDK y GCC) listos y aislados dentro de dev-box.${RESET}"
+else
+    echo -e "${YELLOW}  ⚠ Falló el aprovisionamiento de paquetes dentro de dev-box. Podrás instalar los paquetes manualmente ejecutando 'distrobox enter dev-box'.${RESET}"
+fi
+
+{{- end }}
