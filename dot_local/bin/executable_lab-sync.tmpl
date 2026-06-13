@@ -47,15 +47,11 @@ if [ "$FORCE" = "false" ] && [ -f "$SYNC_STATE" ]; then
     fi
 fi
 
-# ── Extraer token de Forgejo ─────────────────────────────────────────────────
-SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+# ── Extraer token de Forgejo (pass) ───────────────────────────────────────────
 FORGEJO_TOKEN=""
 
-if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
-    DECRYPTED=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null || echo "")
-    if [ -n "$DECRYPTED" ]; then
-        FORGEJO_TOKEN=$(echo "$DECRYPTED" | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
-    fi
+if command -v pass &>/dev/null; then
+    FORGEJO_TOKEN=$(pass chezmoi/forgejo_token 2>/dev/null || echo "")
 fi
 
 if [ -z "$FORGEJO_TOKEN" ]; then

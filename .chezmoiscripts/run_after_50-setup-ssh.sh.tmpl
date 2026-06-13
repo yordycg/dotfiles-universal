@@ -59,18 +59,12 @@ fi
 log_ok "Llave SSH encontrada: $SSH_KEY_PATH"
 
 # ── 2. Extraer tokens de secretos ────────────────────────────────────────────
-SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
 GITHUB_TOKEN=""
 FORGEJO_TOKEN=""
 
-if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
-    DECRYPTED=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null || echo "")
-    if [ -n "$DECRYPTED" ]; then
-        GITHUB_TOKEN=$(echo "$DECRYPTED" | grep "github_token:" | awk '{print $2}' | tr -d '"' || echo "")
-        FORGEJO_TOKEN=$(echo "$DECRYPTED" | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
-    else
-        log_warn "No se pudo descifrar secrets. Verifica que la llave Age esté en ~/.config/age/key.txt"
-    fi
+if command -v pass &>/dev/null; then
+    GITHUB_TOKEN=$(pass chezmoi/github_token 2>/dev/null || echo "")
+    FORGEJO_TOKEN=$(pass chezmoi/forgejo_token 2>/dev/null || echo "")
 fi
 
 # ── 3. GitHub — autenticación ────────────────────────────────────────────────

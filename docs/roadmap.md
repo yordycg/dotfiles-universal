@@ -31,7 +31,8 @@
 
 ## 🔧 Fase 3 — Seguridad y secrets
 
-- [ ] **Investigar `pass` como Gestor Alternativo**: Evaluar `pass` (the standard unix password manager) y compararlo con el stack actual (Bitwarden/Vaultwarden) para determinar si vale la pena la migración hacia una solución más nativa de terminal y ligera en recursos.
+- [x] **Investigar `pass` como Gestor Alternativo**: Evaluar `pass` (the standard unix password manager) y compararlo con el stack actual (Bitwarden/Vaultwarden) para determinar si vale la pena la migración hacia una solución más nativa de terminal y ligera en recursos.
+- [ ] **Integración Móvil y Navegador (pass)**: Implementar y configurar `pass` en iOS (Password Store) y en el navegador Firefox (PassFF con passff-host).
 
 ## 🔧 Fase 4 — Advanced Homelab Workflow (Senior Implementation)
 
@@ -50,8 +51,9 @@
 Para cualquier máquina nueva, el proceso de identidad es manual para máxima seguridad:
 
 1.  **Siembra de Identidad**: Copiar desde USB seguro:
-    - `age` key -> `~/.config/chezmoi/key.txt` (o ruta configurada en `private_secrets.yaml.age`).
+    - `age` key -> `~/.config/age/key.txt` (o ruta configurada en `private_secrets.yaml.age`).
     - SSH key -> `~/.ssh/id_ed25519` y `~/.ssh/id_ed25519.pub`.
+    - GPG keys -> `~/.config/gpg_keys/gpg_public.asc` y `~/.config/gpg_keys/gpg_private.asc` (el script los importará y configurará de forma automática).
 2.  **Chezmoi Init**:
     ```bash
     chezmoi init --apply yordycg

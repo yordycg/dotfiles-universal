@@ -37,12 +37,11 @@ fi
 
 # ── 2. Instalación/Sincronización ────────────────────────────────────────────
 
-# Extraer token bajo demanda (Runtime Decryption)
-SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+# Extraer token bajo demanda (pass)
 GITHUB_TOKEN=""
 
-if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
-    GITHUB_TOKEN=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null | grep "github_token:" | awk '{print $2}' | tr -d '"' || echo "")
+if command -v pass &>/dev/null; then
+    GITHUB_TOKEN=$(pass chezmoi/github_token 2>/dev/null || echo "")
 fi
 
 export GITHUB_TOKEN="$GITHUB_TOKEN"

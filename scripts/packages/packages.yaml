@@ -11,6 +11,9 @@ fedora:
     - git
     - curl
     - wget
+    - pass
+    - gnupg2
+    - pinentry
     - zsh
     - gh
     - jq
@@ -83,6 +86,9 @@ debian:
     - git
     - curl
     - wget
+    - pass
+    - gnupg
+    - pinentry-curses
     - zsh
     - gh
     - jq
@@ -114,6 +120,9 @@ arch:
     - git
     - curl
     - wget
+    - pass
+    - gnupg
+    - pinentry
     - zsh
     - github-cli
     - jq

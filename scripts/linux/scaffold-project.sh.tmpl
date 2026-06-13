@@ -80,13 +80,11 @@ if command -v direnv &>/dev/null; then
     direnv allow .
 fi
 
-# ── Integración con Forgejo ──────────────────────────────────────────────────
-# Extraer token de forma segura en tiempo de ejecución (Runtime Decryption)
-SECRETS_FILE="{{ .chezmoi.sourceDir }}/dot_config/homelab/private_secrets.yaml.age"
+# ── Integración con Forgejo (pass) ───────────────────────────────────────────
 FORGEJO_TOKEN=""
 
-if [ -f "$SECRETS_FILE" ] && command -v chezmoi &>/dev/null; then
-    FORGEJO_TOKEN=$(chezmoi decrypt "$SECRETS_FILE" 2>/dev/null | grep "forgejo_token:" | awk '{print $2}' | tr -d '"' || echo "")
+if command -v pass &>/dev/null; then
+    FORGEJO_TOKEN=$(pass chezmoi/forgejo_token 2>/dev/null || echo "")
 fi
 
 FORGEJO_URL="http://{{ .homelab_ip_local }}:3080/api/v1"
