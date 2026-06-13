@@ -14,6 +14,10 @@
 - [x] **Preservar Atajos Estándar**: Evitar modificar excesivamente los atajos (keybindings) por defecto de Tmux para mantener la memoria muscular intacta al operar en servidores externos u otros equipos.
 - [ ] **Investigación de LazyApps**: Evaluar la integración de otras herramientas TUI de la familia *Lazy* (como `lazydocker` para docker, `lazysql` para BDs u otras) en la configuración de la terminal y los atajos de Tmux.
 
+### 1.3 Limpieza de Shell (Zsh)
+
+- [ ] **Refactorización de `.zshrc`**: Analizar y limpiar `dot_zshrc.tmpl`. Mover variables de entorno (exports), aliases y funciones duplicadas de Mise hacia sus respectivos archivos dedicados en `dot_config/shell/` para mantener el archivo principal minimalista.
+
 ---
 
 ## 🔧 Fase 2 — Contenedores y Proyectos (Host inmaculado)
@@ -68,7 +72,6 @@ just apply        # Aplicar cambios pendientes
 just diff         # Ver qué va a cambiar
 just update       # git pull + apply
 just save         # commit + push rápido
-bwu               # Desbloqueo automático de Bitwarden (Zero-Touch)
 lab-open          # Port forward instantáneo del servidor
 lps               # Ver estado de contenedores remotos
 ```

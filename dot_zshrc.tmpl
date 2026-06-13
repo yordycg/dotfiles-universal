@@ -81,11 +81,7 @@ _start_agent_bridge() {
 _start_agent_bridge
 {{- end }}
 
-# -- Vaultwarden — desbloqueo sin exponer master password ---------
-bwu() {
-    export BW_SESSION="$(bw unlock --raw)"
-    echo "Vaultwarden desbloqueado."
-}
+
 
 # -- FINALIZACIÓN -------------------------------------------------------------
 if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
