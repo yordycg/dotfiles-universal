@@ -126,21 +126,7 @@ if [ -n "$FORGEJO_TOKEN" ]; then
     fi
 fi
 
-# ── 6. SSH Config — entrada para github.com ──────────────────────────────────
-if [ ! -f "$SSH_CONFIG_FILE" ] || ! grep -q "Host github.com" "$SSH_CONFIG_FILE" 2>/dev/null; then
-    log_info "Añadiendo configuración SSH para github.com..."
-    mkdir -p "$HOME/.ssh" && chmod 700 "$HOME/.ssh"
-    cat >> "$SSH_CONFIG_FILE" <<EOF
 
-Host github.com
-    HostName github.com
-    User git
-    IdentityFile ${SSH_KEY_PATH}
-    IdentitiesOnly yes
-EOF
-    chmod 600 "$SSH_CONFIG_FILE"
-    log_ok "SSH config actualizado para github.com."
-fi
 
 # ── Guardar estado exitoso ────────────────────────────────────────────────────
 # Guardamos el fingerprint de la llave actual para evitar re-registro innecesario

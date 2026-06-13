@@ -16,7 +16,7 @@
 
 ### 1.3 Limpieza de Shell (Zsh)
 
-- [ ] **Refactorización de `.zshrc`**: Analizar y limpiar `dot_zshrc.tmpl`. Mover variables de entorno (exports), aliases y funciones duplicadas de Mise hacia sus respectivos archivos dedicados en `dot_config/shell/` para mantener el archivo principal minimalista.
+- [x] **Refactorización de `.zshrc`**: Analizar y limpiar `dot_zshrc.tmpl`. Mover variables de entorno (exports), aliases y funciones duplicadas de Mise hacia sus respectivos archivos dedicados en `dot_config/shell/` para mantener el archivo principal minimalista.
 
 ---
 
@@ -45,7 +45,7 @@
 ### 4.1 Hardening y Autodiscovery (homelab-infra)
 
 - [ ] **Robustez de Respaldos (homelab-infra)**: Cargar `configs/backup.env` en `manage.sh` para garantizar que la copia de seguridad con Restic tenga acceso al entorno configurado.
-- [ ] **Unificación SSH (chezmoi)**: Eliminar la inyección manual de `github.com` al final de `~/.ssh/config` en `run_after_50-setup-ssh.sh.tmpl` para centralizar la configuración en `private_dot_ssh/config.tmpl`.
+- [x] **Unificación SSH (chezmoi)**: Eliminar la inyección manual de `github.com` al final de `~/.ssh/config` en `run_after_50-setup-ssh.sh.tmpl` para centralizar la configuración en `private_dot_ssh/config.tmpl`.
 - [ ] **Bot de Notificación de Backups (homelab-infra & chezmoi)**: Investigar e implementar un bot (Telegram, WhatsApp, o alternativas de notificaciones abiertas como NTFY/Apprise) para alertar sobre el estado de los backups automáticos del servidor, con potencial para reportar métricas del sistema, bloqueos de Fail2ban y alertas críticas de contenedores.
 
 ---
