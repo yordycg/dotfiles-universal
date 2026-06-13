@@ -36,7 +36,7 @@
 ## 🔧 Fase 3 — Seguridad y secrets
 
 - [x] **Investigar `pass` como Gestor Alternativo**: Evaluar `pass` (the standard unix password manager) y compararlo con el stack actual (Bitwarden/Vaultwarden) para determinar si vale la pena la migración hacia una solución más nativa de terminal y ligera en recursos.
-- [ ] **Integración Móvil y Navegador (pass)**: Implementar y configurar `pass` en iOS (Password Store) y en el navegador Firefox (PassFF con passff-host).
+- [ ] **Integración Móvil y Navegador (passage)**: Implementar y configurar `passage` en iOS (Password Store) y en el navegador Firefox (PassFF con passff-host o wrappers).
 
 ## 🔧 Fase 4 — Advanced Homelab Workflow (Senior Implementation)
 
@@ -55,9 +55,9 @@
 Para cualquier máquina nueva, el proceso de identidad es manual para máxima seguridad:
 
 1.  **Siembra de Identidad**: Copiar desde USB seguro:
-    - `age` key -> `~/.config/age/key.txt` (o ruta configurada en `private_secrets.yaml.age`).
+    - `age` key -> `~/.config/age/key.txt` (o `~/.config/chezmoi/key.txt`, el script la estandarizará automáticamente).
     - SSH key -> `~/.ssh/id_ed25519` y `~/.ssh/id_ed25519.pub`.
-    - GPG keys -> `~/.config/gpg_keys/gpg_public.asc` y `~/.config/gpg_keys/gpg_private.asc` (el script los importará y configurará de forma automática).
+    *(Ya no es necesario sembrar llaves GPG para la gestión de secretos).*
 2.  **Chezmoi Init**:
     ```bash
     chezmoi init --apply yordycg
@@ -119,11 +119,11 @@ dotfiles-universal/
 > El objetivo es lograr que Chezmoi corra 100% en espacio de usuario ($HOME) sin requerir `sudo` en su día a día, y unificar el llavero de seguridad bajo una única llave de Age.
 
 ### 5.1 Desacoplamiento de Sudo (Espacio de Sistema)
-- [ ] **Extraer scripts de sistema:** Mover scripts que requieren `sudo` (ej: `run_after_70-trust-homelab-ca.sh.tmpl`, `run_once_after_97-install-pixie-sddm.sh.tmpl` y el instalador de paquetes) a un directorio independiente `provision/` (o playbooks de Ansible) fuera de Chezmoi.
+- [x] **Extraer scripts de sistema:** Modularizamos y extrajimos las tareas que requieren `sudo` (paquetes del sistema, VPN Tailscale, PKI Homelab, y SDDM theme) al directorio `provision/` y creamos un orquestador único `run_once_before_00-provision-system.sh.tmpl` que se ejecuta de forma controlada basándose en hashes, logrando que el día a día sea 100% sudo-less.
 - [ ] **Asegurar fallback de Wallpaper en Sway:** Añadir un fondo de pantalla básico y ligero dentro del repo de Chezmoi para que Sway no inicie en blanco si la carpeta de assets externa no se ha sincronizado.
 
 ### 5.2 Unificación de Secretos (Age)
-- [ ] **Migración a `pass-age`:** Reemplazar la encriptación GPG del llavero `pass` por `pass-age`, permitiendo usar tu llave única de `age` para SOPS, Chezmoi y contraseñas de terminal, reduciendo la necesidad de sembrar llaves GPG.
+- [x] **Migración a `passage` (Age-based):** Reemplazamos el uso de `pass` (GPG) por `passage` (Age) local en `$HOME/.local/bin/passage`. El llavero ahora usa la llave única de `age` para el descifrado y un script de migración movió exitosamente los 13 secretos `.gpg` a `.age`. Todos los scripts consumidores fueron adaptados con detección robusta.
 
 ---
 
