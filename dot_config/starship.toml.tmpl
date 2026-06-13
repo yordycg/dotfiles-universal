@@ -9,7 +9,6 @@ palette = 'default'
 format = """
 $os\
 $username\
-{{ if and (hasKey . "isServer") .isServer }}[󰇄 ](fg:color_hostname){{ end }}\
 $directory\
 $git_branch\
 $git_status\
@@ -62,12 +61,21 @@ style = "fg:color_os"
 format = '[$symbol ]($style)'
 
 [os.symbols]
+{{ if and (hasKey . "isServer") .isServer -}}
+Windows = "󰌘"
+Ubuntu = "󰌘"
+Fedora = "󰌘"
+Arch = "󰌘"
+Debian = "󰌘"
+Linux = "󰌘"
+{{ else -}}
 Windows = "󰍲"
 Ubuntu = "󰕈"
 Fedora = "󰣛"
 Arch = "󰣇"
 Debian = "󰣚"
 Linux = "󰌽"
+{{ end -}}
 
 [username]
 show_always = true
