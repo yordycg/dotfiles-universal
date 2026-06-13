@@ -4,86 +4,38 @@
 # ......██......██.██...██.██...██.██......
 # .███████.███████.██...██.██...██..██████.
 # =============================================================================
-# ARQUITECTURA MODULAR DE SHELL (Senior Hybrid - Claude Fix)
+# ARCHIVO DE CONFIGURACIÓN PRINCIPAL DE ZSH (Senior Minimalist)
 # =============================================================================
 
-# -- MOTOR DE RENDIMIENTO (CACHING ENGINE) ------------------------------------
-ZSH_CACHE_DIR="$HOME/.cache/zsh"
-[[ -d "$ZSH_CACHE_DIR" ]] || mkdir -p "$ZSH_CACHE_DIR"
+# -- CAPA 0: CACHÉ Y MOTOR DE RENDIMIENTO --
+source "$HOME/.config/zsh/cache.zsh"
 
-run_cached() {
-    local name="${1:?run_cached requiere un nombre}"
-    local cmd="${2:?run_cached requiere un comando}"
-    local friendly_name="${3:-$name}"
-    local cache_file="$ZSH_CACHE_DIR/${name}.zsh"
-    
-    if [[ ! -f "$cache_file" ]] || [[ -n "$(command find "$cache_file" -mmin +1440 2>/dev/null)" ]]; then
-        log_info "Regenerando caché: $friendly_name..."
-        ( eval "$cmd" ) > "$cache_file" 2>/dev/null || {
-            rm -f "$cache_file"
-            return 1
-        }
-        log_ok "$friendly_name sincronizado."
-    fi
-    [[ -f "$cache_file" ]] && builtin source "$cache_file"
-}
-
-# -- CAPA 1: ENTORNO BASE Y LOGS (SHELL AGNOSTIC) -----------------------------
+# -- CAPA 1: ENTORNO BASE Y ALIASES (SHELL AGNOSTIC) --
 source "$HOME/.config/shell/exports.sh"
 source "$HOME/.config/shell/aliases.sh"
 source "$HOME/.config/shell/functions.sh"
 
-# -- CAPA 2: COMPLETADO (compinit DEBE IR ANTES QUE FZF-TAB) ------------------
+# -- CAPA 2: COMPLETADO (compinit) --
 source "$HOME/.config/zsh/completion.zsh"
 
-# -- CAPA 3: PLUGINS (fzf-tab, autosuggestions, etc.) -------------------------
+# -- CAPA 3: PLUGINS Y BINDINGS --
 source "$HOME/.config/zsh/plugins.zsh"
 
-# -- CAPA 4: FZF KEYBINDINGS (Después de plugins) -----------------------------
+# -- CAPA 4: MOTOR DE BÚSQUEDA (FZF) --
 source "$HOME/.config/zsh/fzf.zsh"
 
-# -- CAPA 5: HERRAMIENTAS (MISE/STARSHIP) -------------------------------------
-# Al final para no interferir con el sistema de completado
-if command -v mise &>/dev/null; then
-    run_cached "mise" "mise activate zsh" "Mise"
-fi
-[[ -x $(command -v direnv) ]]  && run_cached "direnv" "direnv hook zsh" "Direnv"
-[[ -x $(command -v zoxide) ]]   && run_cached "zoxide" "zoxide init zsh" "Zoxide"
-[[ -x $(command -v starship) ]] && run_cached "starship" "starship init zsh" "Starship"
+# -- CAPA 5: INTEGRACIÓN DE HERRAMIENTAS --
+source "$HOME/.config/zsh/tools.zsh"
 
-# -- CONFIGURACIÓN DE HISTORIAL -----------------------------------------------
-HISTFILE=~/.zsh_history
-HISTSIZE=100000
-SAVEHIST=100000
-setopt SHARE_HISTORY
-setopt HIST_IGNORE_DUPS
-setopt HIST_IGNORE_SPACE
-setopt HIST_REDUCE_BLANKS
-setopt HIST_FIND_NO_DUPS
+# -- CAPA 6: CONFIGURACIÓN DE HISTORIAL --
+source "$HOME/.config/zsh/history.zsh"
 
-# -- AUTO-TMUX / SESSION MANAGER (Senior Workflow) ----------------------------
-# Deshabilitado: El flujo ahora es directo vía SSH o manual con SessionX (prefix + s)
-
-
-# -- SSH agent bridge Windows → WSL (solo en WSL) -----------------
+# -- CAPA 7: INTEGRACIÓN WSL --
 {{- if .isWSL }}
-export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
-
-_start_agent_bridge() {
-    if ! ss -a 2>/dev/null | grep -q "$SSH_AUTH_SOCK"; then
-        rm -f "$SSH_AUTH_SOCK"
-        ( setsid socat \
-            UNIX-LISTEN:"$SSH_AUTH_SOCK",fork \
-            EXEC:"npiperelay.exe -ei -s //./pipe/openssh-ssh-agent",nofork \
-          & ) >/dev/null 2>&1
-    fi
-}
-_start_agent_bridge
+source "$HOME/.config/zsh/wsl.zsh"
 {{- end }}
 
-
-
-# -- FINALIZACIÓN -------------------------------------------------------------
+# -- FINALIZACIÓN: FASTFETCH --
 if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
     fastfetch
 fi
