@@ -85,6 +85,7 @@ debian:
     - git
     - curl
     - wget
+    - python3-venv
     - gnupg
     - pinentry-curses
     - zsh
