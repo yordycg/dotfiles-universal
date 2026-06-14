@@ -86,6 +86,9 @@ return {
           -- Emmet en HTML, CSS, Django templates
           filetypes = { "html", "css", "htmldjango", "javascriptreact", "typescriptreact" },
         },
+        fsautocomplete = {
+          enabled = false,
+        },
       },
     },
   },
