@@ -32,13 +32,16 @@ sync_repo() {
     local path=$3
     local name=$4
 
-    local url=$github_url
-    if ssh -o ConnectTimeout=2 -o BatchMode=yes forgejo.home exit &>/dev/null; then
-        log_info "Servidor Forgejo detectado. Usando mirror local para $name."
-        url=$forgejo_url
-    else
-        log_info "Servidor Forgejo no alcanzable. Usando GitHub para $name."
-    fi
+    local url=""
+    {{ if .isServer -}}
+    # En el servidor, siempre usamos Forgejo localmente
+    url=$forgejo_url
+    log_info "Entorno de servidor. Usando Forgejo para $name."
+    {{- else -}}
+    # En laptops/desktops, el origin principal es siempre GitHub
+    url=$github_url
+    log_info "Entorno cliente. Usando GitHub como origin para $name."
+    {{- end }}
 
     if [ ! -d "$path/.git" ]; then
         log_info "Clonando repositorio de $name en $path..."
@@ -49,6 +52,18 @@ sync_repo() {
         log_info "Actualizando $name..."
         cd "$path"
         git remote set-url origin "$url"
+
+        # Limpiar cualquier pushurl configurado previamente
+        git config --unset-all remote.origin.pushurl || true
+
+        {{ if not .isServer -}}
+        # Si estamos en cliente (laptop/desktop) y Forgejo es alcanzable, configuramos push doble
+        if ssh -T -o ConnectTimeout=2 -o BatchMode=yes forgejo.home &>/dev/null; then
+            git remote set-url --add --push origin "$github_url"
+            git remote set-url --add --push origin "$forgejo_url"
+            log_info "  → Configurado push doble (GitHub + Forgejo) para $name."
+        fi
+        {{- end }}
         
         if ! git diff-index --quiet HEAD --; then
             log_warn "Cambios locales detectados en $name. Realizando stash temporal..."
