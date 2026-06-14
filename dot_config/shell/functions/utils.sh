@@ -84,15 +84,22 @@ notes() {
     fi
     
     if ! command -v tmux &>/dev/null; then
-        (cd "$notes_dir" && lv)
+        (cd "$notes_dir" && git pull -q --rebase && lv)
         return 0
     fi
 
     if ! tmux has-session -t notes 2>/dev/null; then
+        echo -e "\033[0;36m  → Sincronizando notas antes de abrir...\033[0m"
+        (cd "$notes_dir" && git pull -q --rebase)
         tmux new-session -d -s notes -c "$notes_dir"
         tmux send-keys -t notes "lv" C-m
     fi
-    tmux attach-session -t notes
+    
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t notes
+    else
+        tmux attach-session -t notes
+    fi
 }
 
 # Gestor interactivo de servicios Systemd
