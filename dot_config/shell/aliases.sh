@@ -14,7 +14,6 @@ alias as='cd ~/workspace/assets'
 alias pr='cd ~/workspace/personal'
 alias wk='cd ~/workspace/work'
 alias iv='cd ~/workspace/ipvg'
-alias dev='distrobox enter dev-box'
 
 # -- Reemplazos modernos -----------------------
 alias ls='eza --icons --group-directories-first'
@@ -53,13 +52,7 @@ alias czu='chezmoi update'
 alias czs='chezmoi source-path'
 
 # -- Editores ----------------------------------
-lv() {
-    if command -v distrobox &>/dev/null && distrobox list | grep -Fw "dev-box" &>/dev/null; then
-        distrobox enter dev-box -- env NVIM_APPNAME=LazyVim nvim "$@"
-    else
-        env NVIM_APPNAME=LazyVim nvim "$@"
-    fi
-}
+alias lv='env NVIM_APPNAME=LazyVim nvim'
 alias nv='NVIM_APPNAME=nvim-personal nvim'
 alias v='nv'
 alias v.='nv .'
