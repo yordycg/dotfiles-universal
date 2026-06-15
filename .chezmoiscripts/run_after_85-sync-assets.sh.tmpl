@@ -56,7 +56,11 @@ sync_repo() {
         # Limpiar cualquier pushurl configurado previamente
         git config --unset-all remote.origin.pushurl || true
 
-        {{ if not .isServer -}}
+        {{ if .isServer -}}
+        # En el servidor, el push debe ir obligatoriamente a GitHub ya que el mirror en Forgejo es de solo lectura (Read-Only)
+        git remote set-url --push origin "$github_url"
+        log_info "  → Configurado push redirigido a GitHub (Forgejo es espejo de solo lectura)."
+        {{- else -}}
         # Si estamos en cliente (laptop/desktop) y Forgejo es alcanzable, configuramos push doble
         if ssh -T -o ConnectTimeout=2 -o BatchMode=yes forgejo.home &>/dev/null; then
             git remote set-url --add --push origin "$github_url"
