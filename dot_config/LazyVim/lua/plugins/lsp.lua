@@ -43,6 +43,7 @@ return {
 
         -- C#
         "omnisharp",
+        "csharpier",
 
         -- C / C++
         "clangd",
@@ -71,10 +72,10 @@ return {
           },
         },
         ruff = {
-          init_options = { settings = { lineLenght = 100 } },
+          init_options = { settings = { lineLength = 100 } },
         },
         omnisharp = {
-          -- Para proyctos .NET
+          -- Para proyectos .NET
           enable_roslyn_analyzers = true,
           organize_imports_on_format = true,
         },

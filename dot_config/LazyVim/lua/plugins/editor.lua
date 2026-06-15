@@ -37,7 +37,7 @@ return {
         "<leader>hh",
         function()
           local harpoon = require("harpoon")
-          harpoon.ui:toogle_quick_menu(harpoon:list())
+          harpoon.ui:toggle_quick_menu(harpoon:list())
         end,
         desc = "Harpoon: menu",
       },
@@ -124,6 +124,6 @@ return {
   {
     "NvChad/nvim-colorizer.lua",
     ft = { "css", "html", "javascript", "typescript", "htmldjango" },
-    opts = { user_defalt_options = { tailwind = true } },
+    opts = { user_default_options = { tailwind = true } },
   },
 }

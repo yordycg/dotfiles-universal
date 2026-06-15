@@ -27,15 +27,15 @@ save MSG="feat: update dotfiles":
 # ── Linux / Workspace ──────────────────────────────────────────────
 
 project-new NAME CATEGORY="personal" LANG="generic":
-    @bash $(chezmoi source-path)/scripts/scaffold-project.sh {{`{{NAME}}` }} {{`{{CATEGORY}}` }} {{`{{LANG}}` }}
+    @scaffold-project.sh {{`{{NAME}}` }} {{`{{CATEGORY}}` }} {{`{{LANG}}` }}
 
 install:
     @if [ -f /etc/fedora-release ]; then \
-        bash $(chezmoi source-path)/scripts/packages/installers/fedora.sh; \
+        bash $(chezmoi source-path)/provision/installers/fedora.sh; \
     elif [ -f /etc/arch-release ]; then \
         bash $(chezmoi source-path)/scripts/packages/installers/arch.sh; \
     elif [ -f /etc/debian_version ]; then \
-        bash $(chezmoi source-path)/scripts/packages/installers/debian.sh; \
+        bash $(chezmoi source-path)/provision/installers/debian.sh; \
     fi
 
 {{ if and (hasKey . "isServer") .isServer }}

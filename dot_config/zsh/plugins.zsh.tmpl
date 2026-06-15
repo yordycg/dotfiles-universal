@@ -36,13 +36,13 @@ ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 ZSH_AUTOSUGGEST_USE_ASYNC=1
 
-# C. Utilidades de Historial y Alias
+# C. Syntax Highlighting (Debe cargarse antes de substring-search)
+source "$ZPLUGINDIR/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
+
+# D. Utilidades de Historial y Alias
 source "$ZPLUGINDIR/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null
 source "$ZPLUGINDIR/alias-tips/alias-tips.plugin.zsh" 2>/dev/null
 source "$ZPLUGINDIR/zsh-fzf-history-search/zsh-fzf-history-search.zsh" 2>/dev/null
-
-# D. Syntax Highlighting (Debe ser el último en modificar ZLE)
-source "$ZPLUGINDIR/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" 2>/dev/null
 
 # -- 3. MODO EMACS Y BINDINGS FINALES --
 

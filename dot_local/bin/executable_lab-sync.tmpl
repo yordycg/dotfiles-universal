@@ -109,6 +109,10 @@ REPOS_JSON=$(curl -s \
     -H "Authorization: token $FORGEJO_TOKEN" \
     "$FORGEJO_URL/user/repos?limit=50")
 
+if ! echo "$REPOS_JSON" | jq -e 'type == "array"' >/dev/null 2>&1; then
+    log_err "La respuesta de Forgejo no es un array válido. Respuesta: $REPOS_JSON"
+fi
+
 CLONED=0
 UPDATED=0
 SKIPPED=0
