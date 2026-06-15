@@ -28,46 +28,21 @@ log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 # ── Funciones de Utilidad ────────────────────────────────────────────────────
 sync_repo() {
     local github_url=$1
-    local forgejo_url=$2
-    local path=$3
-    local name=$4
-
-    local url=""
-    {{ if .isServer -}}
-    # En el servidor, siempre usamos Forgejo localmente
-    url=$forgejo_url
-    log_info "Entorno de servidor. Usando Forgejo para $name."
-    {{- else -}}
-    # En laptops/desktops, el origin principal es siempre GitHub
-    url=$github_url
-    log_info "Entorno cliente. Usando GitHub como origin para $name."
-    {{- end }}
+    local path=$2
+    local name=$3
 
     if [ ! -d "$path/.git" ]; then
         log_info "Clonando repositorio de $name en $path..."
         mkdir -p "$(dirname "$path")"
-        git clone -q "$url" "$path"
+        git clone -q "$github_url" "$path"
         log_ok "$name clonado exitosamente."
     else
         log_info "Actualizando $name..."
         cd "$path"
-        git remote set-url origin "$url"
+        git remote set-url origin "$github_url"
 
-        # Limpiar cualquier pushurl configurado previamente
+        # Limpiar cualquier pushurl configurado previamente para usar el por defecto de GitHub
         git config --unset-all remote.origin.pushurl || true
-
-        {{ if .isServer -}}
-        # En el servidor, el push debe ir obligatoriamente a GitHub ya que el mirror en Forgejo es de solo lectura (Read-Only)
-        git remote set-url --push origin "$github_url"
-        log_info "  → Configurado push redirigido a GitHub (Forgejo es espejo de solo lectura)."
-        {{- else -}}
-        # Si estamos en cliente (laptop/desktop) y Forgejo es alcanzable, configuramos push doble
-        if ssh -T -o ConnectTimeout=2 -o BatchMode=yes forgejo.home &>/dev/null; then
-            git remote set-url --add --push origin "$github_url"
-            git remote set-url --add --push origin "$forgejo_url"
-            log_info "  → Configurado push doble (GitHub + Forgejo) para $name."
-        fi
-        {{- end }}
         
         if ! git diff-index --quiet HEAD --; then
             log_warn "Cambios locales detectados en $name. Realizando stash temporal..."
@@ -99,8 +74,8 @@ fi
 
 log_step "Sincronizando Recursos Gráficos"
 
-sync_repo "git@github.com:yordycg/wallpapers.git" "git@forgejo.home:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
-sync_repo "git@github.com:yordycg/obsidian-notes.git" "git@forgejo.home:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian-notes" "Obsidian Notes"
+sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
+sync_repo "git@github.com:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian-notes" "Obsidian Notes"
 
 log_ok "Sincronización de assets finalizada."
 date +%s > "$SYNC_STATE"
