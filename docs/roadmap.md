@@ -127,4 +127,21 @@ dotfiles-universal/
 
 ---
 
-> Actualizado: 13 de junio de 2026 — Estrategia Sudo-less y Limpieza.
+## 🔧 Fase 6 — Soporte KDE Plasma 6 y Personalización (Próximamente)
+
+> El objetivo es implementar soporte para entornos de escritorio gráficos modernos de manera condicional y ligera en los Nodos N (Fedora KDE Spin), manteniendo el host limpio y el repositorio de Chezmoi libre de archivos binarios pesados.
+
+### 6.1 Lógica y Condicionales de Entorno
+- [ ] **Variable `desktopEnv`:** Incorporar en `.chezmoi.yaml.tmpl` la variable `desktopEnv` (con opciones: `gnome`, `kde`, `sway`, `none`) para independizar el hardware/virtualización de la interfaz de usuario.
+- [ ] **Aislamiento en `.chezmoignore`:** Configurar exclusiones dinámicas basadas en `desktopEnv` para evitar copiar configuraciones cruzadas de entornos gráficos (ej. ignorar carpetas de KDE si se usa GNOME).
+
+### 6.2 Automatización e Instalación del Tema (Opción B)
+- [ ] **Script de compilación y descarga:** Crear un script de Chezmoi `.chezmoiscripts/run_once_after_45-install-theme.sh.tmpl` que realice un clonado temporal de los temas (`MacSequoia-kde` / `WhiteSur-kde` de vinceliuice), ejecute sus instaladores `./install.sh` y limpie los archivos descargados.
+- [ ] **Modularización de Paquetes:** Reorganizar `scripts/packages/packages.yaml` para clasificar las dependencias por entorno (ej. paquetes específicos de KDE vs dependencias generales de GUI).
+
+### 6.3 Persistencia de Preferencias
+- [ ] **Seguimiento de configuración de KDE:** Una vez instalado el sistema en el Nodo N, añadir las preferencias de atajos y paneles de KDE Plasma (`~/.config/kdeglobals`, `~/.config/kglobalshortcutsrc`, etc.) a Chezmoi como texto plano.
+
+---
+
+> Actualizado: 15 de junio de 2026 — Plan de Soporte KDE Plasma 6.
