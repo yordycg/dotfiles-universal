@@ -102,6 +102,41 @@ notes() {
     fi
 }
 
+# Workflow de Estudio (Learning Path) en Tmux + Neovim
+learn() {
+    local path_dir="$HOME/workspace/personal/learning-path"
+    if [ ! -d "$path_dir" ]; then
+        echo -e "\033[0;31m  ✗ El directorio de aprendizaje no existe: $path_dir\033[0m"
+        return 1
+    fi
+    
+    if ! command -v tmux &>/dev/null; then
+        (cd "$path_dir" && git pull -q --rebase && lv)
+        return 0
+    fi
+
+    # Si la sesión "learn" no existe, la creamos con dos ventanas
+    if ! tmux has-session -t learn 2>/dev/null; then
+        echo -e "\033[0;36m  → Sincronizando repositorio antes de abrir...\033[0m"
+        (cd "$path_dir" && git pull -q --rebase)
+        
+        # Ventana 1: Editor con LazyVim (lv)
+        tmux new-session -d -s learn -n "editor" -c "$path_dir"
+        tmux send-keys -t learn:editor "lv" C-m
+        
+        # Ventana 2: Terminal de soporte
+        tmux new-window -t learn -n "terminal" -c "$path_dir"
+    fi
+    
+    # Cambiar o adjuntar a la sesión learn
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t learn
+    else
+        tmux attach-session -t learn
+    fi
+}
+
+
 # Gestor interactivo de servicios Systemd
 fsvc() {
     local service
