@@ -85,8 +85,15 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
 
     install_section "desktop"
     
-    # Perfil Sway (Instalar si es desktop para asegurar disponibilidad)
-    install_section "sway"
+    # Perfil de Entorno Gráfico Específico (Sway, KDE o Ambos)
+    if [ "${NODE_DESKTOP_ENV:-}" = "sway" ]; then
+        install_section "sway"
+    elif [ "${NODE_DESKTOP_ENV:-}" = "kde" ]; then
+        install_section "kde"
+    elif [ "${NODE_DESKTOP_ENV:-}" = "both" ]; then
+        install_section "sway"
+        install_section "kde"
+    fi
 fi
 
 # Instalar distrobox en clientes (WSL, PC, Laptop)

@@ -33,6 +33,20 @@ dot_mozilla/**
 
 {{ end -}}
 
+# ── Exclusiones dinámicas según el Entorno de Escritorio ──────────
+
+# Si no se usa Sway, ignorar archivos específicos de Sway/Wayland
+{{ if and (ne .desktopEnv "sway") (ne .desktopEnv "both") -}}
+dot_config/sway/**
+dot_config/waybar/**
+dot_config/rofi/**
+dot_config/wofi/**
+dot_config/mako/**
+dot_config/gammastep/**
+dot_config/wallust/**
+dot_config/flavours/**
+{{ end -}}
+
 # ── Archivos generados dinámicamente (todos los sistemas) ────────
 dot_config/kitty/colors.conf
 dot_config/tmux/colors.conf

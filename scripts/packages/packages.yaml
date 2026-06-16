@@ -52,6 +52,7 @@ fedora:
     - qt6-qt5compat
     - qt6-qtvirtualkeyboard
     - qt6-qtmultimedia
+    - kitty
   sway:
     - waybar
     - rofi-wayland
@@ -73,9 +74,28 @@ fedora:
     - kanshi
     - swayidle
     - swaylock
-    - kitty
     - swww
     - waypaper
+  kde:
+    # Core
+    - plasma-desktop
+    - plasma-workspace
+    # Integración del Sistema (Audio, Red, Energía, Monitores, BT, GTK)
+    - plasma-nm
+    - plasma-pa
+    - powerdevil
+    - kscreen
+    - bluedevil
+    - kde-gtk-config
+    # Utilidades de Escritorio indispensables (Visores, Exploradores, Capturadoras)
+    - dolphin
+    - spectacle
+    - ark
+    - gwenview
+    - okular
+    - kate
+    - kcalc
+    - plasma-systemmonitor
 
 debian:
   core:

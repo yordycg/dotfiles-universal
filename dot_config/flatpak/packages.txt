@@ -3,3 +3,7 @@
 
 io.dbeaver.DBeaverCommunity
 io.beekeeperstudio.Studio
+com.discordapp.Discord
+org.videolan.VLC
+com.spotify.Client
+org.onlyoffice.desktopeditors

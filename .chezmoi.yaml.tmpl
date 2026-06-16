@@ -25,6 +25,12 @@
 {{- $isGUI         := $isNativeLinux -}}
 {{- $isHeadless    := or $isServer $isWSL -}}
 
+{{/* ── PASO 2.5: Identificar Entorno Gráfico ────────────────── */}}
+{{- $desktopEnv := "none" -}}
+{{- if $isGUI -}}
+{{-   $desktopEnv = promptStringOnce . "desktopEnv" "Entorno de escritorio (kde, sway, both, gnome, none)" "sway" -}}
+{{- end -}}
+
 {{- $hasGUI      := or $isLaptop $isDesktop -}}
 {{- $hasDocker   := $isServer -}}
 {{- $needsSSHcfg := not $isServer -}}
@@ -53,6 +59,7 @@ data:
   isServer:  {{ $isServer }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
+  desktopEnv: {{ $desktopEnv | quote }}
 
   # ── Capacidades ──
   hasGUI:      {{ $hasGUI }}
