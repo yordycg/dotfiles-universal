@@ -14,22 +14,22 @@ RED='\033[0;31m'
 BOLD='\033[1m'
 RESET='\033[0m'
 
-log_step() { echo -e "\n\${CYAN}\${BOLD}▶ \$1\${RESET}"; }
-log_ok()   { echo -e "\${GREEN}  ✓ \$1\${RESET}"; }
-log_info() { echo -e "\${CYAN}  → \$1\${RESET}"; }
-log_warn() { echo -e "\${YELLOW}  ⚠ \$1\${RESET}"; }
-log_err()  { echo -e "\${RED}  ✗ \$1\${RESET}"; exit 1; }
+log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
 log_step "Instalando tema para KDE Plasma 6..."
 
 # Repositorio del tema (MacSequoia-kde)
 THEME_REPO="https://github.com/vinceliuice/MacSequoia-kde.git"
-TEMP_DIR=\$(mktemp -d)
+TEMP_DIR=$(mktemp -d)
 
-log_info "Clonando repositorio del tema: \$THEME_REPO..."
-if git clone --depth 1 "\$THEME_REPO" "\$TEMP_DIR"; then
+log_info "Clonando repositorio del tema: $THEME_REPO..."
+if git clone --depth 1 "$THEME_REPO" "$TEMP_DIR"; then
     log_info "Ejecutando instalador del tema..."
-    cd "\$TEMP_DIR"
+    cd "$TEMP_DIR"
     
     # Se ejecuta el instalador del tema de forma silenciosa/automatizada
     if ./install.sh; then
@@ -41,6 +41,6 @@ else
     log_warn "No se pudo clonar el repositorio del tema KDE."
 fi
 
-rm -rf "\$TEMP_DIR"
+rm -rf "$TEMP_DIR"
 log_ok "Proceso de tema KDE finalizado."
 {{- end }}
