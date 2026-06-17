@@ -36,6 +36,9 @@ fedora:
     - distrobox
     - podman
     - flatpak
+    - ostree
+    - appstream-compose
+    - gnome-disk-utility
     - fontconfig
     - google-chrome-stable
     - code
@@ -104,7 +107,7 @@ fedora:
     # Dependencias para los scripts de instalación de temas (Compilación)
     - sassc
     - glib2-devel
-    - imagemagick
+    - ImageMagick
     - dialog
     - optipng
     - inkscape
@@ -128,7 +131,7 @@ fedora:
     # Fuentes del Sistema
     - adobe-source-code-pro-fonts
     - google-noto-sans-fonts
-    - google-noto-emoji-color-fonts
+    - google-noto-color-emoji-fonts
 
 debian:
   core:

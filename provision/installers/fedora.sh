@@ -41,7 +41,7 @@ install_section() {
         return
     fi
     
-    sudo dnf install -y -q --skip-unavailable $packages
+    sudo dnf install -y -q --skip-unavailable --allowerasing $packages
     log_ok "Paquetes de $section instalados."
 }
 
@@ -89,6 +89,12 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     if ! dnf copr list | grep -q "solopasha/hyprland"; then
         log_info "Habilitando COPR solopasha/hyprland (swww + waypaper)..."
         sudo dnf copr enable -y solopasha/hyprland
+    fi
+
+    # Habilitar COPR atim/xpadneo para driver de controles Xbox One
+    if ! dnf copr list | grep -q "atim/xpadneo"; then
+        log_info "Habilitando COPR atim/xpadneo (driver Xbox)..."
+        sudo dnf copr enable -y atim/xpadneo
     fi
 
     install_section "desktop"
