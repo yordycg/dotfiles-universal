@@ -57,3 +57,28 @@ Current=pixie
 EOF
 
 log_ok "Configuración de SDDM Pixie aplicada."
+
+# ── 5. Habilitar SDDM y Desactivar otros Display Managers ────────────────────
+log_info "Configurando SDDM como gestor de pantalla predeterminado..."
+if systemctl is-active greetd &>/dev/null || systemctl is-enabled greetd &>/dev/null; then
+    log_info "Deshabilitando greetd y habilitando SDDM..."
+    sudo systemctl disable greetd &>/dev/null || true
+    sudo systemctl enable sddm --force &>/dev/null || true
+elif ! systemctl is-enabled sddm &>/dev/null; then
+    log_info "Habilitando SDDM..."
+    sudo systemctl enable sddm --force &>/dev/null || true
+fi
+
+# ── 6. Desactivar Autologin en SDDM (Idempotente) ─────────────────────────────
+log_info "Desactivando autologin en configuraciones de SDDM..."
+if [ -f /etc/sddm.conf ]; then
+    sudo sed -i 's/^\s*User=/#User=/g' /etc/sddm.conf
+    sudo sed -i 's/^\s*Session=/#Session=/g' /etc/sddm.conf
+fi
+
+if [ -d /etc/sddm.conf.d ]; then
+    # Evitar errores si el directorio no contiene archivos o está vacío
+    sudo sed -i 's/^\s*User=/#User=/g' /etc/sddm.conf.d/* 2>/dev/null || true
+    sudo sed -i 's/^\s*Session=/#Session=/g' /etc/sddm.conf.d/* 2>/dev/null || true
+fi
+log_ok "Autologin desactivado en SDDM."
