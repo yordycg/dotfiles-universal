@@ -9,6 +9,7 @@
 # {{ include "provision/system/trust-homelab-ca.sh" | sha256sum }}
 # {{ include "provision/system/setup-sddm-theme.sh" | sha256sum }}
 # {{ include "provision/system/setup-tailscale.sh" | sha256sum }}
+# {{ include "provision/system/setup-kde-macos-theme.sh" | sha256sum }}
 # {{ include "scripts/packages/packages.yaml" | sha256sum }}
 
 set -euo pipefail
@@ -67,6 +68,18 @@ bash "$PROVISION_DIR/system/trust-homelab-ca.sh"
 if [ "$NODE_HAS_GUI" = "true" ]; then
     log_step "4/4. Configurando temas gráficos del sistema..."
     bash "$PROVISION_DIR/system/setup-sddm-theme.sh"
+
+    # Configurar tema macOS para KDE si aplica
+    {{- if or (eq .desktopEnv "kde") (eq .desktopEnv "both") }}
+    log_info "→ Configurando tema macOS Tahoe para KDE..."
+    bash "$PROVISION_DIR/system/setup-kde-macos-theme.sh"
+
+    if command -v flatpak &>/dev/null; then
+        log_info "→ Aplicando overrides sudo para Flatpak (acceso a temas GTK)..."
+        sudo flatpak override --filesystem=xdg-config/gtk-3.0 || true
+        sudo flatpak override --filesystem=xdg-config/gtk-4.0 || true
+    fi
+    {{- end }}
 else
     log_step "4/4. Sistema Headless (sin GUI), saltando SDDM theme."
 fi

@@ -56,6 +56,14 @@ fi
 
 # Perfil Desktop (Si aplica)
 if [ "${NODE_HAS_GUI:-}" = "true" ]; then
+    # Habilitar RPM Fusion si no está activo (necesario para codecs multimedia)
+    if ! dnf repolist 2>/dev/null | grep -q "rpmfusion-free"; then
+        log_info "Habilitando repositorio de RPM Fusion..."
+        sudo dnf install -y -q \
+            "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+            "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
+    fi
+
     # Habilitar repositorio de Google Chrome (Standard Fedora)
     if ! dnf repolist | grep -q "google-chrome"; then
         log_info "Configurando repositorio de Google Chrome..."
@@ -93,6 +101,16 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     elif [ "${NODE_DESKTOP_ENV:-}" = "both" ]; then
         install_section "sway"
         install_section "kde"
+    fi
+
+    # Activar servicios instalados condicionalmente
+    if systemctl list-unit-files cups.service &>/dev/null; then
+        log_info "Habilitando servicio de impresión (CUPS)..."
+        sudo systemctl enable --now cups &>/dev/null || true
+    fi
+    if systemctl list-unit-files bluetooth.service &>/dev/null; then
+        log_info "Habilitando servicio de Bluetooth..."
+        sudo systemctl enable --now bluetooth &>/dev/null || true
     fi
 fi
 
