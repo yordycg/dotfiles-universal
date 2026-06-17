@@ -11,7 +11,6 @@ org.libreoffice.LibreOffice
 io.github.celluloid_player.Celluloid
 net.lutris.Lutris
 org.keepassxc.KeePassXC
-com.github.hluk.CopyQ
+com.github.hluk.copyq
 org.kde.filelight
-org.gnome.DiskUtility
 com.github.tchx84.Flatseal
