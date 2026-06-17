@@ -71,8 +71,8 @@ if [ "$NODE_HAS_GUI" = "true" ]; then
 
     # Configurar tema macOS para KDE si aplica
     {{- if or (eq .desktopEnv "kde") (eq .desktopEnv "both") }}
-    log_info "→ Configurando tema macOS Tahoe para KDE..."
-    bash "$PROVISION_DIR/system/setup-kde-macos-theme.sh"
+    log_info "→ Configurando tema macOS ({{ .kdeTheme }}) para KDE..."
+    bash "$PROVISION_DIR/system/setup-kde-macos-theme.sh" "{{ .kdeTheme }}"
 
     if command -v flatpak &>/dev/null; then
         log_info "→ Aplicando overrides sudo para Flatpak (acceso a temas GTK)..."

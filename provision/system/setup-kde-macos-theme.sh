@@ -2,42 +2,62 @@
 # =============================================================================
 # provision/system/setup-kde-macos-theme.sh
 #
-# Instala y configura el stack completo de theming macOS Tahoe para KDE Plasma 6.
+# Instala y configura el stack completo de theming macOS para KDE Plasma 6.
 # Diseñado para integrarse con el orquestador run_once_before_00-provision-system.sh.tmpl
 #
 # Idempotente: puede ejecutarse N veces con el mismo resultado final.
 # Sudo-less: todo se instala en directorios de usuario (~/.local/share/*)
-# La única excepción es el fix de Flatpak que requiere sudo (delegado al orquestador).
-#
-# Temas que instala:
-#   - MacTahoe GTK theme     → apps GTK (Firefox, LibreOffice, Celluloid...)
-#   - MacTahoe Icon theme    → iconos del sistema
-#   - WhiteSur KDE/Kvantum   → apps Qt nativas de KDE (Dolphin, Konsole...)
-#   - WhiteSur Cursors       → puntero del ratón
-#   - Firefox theme          → integración con el perfil activo
 #
 # Uso directo (fuera de chezmoi):
-#   bash provision/system/setup-kde-macos-theme.sh
-#   bash provision/system/setup-kde-macos-theme.sh --force   # reinstala todo
+#   bash provision/system/setup-kde-macos-theme.sh [mactahoe|whitesur|mojave]
+#   bash provision/system/setup-kde-macos-theme.sh mactahoe --force     # reinstala
+#   bash provision/system/setup-kde-macos-theme.sh mactahoe --uninstall # desinstala
 # =============================================================================
 
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# Configuración
+# Configuración de Argumentos y Mapeo de Temas
 # -----------------------------------------------------------------------------
+
+THEME_NAME="${1:-mactahoe}"
+FORCE_REINSTALL="${2:-}"  # pasar --force para reinstalar todo
+
+# Normalizar nombre a minúsculas
+THEME_LOWER=$(echo "$THEME_NAME" | tr '[:upper:]' '[:lower:]')
+
+# Valores por defecto (mactahoe)
+GTK_REPO_NAME="MacTahoe-gtk-theme"
+GTK_REPO_URL="https://github.com/vinceliuice/MacTahoe-gtk-theme.git"
+ICON_REPO_NAME="MacTahoe-icon-theme"
+ICON_REPO_URL="https://github.com/vinceliuice/MacTahoe-icon-theme.git"
+GTK_THEME_APPLY="MacTahoe-Dark"
+ICON_THEME_APPLY="MacTahoe"
+
+# Mapear otros temas soportados
+if [[ "$THEME_LOWER" == "whitesur" ]]; then
+    GTK_REPO_NAME="WhiteSur-gtk-theme"
+    GTK_REPO_URL="https://github.com/vinceliuice/WhiteSur-gtk-theme.git"
+    ICON_REPO_NAME="WhiteSur-icon-theme"
+    ICON_REPO_URL="https://github.com/vinceliuice/WhiteSur-icon-theme.git"
+    GTK_THEME_APPLY="WhiteSur-Dark"
+    ICON_THEME_APPLY="WhiteSur"
+elif [[ "$THEME_LOWER" == "mojave" ]]; then
+    GTK_REPO_NAME="Mojave-gtk-theme"
+    GTK_REPO_URL="https://github.com/vinceliuice/Mojave-gtk-theme.git"
+    ICON_REPO_NAME="Mojave-CT-icon-theme"
+    ICON_REPO_URL="https://github.com/vinceliuice/Mojave-CT-icon-theme.git"
+    GTK_THEME_APPLY="Mojave-Dark"
+    ICON_THEME_APPLY="Mojave-CT"
+fi
 
 THEME_REPOS_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/kde-macos-themes"
 THEMES_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/themes"
 ICONS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/icons"
 FONTS_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/fonts"
 
-FORCE_REINSTALL="${1:-}"  # pasar --force para reinstalar todo
-
-# Repos a gestionar
+# Repos auxiliares constantes (Cursores, KDE y Fuentes)
 declare -A REPOS=(
-    ["MacTahoe-gtk-theme"]="https://github.com/vinceliuice/MacTahoe-gtk-theme.git"
-    ["MacTahoe-icon-theme"]="https://github.com/vinceliuice/MacTahoe-icon-theme.git"
     ["WhiteSur-kde"]="https://github.com/vinceliuice/WhiteSur-kde.git"
     ["WhiteSur-cursors"]="https://github.com/vinceliuice/WhiteSur-cursors.git"
     ["San-Francisco-Pro-Fonts"]="https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git"
@@ -70,22 +90,18 @@ log_section() { echo -e "\n${BOLD}${CYAN}═════════════
 # Utilidades
 # -----------------------------------------------------------------------------
 
-# Verifica si un comando existe
 has_cmd() { command -v "$1" &>/dev/null; }
 
-# Marca un paso como completado (idempotencia entre ejecuciones)
 stamp_done() {
     mkdir -p "$INSTALL_STAMPS_DIR"
     touch "$INSTALL_STAMPS_DIR/$1"
 }
 
-# Verifica si un paso ya fue completado
 is_done() {
     [[ "$FORCE_REINSTALL" == "--force" ]] && return 1
     [[ -f "$INSTALL_STAMPS_DIR/$1" ]]
 }
 
-# Clona el repo si no existe, hace pull si ya existe
 clone_or_update() {
     local name="$1"
     local url="$2"
@@ -103,7 +119,6 @@ clone_or_update() {
     fi
 }
 
-# Verifica si las dependencias de sistema están instaladas
 check_deps() {
     local missing=()
     for dep in git sassc glib-compile-schemas; do
@@ -122,14 +137,14 @@ check_deps() {
 # Funciones de instalación
 # -----------------------------------------------------------------------------
 
-install_mactahoe_gtk() {
-    log_section "MacTahoe GTK Theme"
+install_gtk_theme() {
+    log_section "GTK Theme: $GTK_REPO_NAME"
 
-    is_done "mactahoe-gtk" && { log_ok "MacTahoe GTK ya instalado (stamp). Usa --force para reinstalar."; return 0; }
+    is_done "gtk-theme-$THEME_LOWER" && { log_ok "GTK Theme $THEME_LOWER ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "MacTahoe-gtk-theme" "${REPOS[MacTahoe-gtk-theme]}"
+    clone_or_update "$GTK_REPO_NAME" "$GTK_REPO_URL"
 
-    local repo="$THEME_REPOS_DIR/MacTahoe-gtk-theme"
+    local repo="$THEME_REPOS_DIR/$GTK_REPO_NAME"
 
     log_info "Instalando variantes dark + light con soporte libadwaita..."
     bash "$repo/install.sh" \
@@ -141,26 +156,26 @@ install_mactahoe_gtk() {
         --silent-mode \
         2>&1 | sed 's/^/  /'
 
-    log_ok "MacTahoe GTK instalado en $THEMES_DIR"
-    stamp_done "mactahoe-gtk"
+    log_ok "GTK Theme instalado en $THEMES_DIR"
+    stamp_done "gtk-theme-$THEME_LOWER"
 }
 
-install_mactahoe_icons() {
-    log_section "MacTahoe Icon Theme"
+install_icon_theme() {
+    log_section "Icon Theme: $ICON_REPO_NAME"
 
-    is_done "mactahoe-icons" && { log_ok "MacTahoe Icons ya instalado (stamp). Usa --force para reinstalar."; return 0; }
+    is_done "icon-theme-$THEME_LOWER" && { log_ok "Icon Theme $THEME_LOWER ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "MacTahoe-icon-theme" "${REPOS[MacTahoe-icon-theme]}"
+    clone_or_update "$ICON_REPO_NAME" "$ICON_REPO_URL"
 
-    local repo="$THEME_REPOS_DIR/MacTahoe-icon-theme"
+    local repo="$THEME_REPOS_DIR/$ICON_REPO_NAME"
 
     log_info "Instalando iconos..."
     bash "$repo/install.sh" \
         --dest "$ICONS_DIR" \
         2>&1 | sed 's/^/  /'
 
-    log_ok "MacTahoe Icons instalado en $ICONS_DIR"
-    stamp_done "mactahoe-icons"
+    log_ok "Icon Theme instalado en $ICONS_DIR"
+    stamp_done "icon-theme-$THEME_LOWER"
 }
 
 install_whitesur_kde() {
@@ -219,17 +234,15 @@ install_sf_fonts() {
 }
 
 fix_flatpak_themes() {
-    log_section "Fix Flatpak → MacTahoe"
+    log_section "Fix Flatpak → $GTK_REPO_NAME"
 
-    is_done "flatpak-fix" && { log_ok "Fix Flatpak ya aplicado (stamp). Usa --force para reinstalar."; return 0; }
+    is_done "flatpak-fix-$THEME_LOWER" && { log_ok "Fix Flatpak ya aplicado (stamp). Usa --force para reinstalar."; return 0; }
 
-    # El override de Flatpak requiere sudo — lo hace el orquestador
-    # Aquí solo conectamos el tema a las apps Flatpak instaladas (sudo-less)
     if has_cmd flatpak; then
-        local repo="$THEME_REPOS_DIR/MacTahoe-gtk-theme"
+        local repo="$THEME_REPOS_DIR/$GTK_REPO_NAME"
 
         if [[ -d "$repo" ]]; then
-            log_info "Conectando MacTahoe a apps Flatpak..."
+            log_info "Conectando $GTK_REPO_NAME a apps Flatpak..."
             bash "$repo/tweaks.sh" \
                 --flatpak \
                 --color dark \
@@ -239,28 +252,27 @@ fix_flatpak_themes() {
             }
             log_ok "Tema conectado a Flatpak"
         else
-            log_warn "Repo MacTahoe no encontrado, omitiendo fix Flatpak"
+            log_warn "Repo $GTK_REPO_NAME no encontrado, omitiendo fix Flatpak"
         fi
     else
         log_warn "flatpak no encontrado, omitiendo fix"
     fi
 
-    stamp_done "flatpak-fix"
+    stamp_done "flatpak-fix-$THEME_LOWER"
 }
 
 install_firefox_theme() {
-    log_section "Tema Firefox"
+    log_section "Tema Firefox ($GTK_REPO_NAME)"
 
-    is_done "firefox-theme" && { log_ok "Tema Firefox ya instalado (stamp). Usa --force para reinstalar."; return 0; }
+    is_done "firefox-theme-$THEME_LOWER" && { log_ok "Tema Firefox ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    local repo="$THEME_REPOS_DIR/MacTahoe-gtk-theme"
+    local repo="$THEME_REPOS_DIR/$GTK_REPO_NAME"
 
     if [[ ! -d "$repo" ]]; then
-        log_warn "Repo MacTahoe no encontrado, omitiendo tema Firefox"
+        log_warn "Repo $GTK_REPO_NAME no encontrado, omitiendo tema Firefox"
         return 0
     fi
 
-    # Detectar si Firefox está instalado
     if ! has_cmd firefox && ! flatpak list 2>/dev/null | grep -q "firefox"; then
         log_warn "Firefox no encontrado, omitiendo tema"
         return 0
@@ -276,24 +288,22 @@ install_firefox_theme() {
     }
 
     log_ok "Tema Firefox instalado"
-    stamp_done "firefox-theme"
+    stamp_done "firefox-theme-$THEME_LOWER"
 }
 
 apply_kde_settings() {
-    log_section "Aplicar configuración KDE via gsettings / kwriteconfig5"
+    log_section "Aplicar configuración KDE via gsettings / kwriteconfig"
 
-    is_done "kde-settings" && { log_ok "Configuración KDE ya aplicada (stamp). Usa --force para reinstalar."; return 0; }
+    is_done "kde-settings-$THEME_LOWER" && { log_ok "Configuración KDE ya aplicada (stamp). Usa --force para reinstalar."; return 0; }
 
-    # Aplicar tema GTK para apps no-Qt via gsettings
     if has_cmd gsettings; then
         log_info "Aplicando tema GTK via gsettings..."
-        gsettings set org.gnome.desktop.interface gtk-theme  "MacTahoe-Dark"   2>/dev/null || true
-        gsettings set org.gnome.desktop.interface icon-theme "MacTahoe"        2>/dev/null || true
+        gsettings set org.gnome.desktop.interface gtk-theme  "$GTK_THEME_APPLY"   2>/dev/null || true
+        gsettings set org.gnome.desktop.interface icon-theme "$ICON_THEME_APPLY"  2>/dev/null || true
         gsettings set org.gnome.desktop.interface cursor-theme "WhiteSur-cursors" 2>/dev/null || true
         log_ok "gsettings aplicado"
     fi
 
-    # Aplicar tema Kvantum como estilo de aplicación en KDE
     if has_cmd kwriteconfig5; then
         log_info "Configurando estilo Qt a Kvantum via kwriteconfig5..."
         kwriteconfig5 --file kdeglobals --group KDE --key widgetStyle "kvantum"
@@ -302,33 +312,30 @@ apply_kde_settings() {
         log_info "Configurando estilo Qt a Kvantum via kwriteconfig6..."
         kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle "kvantum"
         log_ok "Estilo Qt = kvantum"
-    else
-        log_warn "kwriteconfig5/6 no encontrado. Aplica manualmente: System Settings → Application Style → kvantum"
     fi
 
-    # Aplicar tema Kvantum directamente via kvantummanager si está disponible
     if has_cmd kvantummanager; then
         log_info "Seleccionando tema WhiteSur en Kvantum..."
         kvantummanager --set WhiteSur 2>/dev/null || \
             log_warn "kvantummanager --set falló, aplica manualmente el tema WhiteSur en kvantummanager"
     fi
 
-    stamp_done "kde-settings"
+    stamp_done "kde-settings-$THEME_LOWER"
 }
 
 # -----------------------------------------------------------------------------
-# Función de desinstalación (bonus)
+# Función de desinstalación
 # -----------------------------------------------------------------------------
 
 uninstall_all() {
-    log_section "Desinstalando temas macOS..."
+    log_section "Desinstalando temas macOS ($THEME_NAME)..."
 
-    local repo_gtk="$THEME_REPOS_DIR/MacTahoe-gtk-theme"
-    local repo_icons="$THEME_REPOS_DIR/MacTahoe-icon-theme"
+    local repo_gtk="$THEME_REPOS_DIR/$GTK_REPO_NAME"
+    local repo_icons="$THEME_REPOS_DIR/$ICON_REPO_NAME"
     local repo_kde="$THEME_REPOS_DIR/WhiteSur-kde"
     local repo_cursors="$THEME_REPOS_DIR/WhiteSur-cursors"
 
-    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/install.sh"     --remove --silent-mode
+    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/install.sh"     --remove --silent-mode || true
     [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --firefox --remove --silent-mode 2>/dev/null || true
     [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --flatpak --remove --silent-mode 2>/dev/null || true
     [[ -d "$repo_icons" ]]   && bash "$repo_icons/install.sh"   --remove 2>/dev/null || true
@@ -344,7 +351,7 @@ uninstall_all() {
 # -----------------------------------------------------------------------------
 
 main() {
-    echo -e "\n${BOLD}KDE macOS Tahoe Theme Setup${RESET}"
+    echo -e "\n${BOLD}KDE macOS Theme Setup (${THEME_NAME})${RESET}"
     echo -e "Repo cache : ${CYAN}$THEME_REPOS_DIR${RESET}"
     echo -e "Stamps     : ${CYAN}$INSTALL_STAMPS_DIR${RESET}"
     [[ "$FORCE_REINSTALL" == "--force" ]] && echo -e "${YELLOW}Modo --force: se reinstala todo${RESET}"
@@ -354,8 +361,8 @@ main() {
 
     check_deps
 
-    install_mactahoe_gtk
-    install_mactahoe_icons
+    install_gtk_theme
+    install_icon_theme
     install_whitesur_kde
     install_whitesur_cursors
     install_sf_fonts
@@ -364,7 +371,7 @@ main() {
     apply_kde_settings
 
     echo -e "\n${BOLD}${GREEN}✓ Setup completo.${RESET}"
-    echo -e "  Reinicia la sesión KDE (o ejecuta ${CYAN}kquitapp5 plasmashell && kstart5 plasmashell${RESET}) para aplicar todos los cambios."
+    echo -e "  Reinicia la sesión KDE para aplicar todos los cambios."
     echo ""
 }
 
