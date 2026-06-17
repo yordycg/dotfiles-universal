@@ -2,7 +2,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # .chezmoiscripts/run_once_after_45-install-theme.sh.tmpl
-# Instalación automática del tema para KDE Plasma 6 (MacSequoia-kde)
+# Instalación automática del tema para KDE Plasma 6 (MacSequoia) y GTK
 # =============================================================================
 set -euo pipefail
 
@@ -20,27 +20,44 @@ log_info() { echo -e "${CYAN}  → $1${RESET}"; }
 log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
 log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
 
+# ── 1. Instalar Tema de KDE ──────────────────────────────────────────────────
 log_step "Instalando tema para KDE Plasma 6..."
-
-# Repositorio del tema (MacSequoia-kde)
 THEME_REPO="https://github.com/vinceliuice/MacSequoia-kde.git"
 TEMP_DIR=$(mktemp -d)
 
-log_info "Clonando repositorio del tema: $THEME_REPO..."
+log_info "Clonando repositorio del tema KDE: $THEME_REPO..."
 if git clone --depth 1 "$THEME_REPO" "$TEMP_DIR"; then
-    log_info "Ejecutando instalador del tema..."
+    log_info "Ejecutando instalador del tema KDE..."
     cd "$TEMP_DIR"
-    
-    # Se ejecuta el instalador del tema de forma silenciosa/automatizada
     if ./install.sh; then
         log_ok "Tema KDE (MacSequoia) instalado correctamente."
     else
-        log_warn "Ocurrió un error al ejecutar el instalador del tema."
+        log_warn "Ocurrió un error al ejecutar el instalador del tema KDE."
     fi
 else
     log_warn "No se pudo clonar el repositorio del tema KDE."
 fi
-
 rm -rf "$TEMP_DIR"
-log_ok "Proceso de tema KDE finalizado."
+
+# ── 2. Instalar Tema GTK (para sincronización de Apps) ───────────────────────
+log_step "Instalando tema GTK MacSequoia para aplicaciones..."
+GTK_REPO="https://github.com/vinceliuice/MacSequoia-gtk-theme.git"
+TEMP_GTK_DIR=$(mktemp -d)
+
+log_info "Clonando repositorio del tema GTK: $GTK_REPO..."
+if git clone --depth 1 "$GTK_REPO" "$TEMP_GTK_DIR"; then
+    log_info "Ejecutando instalador del tema GTK..."
+    cd "$TEMP_GTK_DIR"
+    # El instalador de vinceliuice instala localmente en $HOME/.local/share/themes sin root
+    if ./install.sh -d "$HOME/.local/share/themes"; then
+        log_ok "Tema GTK (MacSequoia) instalado correctamente."
+    else
+        log_warn "Ocurrió un error al ejecutar el instalador del tema GTK."
+    fi
+else
+    log_warn "No se pudo clonar el repositorio del tema GTK."
+fi
+rm -rf "$TEMP_GTK_DIR"
+
+log_ok "Proceso de personalización visual finalizado."
 {{- end }}
