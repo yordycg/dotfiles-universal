@@ -146,6 +146,12 @@ install_gtk_theme() {
 
     local repo="$THEME_REPOS_DIR/$GTK_REPO_NAME"
 
+    # Parchear bug en lib-core.sh cuando gnome-shell no está instalado
+    if [[ -f "$repo/libs/lib-core.sh" ]]; then
+        log_info "Parcheando lib-core.sh para entornos sin GNOME Shell..."
+        sed -i 's/GNOME_VERSION="48-0"/GNOME_VERSION="48-0"\n  SHELL_VERSION="48"/g' "$repo/libs/lib-core.sh"
+    fi
+
     log_info "Instalando variantes dark + light con soporte libadwaita..."
     bash "$repo/install.sh" \
         --dest "$THEMES_DIR" \
@@ -153,7 +159,6 @@ install_gtk_theme() {
         --color light \
         --libadwaita \
         --round \
-        --silent-mode \
         2>&1 | sed 's/^/  /'
 
     log_ok "GTK Theme instalado en $THEMES_DIR"
@@ -246,7 +251,6 @@ fix_flatpak_themes() {
             bash "$repo/tweaks.sh" \
                 --flatpak \
                 --color dark \
-                --silent-mode \
                 2>&1 | sed 's/^/  /' || {
                 log_warn "tweaks.sh -F retornó error, puede que no haya Flatpaks instalados aún"
             }
@@ -282,7 +286,6 @@ install_firefox_theme() {
     bash "$repo/tweaks.sh" \
         --firefox \
         --edit-firefox \
-        --silent-mode \
         2>&1 | sed 's/^/  /' || {
         log_warn "tweaks.sh -f retornó error. Firefox debe estar cerrado al instalar el tema."
     }
@@ -335,9 +338,9 @@ uninstall_all() {
     local repo_kde="$THEME_REPOS_DIR/WhiteSur-kde"
     local repo_cursors="$THEME_REPOS_DIR/WhiteSur-cursors"
 
-    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/install.sh"     --remove --silent-mode || true
-    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --firefox --remove --silent-mode 2>/dev/null || true
-    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --flatpak --remove --silent-mode 2>/dev/null || true
+    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/install.sh"     --remove || true
+    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --firefox --remove 2>/dev/null || true
+    [[ -d "$repo_gtk" ]]     && bash "$repo_gtk/tweaks.sh"      --flatpak --remove 2>/dev/null || true
     [[ -d "$repo_icons" ]]   && bash "$repo_icons/install.sh"   --remove 2>/dev/null || true
     [[ -d "$repo_kde" ]]     && bash "$repo_kde/install.sh"     --remove 2>/dev/null || true
     [[ -d "$repo_cursors" ]] && bash "$repo_cursors/install.sh" --remove 2>/dev/null || true
