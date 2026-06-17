@@ -1,3 +1,7 @@
+{{- $localPath := joinPath .chezmoi.homeDir ".config/gtk-4.0/settings.ini" -}}
+{{- if and (or (eq .desktopEnv "kde") (eq .desktopEnv "both")) (stat $localPath) -}}
+{{-   include $localPath -}}
+{{- else -}}
 [Settings]
 gtk-icon-theme-name = Papirus-Dark
 gtk-theme-name = catppuccin-mocha-blue-standard+default
@@ -5,3 +9,4 @@ gtk-font-name = JetBrainsMono Nerd Font 10
 gtk-cursor-theme-name = Adwaita
 gtk-cursor-theme-size = 24
 gtk-application-prefer-dark-theme = 1
+{{- end -}}
