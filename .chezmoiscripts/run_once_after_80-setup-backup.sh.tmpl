@@ -10,15 +10,7 @@ set -euo pipefail
 exit 0  # Solo corre en el servidor
 {{- end }}
 
-# Colores Homelab-Style
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-RESET='\033[0m'
-
-log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
-log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
-log_info() { echo -e "${CYAN}  → $1${RESET}"; }
+{{ include "provision/lib/logging.sh" }}
 
 if systemctl --user is-enabled homelab-backup.timer &>/dev/null; then
     exit 0  # Timer ya activo — silencio absoluto

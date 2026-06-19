@@ -5,19 +5,8 @@
 # =============================================================================
 set -euo pipefail
 
-# Colores Homelab-Style
-GREEN='\033[0;32m'
-CYAN='\033[0;36m'
-YELLOW='\033[0;33m'
-RED='\033[0;31m'
-BOLD='\033[1m'
-RESET='\033[0m'
-
-log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
-log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
-log_info() { echo -e "${CYAN}  → $1${RESET}"; }
-log_warn() { echo -e "${YELLOW}  ! $1${RESET}"; }
-log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/logging.sh"
 
 # Check silencioso — si tailscale ya está activo, salir sin output
 if command -v tailscale &>/dev/null && tailscale status &>/dev/null 2>&1; then

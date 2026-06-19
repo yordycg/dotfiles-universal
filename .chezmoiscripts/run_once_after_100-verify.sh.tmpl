@@ -1,0 +1,52 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_100-verify.sh.tmpl
+# Health Check Post-Bootstrap (Fase Final de Verificación)
+# =============================================================================
+set -uo pipefail  # Sin -e para ejecutar todos los checks de forma resiliente
+
+# Inyectar librería de logging compartida
+{{ include "provision/lib/logging.sh" }}
+
+FAILED=0
+
+check() {
+    local desc="$1"
+    local cmd="$2"
+    if eval "$cmd" &>/dev/null; then
+        log_ok "$desc"
+    else
+        log_error "$desc"
+        FAILED=1
+    fi
+}
+
+log_section "Health Check Post-Bootstrap"
+
+check "Shell predeterminado es ZSH"        '[ "$(basename "$SHELL")" = "zsh" ]'
+check "Llave privada de Age presente"      '[ -f "$HOME/.config/age/key.txt" ] || [ -f "$HOME/.config/chezmoi/key.txt" ]'
+check "Mise (gestor de entornos) listo"    'command -v mise &>/dev/null'
+check "Antigravity CLI (agy) disponible"    'command -v agy &>/dev/null'
+check "Git configurado (user.email)"       '[ -n "$(git config --global user.email)" ]'
+check "GnuPG instalado y configurado"      'command -v gpg &>/dev/null'
+check "VPN Tailscale operativa"            'command -v tailscale &>/dev/null && tailscale status &>/dev/null'
+
+{{- if .hasGUI }}
+check "Fuentes Nerd Fonts instaladas"      '[ -d "$HOME/.local/share/fonts" ] && [ "$(ls -A "$HOME/.local/share/fonts" 2>/dev/null)" ]'
+check "Acceso de passage a secretos"       'command -v passage &>/dev/null || command -v pass &>/dev/null'
+{{- end }}
+
+{{- if .hasDocker }}
+check "Docker/Podman disponible"           'command -v docker &>/dev/null || command -v podman &>/dev/null'
+{{- end }}
+
+echo ""
+if [ "$FAILED" -eq 0 ]; then
+    log_ok "Todos los health checks han pasado con éxito. Sistema listo y verificado."
+else
+    log_warn "Algunos checks fallaron o están inactivos. Por favor, revisa la salida superior."
+fi
+
+exit 0 # Evitamos abortar el apply de chezmoi, es meramente informativo
+{{- end }}

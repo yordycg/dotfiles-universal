@@ -29,8 +29,12 @@ THEME_LOWER=$(echo "$THEME_NAME" | tr '[:upper:]' '[:lower:]')
 # Valores por defecto (mactahoe)
 GTK_REPO_NAME="MacTahoe-gtk-theme"
 GTK_REPO_URL="https://github.com/vinceliuice/MacTahoe-gtk-theme.git"
+GTK_THEME_REF="2026-05-24"
+
 ICON_REPO_NAME="MacTahoe-icon-theme"
 ICON_REPO_URL="https://github.com/vinceliuice/MacTahoe-icon-theme.git"
+ICON_THEME_REF="2025-10-16"
+
 GTK_THEME_APPLY="MacTahoe-Dark"
 ICON_THEME_APPLY="MacTahoe"
 
@@ -38,15 +42,19 @@ ICON_THEME_APPLY="MacTahoe"
 if [[ "$THEME_LOWER" == "whitesur" ]]; then
     GTK_REPO_NAME="WhiteSur-gtk-theme"
     GTK_REPO_URL="https://github.com/vinceliuice/WhiteSur-gtk-theme.git"
+    GTK_THEME_REF="2025-07-24"
     ICON_REPO_NAME="WhiteSur-icon-theme"
     ICON_REPO_URL="https://github.com/vinceliuice/WhiteSur-icon-theme.git"
+    ICON_THEME_REF="v2025-02-10"
     GTK_THEME_APPLY="WhiteSur-Dark"
     ICON_THEME_APPLY="WhiteSur"
 elif [[ "$THEME_LOWER" == "mojave" ]]; then
     GTK_REPO_NAME="Mojave-gtk-theme"
     GTK_REPO_URL="https://github.com/vinceliuice/Mojave-gtk-theme.git"
+    GTK_THEME_REF="2024-11-15"
     ICON_REPO_NAME="Mojave-CT-icon-theme"
     ICON_REPO_URL="https://github.com/vinceliuice/Mojave-CT-icon-theme.git"
+    ICON_THEME_REF="master"
     GTK_THEME_APPLY="Mojave-Dark"
     ICON_THEME_APPLY="Mojave-CT"
 fi
@@ -63,34 +71,17 @@ declare -A REPOS=(
     ["San-Francisco-Pro-Fonts"]="https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts.git"
 )
 
+# Refs fijas para repos auxiliares
+KDE_THEME_REF="2024-11-18"
+CURSORS_THEME_REF="master"
+FONTS_REF="master"
+
 # Señales de instalación completada (para idempotencia rápida sin re-clonar)
 INSTALL_STAMPS_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/kde-macos-themes/.stamps"
 
-# -----------------------------------------------------------------------------
-# Colores y logging
-# -----------------------------------------------------------------------------
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/logging.sh"
 
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-BLUE='\033[0;34m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-RESET='\033[0m'
-
-log_info()    { echo -e "${BLUE}[INFO]${RESET}  $*"; }
-log_ok()      { echo -e "${GREEN}[OK]${RESET}    $*"; }
-log_warn()    { echo -e "${YELLOW}[WARN]${RESET}  $*"; }
-log_error()   { echo -e "${RED}[ERROR]${RESET} $*" >&2; }
-log_section() { echo -e "\n${BOLD}${CYAN}══════════════════════════════════════${RESET}"; \
-                echo -e "${BOLD}${CYAN}  $*${RESET}"; \
-                echo -e "${BOLD}${CYAN}══════════════════════════════════════${RESET}"; }
-
-# -----------------------------------------------------------------------------
-# Utilidades
-# -----------------------------------------------------------------------------
-
-has_cmd() { command -v "$1" &>/dev/null; }
 
 stamp_done() {
     mkdir -p "$INSTALL_STAMPS_DIR"
@@ -105,16 +96,24 @@ is_done() {
 clone_or_update() {
     local name="$1"
     local url="$2"
+    local ref="${3:-master}"
     local dest="$THEME_REPOS_DIR/$name"
 
     if [[ -d "$dest/.git" ]]; then
-        log_info "$name ya clonado — actualizando..."
-        git -C "$dest" pull --ff-only --quiet || {
-            log_warn "git pull falló en $name (puede haber cambios locales), continuando..."
+        log_info "$name ya clonado — verificando ref $ref..."
+        git -C "$dest" fetch --quiet --tags origin 2>/dev/null || true
+        git -C "$dest" checkout --quiet "$ref" 2>/dev/null || {
+            log_warn "No se pudo cambiar a la ref $ref en $name, intentando pull..."
+            git -C "$dest" checkout --quiet master 2>/dev/null || git -C "$dest" checkout --quiet main 2>/dev/null || true
+            git -C "$dest" pull --ff-only --quiet 2>/dev/null || true
         }
     else
-        log_info "Clonando $name..."
-        git clone --depth=1 "$url" "$dest" --quiet
+        log_info "Clonando $name @ $ref..."
+        git clone --quiet --branch "$ref" --depth=1 "$url" "$dest" 2>/dev/null || {
+            log_warn "Fallo al clonar con --branch $ref, clonando por defecto..."
+            git clone --quiet --depth=1 "$url" "$dest"
+            git -C "$dest" checkout --quiet "$ref" 2>/dev/null || log_warn "No se pudo cambiar a la ref $ref."
+        }
         log_ok "$name clonado en $dest"
     fi
 }
@@ -142,7 +141,7 @@ install_gtk_theme() {
 
     is_done "gtk-theme-$THEME_LOWER" && { log_ok "GTK Theme $THEME_LOWER ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "$GTK_REPO_NAME" "$GTK_REPO_URL"
+    clone_or_update "$GTK_REPO_NAME" "$GTK_REPO_URL" "$GTK_THEME_REF"
 
     local repo="$THEME_REPOS_DIR/$GTK_REPO_NAME"
 
@@ -170,7 +169,7 @@ install_icon_theme() {
 
     is_done "icon-theme-$THEME_LOWER" && { log_ok "Icon Theme $THEME_LOWER ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "$ICON_REPO_NAME" "$ICON_REPO_URL"
+    clone_or_update "$ICON_REPO_NAME" "$ICON_REPO_URL" "$ICON_THEME_REF"
 
     local repo="$THEME_REPOS_DIR/$ICON_REPO_NAME"
 
@@ -188,7 +187,7 @@ install_whitesur_kde() {
 
     is_done "whitesur-kde" && { log_ok "WhiteSur KDE ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "WhiteSur-kde" "${REPOS[WhiteSur-kde]}"
+    clone_or_update "WhiteSur-kde" "${REPOS[WhiteSur-kde]}" "$KDE_THEME_REF"
 
     local repo="$THEME_REPOS_DIR/WhiteSur-kde"
 
@@ -205,7 +204,7 @@ install_whitesur_cursors() {
 
     is_done "whitesur-cursors" && { log_ok "WhiteSur Cursors ya instalado (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "WhiteSur-cursors" "${REPOS[WhiteSur-cursors]}"
+    clone_or_update "WhiteSur-cursors" "${REPOS[WhiteSur-cursors]}" "$CURSORS_THEME_REF"
 
     local repo="$THEME_REPOS_DIR/WhiteSur-cursors"
 
@@ -223,7 +222,7 @@ install_sf_fonts() {
 
     is_done "sf-fonts" && { log_ok "Fuentes SF Pro ya instaladas (stamp). Usa --force para reinstalar."; return 0; }
 
-    clone_or_update "San-Francisco-Pro-Fonts" "${REPOS[San-Francisco-Pro-Fonts]}"
+    clone_or_update "San-Francisco-Pro-Fonts" "${REPOS[San-Francisco-Pro-Fonts]}" "$FONTS_REF"
 
     local repo="$THEME_REPOS_DIR/San-Francisco-Pro-Fonts"
     local font_dest="$FONTS_DIR/SanFranciscoPro"

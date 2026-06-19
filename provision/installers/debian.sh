@@ -5,26 +5,14 @@
 # =============================================================================
 set -euo pipefail
 
-# Colores Homelab-Style
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-RESET='\033[0m'
-
-log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
-log_info() { echo -e "${CYAN}  → $1${RESET}"; }
-log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
-log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
-
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/logging.sh"
 PACKAGES_FILE="$SCRIPT_DIR/../../scripts/packages/packages.yaml"
 
 # ── 1. Preparación del Gestor de Paquetes ────────────────────────────────────
 log_info "Instalando dependencias de transporte y detección..."
-sudo apt-get update -y -qq
-sudo apt-get install -y -qq curl gpg wget lsb-release
+run sudo apt-get update -y -qq
+run sudo apt-get install -y -qq curl gpg wget lsb-release
 
 CODENAME=$(lsb_release -cs)
 DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
@@ -32,29 +20,29 @@ DISTRO=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
 # ── 2. Añadir Repositorios de Terceros (Tailscale, GitHub CLI) ───────────────
 if ! command -v tailscale &>/dev/null; then
     log_info "Añadiendo repositorio de Tailscale para $DISTRO $CODENAME..."
-    curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.noarmor.gpg" | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
-    curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.tailscale-keyring.list" | sudo tee /etc/apt/sources.list.d/tailscale.list
+    run curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.noarmor.gpg" | sudo tee /usr/share/keyrings/tailscale-archive-keyring.gpg >/dev/null
+    run curl -fsSL "https://pkgs.tailscale.com/stable/$DISTRO/$CODENAME.tailscale-keyring.list" | sudo tee /etc/apt/sources.list.d/tailscale.list
     log_ok "Repo Tailscale añadido."
 fi
 
 if ! command -v gh &>/dev/null; then
     log_info "Añadiendo repositorio de GitHub CLI..."
-    sudo mkdir -p -m 755 /etc/apt/keyrings
-    wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
-    sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+    run sudo mkdir -p -m 755 /etc/apt/keyrings
+    run wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null
+    run sudo chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg
+    run echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
     log_ok "Repo GitHub CLI añadido."
 fi
 
 log_info "Actualizando índices con nuevos repositorios..."
-sudo apt-get update -y -qq
+run sudo apt-get update -y -qq
 log_ok "Índices actualizados."
 
 # ── 3. Dependencias del Instalador ───────────────────────────────────────────
 if ! command -v yq &>/dev/null; then
     log_info "Instalando yq (Procesador YAML) vía binario..."
-    sudo wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
-    sudo chmod +x /usr/bin/yq
+    run sudo wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+    run sudo chmod +x /usr/bin/yq
     log_ok "yq instalado."
 fi
 
@@ -71,13 +59,21 @@ install_section() {
         return
     fi
 
-    sudo apt-get install -y -qq $packages
+    run sudo apt-get install -y -qq $packages
     log_ok "Paquetes de $section instalados."
 }
 
 # ── 4. Ejecución de Perfiles ─────────────────────────────────────────────────
-# Perfil Core (Siempre)
-install_section "core"
+# Perfil Base (Siempre)
+install_section "base"
+
+# Perfil Terminal UX (Siempre, mejora la experiencia CLI)
+install_section "terminal_ux"
+
+# Perfil de Compilación (Desarrollo: WSL, Laptop, Desktop; u opt-in en servidores)
+if [ "${NODE_IS_SERVER:-}" != "true" ] || [ "${NODE_NEEDS_DEV_TOOLCHAIN:-}" = "true" ]; then
+    install_section "dev_toolchain"
+fi
 
 # Perfil Server (Si aplica)
 if [ "${NODE_IS_SERVER:-}" = "true" ]; then
@@ -92,6 +88,6 @@ fi
 
 # Instalar distrobox en todos los sistemas (servidor y clientes)
 log_info "Instalando herramientas de desarrollo aislado (distrobox)..."
-sudo apt-get install -y -qq distrobox
+run sudo apt-get install -y -qq distrobox
 
 log_ok "Aprovisionamiento de paquetes Debian completado."

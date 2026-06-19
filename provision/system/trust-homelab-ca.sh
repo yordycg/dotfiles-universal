@@ -10,19 +10,8 @@ if [ "${NODE_IS_SERVER:-}" = "true" ]; then
     exit 0
 fi
 
-# Colores Homelab-Style
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-RED='\033[0;31m'
-CYAN='\033[0;36m'
-BOLD='\033[1m'
-RESET='\033[0m'
-
-log_step() { echo -e "\n${CYAN}${BOLD}▶ $1${RESET}"; }
-log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
-log_info() { echo -e "${CYAN}  → $1${RESET}"; }
-log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
-log_err()  { echo -e "${RED}  ✗ $1${RESET}"; exit 1; }
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$SCRIPT_DIR/../lib/logging.sh"
 
 DOMAIN="vault.home"
 ROOT_CERT_NAME="homelab-root-ca.crt"

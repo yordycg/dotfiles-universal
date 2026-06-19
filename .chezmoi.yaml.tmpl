@@ -82,9 +82,13 @@ data:
   fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
 
   # ── Identidad ──────────────────────────────────────────────
-  gitName:      "yordycg"
-  gitEmail:     "yordy.carmona8@gmail.com"
-  homelab_ip_ts:   "100.110.207.73"
-  homelab_ip_local: "192.168.18.99"
-  adguard_ip:      {{ if or $isServer $isWSL }}"100.110.207.73"{{ else }}"192.168.18.99"{{ end }}
+  gitName:          {{ env "CHEZMOI_GIT_NAME" | default "yordycg" | quote }}
+  gitEmail:         {{ env "CHEZMOI_GIT_EMAIL" | default "yordy.carmona8@gmail.com" | quote }}
+  homelab_ip_ts:    {{ env "CHEZMOI_HOMELAB_TS_IP" | default "100.110.207.73" | quote }}
+  homelab_ip_local: {{ env "CHEZMOI_HOMELAB_LOCAL_IP" | default "192.168.18.99" | quote }}
+  adguard_ip:       {{ if or $isServer $isWSL -}}
+                      {{- env "CHEZMOI_HOMELAB_TS_IP" | default "100.110.207.73" | quote -}}
+                    {{- else -}}
+                      {{- env "CHEZMOI_HOMELAB_LOCAL_IP" | default "192.168.18.99" | quote -}}
+                    {{- end }}
   # Los tokens se extraen bajo demanda en los templates que los necesiten

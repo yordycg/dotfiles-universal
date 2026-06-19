@@ -4,18 +4,17 @@
 # Infraestructura del servidor (Docker, etc.) → homelab-infra/
 
 fedora:
-  core:
+  base:
     - tailscale
     - age
-    - tmux
     - git
     - curl
     - wget
-    - gnupg2
-    - pinentry
+    - tmux
     - zsh
-    - gh
     - jq
+
+  dev_toolchain:
     - gcc
     - gcc-c++
     - make
@@ -28,10 +27,16 @@ fedora:
     - ncurses-devel
     - xz-devel
     - libffi-devel
-    - unzip
-    - sqlite
+
+  terminal_ux:
+    - gnupg2
+    - pinentry
+    - gh
     - fzf
     - mosh
+    - unzip
+    - sqlite
+
   desktop:
     - distrobox
     - podman
@@ -56,6 +61,7 @@ fedora:
     - qt6-qtvirtualkeyboard
     - qt6-qtmultimedia
     - kitty
+
   sway:
     - waybar
     - rofi-wayland
@@ -79,6 +85,7 @@ fedora:
     - swaylock
     - swww
     - waypaper
+
   kde:
     # Core
     - plasma-desktop
@@ -134,19 +141,18 @@ fedora:
     - google-noto-color-emoji-fonts
 
 debian:
-  core:
+  base:
     - tailscale
     - age
-    - tmux
     - git
     - curl
     - wget
-    - python3-venv
-    - gnupg
-    - pinentry-curses
+    - tmux
     - zsh
-    - gh
     - jq
+
+  dev_toolchain:
+    - python3-venv
     - gcc
     - g++
     - make
@@ -162,24 +168,28 @@ debian:
     - xz-utils
     - libffi-dev
     - liblzma-dev
-    - unzip
-    - sqlite3
+
+  terminal_ux:
+    - gnupg
+    - pinentry-curses
+    - gh
     - fzf
     - mosh
+    - unzip
+    - sqlite3
 
 arch:
-  core:
+  base:
     - tailscale
     - age
-    - tmux
     - git
     - curl
     - wget
-    - gnupg
-    - pinentry
+    - tmux
     - zsh
-    - github-cli
     - jq
+
+  dev_toolchain:
     - gcc
     - make
     - base-devel
@@ -192,6 +202,11 @@ arch:
     - ncurses
     - xz
     - libffi
-    - unzip
+
+  terminal_ux:
+    - gnupg
+    - pinentry
+    - github-cli
     - fzf
     - mosh
+    - unzip
