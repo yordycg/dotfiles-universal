@@ -140,8 +140,8 @@ dotfiles-universal/
 - [x] **Modularización de Paquetes:** Reorganizar `scripts/packages/packages.yaml` para clasificar las dependencias por entorno (ej. paquetes específicos de KDE vs dependencias generales de GUI).
 
 ### 6.3 Persistencia de Preferencias
-- [ ] **Seguimiento de configuración de KDE:** Una vez instalado el sistema en el Nodo N, añadir las preferencias de atajos y paneles de KDE Plasma (`~/.config/kdeglobals`, `~/.config/kglobalshortcutsrc`, etc.) a Chezmoi como texto plano.
+- [x] **Seguimiento de configuración de KDE:** Implementado: Añadidos atajos personalizados (`kglobalshortcutsrc`) a Chezmoi y automatizada la aplicación de preferencias estéticas (como el tema global) usando scripts CLI (`lookandfeeltool`/`kwriteconfig`) en lugar de archivos `.rc` enteros inestables.
 
 ---
 
-> Actualizado: 15 de junio de 2026 — Plan de Soporte KDE Plasma 6.
+> Actualizado: 18 de junio de 2026 — Plan de Soporte KDE Plasma 6.
