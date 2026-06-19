@@ -295,9 +295,25 @@ install_firefox_theme() {
 }
 
 apply_kde_settings() {
-    log_section "Aplicar configuración KDE via gsettings / kwriteconfig"
+    log_section "Aplicar configuración KDE via gsettings / kwriteconfig / lookandfeeltool"
 
     is_done "kde-settings-$THEME_LOWER" && { log_ok "Configuración KDE ya aplicada (stamp). Usa --force para reinstalar."; return 0; }
+
+    # 1. Aplicar Tema Global de KDE si está disponible (LookAndFeel)
+    if has_cmd lookandfeeltool; then
+        local global_theme="com.github.vinceliuice.WhiteSur-dark"
+        if [[ "$THEME_LOWER" == "whitesur" ]]; then
+            global_theme="com.github.vinceliuice.WhiteSur-dark"
+        elif [[ "$THEME_LOWER" == "mactahoe" ]]; then
+            global_theme="com.github.vinceliuice.WhiteSur-dark"
+        elif [[ "$THEME_LOWER" == "mojave" ]]; then
+            global_theme="com.github.vinceliuice.WhiteSur-dark"
+        fi
+        
+        log_info "Aplicando tema global de KDE ($global_theme) via lookandfeeltool..."
+        lookandfeeltool -a "$global_theme" 2>/dev/null || \
+            log_warn "lookandfeeltool falló al aplicar el tema global $global_theme"
+    fi
 
     if has_cmd gsettings; then
         log_info "Aplicando tema GTK via gsettings..."
