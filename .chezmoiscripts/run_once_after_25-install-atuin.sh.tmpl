@@ -13,8 +13,10 @@ mkdir -p "$HOME/.local/bin"
 
 if [ ! -f "$HOME/.local/bin/atuin" ]; then
     log_step "Instalador de Atuin — Descargando la última versión oficial"
-    # Descargamos e instalamos el binario directamente de forma no interactiva y limpia en ~/.local/bin
-    if ATUIN_NO_MODIFY_PATH=1 ATUIN_INSTALL_DIR="$HOME/.local/bin" curl --proto '=https' --tlsv1.2 -LsSf https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh | sh; then
+    # Descargamos e instalamos el binario de forma no interactiva y limpia en ~/.local/bin
+    export ATUIN_NO_MODIFY_PATH=1
+    export ATUIN_INSTALL_DIR="$HOME/.local/bin"
+    if curl --proto '=https' --tlsv1.2 -LsSf https://github.com/atuinsh/atuin/releases/latest/download/atuin-installer.sh | sh; then
         log_ok "Atuin se instaló correctamente en ~/.local/bin/."
     else
         log_err "Fallo al instalar Atuin usando el script de descarga de binarios."
