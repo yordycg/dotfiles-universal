@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# =============================================================================
+# ~/.local/bin/pass
+# Redirige de forma transparente las llamadas de 'pass' a 'passage'
+# =============================================================================
+
+if command -v passage &>/dev/null; then
+    exec passage "$@"
+else
+    # Si por alguna razón passage no está, buscar el pass original del sistema
+    # eliminando de forma segura ~/.local/bin y ~/bin del PATH para evitar bucles
+    REAL_PASS=$(PATH=$(echo "$PATH" | sed -e "s|$HOME/.local/bin:||g" -e "s|$HOME/bin:||g") command -v pass)
+    if [ -n "$REAL_PASS" ] && [ "$REAL_PASS" != "$0" ]; then
+        exec "$REAL_PASS" "$@"
+    else
+        echo "Error: passage no está instalado y no se encontró pass en el sistema." >&2
+        exit 1
+    fi
+fi
