@@ -9,6 +9,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/logging.sh"
 PACKAGES_FILE="$SCRIPT_DIR/../../scripts/packages/packages.yaml"
 
+# ── 0. Optimización de DNF ────────────────────────────────────────────────────
+if ! grep -q "max_parallel_downloads" /etc/dnf/dnf.conf 2>/dev/null; then
+    log_info "Configurando descargas en paralelo para DNF..."
+    echo "max_parallel_downloads=10" | sudo tee -a /etc/dnf/dnf.conf >/dev/null
+    log_ok "DNF optimizado (max_parallel_downloads=10)."
+fi
+
 # ── 1. Dependencias del Aprovisionador ────────────────────────────────────────
 if ! command -v yq &>/dev/null; then
     log_info "Instalando yq (Procesador YAML)..."

@@ -322,14 +322,15 @@ apply_kde_settings() {
         log_ok "gsettings aplicado"
     fi
 
-    if has_cmd kwriteconfig5; then
-        log_info "Configurando estilo Qt a Kvantum via kwriteconfig5..."
-        kwriteconfig5 --file kdeglobals --group KDE --key widgetStyle "kvantum"
-        log_ok "Estilo Qt = kvantum"
-    elif has_cmd kwriteconfig6; then
+    if has_cmd kwriteconfig6; then
         log_info "Configurando estilo Qt a Kvantum via kwriteconfig6..."
         kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle "kvantum"
         log_ok "Estilo Qt = kvantum"
+    fi
+    if has_cmd kwriteconfig5; then
+        log_info "Configurando estilo Qt a Kvantum via kwriteconfig5..."
+        kwriteconfig5 --file kdeglobals --group KDE --key widgetStyle "kvantum"
+        log_ok "Estilo Qt (legacy) = kvantum"
     fi
 
     if has_cmd kvantummanager; then

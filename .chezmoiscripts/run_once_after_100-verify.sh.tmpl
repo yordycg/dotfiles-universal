@@ -24,7 +24,7 @@ check() {
 
 log_section "Health Check Post-Bootstrap"
 
-check "Shell predeterminado es ZSH"        '[ "$(basename "$SHELL")" = "zsh" ]'
+check "Shell predeterminado es ZSH"        'getent passwd "$USER" | cut -d: -f7 | grep -q "zsh"'
 check "Llave privada de Age presente"      '[ -f "$HOME/.config/age/key.txt" ] || [ -f "$HOME/.config/chezmoi/key.txt" ]'
 check "Mise (gestor de entornos) listo"    'command -v mise &>/dev/null'
 check "Antigravity CLI (agy) disponible"    'command -v agy &>/dev/null'

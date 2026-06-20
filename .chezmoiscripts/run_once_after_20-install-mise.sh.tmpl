@@ -56,12 +56,14 @@ log_info "Sincronizando herramientas y CLIs globales..."
 eval "$("$MISE_BIN" activate bash)"
 
 # Instalar paquetes globales de Node/Python solo si son gestionados por mise
-if command -v npm &>/dev/null && [[ "$(which npm)" == *"/mise/"* ]] && npm --version &>/dev/null; then
+NPM_PATH=$(command -v npm 2>/dev/null || echo "")
+if [ -n "$NPM_PATH" ] && [[ "$NPM_PATH" == *"/mise/"* ]] && npm --version &>/dev/null; then
     log_info "Instalando paquetes globales de Node en mise..."
     npm install -g neovim @bitwarden/cli --silent || true
 fi
 
-if command -v pip &>/dev/null && [[ "$(which pip)" == *"/mise/"* ]] && pip --version &>/dev/null; then
+PIP_PATH=$(command -v pip 2>/dev/null || echo "")
+if [ -n "$PIP_PATH" ] && [[ "$PIP_PATH" == *"/mise/"* ]] && pip --version &>/dev/null; then
     log_info "Instalando paquetes globales de Python en mise..."
     pip install pynvim --quiet || true
 fi

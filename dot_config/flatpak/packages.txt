@@ -9,4 +9,9 @@ com.spotify.Client
 org.onlyoffice.desktopeditors
 com.github.hluk.copyq
 ch.usebruno.Bruno
+com.brave.Browser
+com.microsoft.Edge
+us.zoom.Zoom
+io.github.alainm23.whatsapp-for-linux
+
 

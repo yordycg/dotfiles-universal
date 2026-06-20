@@ -82,9 +82,12 @@ export PATH="$HOME/.local/share/mise/shims:$HOME/bin:$HOME/.local/bin:$PATH"
 
 # -- Theming: GTK & Qt Integration (Senior UI Consistency) --
 {{ if eq .chezmoi.os "linux" -}}
+{{   if ne .desktopEnv "kde" -}}
 export QT_QPA_PLATFORMTHEME="qt5ct"
+{{   end -}}
 export QT_WAYLAND_DISABLE_WINDOWDECORATION="1"
 export GDK_BACKEND="wayland,x11"
 export SDL_VIDEODRIVER="wayland"
 export CLUTTER_BACKEND="wayland"
 {{ end -}}
+

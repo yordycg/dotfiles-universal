@@ -49,6 +49,7 @@ fedora:
     - gnome-disk-utility
     - fontconfig
     - google-chrome-stable
+    - firefox
     - code
     - gnome-keyring
     - libsecret

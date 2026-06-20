@@ -21,10 +21,10 @@ else
     log_info "Cambiando shell predeterminado de $CURRENT_SHELL a $DESIRED_SHELL..."
     log_info "Se requiere elevación de privilegios (sudo) para cambiar el shell del sistema."
     
-    if sudo chsh -s "$DESIRED_SHELL" "$USER"; then
+    if sudo usermod -s "$DESIRED_SHELL" "$USER"; then
         log_ok "Shell cambiado exitosamente. Los cambios surtirán efecto en el próximo inicio de sesión."
     else
-        log_warn "No se pudo cambiar el shell automáticamente vía chsh."
+        log_warn "No se pudo cambiar el shell automáticamente vía usermod."
     fi
 fi
 
