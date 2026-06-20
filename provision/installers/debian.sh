@@ -90,4 +90,15 @@ fi
 log_info "Instalando herramientas de desarrollo aislado (distrobox)..."
 run sudo apt-get install -y -qq distrobox
 
+# Instalar atuin en espacio de usuario si no está presente en Debian
+if ! command -v atuin &>/dev/null; then
+    log_info "Instalando atuin vía script oficial de usuario..."
+    if [ "${DRY_RUN:-0}" = "1" ]; then
+        log_info "[DRY-RUN] curl -LsSf https://setup.atuin.sh | sh"
+    else
+        curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh -s -- --no-modify
+    fi
+    log_ok "atuin instalado."
+fi
+
 log_ok "Aprovisionamiento de paquetes Debian completado."

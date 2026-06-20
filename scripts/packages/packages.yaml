@@ -36,6 +36,7 @@ fedora:
     - mosh
     - unzip
     - sqlite
+    - atuin
 
   desktop:
     - distrobox
@@ -210,3 +211,4 @@ arch:
     - fzf
     - mosh
     - unzip
+    - atuin

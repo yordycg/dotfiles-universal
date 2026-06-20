@@ -9,7 +9,6 @@
 # {{ include "provision/system/trust-homelab-ca.sh" | sha256sum }}
 # {{ include "provision/system/setup-sddm-theme.sh" | sha256sum }}
 # {{ include "provision/system/setup-tailscale.sh" | sha256sum }}
-# {{ include "provision/system/setup-kde-macos-theme.sh" | sha256sum }}
 # {{ include "scripts/packages/packages.yaml" | sha256sum }}
 
 set -euo pipefail
@@ -57,11 +56,8 @@ if [ "$NODE_HAS_GUI" = "true" ]; then
     log_step "4/4. Configurando temas gráficos del sistema..."
     bash "$PROVISION_DIR/system/setup-sddm-theme.sh"
 
-    # Configurar tema macOS para KDE si aplica
-    {{- if or (eq .desktopEnv "kde") (eq .desktopEnv "both") }}
-    log_info "→ Configurando tema macOS ({{ .kdeTheme }}) para KDE..."
-    bash "$PROVISION_DIR/system/setup-kde-macos-theme.sh" "{{ .kdeTheme }}"
-
+    # Configurar overrides de Flatpak para temas si aplica
+    {{- if or (eq .desktopEnv "kde") (eq .desktopEnv "both") (eq .desktopEnv "gnome") }}
     if command -v flatpak &>/dev/null; then
         log_info "→ Aplicando overrides sudo para Flatpak (acceso a temas GTK)..."
         sudo flatpak override --filesystem=xdg-config/gtk-3.0 || true

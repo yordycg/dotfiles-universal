@@ -4,7 +4,7 @@
 # ==============================================================================
 
 # --- General Settings & Fixes ---
-set-environment -g PATH "/home/yordycg/.local/share/mise/shims:/home/yordycg/.local/share/mise/bin:/usr/local/bin:/usr/bin:/bin"
+set-environment -g PATH "{{ .chezmoi.homeDir }}/.local/share/mise/shims:{{ .chezmoi.homeDir }}/.local/share/mise/bin:/usr/local/bin:/usr/bin:/bin"
 set -g default-terminal "tmux-256color"
 set -ga terminal-overrides ",*:RGB"
 set -ga terminal-overrides ",xterm-256color:RGB"

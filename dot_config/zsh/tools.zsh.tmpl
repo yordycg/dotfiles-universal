@@ -8,3 +8,6 @@ fi
 command -v direnv  &>/dev/null && run_cached "direnv" "direnv hook zsh" "Direnv"
 command -v zoxide  &>/dev/null && run_cached "zoxide" "zoxide init zsh" "Zoxide"
 command -v starship &>/dev/null && run_cached "starship" "starship init zsh" "Starship"
+if command -v atuin &>/dev/null; then
+    run_cached "atuin" "atuin init zsh --disable-up-arrow" "Atuin"
+fi

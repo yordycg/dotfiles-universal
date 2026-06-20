@@ -22,7 +22,10 @@ _install_plugin "Aloxaf/fzf-tab"
 _install_plugin "zsh-users/zsh-autosuggestions"
 _install_plugin "zsh-users/zsh-history-substring-search"
 _install_plugin "djui/alias-tips"
-_install_plugin "joshskidmore/zsh-fzf-history-search"
+# Instalar fzf-history-search solo si no tenemos atuin
+if ! command -v atuin &>/dev/null; then
+    _install_plugin "joshskidmore/zsh-fzf-history-search"
+fi
 _install_plugin "zdharma-continuum/fast-syntax-highlighting"
 
 # -- 2. CARGA DIRECTA DE PLUGINS (Orden Blindado) --
@@ -42,7 +45,9 @@ source "$ZPLUGINDIR/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 # D. Utilidades de Historial y Alias
 source "$ZPLUGINDIR/zsh-history-substring-search/zsh-history-substring-search.zsh" 2>/dev/null
 source "$ZPLUGINDIR/alias-tips/alias-tips.plugin.zsh" 2>/dev/null
-source "$ZPLUGINDIR/zsh-fzf-history-search/zsh-fzf-history-search.zsh" 2>/dev/null
+if ! command -v atuin &>/dev/null; then
+    source "$ZPLUGINDIR/zsh-fzf-history-search/zsh-fzf-history-search.zsh" 2>/dev/null
+fi
 
 # -- 3. MODO EMACS Y BINDINGS FINALES --
 
@@ -51,7 +56,9 @@ bindkey -e              # Activar modo Emacs (estándar)
 # Vincular teclas
 bindkey '^I' fzf-tab-complete      # TAB abre FZF
 bindkey '^f' autosuggest-accept    # Ctrl+f acepta sugerencia (evita conflicto con Tmux Ctrl+Space)
-bindkey '^R' fzf_history_search    # Ctrl+R busca historial FZF
+if ! command -v atuin &>/dev/null; then
+    bindkey '^R' fzf_history_search    # Ctrl+R busca historial FZF
+fi
 
 # Flechas para búsqueda de historial (substring-search)
 bindkey '^[[A' history-substring-search-up
