@@ -4,6 +4,20 @@ Esta guía detalla los pasos para realizar una instalación limpia de **Fedora K
 
 ---
 
+## Fase 0: Preparación en Windows (Antes de Formatear)
+
+Antes de apagar Windows para comenzar la instalación, realiza estas tareas críticas:
+
+1.  **Desactivar Inicio Rápido (Fast Startup):**
+    *   *Por qué:* Si no lo haces, Windows bloqueará las particiones NTFS (Respaldo y Estudio) al apagarse, lo que provocará que Linux las monte en modo de solo lectura o falle el automontaje.
+    *   *Cómo:* Abre una consola en Windows (CMD o PowerShell) como Administrador y ejecuta:
+        ```cmd
+        powercfg /h off
+        ```
+2.  **Respaldar Credenciales y Licencia:** Ejecuta tu script de respaldo unificado para guardar tu clave de Age (`key.txt`), llaves SSH y el archivo de texto con tu licencia RETAIL de Windows en un pendrive externo.
+
+---
+
 ## Fase 1: Preparación de Medios e Instalación del SO (Anaconda)
 
 El proceso en el instalador de Fedora es prácticamente idéntico para ambos entornos, solo cambia la imagen ISO que grabas en tu USB.
