@@ -13,5 +13,9 @@ com.brave.Browser
 com.microsoft.Edge
 us.zoom.Zoom
 io.github.alainm23.whatsapp-for-linux
+com.stremio.Stremio
+io.github.miruproject.miru
+info.febvre.Komikku
+
 
 
