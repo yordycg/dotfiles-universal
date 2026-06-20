@@ -25,6 +25,7 @@ alias grep='rg'
 alias find='fd'
 alias top='btop'
 alias h='history | grep'
+alias pass='passage'
 
 # -- Zoxide ------------------------------------
 alias zi='zi'
