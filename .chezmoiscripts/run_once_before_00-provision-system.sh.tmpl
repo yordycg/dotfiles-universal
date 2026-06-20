@@ -9,6 +9,10 @@
 # {{ include "provision/system/trust-homelab-ca.sh" | sha256sum }}
 # {{ include "provision/system/setup-sddm-theme.sh" | sha256sum }}
 # {{ include "provision/system/setup-tailscale.sh" | sha256sum }}
+# {{ include "provision/system/setup-snapper.sh" | sha256sum }}
+# {{ include "provision/system/setup-virtualization.sh" | sha256sum }}
+# {{ include "provision/system/setup-nvidia.sh" | sha256sum }}
+# {{ include "provision/system/cleanup-kde.sh" | sha256sum }}
 # {{ include "scripts/packages/packages.yaml" | sha256sum }}
 
 set -euo pipefail
@@ -34,7 +38,7 @@ sudo -v
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 
 # 1. Ejecutar instalación de paquetes del sistema
-log_step "1/4. Instalando paquetes del sistema..."
+log_step "1/7. Instalando paquetes del sistema..."
 if [ -f /etc/fedora-release ]; then
     bash "$PROVISION_DIR/installers/fedora.sh"
 elif [ -f /etc/debian_version ]; then
@@ -44,17 +48,42 @@ else
 fi
 
 # 2. Configurar Tailscale
-log_step "2/4. Configurando Tailscale VPN..."
+log_step "2/7. Configurando Tailscale VPN..."
 bash "$PROVISION_DIR/system/setup-tailscale.sh"
 
 # 3. Confianza SSL (Homelab PKI)
-log_step "3/4. Configurando Confianza SSL (Homelab PKI)..."
+log_step "3/7. Configurando Confianza SSL (Homelab PKI)..."
 bash "$PROVISION_DIR/system/trust-homelab-ca.sh"
 
-# 4. Configurar temas de sistema (SDDM, etc.) si tiene GUI
+# 4. Configurar Snapper para snapshots automáticos
+if [ "$NODE_IS_SERVER" != "true" ] && [ "$NODE_IS_WSL" != "true" ]; then
+    log_step "4/7. Configurando Snapper..."
+    bash "$PROVISION_DIR/system/setup-snapper.sh"
+else
+    log_step "4/7. Saltando Snapper (No es native desktop/laptop)."
+fi
+
+# 5. Configurar controladores de GPU NVIDIA
+if [ "$NODE_IS_SERVER" != "true" ] && [ "$NODE_IS_WSL" != "true" ]; then
+    log_step "5/7. Configurando controladores NVIDIA..."
+    bash "$PROVISION_DIR/system/setup-nvidia.sh"
+else
+    log_step "5/7. Saltando controladores NVIDIA (No es native desktop/laptop)."
+fi
+
+# 6. Configurar Virtualización
+if [ "$NODE_IS_SERVER" != "true" ] && [ "$NODE_IS_WSL" != "true" ]; then
+    log_step "6/7. Configurando Virtualización..."
+    bash "$PROVISION_DIR/system/setup-virtualization.sh"
+else
+    log_step "6/7. Saltando Virtualización (No es native desktop/laptop)."
+fi
+
+# 7. Configurar temas de sistema y limpieza KDE
 if [ "$NODE_HAS_GUI" = "true" ]; then
-    log_step "4/4. Configurando temas gráficos del sistema..."
+    log_step "7/7. Configurando temas gráficos del sistema y limpiando paquetes..."
     bash "$PROVISION_DIR/system/setup-sddm-theme.sh"
+    bash "$PROVISION_DIR/system/cleanup-kde.sh"
 
     # Configurar overrides de Flatpak para temas si aplica
     {{- if or (eq .desktopEnv "kde") (eq .desktopEnv "both") (eq .desktopEnv "gnome") }}
@@ -65,7 +94,7 @@ if [ "$NODE_HAS_GUI" = "true" ]; then
     fi
     {{- end }}
 else
-    log_step "4/4. Sistema Headless (sin GUI), saltando SDDM theme."
+    log_step "7/7. Sistema Headless (sin GUI), saltando SDDM theme y limpieza KDE."
 fi
 
 log_ok "Aprovisionamiento del sistema completado con éxito."

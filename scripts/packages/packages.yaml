@@ -40,6 +40,9 @@ fedora:
   desktop:
     - distrobox
     - podman
+    - podman-compose
+    - snapper
+    - python3-dnf-plugin-snapper
     - flatpak
     - ostree
     - appstream-compose
@@ -100,7 +103,7 @@ fedora:
     # Theming Qt / Kvantum
     - qt5ct
     # Utilidades de Escritorio indispensables (Visores, Exploradores, Capturadoras)
-    - konsole
+    # - konsole
     - dolphin
     - spectacle
     - ark

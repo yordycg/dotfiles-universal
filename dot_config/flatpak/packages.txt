@@ -8,3 +8,5 @@ org.videolan.VLC
 com.spotify.Client
 org.onlyoffice.desktopeditors
 com.github.hluk.copyq
+ch.usebruno.Bruno
+
