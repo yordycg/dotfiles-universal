@@ -11,7 +11,7 @@ set -euo pipefail
 # Asegurar que ~/.local/bin existe
 mkdir -p "$HOME/.local/bin"
 
-if ! command -v atuin &>/dev/null; then
+if [ ! -f "$HOME/.local/bin/atuin" ]; then
     log_step "Instalador de Atuin — Descargando la última versión oficial"
     # Descargamos el script y lo ejecutamos de forma no interactiva
     if curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh -s -- --no-modify; then
@@ -20,6 +20,6 @@ if ! command -v atuin &>/dev/null; then
         log_err "Fallo al instalar Atuin usando el script oficial."
     fi
 else
-    log_info "Atuin ya está instalado en el sistema (versión: $(atuin --version))."
+    log_info "Atuin ya está instalado localmente en ~/.local/bin (versión: $($HOME/.local/bin/atuin --version))."
 fi
 {{- end }}
