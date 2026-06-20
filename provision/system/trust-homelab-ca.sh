@@ -31,6 +31,8 @@ if [ -f /etc/debian_version ]; then
     INSTALLED_BUNDLE="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
 elif [ -f /etc/fedora-release ]; then
     INSTALLED_BUNDLE="/etc/pki/ca-trust/source/anchors/homelab-ca-bundle.crt"
+elif [ -f /etc/arch-release ]; then
+    INSTALLED_BUNDLE="/etc/ca-certificates/trust-source/anchors/homelab-ca-bundle.crt"
 fi
 
 # Si el bundle existe y el hash coincide con el guardado → salir en silencio
@@ -120,6 +122,9 @@ install_cert() {
         local update_cmd="sudo update-ca-certificates"
     elif [ -f /etc/fedora-release ]; then
         local store="/etc/pki/ca-trust/source/anchors/${name}"
+        local update_cmd="sudo update-ca-trust"
+    elif [ -f /etc/arch-release ]; then
+        local store="/etc/ca-certificates/trust-source/anchors/${name}"
         local update_cmd="sudo update-ca-trust"
     else
         return
