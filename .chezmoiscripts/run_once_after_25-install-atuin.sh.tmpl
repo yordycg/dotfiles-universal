@@ -1,0 +1,25 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_25-install-atuin.sh.tmpl
+# Instalador universal de Atuin en espacio de usuario.
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+# Asegurar que ~/.local/bin existe
+mkdir -p "$HOME/.local/bin"
+
+if ! command -v atuin &>/dev/null; then
+    log_step "Instalador de Atuin — Descargando la última versión oficial"
+    # Descargamos el script y lo ejecutamos de forma no interactiva
+    if curl --proto '=https' --tlsv1.2 -LsSf https://setup.atuin.sh | sh -s -- --no-modify; then
+        log_ok "Atuin se instaló correctamente en ~/.local/bin/."
+    else
+        log_err "Fallo al instalar Atuin usando el script oficial."
+    fi
+else
+    log_info "Atuin ya está instalado en el sistema (versión: $(atuin --version))."
+fi
+{{- end }}

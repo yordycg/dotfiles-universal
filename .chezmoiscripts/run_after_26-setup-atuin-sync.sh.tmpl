@@ -1,0 +1,78 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_after_26-setup-atuin-sync.sh.tmpl
+# Automatización de Login y Sincronización de Atuin usando Passage/Pass.
+# =============================================================================
+set -euo pipefail
+
+# Asegurar que local/bin está en el PATH de ejecución de este script
+export PATH="$HOME/.local/bin:$PATH"
+
+{{ include "provision/lib/logging.sh" }}
+
+if ! command -v atuin &>/dev/null; then
+    exit 0 # Saltamos si Atuin no está instalado en este paso
+fi
+
+# 1. Verificar si ya tenemos sesión iniciada en Atuin
+if atuin status &>/dev/null; then
+    exit 0 # Ya logueado y funcionando, salimos de inmediato
+fi
+
+log_step "Atuin Sync Optimizer — Configurando sincronización automática"
+
+# 2. Localizar el comando de Passage o Pass
+PASSAGE_CMD=""
+if [ -f "$HOME/.local/bin/passage" ]; then
+    PASSAGE_CMD="$HOME/.local/bin/passage"
+elif command -v passage &>/dev/null; then
+    PASSAGE_CMD="passage"
+elif command -v pass &>/dev/null; then
+    PASSAGE_CMD="pass"
+fi
+
+if [ -z "$PASSAGE_CMD" ]; then
+    log_warn "No se encontró passage ni pass en el sistema. Omitiendo auto-login de Atuin."
+    exit 0
+fi
+
+# 3. Detectar credenciales en la bóveda
+ATUIN_USER=$("$PASSAGE_CMD" atuin/username 2>/dev/null || echo "")
+ATUIN_PASS=$("$PASSAGE_CMD" atuin/password 2>/dev/null || echo "")
+ATUIN_KEY=$("$PASSAGE_CMD" atuin/key 2>/dev/null || echo "")
+
+if [ -z "$ATUIN_USER" ] || [ -z "$ATUIN_PASS" ] || [ -z "$ATUIN_KEY" ]; then
+    log_info "No se encontraron credenciales completas de Atuin en la bóveda."
+    log_info "Si ya creaste tu cuenta, puedes guardarla ejecutando:"
+    log_info "  passage insert atuin/<tu_usuario> (dentro escribe tu contraseña)"
+    log_info "  passage insert atuin/key          (dentro pega tu frase de seguridad)"
+    exit 0
+fi
+
+# 4. Limpiar y sanitizar la llave (remover espacios y saltos de línea indeseados)
+# Esto previene errores de copiado/pegado por parte del usuario
+ATUIN_KEY_CLEAN=$(echo "$ATUIN_KEY" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')
+
+log_info "Credenciales de Atuin encontradas para el usuario '$ATUIN_USER'. Iniciando sesión..."
+
+# 5. Iniciar sesión y sincronizar (de forma segura y no bloqueante)
+# Usamos un subshell temporal para evitar que el fallo del comando aborte el apply completo
+if atuin login -u "$ATUIN_USER" -p "$ATUIN_PASS" -k "$ATUIN_KEY_CLEAN"; then
+    log_ok "Sesión iniciada con éxito en Atuin Hub."
+    log_info "Importando historial local..."
+    atuin import auto >/dev/null 2>&1 || log_warn "Aviso al importar el historial de la terminal."
+    
+    log_info "Ejecutando primera sincronización..."
+    if atuin sync; then
+        log_ok "Sincronización de Atuin completada correctamente."
+    else
+        log_warn "Sincronización inicial de Atuin falló temporalmente (error de red), se reintentará en segundo plano."
+    fi
+else
+    log_warn "No se pudo iniciar sesión en Atuin Hub con las credenciales de la bóveda."
+    log_warn "Verifica tu contraseña o llave ejecutando manualmente: atuin login"
+fi
+
+exit 0
+{{- end }}
