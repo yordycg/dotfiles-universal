@@ -323,14 +323,16 @@ apply_kde_settings() {
     fi
 
     if has_cmd kwriteconfig6; then
-        log_info "Configurando estilo Qt a Kvantum via kwriteconfig6..."
+        log_info "Configurando estilo Qt a Kvantum e iconos via kwriteconfig6..."
         kwriteconfig6 --file kdeglobals --group KDE --key widgetStyle "kvantum"
-        log_ok "Estilo Qt = kvantum"
+        kwriteconfig6 --file kdeglobals --group Icons --key Theme "$ICON_THEME_APPLY"
+        log_ok "Estilo Qt = kvantum, Iconos = $ICON_THEME_APPLY"
     fi
     if has_cmd kwriteconfig5; then
-        log_info "Configurando estilo Qt a Kvantum via kwriteconfig5..."
+        log_info "Configurando estilo Qt a Kvantum e iconos via kwriteconfig5..."
         kwriteconfig5 --file kdeglobals --group KDE --key widgetStyle "kvantum"
-        log_ok "Estilo Qt (legacy) = kvantum"
+        kwriteconfig5 --file kdeglobals --group Icons --key Theme "$ICON_THEME_APPLY"
+        log_ok "Estilo Qt (legacy) = kvantum, Iconos = $ICON_THEME_APPLY"
     fi
 
     if has_cmd kvantummanager; then
