@@ -8,13 +8,13 @@ org.videolan.VLC
 com.spotify.Client
 org.onlyoffice.desktopeditors
 com.github.hluk.copyq
-ch.usebruno.Bruno
+com.usebruno.Bruno
 com.brave.Browser
 com.microsoft.Edge
 us.zoom.Zoom
 io.github.alainm23.whatsapp-for-linux
 com.stremio.Stremio
-io.github.miruproject.miru
+# io.github.miruproject.miru # No longer available on Flathub EOL
 info.febvre.Komikku
 
 
