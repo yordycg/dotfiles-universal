@@ -46,8 +46,10 @@ MISE_BIN="$HOME/.local/bin/mise"
 
 if [ ! -f "$MISE_BIN" ]; then
     log_info "Instalando Mise..."
-    MISE_VERSION="v2024.12.1"
-    curl -fsSL https://mise.run | MISE_VERSION="$MISE_VERSION" sh -s -- --quiet
+    curl -fsSL https://mise.run | sh -s -- --quiet
+else
+    log_info "Actualizando Mise..."
+    "$MISE_BIN" self-update || true
 fi
 
 log_info "Sincronizando herramientas y CLIs globales..."

@@ -44,7 +44,7 @@ Configura el esquema de particiones para el disco ADATA:
 
 ---
 
-## Fase 2: Configuración del Sistema mediante Chezmoi (Primer Inicio)
+## Fase 2: Actualización Inicial y Preparación de Credenciales (Primer Inicio)
 
 Una vez completada la instalación básica y tras iniciar sesión en el nuevo escritorio por primera vez:
 
@@ -52,11 +52,48 @@ Una vez completada la instalación básica y tras iniciar sesión en el nuevo es
 *   **En Fedora KDE:** Abre **Konsole** (es temporal, el script la eliminará más tarde).
 *   **En Fedora Sway:** Presiona `$mod + Enter` (normalmente `Super + Enter`) para abrir la terminal por defecto (`foot` o `kitty`).
 
-### 2. Clonar y aplicar tus dotfiles
-Instala Chezmoi y descarga tu configuración ejecutando:
+### 2. Actualizar el Sistema Completamente (Crítico)
+Antes de configurar cualquier herramienta o driver, realiza una actualización completa de todos los paquetes y del Kernel de Fedora. Esto evita que los drivers de NVIDIA se compilen para un kernel obsoleto que será reemplazado inmediatamente:
 ```bash
-sudo dnf install -y chezmoi
-chezmoi init --apply https://github.com/yordycg/dotfiles-universales.git
+sudo dnf upgrade --refresh -y
+```
+**Una vez terminada la actualización, REINICIA el equipo (`reboot`)** para arrancar en el kernel actualizado antes de continuar.
+
+### 3. Restaurar Credenciales y Llaves de Respaldo desde el USB
+Conecta tu pendrive USB con los respaldos y restaura tus llaves SSH y la clave de Age necesarias para que Chezmoi pueda autenticar y descifrar los archivos secretos:
+```bash
+# Crear directorios con permisos correctos
+mkdir -p -m 700 ~/.ssh
+mkdir -p -m 700 ~/.config/age
+
+# Copiar llaves SSH (reemplaza /run/media/$USER/*/ con la ruta real de tu pendrive)
+cp /run/media/$USER/*/id_ed25519* ~/.ssh/
+chmod 600 ~/.ssh/id_ed25519
+chmod 644 ~/.ssh/id_ed25519.pub
+
+# Copiar la clave de cifrado Age (key.txt)
+cp /run/media/$USER/*/key.txt ~/.config/age/key.txt
+chmod 600 ~/.config/age/key.txt
+```
+
+---
+
+## Fase 3: Inicialización y Aprovisionamiento Automático (Chezmoi)
+
+### 1. Instalar Chezmoi mediante Curl
+Instala la última versión de Chezmoi en tu carpeta local de binarios (`~/.local/bin`), evitando paquetes obsoletos de `dnf`:
+```bash
+# Crear directorio de binarios de usuario si no existe
+mkdir -p ~/.local/bin
+
+# Descargar chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+```
+
+### 2. Clonar y aplicar tus dotfiles
+Ejecuta la inicialización de Chezmoi apuntando a tu repositorio correcto (`dotfiles-universal.git`):
+```bash
+~/.local/bin/chezmoi init --apply https://github.com/yordycg/dotfiles-universal.git
 ```
 
 ### 3. Responder al Asistente de Chezmoi
@@ -66,32 +103,40 @@ Entorno de escritorio (kde, sway, both, gnome, none) [sway]:
 ```
 *   **Si instalaste Fedora KDE:** Escribe `kde`.
 *   **Si instalaste Fedora Sway:** Escribe `sway`.
-*   **Si quieres tener ambos a la vez:** Escribe `both` (coexistirán perfectamente y podrás elegir cuál usar desde la pantalla de login).
+*   **Si quieres tener ambos a la vez:** Escribe `both`.
 
 ### 4. Aprovisionamiento Automático (Sudo-Space)
-Chezmoi solicitará tu contraseña de administrador (`sudo`) para lanzar los instaladores automáticos. Aquí ocurre la magia configurada:
-*   Habilita RPM Fusion, Chrome repositories y códecs de video completos.
-*   Instala herramientas de desarrollo y de sistema (`snapper`, `podman`, `podman-compose`, `distrobox`, `kitty`, `fastfetch`).
-*   Instala aplicaciones Flatpak de usuario en segundo plano (incluyendo **Bruno** para APIs REST, DBeaver, Discord, etc.).
-*   **Si seleccionaste KDE:** Configura los temas visuales (SDDM y Kvantum), y ejecuta `cleanup-kde.sh` eliminando automáticamente `kmail`, `kontact`, `dragon`, etc.
-*   **Si seleccionaste Sway:** Despliega las configuraciones personalizadas de Waybar, atajos de teclado de Sway, Rofi y fondos de pantalla.
-*   **Instala NVIDIA:** Descarga `akmod-nvidia` y compila los módulos de kernel en segundo plano con `akmods --force`.
-*   **Configura Snapper:** Crea snapshots iniciales para `/` y `/home` bajo el sistema Btrfs.
-*   **Configura KVM/QEMU:** Instala la virtualización y agrega tu usuario al grupo `libvirt`.
+Chezmoi solicitará tu contraseña de administrador (`sudo`) para lanzar los instaladores automáticos:
+*   Habilita RPM Fusion, repositorios de Chrome y códecs multimedia.
+*   Instala la última versión de **Mise** de forma automática vía script (`curl https://mise.run | sh`) para evitar la versión obsoleta del empaquetado nativo.
+*   Instala herramientas de sistema y desarrollo (`snapper`, `podman`, `kitty`, etc.).
+*   Instala aplicaciones Flatpak de usuario (incluyendo Bruno, DBeaver, Discord, ZapZap, etc.).
+*   Descarga el driver propietario de NVIDIA (`akmod-nvidia`).
+
+### 5. Esperar la Compilación de NVIDIA (Crítico)
+**¡NO REINICIES EL EQUIPO INMEDIATAMENTE!** Cuando finaliza la ejecución de Chezmoi, el instalador de NVIDIA se ejecuta en segundo plano mediante `akmods`. Si reinicias antes de que termine, arrancarás en pantalla negra.
+Puedes comprobar si el driver terminó de compilarse ejecutando:
+```bash
+# Si el comando no devuelve ningún proceso ejecutándose, significa que ha terminado
+pgrep -a akmods
+```
+Espera unos 3 a 5 minutos a que finalice la compilación.
+
+### 6. Reinicio e inscripción de firma MOK
+Una vez terminada la compilación de los drivers NVIDIA, reinicia el equipo:
+```bash
+reboot
+```
+Si Secure Boot está habilitado en tu BIOS, al reiniciar verás una pantalla azul de **MOKManager**:
+1. Selecciona **Enroll MOK**.
+2. Elige **View key** o **Continue**.
+3. Selecciona **Yes**.
+4. Escribe la contraseña que te pida (la que definiste al aprovisionar o tu password de root).
+5. Selecciona **Reboot**.
 
 ---
 
-## Fase 3: Post-Aprovisionamiento (Puntos manuales y Discos)
-
-### 1. Primer Reinicio e inscripción de firma MOK
-1. Reinicia el equipo: `reboot`.
-2. **Si Secure Boot está habilitado en tu BIOS:** Al reiniciar verás una pantalla azul titulada **MOKManager**.
-    *   Selecciona **Enroll MOK**.
-    *   Elige **View key** o **Continue**.
-    *   Selecciona **Yes**.
-    *   Escribe la contraseña que te pida (la que definiste al aprovisionar o tu password de root).
-    *   Selecciona **Reboot**.
-    *(Este paso es crucial para que el Kernel firmado de Fedora acepte cargar los drivers propietarios de NVIDIA).*
+## Fase 4: Post-Aprovisionamiento (Puntos manuales y Discos)
 
 ### 2. Configurar el montaje de discos NTFS
 Una vez dentro del escritorio con los drivers NVIDIA cargados, abre una terminal (`kitty`) y ejecuta tu script interactivo personalizado:
