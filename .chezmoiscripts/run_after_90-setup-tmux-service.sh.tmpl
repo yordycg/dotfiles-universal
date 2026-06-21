@@ -1,0 +1,38 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# scripts/run_after_90-setup-tmux-service.sh.tmpl
+# Configura y habilita el servicio de tmux de systemd de usuario
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+# Comprobar si systemd de usuario está disponible y activo
+if systemctl --user &>/dev/null; then
+    log_step "Configurando servicio de usuario de Systemd para Tmux"
+    
+    # Recargar el demonio para detectar el nuevo archivo de servicio
+    systemctl --user daemon-reload
+    
+    # 1. Habilitar lingering para que los servicios de usuario corran en segundo plano
+    if ! loginctl user-status "$USER" 2>/dev/null | grep -q "Linger: yes"; then
+        log_info "Habilitando lingering (permanencia de procesos) para el usuario $USER..."
+        loginctl enable-linger "$USER" || sudo loginctl enable-linger "$USER"
+        log_ok "Lingering habilitado correctamente."
+    else
+        log_info "Lingering ya está habilitado para el usuario $USER."
+    fi
+
+    # 2. Habilitar el servicio tmux.service
+    if ! systemctl --user is-enabled tmux &>/dev/null; then
+        log_info "Habilitando servicio tmux.service..."
+        systemctl --user enable tmux
+        log_ok "Servicio de tmux habilitado correctamente."
+    else
+        log_info "El servicio tmux.service ya está habilitado."
+    fi
+else
+    log_warn "Systemd de usuario no disponible o no activo. Saltando configuración del servicio de Tmux."
+fi
+{{ end -}}

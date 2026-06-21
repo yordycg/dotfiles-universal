@@ -1,0 +1,18 @@
+[Unit]
+Description=Tmux Terminal Multiplexer (Persistencia de Sesiones)
+Documentation=man:tmux(1)
+After=network.target
+
+[Service]
+Type=forking
+# Arranca el servidor de tmux en segundo plano
+ExecStart=/usr/bin/tmux new-session -s default -d
+# Guarda la sesión de resurrect de forma limpia antes de apagar
+ExecStop={{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/save.sh
+# Detiene el servidor de forma limpia
+ExecStop=/usr/bin/tmux kill-server
+KillMode=mixed
+Restart=on-failure
+
+[Install]
+WantedBy=default.target

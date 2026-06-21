@@ -15,6 +15,7 @@
 # {{ include "provision/system/setup-dualboot-fixes.sh" | sha256sum }}
 # {{ include "provision/system/cleanup-kde.sh" | sha256sum }}
 # {{ include "scripts/packages/packages.yaml" | sha256sum }}
+# {{ include "provision/system/setup-wsl-systemd.sh" | sha256sum }}
 
 set -euo pipefail
 
@@ -37,6 +38,12 @@ sudo -v
 
 # Mantener sudo activo en segundo plano mientras corre el script
 while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
+
+# 0. Habilitar Systemd en WSL si aplica
+if [ "$NODE_IS_WSL" = "true" ]; then
+    log_step "Configurando WSL Systemd..."
+    bash "$PROVISION_DIR/system/setup-wsl-systemd.sh"
+fi
 
 # 1. Ejecutar instalación de paquetes del sistema
 log_step "1/8. Instalando paquetes del sistema..."
