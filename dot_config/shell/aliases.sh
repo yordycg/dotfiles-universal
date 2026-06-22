@@ -26,6 +26,7 @@ alias find='fd'
 alias top='btop'
 alias h='history | grep'
 alias pass='passage'
+alias genpass='pwgen -s -y 20 1'
 
 # -- Zoxide ------------------------------------
 alias zi='zi'

@@ -13,6 +13,7 @@ fedora:
     - tmux
     - zsh
     - jq
+    - pwgen
 
   dev_toolchain:
     - gcc
@@ -154,6 +155,7 @@ debian:
     - tmux
     - zsh
     - jq
+    - pwgen
 
   dev_toolchain:
     - python3-venv
@@ -192,6 +194,7 @@ arch:
     - tmux
     - zsh
     - jq
+    - pwgen
 
   dev_toolchain:
     - gcc
