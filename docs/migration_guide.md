@@ -134,6 +134,28 @@ Si Secure Boot está habilitado en tu BIOS, al reiniciar verás una pantalla azu
 4. Escribe la contraseña que te pida (la que definiste al aprovisionar o tu password de root).
 5. Selecciona **Reboot**.
 
+### 7. Resolución de Problemas: Pantalla Negra o Firma MOK Fallida
+Si el sistema inicia en pantalla negra o no aparece la pantalla azul de MOKManager tras reiniciar:
+1. **Entrar al escritorio de emergencia:**
+   - En el GRUB, presiona **`e`**.
+   - Busca la línea que inicia con `linux` y añade `nomodeset` al final de la línea.
+   - Presiona **`Ctrl + X`** para arrancar en modo gráfico básico.
+2. **Generar y firmar MOK manualmente:**
+   - Si no existían las llaves de firma de akmods en `/etc/pki/akmods/certs/`, créalas:
+     ```bash
+     sudo kmodgenca --force
+     ```
+   - Importa la llave pública a la BIOS (usa la ruta del enlace simbólico creado, usualmente `public_key.der` o `akmods.der`):
+     ```bash
+     sudo mokutil --import /etc/pki/akmods/certs/public_key.der
+     ```
+     *(Define una contraseña temporal que deberás escribir en el reinicio).*
+   - Reconstruye y firma los módulos del driver de NVIDIA:
+     ```bash
+     sudo akmods --force --rebuild
+     ```
+   - Reinicia con `reboot` y completa el registro en la pantalla azul del **MOKManager**.
+
 ---
 
 ## Fase 4: Post-Aprovisionamiento (Puntos manuales y Discos)
