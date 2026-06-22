@@ -32,6 +32,10 @@ provision/**
 .chezmoiscripts/run_onchange_after_30-install-flatpaks.sh.tmpl
 .chezmoiscripts/run_onchange_after_40-apply-theme.sh.tmpl
 
+# Configuración de servicio tmux no deseada en servidor/WSL
+.config/systemd/user/tmux.service.tmpl
+.chezmoiscripts/run_after_90-setup-tmux-service.sh.tmpl
+
 {{ end -}}
 
 # ── Exclusiones dinámicas según el Entorno de Escritorio ──────────
