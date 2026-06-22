@@ -56,7 +56,7 @@ if [ -f /etc/fedora-release ] && command -v mokutil &>/dev/null; then
         # Si no existe ninguna llave MOK, la generamos
         if [ ! -f "$MOK_DER" ]; then
             log_info "→ Llave MOK de akmods no encontrada. Generándola..."
-            sudo kmodgenca --force
+            sudo kmodgenca -a --force
             
             # Buscar de nuevo
             MOK_DER="/etc/pki/akmods/certs/public_key.der"
