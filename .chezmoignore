@@ -45,7 +45,6 @@ provision/**
 .config/mako/**
 .config/gammastep/**
 .config/wallust/**
-.config/flavours/**
 {{ end -}}
 
 # ── Archivos generados dinámicamente (todos los sistemas) ────────
