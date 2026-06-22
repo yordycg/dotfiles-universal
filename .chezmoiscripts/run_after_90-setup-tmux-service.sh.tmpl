@@ -1,4 +1,4 @@
-{{ if eq .chezmoi.os "linux" -}}
+{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_90-setup-tmux-service.sh.tmpl
