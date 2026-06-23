@@ -10,7 +10,7 @@
 	editor = nvim
 	autocrlf = input
 {{- end }}
-	pager = delta
+	pager = less -RFX
 	compression = 9
 	whitespace = error
 	preloadindex = true
@@ -19,18 +19,19 @@
 [init]
 	defaultBranch = main
 
-[delta]
-	navigate = true						# use n and N to move between diff sections
-	line-numbers = true
-	side-by-side = true
-	syntax-theme = gruvbox-dark
-	plus-style = syntax "#012800"
-	minus-style = syntax "#340001"
-	file-added-label = [+]
-	file-modified-label = [*]
-	file-removed-label = [-]
-	file-copied-label = [==]
-	file-renamed-label = [->]
+# [delta]
+# 	navigate = true						# use n and N to move between diff sections
+# 	line-numbers = true
+# 	side-by-side = false
+# 	pager = less -RFX
+# 	syntax-theme = gruvbox-dark
+# 	plus-style = syntax "#012800"
+# 	minus-style = syntax "#340001"
+# 	file-added-label = [+]
+# 	file-modified-label = [*]
+# 	file-removed-label = [-]
+# 	file-copied-label = [==]
+# 	file-renamed-label = [->]
 
 [merge]
 	conflictstyle = zdiff3
