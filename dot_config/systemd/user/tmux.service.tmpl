@@ -7,8 +7,8 @@ After=network.target
 Type=forking
 # Arranca el servidor de tmux en segundo plano
 ExecStart=/usr/bin/tmux new-session -s default -d
-# Guarda la sesión de resurrect de forma limpia antes de apagar
-ExecStop={{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/save.sh
+# Guarda la sesión de resurrect de forma limpia antes de apagar (solo si el servidor está activo)
+ExecStop=/usr/bin/bash -c '/usr/bin/tmux has-session &>/dev/null && {{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/save.sh || true'
 # Detiene el servidor de forma limpia
 ExecStop=/usr/bin/tmux kill-server
 KillMode=mixed
