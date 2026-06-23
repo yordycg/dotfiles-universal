@@ -8,6 +8,12 @@ return {
       "nvim-lua/plenary.nvim",
       "hrsh7th/nvim-cmp", -- Para autocompletar enlaces y tags
     },
+    keys = {
+      { "<leader>ot", "<cmd>ObsidianTemplate<cr>", desc = "Insertar Plantilla" },
+      { "<leader>on", "<cmd>ObsidianNew<cr>", desc = "Nueva Nota" },
+      { "<leader>os", "<cmd>ObsidianSearch<cr>", desc = "Buscar Notas (Grep)" },
+      { "<leader>ob", "<cmd>ObsidianBacklinks<cr>", desc = "Backlinks de la nota" },
+    },
     opts = {
       workspaces = {
         {
@@ -29,6 +35,13 @@ return {
       -- 3. Desactivar UI incorporada para evitar conflictos con render-markdown
       ui = {
         enable = false,
+      },
+
+      -- 4. Plantillas (Templates)
+      templates = {
+        folder = "600 Templates",
+        date_format = "%Y-%m-%d",
+        time_format = "%H:%M",
       },
     },
   },
