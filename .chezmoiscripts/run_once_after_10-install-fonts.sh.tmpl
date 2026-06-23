@@ -26,7 +26,7 @@ CURRENT_HASH="{{ include ".chezmoiscripts/run_once_after_10-install-fonts.sh.tmp
 log_step "Tipografías (Nerd Fonts)"
 
 if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ]; then
-    log_ok "Fuentes JetBrains, FiraCode y Lilex están al día."
+    log_ok "Fuentes JetBrains, FiraCode, Lilex y Apple SF están al día."
     exit 0
 fi
 
@@ -48,6 +48,29 @@ for font in "${fonts[@]}"; do
         fi
     fi
 done
+
+# ── 3. Fuentes Apple SF (San Francisco) ──────────────────────────────────────
+# Descargar Apple SF Pro
+if [ ! -d "$FONTS_DIR/AppleSFPro" ]; then
+    log_info "Descargando Apple SF Pro..."
+    mkdir -p "$FONTS_DIR/AppleSFPro"
+    if wget -q --show-progress -O "/tmp/AppleSFPro.zip" "https://github.com/sahibjotsaggu/San-Francisco-Pro-Fonts/archive/refs/heads/master.zip"; then
+        unzip -q -o "/tmp/AppleSFPro.zip" -d "/tmp/AppleSFPro"
+        find "/tmp/AppleSFPro" \( -name "*.otf" -o -name "*.ttf" \) -exec cp {} "$FONTS_DIR/AppleSFPro/" \;
+        rm -rf "/tmp/AppleSFPro.zip" "/tmp/AppleSFPro"
+    fi
+fi
+
+# Descargar Apple SF Mono
+if [ ! -d "$FONTS_DIR/AppleSFMono" ]; then
+    log_info "Descargando Apple SF Mono..."
+    mkdir -p "$FONTS_DIR/AppleSFMono"
+    if wget -q --show-progress -O "/tmp/AppleSFMono.zip" "https://github.com/supercomputra/SF-Mono-Font/archive/refs/heads/master.zip"; then
+        unzip -q -o "/tmp/AppleSFMono.zip" -d "/tmp/AppleSFMono"
+        find "/tmp/AppleSFMono" \( -name "*.otf" -o -name "*.ttf" \) -exec cp {} "$FONTS_DIR/AppleSFMono/" \;
+        rm -rf "/tmp/AppleSFMono.zip" "/tmp/AppleSFMono"
+    fi
+fi
 
 log_info "Actualizando caché del sistema..."
 find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true

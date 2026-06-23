@@ -142,6 +142,10 @@ dotfiles-universal/
 ### 6.3 Persistencia de Preferencias
 - [x] **Seguimiento de configuración de KDE:** Implementado: Añadidos atajos personalizados (`kglobalshortcutsrc`) a Chezmoi y automatizada la aplicación de preferencias estéticas (como el tema global) usando scripts CLI (`lookandfeeltool`/`kwriteconfig`) en lugar de archivos `.rc` enteros inestables.
 
+### 6.4 Tipografías y Consistencia Visual (Apple SF Pro Font)
+- [x] **Instalación y Configuración de San Francisco Font:** Automatizar la descarga e instalación de las tipografías de macOS (SF Pro Display, SF Pro Text, SF Mono) de manera limpia (ej. en `.chezmoiscripts/run_once_after_10-install-fonts.sh.tmpl`).
+- [x] **Predeterminación en el Sistema (Sway & Navegadores):** Configurar Fontconfig (`~/.config/fontconfig/fonts.conf`) para establecer SF Pro como la tipografía sans-serif/system-ui por defecto. Asegurar que la UI de Sway, navegadores (Firefox, Chromium) y otras aplicaciones GTK/Qt la usen de forma consistente y automática.
+
 ---
 
-> Actualizado: 18 de junio de 2026 — Plan de Soporte KDE Plasma 6.
+> Actualizado: 22 de junio de 2026 — Plan de Soporte KDE Plasma 6 y Tipografías.
