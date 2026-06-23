@@ -146,6 +146,10 @@ dotfiles-universal/
 - [x] **Instalación y Configuración de San Francisco Font:** Automatizar la descarga e instalación de las tipografías de macOS (SF Pro Display, SF Pro Text, SF Mono) de manera limpia (ej. en `.chezmoiscripts/run_once_after_10-install-fonts.sh.tmpl`).
 - [x] **Predeterminación en el Sistema (Sway & Navegadores):** Configurar Fontconfig (`~/.config/fontconfig/fonts.conf`) para establecer SF Pro como la tipografía sans-serif/system-ui por defecto. Asegurar que la UI de Sway, navegadores (Firefox, Chromium) y otras aplicaciones GTK/Qt la usen de forma consistente y automática.
 
+### 6.5 Centralización Estética Declarativa (Chezmoi as Theme Manager)
+- [ ] **Unificación de Tematizado en TWM (Chezmoi):** Migrar la configuración de temas GTK/Qt, temas de cursor y tamaños a variables globales de Chezmoi (`.chezmoi.toml.tmpl` o `.chezmoi.yaml.tmpl`).
+- [ ] **Creación de Plantillas de Estilo:** Implementar plantillas para GTK 3/4 (`settings.ini.tmpl`), puntero de X11 (`index.theme.tmpl`) y Sway (`config.tmpl`), eliminando valores hardcoded y automatizando la sincronización estética con un solo parámetro.
+
 ---
 
-> Actualizado: 22 de junio de 2026 — Plan de Soporte KDE Plasma 6 y Tipografías.
+> Actualizado: 22 de junio de 2026 — Plan de Soporte KDE Plasma 6, Tipografías y Tematizado.
