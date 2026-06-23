@@ -21,9 +21,9 @@ if [ -f /etc/fedora-release ]; then
     if ! rpm -q akmod-nvidia &>/dev/null; then
         log_info "→ Fedora detectado. Instalando akmod-nvidia..."
         sudo dnf install -y akmod-nvidia
+        log_info "→ Compilando módulos de kernel con akmods..."
+        sudo akmods
     fi
-    log_info "→ Compilando módulos de kernel con akmods..."
-    sudo akmods --force
 elif [ -f /etc/arch-release ]; then
     if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null; then
         log_info "→ Arch Linux detectado. Instalando driver nvidia..."
@@ -47,26 +47,26 @@ if [ -f /etc/fedora-release ] && command -v mokutil &>/dev/null; then
     if mokutil --sb-state 2>/dev/null | grep -q "SecureBoot enabled"; then
         log_info "→ Secure Boot activo detectado. Comprobando llave MOK..."
         
-        # Determinar la ruta de la llave pública MOK
+        # Determinar la ruta de la llave pública MOK (usando sudo para verificar existencia en directorio protegido)
         MOK_DER="/etc/pki/akmods/certs/public_key.der"
-        if [ ! -f "$MOK_DER" ] && [ -f "/etc/pki/akmods/certs/akmods.der" ]; then
+        if ! sudo test -f "$MOK_DER" && sudo test -f "/etc/pki/akmods/certs/akmods.der"; then
             MOK_DER="/etc/pki/akmods/certs/akmods.der"
         fi
 
-        # Si no existe ninguna llave MOK, la generamos
-        if [ ! -f "$MOK_DER" ]; then
+        # Si no existe ninguna llave MOK, la generamos (sin --force para evitar sobrescritura accidental)
+        if ! sudo test -f "$MOK_DER"; then
             log_info "→ Llave MOK de akmods no encontrada. Generándola..."
-            sudo kmodgenca -a --force
+            sudo kmodgenca -a
             
-            # Buscar de nuevo
+            # Buscar de nuevo la llave generada
             MOK_DER="/etc/pki/akmods/certs/public_key.der"
-            if [ ! -f "$MOK_DER" ] && [ -f "/etc/pki/akmods/certs/akmods.der" ]; then
+            if ! sudo test -f "$MOK_DER" && sudo test -f "/etc/pki/akmods/certs/akmods.der"; then
                 MOK_DER="/etc/pki/akmods/certs/akmods.der"
             fi
         fi
 
-        # Comprobar si la llave ya está en la BIOS/UEFI (MOK)
-        if ! mokutil --test-key "$MOK_DER" &>/dev/null; then
+        # Comprobar si la llave ya está en la BIOS/UEFI (MOK) usando sudo
+        if ! sudo mokutil --test-key "$MOK_DER" &>/dev/null; then
             log_warn "====================================================================="
             log_warn "🔑 LLAVE MOK DE AKMODS NO REGISTRADA EN LA BIOS"
             log_warn "Se te solicitará crear una contraseña temporal para importar la llave MOK."
