@@ -14,11 +14,11 @@ default-timeout=5000
 ignore-timeout=0
 
 # Colors (Dynamic Catppuccin-style based on Wallpaper)
-background-color=#{{color0}}B3
-text-color=#{{foreground}}
-border-color=#{{color4}}
-progress-color=over #{{color4}}
+background-color={{color0}}B3
+text-color={{foreground}}
+border-color={{color4}}
+progress-color=over {{color4}}
 
 [urgency=high]
-border-color=#{{color1}}
+border-color={{color1}}
 default-timeout=0
