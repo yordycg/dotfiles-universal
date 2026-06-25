@@ -94,6 +94,19 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo dnf copr enable -y solopasha/hyprland
     fi
 
+    # Configurar exclusiones en el COPR solopasha para evitar conflictos en Fedora 44+
+    local solopasha_repo="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:solopasha:hyprland.repo"
+    if [ -f "$solopasha_repo" ] && ! grep -q "exclude=" "$solopasha_repo"; then
+        log_info "Configurando exclusiones en el COPR solopasha para evitar conflictos de dependencias..."
+        run sudo sh -c "echo 'exclude=hyprland,aquamarine,xdg-desktop-portal-hyprland,hyprsunset,hyprpolkitagent,hyprpicker,hypridle,hyprlock,hyprpaper' >> '$solopasha_repo'"
+    fi
+
+    # Habilitar COPR ashbuk/Hyprland-Fedora para el compositor estable e independiente
+    if ! dnf copr list | grep -q "ashbuk/Hyprland-Fedora"; then
+        log_info "Habilitando COPR ashbuk/Hyprland-Fedora (Hyprland Core)..."
+        run sudo dnf copr enable -y ashbuk/Hyprland-Fedora
+    fi
+
     # Habilitar COPR atim/xpadneo para driver de controles Xbox One
     if ! dnf copr list | grep -q "atim/xpadneo"; then
         log_info "Habilitando COPR atim/xpadneo (driver Xbox)..."
