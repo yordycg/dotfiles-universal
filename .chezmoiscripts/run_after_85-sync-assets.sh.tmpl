@@ -51,20 +51,40 @@ CACHE_DIR="$HOME/.cache/chezmoi-scripts"
 mkdir -p "$CACHE_DIR"
 SYNC_STATE="$CACHE_DIR/assets-last-sync"
 
+SHOULD_SYNC=1
 if [ -f "$SYNC_STATE" ]; then
     LAST_SYNC=$(cat "$SYNC_STATE")
     NOW=$(date +%s)
     DIFF=$(( NOW - LAST_SYNC ))
     if [ "$DIFF" -lt 86400 ]; then
-        exit 0  # Sincronizado hace menos de 24h — silencio
+        SHOULD_SYNC=0
     fi
 fi
 
-log_step "Sincronizando Recursos Gráficos"
+if [ "$SHOULD_SYNC" = "1" ]; then
+    log_step "Sincronizando Recursos Gráficos"
+    sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
+    sync_repo "git@github.com:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian-notes" "Obsidian Notes"
+    date +%s > "$SYNC_STATE"
+    log_ok "Sincronización de assets finalizada."
+fi
 
-sync_repo "git@github.com:yordycg/wallpapers.git" "$HOME/workspace/assets/wallpapers" "Wallpapers"
-sync_repo "git@github.com:yordycg/obsidian-notes.git" "$HOME/workspace/assets/obsidian-notes" "Obsidian Notes"
+# ── 2. Crear Enlaces para Hyprland (Se ejecuta en cada apply) ─────────────────
+log_info "Configurando enlaces de fondos de pantalla (Pictures)..."
+mkdir -p "$HOME/Pictures"
 
-log_ok "Sincronización de assets finalizada."
-date +%s > "$SYNC_STATE"
+# Crear enlace simbólico de Wallpapers si no existe
+if [ ! -d "$HOME/Pictures/Wallpapers" ]; then
+    ln -sf "$HOME/workspace/assets/wallpapers" "$HOME/Pictures/Wallpapers"
+    log_ok "Enlace de Wallpapers creado en ~/Pictures/Wallpapers."
+fi
+
+# Asegurar default.jpg para autostart y hyprpaper
+if [ -d "$HOME/Pictures/Wallpapers" ]; then
+    # Usar pokemon_01.jpg como default.jpg según preferencia del usuario
+    if [ -f "$HOME/Pictures/Wallpapers/pokemon_01.jpg" ]; then
+        ln -sf "$HOME/Pictures/Wallpapers/pokemon_01.jpg" "$HOME/Pictures/Wallpapers/default.jpg"
+        log_ok "Establecido pokemon_01.jpg como default.jpg."
+    fi
+fi
 {{- end }}
