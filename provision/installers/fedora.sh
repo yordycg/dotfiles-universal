@@ -95,7 +95,7 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     fi
 
     # Configurar exclusiones en el COPR solopasha para evitar conflictos en Fedora 44+
-    local solopasha_repo="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:solopasha:hyprland.repo"
+    solopasha_repo="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:solopasha:hyprland.repo"
     if [ -f "$solopasha_repo" ] && ! grep -q "exclude=" "$solopasha_repo"; then
         log_info "Configurando exclusiones en el COPR solopasha para evitar conflictos de dependencias..."
         run sudo sh -c "echo 'exclude=hyprland,aquamarine,xdg-desktop-portal-hyprland,hyprsunset,hyprpolkitagent,hyprpicker,hypridle,hyprlock,hyprpaper' >> '$solopasha_repo'"
