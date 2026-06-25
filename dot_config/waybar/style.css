@@ -4,18 +4,18 @@
 
 @import "colors.css";
 
-/* Mapeo de colores semánticos basados en Catppuccin */
-@define-color bg       rgba(30, 30, 46, 0.70); /* Base Mocha traslúcido */
-@define-color border   rgba(137, 180, 250, 0.20); /* Borde azul muy fino */
+/* Mapeo de colores semánticos dinámicos (Wallust) */
+@define-color bg       alpha(@base00, 0.70); /* Fondo traslúcido dinámico */
+@define-color border   alpha(@base0D, 0.20); /* Borde con acento sutil dinámico */
 
-@define-color red      #f38ba8;
-@define-color green    #a6e3a1;
-@define-color yellow   #f9e2af;
-@define-color blue     #89b4fa;
-@define-color purple   #cba6f7;
-@define-color aqua     #74c7ec;
-@define-color gray     #6c7086;
-@define-color fg       #cdd6f4;
+@define-color red      @base08;
+@define-color green    @base0B;
+@define-color yellow   @base0A;
+@define-color blue     @base0D;
+@define-color purple   @base0E;
+@define-color aqua     @base0C;
+@define-color gray     @base03;
+@define-color fg       @base05;
 
 * {
     border: none;
