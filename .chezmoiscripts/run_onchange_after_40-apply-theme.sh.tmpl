@@ -101,5 +101,10 @@ if command -v flavours &>/dev/null; then
     log_ok "Colores de terminal actualizados."
 fi
 
+# ── 6. Asegurar existencia de archivos dinámicos de Hyprland ─────────────────
+log_info "Asegurando archivo de colores dinámicos para Hyprland..."
+mkdir -p "$HOME/.config/hypr/conf.d"
+[ -f "$HOME/.config/hypr/conf.d/theme-colors.conf" ] || touch "$HOME/.config/hypr/conf.d/theme-colors.conf"
+
 log_ok "Personalización visual completada exitosamente."
 {{- end }}
