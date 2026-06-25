@@ -1,4 +1,4 @@
-# Mako Configuration (Gruvbox Style)
+# Mako Configuration (Catppuccin Mocha Style via chezmoi)
 # -----------------------------------------------------------------------------
 
 font=JetBrainsMono Nerd Font 10
@@ -7,18 +7,18 @@ height=150
 margin=20
 padding=15
 border-size=2
-border-radius=0
+border-radius=8
 icons=1
 max-icon-size=48
 default-timeout=5000
 ignore-timeout=0
 
-# Colors (Gruvbox Dark)
-background-color=#282828
-text-color=#ebdbb2
-border-color=#458588
-progress-color=over #458588
+# Colors (Catppuccin Mocha with transparency)
+background-color=#1e1e2eB3
+text-color=#cdd6f4
+border-color=#{{ .accentColor }}
+progress-color=over #{{ .accentColor }}
 
 [urgency=high]
-border-color=#cc241d
+border-color=#f38ba8
 default-timeout=0

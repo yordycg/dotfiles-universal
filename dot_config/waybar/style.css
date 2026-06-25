@@ -1,19 +1,21 @@
 /* =============================================================================
- * Waybar Style - Managed by flavours
+ * Waybar Style - Catppuccin Floating Capsule Style
  * ============================================================================= */
 
 @import "colors.css";
 
-/* Mapping base16 to semantic names for easier maintenance */
-@define-color bg      @base00;
-@define-color red     @base08;
-@define-color green   @base0B;
-@define-color yellow  @base0A;
-@define-color blue    @base0D;
-@define-color purple  @base0E;
-@define-color aqua    @base0C;
-@define-color gray    @base03;
-@define-color fg      @base05;
+/* Mapeo de colores semánticos basados en Catppuccin */
+@define-color bg       rgba(30, 30, 46, 0.70); /* Base Mocha traslúcido */
+@define-color border   rgba(137, 180, 250, 0.20); /* Borde azul muy fino */
+
+@define-color red      #f38ba8;
+@define-color green    #a6e3a1;
+@define-color yellow   #f9e2af;
+@define-color blue     #89b4fa;
+@define-color purple   #cba6f7;
+@define-color aqua     #74c7ec;
+@define-color gray     #6c7086;
+@define-color fg       #cdd6f4;
 
 * {
     border: none;
@@ -23,77 +25,70 @@
     min-height: 0;
 }
 
+/* Contenedor principal flotante */
 window#waybar {
     background: @bg;
     color: @fg;
-    border-bottom: 2px solid @blue;
+    border: 1px solid @border;
+    border-radius: 14px;
+    margin: 8px 12px 0 12px; /* Margen superior y lateral para flotar */
+    transition: all 0.3s ease;
+}
+
+/* Contenedor interno de espacios de trabajo (Píldora izquierda) */
+#workspaces {
+    background: rgba(17, 17, 27, 0.4);
+    border-radius: 10px;
+    margin: 4px 6px;
+    padding: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 #workspaces button {
     padding: 0 10px;
-    background: transparent;
     color: @gray;
-    border-bottom: 3px solid transparent;
+    background: transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
 }
 
-#workspaces button.focused {
-    color: @fg;
-    background: @base02;
-    border-bottom: 3px solid @blue;
+/* Corrección de la clase activa para Hyprland (antes .focused) */
+#workspaces button.active {
+    color: #11111b; /* Texto oscuro sobre fondo claro */
+    background: @blue; /* Botón azul brillante */
+    font-weight: bold;
 }
 
 #workspaces button.urgent {
     background-color: @red;
-    color: @fg;
+    color: #11111b;
 }
 
 #workspaces button:hover {
-    background: @base02;
-    box-shadow: inherit;
-    text-shadow: inherit;
+    background: rgba(255, 255, 255, 0.08);
+    color: @fg;
 }
 
-#mode, #clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #idle_inhibitor, #tray {
+/* Píldoras individuales para cada módulo de información */
+#clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #idle_inhibitor, #tray, #window {
+    background: rgba(17, 17, 27, 0.4);
+    border-radius: 10px;
+    margin: 4px 3px;
     padding: 0 12px;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+/* Personalización de colores por píldora */
+#window {
+    background: transparent;
+    border: none;
+    color: @purple;
+    font-weight: bold;
 }
 
 #clock {
+    color: @aqua;
     font-weight: bold;
-    color: @aqua;
-}
-
-#battery {
-    color: @green;
-}
-
-#battery.critical:not(.charging) {
-    background-color: @red;
-    color: @fg;
-    animation-name: blink;
-    animation-duration: 0.5s;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-    animation-direction: alternate;
-}
-
-#cpu {
-    color: @blue;
-}
-
-#memory {
-    color: @purple;
-}
-
-#temperature {
-    color: @yellow;
-}
-
-#backlight {
-    color: @yellow;
-}
-
-#network {
-    color: @aqua;
 }
 
 #pulseaudio {
@@ -102,6 +97,36 @@ window#waybar {
 
 #pulseaudio.muted {
     color: @gray;
+}
+
+#network {
+    color: @green;
+}
+
+#cpu {
+    color: @yellow;
+}
+
+#memory {
+    color: @purple;
+}
+
+#temperature {
+    color: @aqua;
+}
+
+#backlight {
+    color: @yellow;
+}
+
+#battery {
+    color: @green;
+}
+
+#battery.critical:not(.charging) {
+    background-color: @red;
+    color: #11111b;
+    animation: blink 0.5s linear infinite alternate;
 }
 
 #idle_inhibitor {
@@ -113,12 +138,12 @@ window#waybar {
 }
 
 #tray {
-    background-color: @base02;
+    padding: 0 8px;
 }
 
 @keyframes blink {
     to {
         background-color: @fg;
-        color: @bg;
+        color: #11111b;
     }
 }
