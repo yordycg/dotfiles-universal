@@ -28,7 +28,7 @@
 {{/* ── PASO 2.5: Identificar Entorno Gráfico ────────────────── */}}
 {{- $desktopEnv := "none" -}}
 {{- if $isGUI -}}
-{{-   $desktopEnv = promptStringOnce . "desktopEnv" "Entorno de escritorio (kde, sway, both, gnome, none)" "sway" -}}
+{{-   $desktopEnv = promptStringOnce . "desktopEnv" "Entorno de escritorio (kde, sway, hyprland, both, gnome, none)" "sway" -}}
 {{- end -}}
 
 {{- $hasGUI      := or $isLaptop $isDesktop -}}
@@ -61,6 +61,14 @@ data:
   isDesktop: {{ $isDesktop }}
   desktopEnv: {{ $desktopEnv | quote }}
   kdeTheme: "mactahoe"
+
+  # ── Tema de Escritorio ──
+  gtkTheme: "Adwaita-dark"
+  cursorTheme: "Adwaita"
+  iconTheme: "Papirus-Dark"
+  accentColor: "cba6f7"
+  accentColorAlt: "89b4fa"
+  borderInactive: "313244"
 
   # ── Capacidades ──
   hasGUI:      {{ $hasGUI }}

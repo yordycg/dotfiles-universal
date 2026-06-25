@@ -25,7 +25,11 @@ case $chosen in
         systemctl reboot
         ;;
     $lock)
-        swaylock -c #282828
+        if pgrep -x "Hyprland" > /dev/null; then
+            hyprlock
+        else
+            swaylock -c #282828
+        fi
         ;;
     $suspend)
         mpc -q pause
@@ -33,6 +37,10 @@ case $chosen in
         systemctl suspend
         ;;
     $logout)
-        swaymsg exit
+        if pgrep -x "Hyprland" > /dev/null; then
+            hyprctl dispatch exit
+        elif pgrep -x "sway" > /dev/null; then
+            swaymsg exit
+        fi
         ;;
 esac

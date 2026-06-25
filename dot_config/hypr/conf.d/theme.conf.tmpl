@@ -1,0 +1,83 @@
+# =============================================================================
+# theme.conf — Tema Visual (Colores, Bordes, Blur, Sombras)
+# Las variables de color vienen de .chezmoi.yaml.tmpl (data:)
+# Para theming dinámico desde wallpaper, este archivo puede ser sobreescrito
+# por wallust en runtime (fuera del ciclo de chezmoi).
+# =============================================================================
+
+general {
+    gaps_in = 5
+    gaps_out = 10
+    border_size = 2
+
+    # Gradiente en el borde de ventana activa
+    col.active_border = rgba({{ get . "accentColor" | default "cba6f7" }}ee) rgba({{ get . "accentColorAlt" | default "89b4fa" }}ee) 45deg
+    col.inactive_border = rgba({{ get . "borderInactive" | default "313244" }}aa)
+
+    layout = dwindle            # dwindle (espiral) o master
+    resize_on_border = true     # Redimensionar arrastrando el borde
+    allow_tearing = false
+}
+
+decoration {
+    rounding = 10               # Radio de esquinas redondeadas en px
+
+    # ── Transparencia ────────────────────────────────────────────────
+    active_opacity = 1.0
+    inactive_opacity = 0.95
+
+    # ── Blur (desenfoque gaussiano) ───────────────────────────────────
+    blur {
+        enabled = true
+        size = 8
+        passes = 2
+        vibrancy = 0.1696
+        noise = 0.0117
+        contrast = 0.8917
+        brightness = 0.8172
+        xray = false            # Si true: el blur traspasa ventanas
+    }
+
+    # ── Sombras ───────────────────────────────────────────────────────
+    # Sintaxis 0.42+ (drop_shadow fue deprecado)
+    shadow {
+        enabled = true
+        range = 12
+        render_power = 3
+        color = rgba(1a1a1aee)
+        color_inactive = rgba(1a1a1a88)
+    }
+}
+
+# ── Dimensiones de ventanas ───────────────────────────────────────────────────
+dwindle {
+    pseudotile = true           # Super+P activa pseudo-tiling
+    preserve_split = true
+    smart_split = false
+    smart_resizing = true
+}
+
+master {
+    new_status = master
+    mfact = 0.55                # Proporción master/stack
+}
+
+misc {
+    force_default_wallpaper = 0     # Desactivar wallpaper por defecto de Hyprland
+    disable_hyprland_logo = true    # Quitar logo splash al inicio
+    disable_splash_rendering = true
+    mouse_move_enables_dpms = true
+    key_press_enables_dpms = true
+    animate_manual_resizes = true
+}
+
+# ── Cursor ────────────────────────────────────────────────────────────────────
+cursor {
+    no_hardware_cursors = true      # Requerido para NVIDIA propietario
+    enable_hyprcursor = true
+}
+
+# ── Colores dinámicos desde wallpaper (generado por wallust) ─────────────────
+# Este archivo es generado en runtime por wallust al cambiar el wallpaper.
+# Si no existe, se usan los colores de fallback declarados arriba.
+source = ~/.config/hypr/conf.d/theme-colors.conf

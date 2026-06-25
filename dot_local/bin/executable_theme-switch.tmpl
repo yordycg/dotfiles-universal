@@ -51,7 +51,11 @@ if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
 fi
 
 # --- 5. Reload de Apps Gráficas Locales ---
-pgrep -x sway > /dev/null && swaymsg reload
+if pgrep -x "Hyprland" > /dev/null; then
+    hyprctl reload
+elif pgrep -x "sway" > /dev/null; then
+    swaymsg reload
+fi
 pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
 pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
 {{- end }}

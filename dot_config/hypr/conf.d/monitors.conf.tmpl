@@ -1,0 +1,14 @@
+# =============================================================================
+# monitors.conf — Configuración de Monitores
+# Generado por chezmoi.
+# =============================================================================
+
+{{ if .isDesktop -}}
+# ── Desktop (ajustar resolución, refresh rate y posición reales) ──────────────
+# Formato: monitor=NOMBRE,RESOLUCIONxALTURA@REFRESCO,POSICIONxPOSICION,ESCALA
+# Listar monitores disponibles: hyprctl monitors
+monitor = , preferred, auto, 1
+{{ else -}}
+# ── Fallback genérico (auto-detectar) ────────────────────────────────────────
+monitor = , preferred, auto, 1
+{{ end -}}

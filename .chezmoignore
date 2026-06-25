@@ -40,19 +40,32 @@ provision/**
 
 # ── Exclusiones dinámicas según el Entorno de Escritorio ──────────
 
-# Si no se usa Sway, ignorar archivos específicos de Sway/Wayland
-{{ if and (ne .desktopEnv "sway") (ne .desktopEnv "both") -}}
-.config/sway/**
+# Identificar si se usará algún entorno basado en Wayland (Sway o Hyprland)
+{{- $usesWayland := or (eq .desktopEnv "sway") (eq .desktopEnv "hyprland") (eq .desktopEnv "both") -}}
+
+# Si no se usa ningún entorno Wayland, ignorar configuraciones comunes
+{{- if not $usesWayland }}
 .config/waybar/**
 .config/rofi/**
 .config/wofi/**
 .config/mako/**
 .config/gammastep/**
 .config/wallust/**
-{{ end -}}
+{{- end }}
+
+# Ignorar Sway si no está seleccionado
+{{- if and (ne .desktopEnv "sway") (ne .desktopEnv "both") }}
+.config/sway/**
+{{- end }}
+
+# Ignorar Hyprland si no está seleccionado O si el nodo NO es Desktop
+{{- if or (and (ne .desktopEnv "hyprland") (ne .desktopEnv "both")) (not .isDesktop) }}
+.config/hypr/**
+{{- end }}
 
 # ── Archivos generados dinámicamente (todos los sistemas) ────────
 .config/kitty/colors.conf
 .config/tmux/colors.conf
 .config/waybar/colors.css
 .config/sway/colors
+.config/hypr/conf.d/theme-colors.conf

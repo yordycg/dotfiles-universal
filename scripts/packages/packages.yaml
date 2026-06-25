@@ -91,6 +91,34 @@ fedora:
     - swww
     - waypaper
 
+  hyprland:
+    # ── Compositor y ecosistema Hypr (via COPR solopasha/hyprland) ──
+    - hyprland
+    - hyprpaper
+    - hyprlock
+    - hypridle
+    - hyprpicker
+    - hyprsunset
+    - hyprpolkitagent
+    - xdg-desktop-portal-hyprland
+    # ── Wayland / Qt (nombres correctos en Fedora) ──
+    - qt5-qtwayland
+    - qt6-qtwayland
+    # ── Herramientas Wayland compartidas ──
+    - waybar
+    - rofi-wayland
+    - mako
+    - grim
+    - slurp
+    - wl-clipboard
+    - cliphist
+    - swww
+    - brightnessctl
+    - pavucontrol
+    - mate-polkit
+    - papirus-icon-theme
+    - imv
+
   kde:
     # Core
     - plasma-desktop

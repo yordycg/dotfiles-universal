@@ -105,11 +105,29 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     # Perfil de Entorno Gráfico Específico (Sway, KDE o Ambos)
     if [ "${NODE_DESKTOP_ENV:-}" = "sway" ]; then
         install_section "sway"
+    elif [ "${NODE_DESKTOP_ENV:-}" = "hyprland" ]; then
+        if [ "${NODE_IS_DESKTOP:-}" = "true" ]; then
+            log_info "Instalando Hyprland (nodo Desktop detectado)..."
+            install_section "hyprland"
+        else
+            log_warn "Hyprland seleccionado pero este nodo no es Desktop (sin GPU dedicada)."
+            log_warn "Instalando Sway como fallback para este nodo..."
+            install_section "sway"
+        fi
     elif [ "${NODE_DESKTOP_ENV:-}" = "kde" ]; then
         install_section "kde"
     elif [ "${NODE_DESKTOP_ENV:-}" = "both" ]; then
-        install_section "sway"
-        install_section "kde"
+        if [ "${NODE_IS_DESKTOP:-}" = "true" ]; then
+            # Desktop: Sway + Hyprland (para poder comparar/alternar)
+            log_info "Modo 'both' en Desktop: instalando Sway + Hyprland..."
+            install_section "sway"
+            install_section "hyprland"
+        else
+            # Laptop: Sway + KDE (comportamiento original)
+            log_info "Modo 'both' en Laptop: instalando Sway + KDE..."
+            install_section "sway"
+            install_section "kde"
+        fi
     fi
 
     # Activar servicios instalados condicionalmente

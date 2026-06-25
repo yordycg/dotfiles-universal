@@ -1,0 +1,36 @@
+# =============================================================================
+# autostart.conf — Programas al Inicio de Sesión
+# exec-once: se ejecuta solo la primera vez que inicia Hyprland
+# exec: se ejecuta en cada reload de config
+# =============================================================================
+
+# ── Status bar ────────────────────────────────────────────────────────────────
+exec-once = waybar
+
+# ── Wallpaper (swww con transición al cambiar) ────────────────────────────────
+exec-once = swww-daemon
+exec-once = swww img {{ .chezmoi.homeDir }}/Pictures/Wallpapers/default.jpg --transition-type wipe
+
+# ── Notificaciones ────────────────────────────────────────────────────────────
+exec-once = mako
+
+# ── Autenticación Polkit ──────────────────────────────────────────────────────
+exec-once = /usr/libexec/mate-polkit/polkit-mate-authentication-agent-1
+
+# ── Portapapeles (historial con cliphist) ────────────────────────────────────
+exec-once = wl-paste --type text  --watch cliphist store
+exec-once = wl-paste --type image --watch cliphist store
+
+# ── Cursor (aplicar tema al inicio) ──────────────────────────────────────────
+exec-once = hyprctl setcursor {{ get . "cursorTheme" | default "Adwaita" }} 24
+
+# ── Theming GTK (aplicar via gsettings) ──────────────────────────────────────
+exec-once = gsettings set org.gnome.desktop.interface gtk-theme   '{{ get . "gtkTheme" | default "Adwaita-dark" }}'
+exec-once = gsettings set org.gnome.desktop.interface icon-theme  '{{ get . "iconTheme" | default "Papirus-Dark" }}'
+exec-once = gsettings set org.gnome.desktop.interface cursor-theme '{{ get . "cursorTheme" | default "Adwaita" }}'
+
+# ── Idle management (hypridle) ────────────────────────────────────────────────
+exec-once = hypridle
+
+# ── Keyring de GNOME ─────────────────────────────────────────────────────────
+exec-once = /usr/bin/gnome-keyring-daemon --start --components=secrets

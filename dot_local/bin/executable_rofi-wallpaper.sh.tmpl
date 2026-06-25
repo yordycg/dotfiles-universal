@@ -49,7 +49,11 @@ if [ -n "$selection" ]; then
         $HOME/.cargo/bin/wallust run "$full_path"
         
         # 3. Reload apps to apply new colors
-        swaymsg reload
+        if pgrep -x "Hyprland" > /dev/null; then
+            hyprctl reload
+        elif pgrep -x "sway" > /dev/null; then
+            swaymsg reload
+        fi
         pkill -USR1 kitty   # Reload kitty config
         pkill -USR2 waybar  # Reload waybar styles without restarting
     fi

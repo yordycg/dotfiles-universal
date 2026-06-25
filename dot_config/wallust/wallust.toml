@@ -9,3 +9,4 @@ sway = { template = "sway.wl", target = "~/.config/sway/colors" }
 kitty = { template = "kitty.wl", target = "~/.config/kitty/colors.conf" }
 waybar = { template = "waybar.wl", target = "~/.config/waybar/colors.css" }
 fzf = { template = "fzf.wl", target = "~/.config/shell/fzf_colors.sh" }
+hyprland = { template = "hyprland.wl", target = "~/.config/hypr/conf.d/theme-colors.conf" }
