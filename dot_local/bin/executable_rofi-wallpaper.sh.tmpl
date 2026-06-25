@@ -45,8 +45,8 @@ if [ -n "$selection" ]; then
     swww img "$full_path" --transition-type grow --transition-pos center --transition-duration 1.5
     
     # 2. Update colors with wallust
-    if [ -x "$HOME/.cargo/bin/wallust" ]; then
-        $HOME/.cargo/bin/wallust run "$full_path"
+    if command -v wallust &> /dev/null; then
+        wallust run "$full_path"
         
         # 3. Reload apps to apply new colors
         if pgrep -x "Hyprland" > /dev/null; then
