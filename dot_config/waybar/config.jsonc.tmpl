@@ -12,7 +12,7 @@
     // Modules configuration
     "hyprland/workspaces": {
         "disable-scroll": true,
-        "all-outputs": true,
+        "all-outputs": false,
         "format": "{name}: {icon}",
         "format-icons": {
             "1": "",
@@ -23,7 +23,17 @@
             "urgent": "",
             "active": "",
             "default": ""
+        },
+        {{- if .isDesktop }}
+        "persistent-workspaces": {
+            "DP-2": [1, 2, 3, 4, 5],
+            "HDMI-A-3": [6, 7, 8, 9, 10]
         }
+        {{- else }}
+        "persistent-workspaces": {
+            "*": [1, 2, 3, 4, 5]
+        }
+        {{- end }}
     },
     "hyprland/window": {
         "format": "󰣛 {}"
