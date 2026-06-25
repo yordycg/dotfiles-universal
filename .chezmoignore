@@ -69,3 +69,5 @@ provision/**
 .config/waybar/colors.css
 .config/sway/colors
 .config/hypr/conf.d/theme-colors.conf
+.config/mako/config
+.config/rofi/colors.rasi

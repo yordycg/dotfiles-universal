@@ -2,8 +2,8 @@
 # {{ .chezmoi.sourceDir }}/dot_local/bin/executable_theme-switch.tmpl
 # Usage: theme-switch catppuccin-mocha
 
-# Ensure ~/.local/bin and ~/.cargo/bin are in PATH
-export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+# Ensure ~/.local/share/mise/shims, ~/.local/bin and ~/.cargo/bin are in PATH
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 # --- 1. Verificación de Entorno ---
 # Si no hay flavours, no podemos generar ni listar temas.

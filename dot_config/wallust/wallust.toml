@@ -10,3 +10,5 @@ kitty = { template = "kitty.wl", target = "~/.config/kitty/colors.conf" }
 waybar = { template = "waybar.wl", target = "~/.config/waybar/colors.css" }
 fzf = { template = "fzf.wl", target = "~/.config/shell/fzf_colors.sh" }
 hyprland = { template = "hyprland.wl", target = "~/.config/hypr/conf.d/theme-colors.conf" }
+mako = { template = "mako.wl", target = "~/.config/mako/config" }
+rofi = { template = "rofi.wl", target = "~/.config/rofi/colors.rasi" }

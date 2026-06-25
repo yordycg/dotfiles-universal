@@ -1,4 +1,4 @@
-# Mako Configuration (Catppuccin Mocha Style via chezmoi)
+# Mako Configuration (Dynamic Colors via Wallust)
 # -----------------------------------------------------------------------------
 
 font=JetBrainsMono Nerd Font 10
@@ -13,12 +13,12 @@ max-icon-size=48
 default-timeout=5000
 ignore-timeout=0
 
-# Colors (Catppuccin Mocha with transparency)
-background-color=#1e1e2eB3
-text-color=#cdd6f4
-border-color=#{{ .accentColor }}
-progress-color=over #{{ .accentColor }}
+# Colors (Dynamic Catppuccin-style based on Wallpaper)
+background-color=#{{color0}}B3
+text-color=#{{foreground}}
+border-color=#{{color4}}
+progress-color=over #{{color4}}
 
 [urgency=high]
-border-color=#f38ba8
+border-color=#{{color1}}
 default-timeout=0

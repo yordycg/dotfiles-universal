@@ -9,12 +9,9 @@ configuration {
 
 @theme "/dev/null"
 
-* {
-    bg:                          #1e1e2eB3; /* Catppuccin Mocha Base with 70% opacity */
-    bg-alt:                      #313244B3; /* Catppuccin Mocha Surface0 with 70% opacity */
-    fg:                          #cdd6f4;   /* Catppuccin Mocha Text */
-    accent:                      #{{ .accentColor }};
+@import "colors.rasi"
 
+* {
     background-color:            transparent;
     text-color:                  @fg;
 }
