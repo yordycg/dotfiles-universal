@@ -47,9 +47,9 @@ if [ -n "$selection" ]; then
     # 1. Apply with swww (already used in sway config)
     swww img "$full_path" --transition-type grow --transition-pos center --transition-duration 1.5
     
-    # 2. Update colors with wallust
+    # 2. Update colors with wallust (skip terminal sequences to prevent KDE daemon warnings)
     if command -v wallust &> /dev/null; then
-        wallust run "$full_path"
+        wallust run --skip-sequences "$full_path"
         
         # 3. Reload apps to apply new colors
         if pgrep -x "Hyprland" > /dev/null; then
