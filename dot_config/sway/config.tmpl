@@ -181,8 +181,8 @@ exec /usr/libexec/polkit-mate-authentication-agent-1
 
 # Wallpaper (swww para transiciones suaves)
 exec_always swww-daemon --format xrgb
-# Aplicar el último wallpaper (swww se encarga de recordar o aplicar uno por defecto)
-exec swww img ~/workspace/assets/wallpapers/macos-00.jpg --transition-type center
+# Aplicar el último wallpaper (se restaura el guardado por el picker o uno por defecto)
+exec ~/.local/bin/rofi-wallpaper.sh --restore
 
 # Lock screen shortcut
 bindsym $mod+Escape exec swaylock -c $base00

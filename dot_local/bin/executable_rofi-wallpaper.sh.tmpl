@@ -10,6 +10,42 @@ WALLPAPER_DIR="$HOME/workspace/assets/wallpapers"
 THUMB_DIR="$HOME/.cache/wallpaper-thumbnails"
 ROFI_THEME="$HOME/.config/rofi/wallpaper.rasi"
 
+# --- RESTORE WALLPAPER ON BOOT ---
+if [ "$1" = "--restore" ]; then
+    # Read saved wallpaper path
+    if [ -f "$HOME/.cache/.current_wallpaper" ]; then
+        full_path=$(cat "$HOME/.cache/.current_wallpaper")
+    fi
+
+    # Fallback if empty or file doesn't exist
+    if [ -z "$full_path" ] || [ ! -f "$full_path" ]; then
+        full_path="$WALLPAPER_DIR/macos-00.jpg"
+        if [ ! -f "$full_path" ]; then
+            full_path="$HOME/Pictures/Wallpapers/default.jpg"
+        fi
+    fi
+
+    # Apply wallpaper if we have a valid file
+    if [ -f "$full_path" ]; then
+        # Wait for swww-daemon to be ready (up to 3 seconds)
+        for i in {1..15}; do
+            if swww query &>/dev/null; then
+                break
+            fi
+            sleep 0.2
+        done
+
+        # Apply wallpaper
+        swww img "$full_path" --transition-type center --transition-duration 1.5
+
+        # Update colors with wallust (skip terminal sequences to prevent KDE daemon warnings)
+        if command -v wallust &> /dev/null; then
+            wallust run --skip-sequences "$full_path"
+        fi
+    fi
+    exit 0
+fi
+
 mkdir -p "$THUMB_DIR"
 
 # 1. Generate thumbnails (optimized)

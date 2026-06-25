@@ -9,7 +9,7 @@ exec-once = waybar
 
 # ── Wallpaper (swww con transición al cambiar) ────────────────────────────────
 exec-once = swww-daemon
-exec-once = swww img {{ .chezmoi.homeDir }}/Pictures/Wallpapers/default.jpg --transition-type wipe
+exec-once = {{ .chezmoi.homeDir }}/.local/bin/rofi-wallpaper.sh --restore
 
 # ── Notificaciones ────────────────────────────────────────────────────────────
 exec-once = mako
