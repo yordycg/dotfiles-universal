@@ -8,14 +8,18 @@ if [ -z "$TARGET_WORKSPACE" ]; then
     exit 1
 fi
 
-# 1. Check if the target workspace is already active/visible on any monitor
-if hyprctl monitors -j | jq -e ".[] | select(.activeWorkspace.id == ($TARGET_WORKSPACE | tonumber))" >/dev/null 2>&1; then
-    # The workspace is already visible, no action needed!
+# 1. Get the currently active monitor
+ORIGINAL_MONITOR=$(hyprctl activeworkspace | head -n 1 | awk '{print $NF}' | tr -d ':')
+
+# 2. Check if the target workspace is already active/visible on any monitor
+TARGET_MONITOR=$(hyprctl monitors -j | jq -r ".[] | select(.activeWorkspace.id == ($TARGET_WORKSPACE | tonumber)) | .name")
+
+if [ -n "$TARGET_MONITOR" ] && [ "$TARGET_MONITOR" != "null" ]; then
+    # The workspace is already visible on some monitor.
+    # Just focus that monitor!
+    hyprctl dispatch focusmonitor "$TARGET_MONITOR"
     exit 0
 fi
-
-# 2. Get the currently active monitor
-ORIGINAL_MONITOR=$(hyprctl activeworkspace | awk '{print $NF}' | tr -d ':')
 
 # 3. Switch to the target workspace (this may shift focus to its monitor)
 hyprctl dispatch workspace "$TARGET_WORKSPACE"
