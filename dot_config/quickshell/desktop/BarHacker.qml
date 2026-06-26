@@ -16,6 +16,9 @@ import Quickshell.Io
 PanelWindow {
     id: hk
     required property var root
+    required property var modelData
+    screen: modelData
+    readonly property int screenIndex: Quickshell.screens.indexOf(modelData)
 
     color: "transparent"
     anchors {
@@ -274,10 +277,10 @@ PanelWindow {
                 Layout.alignment: Qt.AlignVCenter
                 spacing: 3
                 Repeater {
-                    model: 10
+                    model: 5
                     delegate: Item {
                         required property int index
-                        readonly property int wsId: index + 1
+                        readonly property int wsId: index + 1 + (hk.screenIndex * 5)
                         readonly property bool active: hk.root.activeWs === wsId
                         readonly property bool present: hk.root.existingWs.indexOf(wsId) !== -1
                         width: tag.implicitWidth
@@ -524,10 +527,10 @@ PanelWindow {
 
         // present/active workspace numbers, stacked
         Repeater {
-            model: 10
+            model: 5
             delegate: Text {
                 required property int index
-                readonly property int wsId: index + 1
+                readonly property int wsId: index + 1 + (hk.screenIndex * 5)
                 readonly property bool active: hk.root.activeWs === wsId
                 readonly property bool present: hk.root.existingWs.indexOf(wsId) !== -1
                 visible: active || present

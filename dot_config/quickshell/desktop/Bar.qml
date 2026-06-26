@@ -6,6 +6,9 @@ import Quickshell.Wayland
 PanelWindow {
     id: bar
     required property var root
+    required property var modelData
+    screen: modelData
+    readonly property int screenIndex: Quickshell.screens.indexOf(modelData)
 
     color: "transparent"
     // Anchors track barEdge — three sides anchored, the side opposite
@@ -412,15 +415,15 @@ PanelWindow {
             Separator { root: bar.root }
 
             Repeater {
-                model: 10
+                model: 5
                 delegate: Workspace {
                     required property int index
                     root: bar.root
-                    wsId: index + 1
-                    label: bar.root.indexKanji(index + 1)
-                    active: bar.root.activeWs === (index + 1)
-                    present: bar.root.existingWs.indexOf(index + 1) !== -1
-                    onActivated: { console.log("[WS-ACT fired] ws=" + (index + 1) + " runType=" + (typeof (bar.root && bar.root.run))); bar.root.run("hyprctl dispatch workspace " + (index + 1)); }
+                    wsId: index + 1 + (bar.screenIndex * 5)
+                    label: bar.root.indexKanji(wsId)
+                    active: bar.root.activeWs === wsId
+                    present: bar.root.existingWs.indexOf(wsId) !== -1
+                    onActivated: { console.log("[WS-ACT fired] ws=" + wsId + " runType=" + (typeof (bar.root && bar.root.run))); bar.root.run("hyprctl dispatch workspace " + wsId); }
                 }
             }
 

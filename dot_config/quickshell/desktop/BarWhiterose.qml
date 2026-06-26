@@ -8,8 +8,10 @@ import Quickshell.Wayland
 // for emphasis while still following the live omarchy theme palette.
 PanelWindow {
     id: wr
-
     required property var root
+    required property var modelData
+    screen: modelData
+    readonly property int screenIndex: Quickshell.screens.indexOf(modelData)
 
     readonly property color bg: root.bg
     readonly property color text: root.ink
@@ -174,11 +176,11 @@ PanelWindow {
             Rectangle { Layout.preferredWidth: 1; Layout.preferredHeight: 14; Layout.alignment: Qt.AlignVCenter; color: wr.line }
 
             Repeater {
-                model: 10
+                model: 5
                 delegate: Item {
                     id: wsDot
                     required property int index
-                    readonly property int wsId: index + 1
+                    readonly property int wsId: index + 1 + (wr.screenIndex * 5)
                     readonly property bool active: wr.root.activeWs === wsId
                     readonly property bool present: wr.root.existingWs.indexOf(wsId) !== -1
 
@@ -367,11 +369,11 @@ PanelWindow {
         Rectangle { Layout.preferredWidth: 14; Layout.preferredHeight: 1; Layout.alignment: Qt.AlignHCenter; color: wr.line }
 
         Repeater {
-            model: 10
+            model: 5
             delegate: Item {
                 id: wsDotV
                 required property int index
-                readonly property int wsId: index + 1
+                readonly property int wsId: index + 1 + (wr.screenIndex * 5)
                 readonly property bool active: wr.root.activeWs === wsId
                 readonly property bool present: wr.root.existingWs.indexOf(wsId) !== -1
 

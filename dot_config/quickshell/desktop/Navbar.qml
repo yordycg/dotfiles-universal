@@ -1754,9 +1754,33 @@ Item {
     // ---------- Surfaces ----------
     // All bar faces are instantiated; only the one matching barVariant maps
     // to the edge (the other is an unmapped, zero-exclusive-zone window).
-    Bar              { root: root; visible: root.barVariant === "zen" }
-    BarHacker        { root: root; visible: root.barVariant === "hackerman" }
-    BarWhiterose     { root: root; visible: root.barVariant === "whiterose" }
+    Variants {
+        model: Quickshell.screens
+        delegate: Component {
+            Bar {
+                root: root
+                visible: root.barVariant === "zen"
+            }
+        }
+    }
+    Variants {
+        model: Quickshell.screens
+        delegate: Component {
+            BarHacker {
+                root: root
+                visible: root.barVariant === "hackerman"
+            }
+        }
+    }
+    Variants {
+        model: Quickshell.screens
+        delegate: Component {
+            BarWhiterose {
+                root: root
+                visible: root.barVariant === "whiterose"
+            }
+        }
+    }
     TooltipOverlay   { root: root }
     SystemPopup      { root: root }
     CalendarPopup    { root: root }
