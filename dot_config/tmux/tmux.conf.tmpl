@@ -127,13 +127,12 @@ set -g @tmux-dotbar-bold-current-window true
 set -g @tmux-dotbar-ssh-icon-only true
 set -g @tmux-dotbar-right false
 
-# Colores Predeterminados (Kanagawa Dragon)
-set -g @tmux-dotbar-bg "#1d1c19"
-set -g @tmux-dotbar-fg "#a6a69c"
-set -g @tmux-dotbar-active-bg "#c4746e"        # Rojo (Seal) para ventana activa
-set -g @tmux-dotbar-active-fg "#181616"
-set -g @tmux-dotbar-prefix-bg "#c4746e"        # Rojo (Seal) para Prefix activo
-set -g @tmux-dotbar-prefix-fg "#181616"
+# Colores Predeterminados (Kanagawa Dragon - dotbar)
+set -g @tmux-dotbar-bg "#1d1c19"               # Fondo de la barra (Gris carbón)
+set -g @tmux-dotbar-fg "#a6a69c"               # Pestañas inactivas (Gris terroso)
+set -g @tmux-dotbar-fg-current "#c4746e"       # Pestaña activa (Rojo Seal)
+set -g @tmux-dotbar-fg-session "#658594"       # Nombre de sesión (Azul Pizarra)
+set -g @tmux-dotbar-fg-prefix "#c4746e"        # Prefix activo (Rojo Seal)
 
 # Pane borders y estilos de selección (Kanagawa Dragon)
 set -g pane-border-style "fg=#2a2828"
