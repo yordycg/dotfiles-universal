@@ -35,10 +35,22 @@ PanelWindow {
     WlrLayershell.namespace: "omarchy-menu"
 
     // ---------- Palette derivations ----------
-    readonly property color deepBg: Qt.rgba(hk.root.paper.r * 0.30, hk.root.paper.g * 0.30, hk.root.paper.b * 0.30, 0.97)
-    readonly property color dim:    Qt.rgba(hk.root.ink.r, hk.root.ink.g, hk.root.ink.b, 0.45)
-    readonly property color dimmer: Qt.rgba(hk.root.ink.r, hk.root.ink.g, hk.root.ink.b, 0.22)
-    readonly property color line:   Qt.rgba(hk.root.seal.r, hk.root.seal.g, hk.root.seal.b, 0.5)
+    readonly property color deepBg: {
+        let c = hk.root.paper;
+        return Qt.rgba(c.r * 0.30, c.g * 0.30, c.b * 0.30, 0.97);
+    }
+    readonly property color dim: {
+        let c = hk.root.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.45);
+    }
+    readonly property color dimmer: {
+        let c = hk.root.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.22);
+    }
+    readonly property color line: {
+        let c = hk.root.seal;
+        return Qt.rgba(c.r, c.g, c.b, 0.5);
+    }
 
     // ---------- Live clock ----------
     // Self-contained 1Hz tick so the readout shows real seconds, rather than

@@ -16,10 +16,19 @@ PanelWindow {
     readonly property color bg: root.bg
     readonly property color text: root.ink
     readonly property color muted: root.inkDeep
-    readonly property color faint: Qt.rgba(root.ink.r, root.ink.g, root.ink.b, 0.45)
+    readonly property color faint: {
+        let c = root.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.45);
+    }
     readonly property color line: root.sep
-    readonly property color lineStrong: Qt.rgba(root.ink.r, root.ink.g, root.ink.b, 0.52)
-    readonly property color surface: Qt.rgba(root.ink.r, root.ink.g, root.ink.b, 0.06)
+    readonly property color lineStrong: {
+        let c = root.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.52);
+    }
+    readonly property color surface: {
+        let c = root.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.06);
+    }
     readonly property color musicAccent: root.green
 
     readonly property string logoSource:

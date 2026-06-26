@@ -149,7 +149,7 @@ Item {
             if (ci < body._themes.length) {
                 const t = body._themes[ci];
                 if (t && body.nav) {
-                    body.nav.run("sh -c 'setsid -f uwsm-app -- omarchy-theme-set \"$1\" >/dev/null 2>&1' sh "
+                    body.nav.run("sh -c 'if command -v uwsm-app >/dev/null 2>&1; then setsid -f uwsm-app -- omarchy-theme-set \"$1\" >/dev/null 2>&1; else setsid -f omarchy-theme-set \"$1\" >/dev/null 2>&1; fi' sh "
                                  + JSON.stringify(t.themeName));
                 }
                 body.close();

@@ -40,24 +40,101 @@ Item {
     property color sealRaw: "#c4746e"
     property real  driftAmount: 0
 
-    readonly property color seal: Qt.hsva(
-        sealRaw.hsvHue,
-        Math.min(1, sealRaw.hsvSaturation + driftAmount * 0.05),
-        sealRaw.hsvValue,
-        sealRaw.a
-    )
+    readonly property string themeModeStatePath:
+        Quickshell.env("HOME") + "/.local/state/quickshell-desktop/theme-mode"
+    property string themeMode: "wallpaper" // "wallpaper" | "static"
+
+    function printTheme() {
+        console.warn("DEBUG_THEME_VALUES: themeMode=" + theme.themeMode + " paper=" + theme.paper + " bg=" + theme.bg + " fg=" + theme.fg + " accent=" + theme.accent);
+    }
+
+    function resetToDefault() {
+        console.log("Theme: resetToDefault called. Current paper:", theme.paper);
+        theme.paper = "#181616";
+        theme.ink = "#c5c9c5";
+        theme.inkDeep = "#c8c093";
+        theme.sumi = "#a6a69c";
+        theme.indigo = "#658594";
+        theme.green = "#a9b665";
+        theme.sealRaw = "#c4746e";
+        console.log("Theme: resetToDefault finished. New paper:", theme.paper);
+    }
+
+    function setThemeMode(mode) {
+        const want = (mode === "static" || mode === "default") ? "static" : "wallpaper";
+        theme.themeMode = want;
+        console.log("Theme: setThemeMode called with mode:", mode, "resolved to want:", want);
+        themeModeWriter.command = ["bash", "-lc",
+            "mkdir -p " + JSON.stringify(theme.themeModeStatePath.replace(/\/[^/]+$/, ""))
+            + " && printf '%s' " + JSON.stringify(want)
+            + " > " + JSON.stringify(theme.themeModeStatePath)];
+        themeModeWriter.running = false;
+        themeModeWriter.running = true;
+
+        if (want === "static") {
+            theme.resetToDefault();
+        } else {
+            paletteFile.reload();
+        }
+    }
+    function toggleThemeMode() {
+        theme.setThemeMode(theme.themeMode === "wallpaper" ? "static" : "wallpaper");
+    }
+
+    Process { id: themeModeWriter; running: false }
+    Process {
+        id: themeModeReader
+        running: true
+        command: ["cat", theme.themeModeStatePath]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const m = this.text.trim();
+                theme.themeMode = (m === "static") ? "static" : "wallpaper";
+                console.log("Theme: themeModeReader loaded mode from file:", m, "setting themeMode to:", theme.themeMode);
+                if (theme.themeMode === "static") {
+                    theme.resetToDefault();
+                } else {
+                    paletteFile.reload();
+                }
+            }
+        }
+        onExited: function(code) {
+            if (code !== 0) {
+                console.log("Theme: themeModeReader file not found, defaulting to wallpaper");
+                theme.themeMode = "wallpaper";
+                paletteFile.reload();
+            }
+        }
+    }
+
+    readonly property color seal: {
+        let c = theme.sealRaw;
+        return Qt.hsva(c.hsvHue, Math.min(1, c.hsvSaturation + theme.driftAmount * 0.05), c.hsvValue, c.a);
+    }
 
     readonly property string serif: "serif"
     readonly property string mono:  "JetBrainsMono Nerd Font"
 
-    readonly property color bg:     Qt.rgba(paper.r, paper.g, paper.b, 0.94)
+    readonly property color bg: {
+        let c = theme.paper;
+        return Qt.rgba(c.r, c.g, c.b, 0.94);
+    }
     readonly property color fg:     ink
     readonly property color muted:  sumi
     readonly property color accent: seal
     readonly property color warn:   seal
-    readonly property color sep:    Qt.rgba(ink.r, ink.g, ink.b, 0.18)
-    readonly property color rowHi:  Qt.rgba(ink.r, ink.g, ink.b, 0.06)
-    readonly property color rowSel: Qt.rgba(seal.r, seal.g, seal.b, 0.18)
+    readonly property color sep: {
+        let c = theme.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.18);
+    }
+    readonly property color rowHi: {
+        let c = theme.ink;
+        return Qt.rgba(c.r, c.g, c.b, 0.06);
+    }
+    readonly property color rowSel: {
+        let c = theme.seal;
+        return Qt.rgba(c.r, c.g, c.b, 0.18);
+    }
 
     // Name of the last theme applied via IPC. Used to suppress the drift
     // animation when the hook pushes the same theme twice or races the
@@ -71,7 +148,14 @@ Item {
         id: paletteFile
         path: theme.colorsPath
         watchChanges: false
-        onLoaded: Palette.apply(theme, Palette.parse(paletteFile.text()))
+        onLoaded: {
+            console.log("Theme: paletteFile loaded. themeMode is:", theme.themeMode);
+            if (theme.themeMode === "wallpaper") {
+                console.log("Theme: applying wallpaper palette. Current paper:", theme.paper);
+                Palette.apply(theme, Palette.parse(paletteFile.text()));
+                console.log("Theme: applied wallpaper palette. New paper:", theme.paper);
+            }
+        }
     }
 
     // Local persistence: one-line file containing "round" or "sharp".
@@ -133,15 +217,22 @@ Item {
             try { p = JSON.parse(payload); }
             catch (e) { console.warn("theme.apply: bad payload —", e); return; }
             if (!p || !p.colors) return;
-            Palette.apply(theme, Palette.mapKeys(p.colors));
+            if (theme.themeMode === "wallpaper") {
+                Palette.apply(theme, Palette.mapKeys(p.colors));
+            }
             if (p.name && p.name !== theme.lastAppliedName) {
                 theme.lastAppliedName = p.name;
                 driftDelay.restart();
             }
         }
         function reload(): void {
-            paletteFile.reload();
+            if (theme.themeMode === "wallpaper") {
+                paletteFile.reload();
+            }
             driftDelay.restart();
         }
+        function setMode(mode: string): void { theme.setThemeMode(mode); }
+        function toggleMode(): void { theme.toggleThemeMode(); }
+        function debug(): void { theme.printTheme(); }
     }
 }

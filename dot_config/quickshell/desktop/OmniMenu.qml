@@ -37,6 +37,14 @@ Item {
     // category-row array further down.
     property var navbar: null
 
+    property bool hasUwsm: false
+    Process {
+        id: uwsmCheck
+        running: true
+        command: ["sh", "-c", "command -v uwsm-app"]
+        onExited: function(code) { root.hasUwsm = (code === 0); }
+    }
+
     readonly property color paper:   theme.paper
     readonly property color ink:     theme.ink
     readonly property color inkDeep: theme.inkDeep
@@ -185,8 +193,9 @@ Item {
     // get fired off-process and quickshell can close immediately.
     function activateQuickTile(t) {
         if (!t || !t.action) return;
+        const launcher = root.hasUwsm ? "setsid -f uwsm-app --" : "setsid -f";
         runner.command = ["sh", "-c",
-                          "setsid -f uwsm-app -- bash -c "
+                          launcher + " bash -c "
                           + JSON.stringify(t.action)
                           + " >/dev/null 2>&1"];
         runner.running = false;
@@ -198,8 +207,9 @@ Item {
     // or "reset display" doesn't dismiss the panel mid-glance.
     function longQuickTile(t) {
         if (!t || !t.longAction) return;
+        const launcher = root.hasUwsm ? "setsid -f uwsm-app --" : "setsid -f";
         runner.command = ["sh", "-c",
-                          "setsid -f uwsm-app -- bash -c "
+                          launcher + " bash -c "
                           + JSON.stringify(t.longAction)
                           + " >/dev/null 2>&1"];
         runner.running = false;
@@ -404,8 +414,9 @@ Item {
         // Theme apply — fire and forget; omarchy-theme-set rebuilds
         // configs and reloads all the live apps that listen for it.
         if (item.isTheme) {
+            const launcher = root.hasUwsm ? "setsid -f uwsm-app --" : "setsid -f";
             runner.command = ["sh", "-c",
-                "setsid -f uwsm-app -- omarchy-theme-set \"$1\" >/dev/null 2>&1",
+                launcher + " omarchy-theme-set \"$1\" >/dev/null 2>&1",
                 "sh", item.themeName];
             runner.running = false;
             runner.running = true;
@@ -434,8 +445,9 @@ Item {
                 // told the user what to do.
                 return;
             }
+            const prefix = root.hasUwsm ? ["setsid", "-f", "uwsm-app", "--"] : ["setsid", "-f"];
             if (status === "no-daemon") {
-                runner.command = ["setsid", "-f", "uwsm-app", "--",
+                runner.command = prefix.concat([
                     "xdg-terminal-exec",
                     "--app-id=org.omarchy.terminal",
                     "--title=Omarchy",
@@ -444,7 +456,7 @@ Item {
                     + "systemctl --user start ollama 2>/dev/null "
                     + "|| sudo systemctl start ollama 2>/dev/null "
                     + "|| ollama serve; "
-                    + "echo; echo '[done — close to return]'; exec bash"];
+                    + "echo; echo '[done — close to return]'; exec bash"]);
                 runner.running = false;
                 runner.running = true;
                 root.close();
@@ -457,14 +469,14 @@ Item {
                 // hardening as the probe in OllamaChat.qml). `exec bash`
                 // at the end keeps the window up so the user can read
                 // the pull output (and any errors) before closing.
-                runner.command = ["setsid", "-f", "uwsm-app", "--",
+                runner.command = prefix.concat([
                     "xdg-terminal-exec",
                     "--app-id=org.omarchy.terminal",
                     "--title=Omarchy",
                     "-e", "bash", "-c",
                     "ollama pull \"$1\"; "
                     + "echo; echo '[done — close to return]'; exec bash",
-                    "--", ollamaChat.model_];
+                    "--", ollamaChat.model_]);
                 runner.running = false;
                 runner.running = true;
                 root.close();
@@ -480,13 +492,14 @@ Item {
             return;
         }
         if (item.isTldr) {
-            runner.command = ["setsid", "-f", "uwsm-app", "--",
+            const prefix = root.hasUwsm ? ["setsid", "-f", "uwsm-app", "--"] : ["setsid", "-f"];
+            runner.command = prefix.concat([
                 "xdg-terminal-exec",
                 "--app-id=org.omarchy.terminal",
                 "--title=Omarchy",
                 "-e", "bash", "-c",
                 "read -e -i \"$1 \" line; eval \"$line\"; exec bash",
-                "_", item.tldrPreFill || item.tldrName || ""];
+                "_", item.tldrPreFill || item.tldrName || ""]);
             runner.running = false;
             runner.running = true;
             root.close();
@@ -497,8 +510,9 @@ Item {
         // `read` fail when launched detached. `item.tui` holds the wrapper
         // command name (omarchy-launch-tui or omarchy-launch-floating-…).
         const cmd = item.tui ? item.tui + " " + item.exec : item.exec;
+        const launcher = root.hasUwsm ? "setsid -f uwsm-app --" : "setsid -f";
         runner.command = ["sh", "-c",
-                          "setsid -f uwsm-app -- bash -c "
+                          launcher + " bash -c "
                           + JSON.stringify(cmd)
                           + " >/dev/null 2>&1"];
         runner.running = false;
