@@ -1,6 +1,6 @@
 /**
- * Base Rofi Theme - Senior Edition
- * Clean, modern, and high-performance.
+ * Spotlight / Omni-Menu Rofi Theme - iamdothash Edition
+ * A sleek, high-performance, modern command palette.
  */
 
 configuration {
@@ -12,58 +12,62 @@ configuration {
     display-window:             "󰖲 ";
     drun-display-format:        "{name}";
     window-format:              "{w} · {c} · {t}";
-    font:                        "JetBrainsMono NF 10";
-    icon-theme:                  "Papirus-Dark";
+    font:                       "JetBrainsMono NF 11";
+    icon-theme:                 "Papirus-Dark";
 }
 
-@theme "/dev/null"
-
-@import "colors.rasi"
+@theme "/dev/null";
+@import "{{ .chezmoi.homeDir }}/.config/rofi/current-colors.rasi";
 
 * {
+    /* Colores estáticos de respaldo - Tema Kanagawa Dragon */
+    bg:                          #080808B3; /* Negro cálido al 70% */
+    bg-alt:                      #5a5040B3; /* Gris tierra al 70% */
+    fg:                          #d4c5a9;   /* Blanco arena */
+    accent:                      #c7362a;   /* Rojo anaranjado */
+
     background-color:            transparent;
     text-color:                  @fg;
 }
 
+/* ── Ventana Principal (Spotlight Centrado) ─────────────────────────────────── */
 window {
     transparency:                "real";
     location:                    center;
     anchor:                      center;
     fullscreen:                  false;
-    width:                       600px;
+    width:                       680px;
     x-offset:                    0px;
     y-offset:                    0px;
 
     enabled:                     true;
     margin:                      0px;
     padding:                     0px;
-    border:                      2px solid;
-    border-radius:               12px;
+    border:                      1px solid;
+    border-radius:               16px;
     border-color:                @accent;
-    background-color:            @bg;
+    background-color:            @bg; /* Usa el fondo traslúcido dinámico de Wallust */
     cursor:                      "default";
 }
 
+/* ── Contenedor principal ───────────────────────────────────────────────────── */
 mainbox {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     0px;
     margin:                      0px;
-    padding:                     20px;
-    border:                      0px solid;
-    border-radius:               0px 0px 0px 0px;
-    border-color:                @accent;
+    padding:                     0px;
     background-color:            transparent;
     children:                    [ "inputbar", "listview" ];
 }
 
+/* ── Barra de Búsqueda Superior (Spotlight) ─────────────────────────────────── */
 inputbar {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     14px;
     margin:                      0px;
-    padding:                     0px;
-    border:                      0px solid;
-    border-radius:               0px;
-    border-color:                @accent;
+    padding:                     24px 24px 20px 24px;
+    border:                      0px 0px 1px 0px solid;
+    border-color:                @bg-alt; /* Línea divisoria muy sutil */
     background-color:            transparent;
     text-color:                  @fg;
     children:                    [ "prompt", "entry" ];
@@ -72,30 +76,25 @@ inputbar {
 prompt {
     enabled:                     true;
     background-color:            inherit;
-    text-color:                  inherit;
-}
-
-textbox-prompt-colon {
-    enabled:                     true;
-    expand:                      false;
-    str:                         "::";
-    background-color:            inherit;
-    text-color:                  inherit;
+    text-color:                  @accent;
+    font:                        "JetBrainsMono NF 15";
 }
 
 entry {
     enabled:                     true;
     background-color:            inherit;
     text-color:                  inherit;
+    font:                        "JetBrainsMono NF 14";
     cursor:                      text;
-    placeholder:                 "Search...";
-    placeholder-color:           inherit;
+    placeholder:                 "Search applications, files, settings...";
+    placeholder-color:           @bg-alt;
 }
 
+/* ── Lista de Resultados ────────────────────────────────────────────────────── */
 listview {
     enabled:                     true;
     columns:                     1;
-    lines:                       8;
+    lines:                       7;
     cycle:                       true;
     dynamic:                     true;
     scrollbar:                   false;
@@ -104,39 +103,37 @@ listview {
     fixed-height:                true;
     fixed-columns:               true;
     
-    spacing:                     5px;
+    spacing:                     6px;
     margin:                      0px;
-    padding:                     0px;
-    border:                      0px solid;
-    border-radius:               0px;
-    border-color:                @accent;
+    padding:                     18px 20px 20px 20px;
     background-color:            transparent;
     text-color:                  @fg;
     cursor:                      "default";
 }
 
+/* ── Elemento Individual ────────────────────────────────────────────────────── */
 element {
     enabled:                     true;
-    spacing:                     10px;
+    spacing:                     12px;
     margin:                      0px;
-    padding:                     8px;
+    padding:                     10px 14px;
     border:                      0px solid;
-    border-radius:               6px;
-    border-color:                @accent;
+    border-radius:               10px;
     background-color:            transparent;
     text-color:                  @fg;
     cursor:                      pointer;
 }
 
+/* Estado Seleccionado (Acento sólido con texto oscuro para máximo contraste) */
 element selected.normal {
-    background-color:            @bg-alt;
-    text-color:                  @accent;
+    background-color:            @accent;
+    text-color:                  #080808; /* Texto oscuro sobre el acento de color */
 }
 
 element-icon {
     background-color:            transparent;
     text-color:                  inherit;
-    size:                        24px;
+    size:                        28px;
     cursor:                      inherit;
 }
 

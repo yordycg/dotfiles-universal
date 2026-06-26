@@ -7,11 +7,16 @@ configuration {
     font:                        "JetBrainsMono Nerd Font 10";
 }
 
-@theme "/dev/null"
-
-@import "colors.rasi"
+@theme "/dev/null";
+@import "{{ .chezmoi.homeDir }}/.config/rofi/current-colors.rasi";
 
 * {
+    /* Colores estáticos de respaldo - Tema Kanagawa Dragon */
+    bg:                          #080808B3;
+    bg-alt:                      #5a5040B3;
+    fg:                          #d4c5a9;
+    accent:                      #c7362a;
+
     background-color:            transparent;
     text-color:                  @fg;
 }

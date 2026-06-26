@@ -1,0 +1,12 @@
+/* =============================================================================
+ * ~/.config/rofi/colors-base.rasi
+ * Tema "home" estático para Rofi — Negro y acento rojo óxido (#c7362a)
+ * ============================================================================= */
+
+* {
+    bg:      #080808B3; /* Fondo negro translúcido al 70% */
+    bg-alt:  #5a5040B3; /* Fondo secundario terroso al 70% */
+    fg:      #d4c5a9;   /* Blanco arena */
+    accent:  #c7362a;   /* Rojo óxido */
+    urgent:  #c7362a;
+}
