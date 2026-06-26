@@ -127,13 +127,20 @@ set -g @tmux-dotbar-bold-current-window true
 set -g @tmux-dotbar-ssh-icon-only true
 set -g @tmux-dotbar-right false
 
-# Colores Dinámicos (Respetan Windows Terminal o Flavours/Wallust)
-set -g @tmux-dotbar-bg "default"
-set -g @tmux-dotbar-fg "color7"
-set -g @tmux-dotbar-active-bg "color4"
-set -g @tmux-dotbar-active-fg "color0"
-set -g @tmux-dotbar-prefix-bg "color2"
-set -g @tmux-dotbar-prefix-fg "color0"
+# Colores Predeterminados (Kanagawa Dragon)
+set -g @tmux-dotbar-bg "#1d1c19"
+set -g @tmux-dotbar-fg "#a6a69c"
+set -g @tmux-dotbar-active-bg "#c4746e"        # Rojo (Seal) para ventana activa
+set -g @tmux-dotbar-active-fg "#181616"
+set -g @tmux-dotbar-prefix-bg "#c4746e"        # Rojo (Seal) para Prefix activo
+set -g @tmux-dotbar-prefix-fg "#181616"
+
+# Pane borders y estilos de selección (Kanagawa Dragon)
+set -g pane-border-style "fg=#2a2828"
+set -g pane-active-border-style "fg=#658594"  # Azul Pizarra para panel activo
+set -g message-style "fg=#c8c093,bg=#1d1c19"   # Oro para comandos
+set -g clock-mode-colour "#658594"
+set -g mode-style "fg=#181616,bg=#658594"      # Azul Pizarra para selección
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \
