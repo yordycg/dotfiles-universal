@@ -39,8 +39,10 @@ lua = "5.1"
 go = "latest"
 dotnet = "latest"
 rust = "latest"
+{{- if not .isHeadless }}
 "cargo:wallust" = "latest"
 "cargo:flavours" = "latest"
+{{- end }}
 
 [settings]
 experimental = true
