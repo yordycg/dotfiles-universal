@@ -72,6 +72,19 @@ if [ ! -d "$FONTS_DIR/AppleSFMono" ]; then
     fi
 fi
 
+# ── 4. Fuente Omarchy ───────────────────────────────────────────────────────
+if [ ! -d "$FONTS_DIR/omarchy" ]; then
+    log_info "Descargando Omarchy Icon Font..."
+    mkdir -p "$FONTS_DIR/omarchy"
+    if wget -q --show-progress -O "$FONTS_DIR/omarchy/omarchy.ttf" "https://github.com/jesus-molano/omarchy-dotfiles/raw/main/omarchy.ttf" || \
+       wget -q --show-progress -O "$FONTS_DIR/omarchy/omarchy.ttf" "https://github.com/jesus-molano/omarchy-dotfiles/raw/master/omarchy.ttf"; then
+        log_ok "Fuente Omarchy descargada."
+    else
+        log_info "No se pudo descargar la fuente Omarchy."
+        rm -rf "$FONTS_DIR/omarchy"
+    fi
+fi
+
 log_info "Actualizando caché del sistema..."
 find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true
 fc-cache -f > /dev/null
