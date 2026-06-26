@@ -60,14 +60,21 @@ Item {
         console.log("Theme: resetToDefault finished. New paper:", theme.paper);
     }
 
-    function setThemeMode(mode) {
+    function setThemeMode(mode, triggerExternal) {
+        if (triggerExternal === undefined) triggerExternal = true;
         const want = (mode === "static" || mode === "default") ? "static" : "wallpaper";
         theme.themeMode = want;
-        console.log("Theme: setThemeMode called with mode:", mode, "resolved to want:", want);
-        themeModeWriter.command = ["bash", "-lc",
-            "mkdir -p " + JSON.stringify(theme.themeModeStatePath.replace(/\/[^/]+$/, ""))
+        console.log("Theme: setThemeMode called with mode:", mode, "resolved to want:", want, "triggerExternal:", triggerExternal);
+        
+        let cmd = "mkdir -p " + JSON.stringify(theme.themeModeStatePath.replace(/\/[^/]+$/, ""))
             + " && printf '%s' " + JSON.stringify(want)
-            + " > " + JSON.stringify(theme.themeModeStatePath)];
+            + " > " + JSON.stringify(theme.themeModeStatePath);
+            
+        if (triggerExternal) {
+            cmd += " && desktop-theme-toggle.sh --" + (want === "static" ? "static" : "dynamic");
+        }
+        
+        themeModeWriter.command = ["bash", "-lc", cmd];
         themeModeWriter.running = false;
         themeModeWriter.running = true;
 
@@ -77,8 +84,9 @@ Item {
             paletteFile.reload();
         }
     }
-    function toggleThemeMode() {
-        theme.setThemeMode(theme.themeMode === "wallpaper" ? "static" : "wallpaper");
+    function toggleThemeMode(triggerExternal) {
+        if (triggerExternal === undefined) triggerExternal = true;
+        theme.setThemeMode(theme.themeMode === "wallpaper" ? "static" : "wallpaper", triggerExternal);
     }
 
     Process { id: themeModeWriter; running: false }
@@ -231,8 +239,8 @@ Item {
             }
             driftDelay.restart();
         }
-        function setMode(mode: string): void { theme.setThemeMode(mode); }
-        function toggleMode(): void { theme.toggleThemeMode(); }
+        function setMode(mode: string): void { theme.setThemeMode(mode, false); }
+        function toggleMode(): void { theme.toggleThemeMode(false); }
         function debug(): void { theme.printTheme(); }
     }
 }

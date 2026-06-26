@@ -9,18 +9,34 @@ height=150
 margin=20
 padding=15
 border-size=2
-border-radius=8
+border-radius=0
 icons=1
 max-icon-size=48
 default-timeout=5000
 ignore-timeout=0
 
-# Colors (Static Kanagawa Dragon)
-background-color=#080808B3
-text-color=#d4c5a9
-border-color=#c7362a
-progress-color=over #c7362a
+# Colors (Static Kanagawa Dragon aligned with Quickshell)
+background-color=#181616B3
+text-color=#c5c9c5
+border-color=#658594
+progress-color=over #658594
 
 [urgency=high]
-border-color=#c7362a
+border-color=#c4746e
 default-timeout=0
+
+[app-name=volume-hud]
+width=260
+height=38
+border-size=1
+padding=8
+default-timeout=1500
+margin=10
+
+[app-name=brightness-hud]
+width=260
+height=38
+border-size=1
+padding=8
+default-timeout=1500
+margin=10

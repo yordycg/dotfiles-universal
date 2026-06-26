@@ -27,7 +27,8 @@ VOLUME=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -Po '[0-9]+(?=%)' | head -n
 
 # 3. Enviar notificación con barra de progreso
 if [ "$MUTE" = "yes" ]; then
-    notify-send -h string:x-canonical-private-synchronous:volume_notif \
+    notify-send -a volume-hud \
+                -h string:x-canonical-private-synchronous:volume_notif \
                 -h int:value:0 \
                 -i audio-volume-muted \
                 "Silenciado"
@@ -41,7 +42,8 @@ else
         ICON="audio-volume-high"
     fi
     
-    notify-send -h string:x-canonical-private-synchronous:volume_notif \
+    notify-send -a volume-hud \
+                -h string:x-canonical-private-synchronous:volume_notif \
                 -h int:value:"$VOLUME" \
                 -i "$ICON" \
                 "Volumen: $VOLUME%"

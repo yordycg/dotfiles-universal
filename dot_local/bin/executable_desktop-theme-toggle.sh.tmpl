@@ -68,6 +68,11 @@ if [ "$MODE" = "static" ] || { [ "$MODE" = "toggle" ] && [ "$(basename "$CURRENT
     # 6. Sway
     ln -sf "colors-base" "$SWAY_LINK"
 
+    # 7. Quickshell
+    if pgrep -x "quickshell" >/dev/null || pgrep -x "qs" >/dev/null; then
+        qs -c desktop ipc call theme setMode static 2>/dev/null || true
+    fi
+
     if command -v notify-send &>/dev/null; then
         notify-send -i preferences-desktop-theme "Escritorio" "Modo Estático Activado (Kanagawa Dragon)"
     fi
@@ -95,6 +100,11 @@ else
     ln -sf "theme-colors.conf" "$HYPR_LINK"
     # 6. Sway
     ln -sf "colors" "$SWAY_LINK"
+
+    # 7. Quickshell
+    if pgrep -x "quickshell" >/dev/null || pgrep -x "qs" >/dev/null; then
+        qs -c desktop ipc call theme setMode wallpaper 2>/dev/null || true
+    fi
 
     if command -v notify-send &>/dev/null; then
         notify-send -i preferences-desktop-theme "Escritorio" "Modo Dinámico Activado (Colores del Wallpaper)"

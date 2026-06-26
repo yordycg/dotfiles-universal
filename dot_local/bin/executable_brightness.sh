@@ -24,7 +24,8 @@ CURRENT=$(brightnessctl get)
 PERCENT=$(( CURRENT * 100 / MAX ))
 
 # 3. Enviar notificación con barra de progreso
-notify-send -h string:x-canonical-private-synchronous:brightness_notif \
+notify-send -a brightness-hud \
+            -h string:x-canonical-private-synchronous:brightness_notif \
             -h int:value:"$PERCENT" \
             -i display-brightness \
             "Brillo: $PERCENT%"
