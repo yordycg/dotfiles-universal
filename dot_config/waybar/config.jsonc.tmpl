@@ -1,131 +1,440 @@
-{
+{{- if .isDesktop }}
+[
+  // ── Monitor Principal (DP-2) ────────────────────────────────────────────────
+  {
+    "output": "DP-2",
     "layer": "top",
     "position": "top",
-    "height": 34,
+    "height": 28,
     "exclusive": true,
     "passthrough": false,
     "gtk-layer-shell": true,
-    "modules-left": ["hyprland/workspaces"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["idle_inhibitor", "pulseaudio", "network", "cpu", "memory", "temperature", "backlight", "battery", "clock", "tray"],
+    "spacing": 0,
 
-    // Modules configuration
+    "modules-left": [
+      "custom/launcher",
+      "hyprland/workspaces"
+    ],
+    "modules-center": ["clock"],
+    "modules-right": [
+      "backlight",
+      "custom/sep",
+      "bluetooth",
+      "custom/sep",
+      "network",
+      "custom/sep",
+      "pulseaudio",
+      "custom/sep",
+      "cpu",
+      "custom/sep",
+      "memory",
+      "custom/sep",
+      "idle_inhibitor",
+      "custom/sep",
+      "mpris",
+      "custom/sep",
+      "tray",
+      "custom/session"
+    ],
+
+    // ── Cuadrado outline izquierdo (launcher / power) ───────────────────────
+    "custom/launcher": {
+      "format": "󰄱",
+      "tooltip": false,
+      "on-click": "~/.local/bin/rofi-powermenu.sh"
+    },
+
+    // ── Workspaces ──────────────────────────────────────────────────────────
     "hyprland/workspaces": {
-        "disable-scroll": true,
-        "all-outputs": false,
-        "format": "{name}: {icon}",
-        "format-icons": {
-            "1": "",
-            "2": "",
-            "3": "",
-            "4": "",
-            "5": "",
-            "urgent": "",
-            "active": "",
-            "default": ""
-        },
-        {{- if .isDesktop }}
-        "persistent-workspaces": {
-            "DP-2": [1, 2, 3, 4, 5],
-            "HDMI-A-3": [6, 7, 8, 9, 10]
-        }
-        {{- else }}
-        "persistent-workspaces": {
-            "*": [1, 2, 3, 4, 5]
-        }
-        {{- end }}
+      "disable-scroll": true,
+      "all-outputs": false,
+      "format": "{icon}",
+      "format-icons": {
+        "1": "一",
+        "2": "二",
+        "3": "三",
+        "4": "四",
+        "5": "五"
+      },
+      "persistent-workspaces": {
+        "DP-2": [1, 2, 3, 4, 5]
+      }
     },
-    "hyprland/window": {
-        "format": "󰣛 {}"
-    },
-    "idle_inhibitor": {
-        "format": "{icon}",
-        "format-icons": {
-            "activated": "",
-            "deactivated": ""
-        }
-    },
-    "tray": {
-        "icon-size": 21,
-        "spacing": 10
-    },
+
+    // ── Reloj centrado, solo hora ───────────────────────────────────────────
     "clock": {
-        "format": "  {:%H:%M}",
-        "format-alt": "  {:%A, %B %d, %Y}",
-        "tooltip-format": "<tt><small>{calendar}</small></tt>",
-        "calendar": {
-                    "mode"          : "year",
-                    "mode-mon-col"  : 3,
-                    "weeks-pos"     : "right",
-                    "on-scroll"     : 1,
-                    "format": {
-                              "months":     "<span color='#ffead3'><b>{}</b></span>",
-                              "days":       "<span color='#ecc6d9'><b>{}</b></span>",
-                              "weeks":      "<span color='#99ffdd'><b>W{}</b></span>",
-                              "weekdays":   "<span color='#ffcc66'><b>{}</b></span>",
-                              "today":      "<span color='#ff6699'><b><u>{}</u></b></span>"
-                              }
-                    },
-        "actions":  {
-                    "on-click-right": "mode",
-                    "on-click-middle": "shift_reset",
-                    "on-scroll-up": "shift_up",
-                    "on-scroll-down": "shift_down"
-                    }
+      "format": "{:%H:%M}",
+      "format-alt": "{:%a %d %b}",
+      "tooltip-format": "<tt><small>{calendar}</small></tt>",
+      "calendar": {
+        "mode": "month",
+        "format": {
+          "months":   "<span color='#c4a265'><b>{}</b></span>",
+          "days":     "<span color='#d4c5a9'>{}</span>",
+          "weekdays": "<span color='#c7362a'><b>{}</b></span>",
+          "today":    "<span color='#c7362a'><b><u>{}</u></b></span>"
+        }
+      },
+      "actions": {
+        "on-click-right": "mode",
+        "on-scroll-up":   "shift_up",
+        "on-scroll-down": "shift_down"
+      }
+    },
+
+    // ── Separador | ─────────────────────────────────────────────────────────
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+
+    // ── Brillo (solo icono) ─────────────────────────────────────────────────
+    "backlight": {
+      "format": "{icon}",
+      "format-icons": ["󰃞", "󰃟", "󰃠"],
+      "tooltip-format": "Brillo: {percent}%",
+      "on-scroll-up":   "brightnessctl set +5%",
+      "on-scroll-down": "brightnessctl set 5%-"
+    },
+
+    // ── Bluetooth (solo icono) ──────────────────────────────────────────────
+    "bluetooth": {
+      "format":           "󰂯",
+      "format-connected": "󰂱",
+      "format-off":       "󰂲",
+      "tooltip-format":   "{controller_alias}\n{num_connections} conectado(s)",
+      "on-click": "blueman-manager"
+    },
+
+    // ── Red (solo icono) ────────────────────────────────────────────────────
+    "network": {
+      "format-wifi":         "󰤨",
+      "format-ethernet":     "󰈀",
+      "format-disconnected": "󰤭",
+      "tooltip-format-wifi":     "{essid} {signalStrength}%\n{ipaddr}",
+      "tooltip-format-ethernet": "{ifname} — {ipaddr}",
+      "on-click": "nm-connection-editor"
+    },
+
+    // ── Audio (solo icono) ──────────────────────────────────────────────────
+    "pulseaudio": {
+      "format":       "{icon}",
+      "format-muted": "󰝟",
+      "format-icons": {
+        "headphone": "󰋋",
+        "headset":   "󰋎",
+        "default":   ["󰕿", "󰖀", "󰕾"]
+      },
+      "tooltip-format": "Volumen: {volume}%",
+      "on-click":       "pavucontrol",
+      "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +2%",
+      "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -2%"
+    },
+
+    // ── CPU (solo icono) ────────────────────────────────────────────────────
+    "cpu": {
+      "format":         "󰍛",
+      "tooltip-format": "CPU: {usage}%",
+      "interval":       2
+    },
+
+    // ── RAM (solo icono) ────────────────────────────────────────────────────
+    "memory": {
+      "format":         "󰘚",
+      "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G ({percentage}%)",
+      "interval":       5
+    },
+
+    // ── Idle inhibitor ──────────────────────────────────────────────────────
+    "idle_inhibitor": {
+      "format": "{icon}",
+      "format-icons": {
+        "activated":   "",
+        "deactivated": ""
+      }
+    },
+
+    // ── Media Player (Music Pill) ───────────────────────────────────────────
+    "mpris": {
+      "format": "󰎆 {title}",
+      "format-paused": "󰎊 {title}",
+      "max-length": 25,
+      "tooltip": false
+    },
+
+    // ── Tray ────────────────────────────────────────────────────────────────
+    "tray": {
+      "icon-size": 15,
+      "spacing":   6
+    },
+
+    // ── Botón sesión (extremo derecho, fondo rojo) ──────────────────────────
+    "custom/session": {
+      "format": "⏻",
+      "tooltip": false,
+      "on-click": "~/.local/bin/rofi-powermenu.sh"
+    }
+  },
+
+  // ── Monitor Secundario (HDMI-A-3) ──────────────────────────────────────────
+  {
+    "output": "HDMI-A-3",
+    "layer": "top",
+    "position": "top",
+    "height": 28,
+    "exclusive": true,
+    "passthrough": false,
+    "gtk-layer-shell": true,
+    "spacing": 0,
+
+    "modules-left":   ["custom/launcher", "hyprland/workspaces"],
+    "modules-center": ["clock"],
+    "modules-right":  [
+      "network",
+      "custom/sep",
+      "pulseaudio",
+      "custom/sep",
+      "cpu",
+      "custom/sep",
+      "memory"
+    ],
+
+    "custom/launcher": {
+      "format": "󰄱",
+      "tooltip": false,
+      "on-click": "~/.local/bin/rofi-powermenu.sh"
+    },
+
+    "hyprland/workspaces": {
+      "disable-scroll": true,
+      "all-outputs": false,
+      "format": "{icon}",
+      "format-icons": {
+        "6":  "六",
+        "7":  "七",
+        "8":  "八",
+        "9":  "九",
+        "10": "十"
+      },
+      "persistent-workspaces": {
+        "HDMI-A-3": [6, 7, 8, 9, 10]
+      }
+    },
+
+    "clock": {
+      "format":     "{:%H:%M}",
+      "format-alt": "{:%a %d %b}"
+    },
+
+    "custom/sep": {
+      "format": "|",
+      "interval": "once",
+      "tooltip": false
+    },
+
+    "network": {
+      "format-wifi":         "󰤨",
+      "format-ethernet":     "󰈀",
+      "format-disconnected": "󰤭",
+      "tooltip-format-wifi": "{essid} {signalStrength}%"
+    },
+
+    "pulseaudio": {
+      "format":       "{icon}",
+      "format-muted": "󰝟",
+      "format-icons": { "default": ["󰕿", "󰖀", "󰕾"] },
+      "tooltip-format": "Volumen: {volume}%",
+      "on-click": "pavucontrol"
     },
 
     "cpu": {
-        "format": "󰍛 {usage}%",
-        "tooltip": false
+      "format":         "󰍛",
+      "tooltip-format": "CPU: {usage}%",
+      "interval":       2
     },
+
     "memory": {
-        "format": "󰘚 {percentage}%",
-        "format-alt": "󰘚 {used:0.1f}G/{total:0.1f}G"
-    },
-    "temperature": {
-        "critical-threshold": 80,
-        "format": "{icon} {temperatureC}°C",
-        "format-icons": ["󰔄", "󰔏", "󰔆"]
-    },
-    "backlight": {
-        "format": "{icon} {percent}%",
-        "format-icons": ["󰃞", "󰃟", "󰃠"]
-    },
-    "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
-        },
-        "format": "{icon} {capacity}%",
-        "format-charging": "󰂄 {capacity}%",
-        "format-plugged": "󰚥 {capacity}%",
-        "format-alt": "{icon} {time}",
-        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"]
-    },
-    "network": {
-        "format-wifi": "󰤨 {essid} ({signalStrength}%)",
-        "format-ethernet": "󰈀 {ipaddr}/{cidr}",
-        "tooltip-format": "󰈀 {ifname} via {gwaddr}",
-        "format-linked": "󰈀 {ifname} (No IP)",
-        "format-disconnected": "󰤭 Disconnected",
-        "format-alt": "{ifname}: {ipaddr}/{cidr}"
-    },
-    "pulseaudio": {
-        "format": "{icon} {volume}% {format_source}",
-        "format-bluetooth": "󰂰 {icon} {volume}% {format_source}",
-        "format-bluetooth-muted": "󰝟 󰂰 {icon} {format_source}",
-        "format-muted": "󰝟 {format_source}",
-        "format-source": "󰍬 {volume}%",
-        "format-source-muted": "󰍭",
-        "format-icons": {
-            "headphone": "󰋋",
-            "hands-free": "󰋎",
-            "headset": "󰋎",
-            "phone": "󰏲",
-            "portable": "󰏲",
-            "car": "󰄄",
-            "default": ["󰕿", "󰖀", "󰕾"]
-        },
-        "on-click": "pavucontrol"
+      "format":         "󰘚",
+      "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G",
+      "interval":       5
     }
+  }
+]
+{{- else }}
+// ── Laptop Single Monitor Configuration ──────────────────────────────────────
+{
+  "layer": "top",
+  "position": "top",
+  "height": 28,
+  "exclusive": true,
+  "passthrough": false,
+  "gtk-layer-shell": true,
+  "spacing": 0,
+
+  "modules-left": [
+    "custom/launcher",
+    "hyprland/workspaces"
+  ],
+  "modules-center": ["clock"],
+  "modules-right": [
+    "backlight",
+    "custom/sep",
+    "bluetooth",
+    "custom/sep",
+    "network",
+    "custom/sep",
+    "pulseaudio",
+    "custom/sep",
+    "cpu",
+    "custom/sep",
+    "memory",
+    "custom/sep",
+    "idle_inhibitor",
+    "custom/sep",
+    "mpris",
+    "custom/sep",
+    "tray",
+    "custom/session"
+  ],
+
+  // ── Cuadrado outline izquierdo (launcher / power) ───────────────────────
+  "custom/launcher": {
+    "format": "󰄱",
+    "tooltip": false,
+    "on-click": "~/.local/bin/rofi-powermenu.sh"
+  },
+
+  // ── Workspaces ──────────────────────────────────────────────────────────
+  "hyprland/workspaces": {
+    "disable-scroll": true,
+    "all-outputs": false,
+    "format": "{icon}",
+    "format-icons": {
+      "1": "一",
+      "2": "二",
+      "3": "三",
+      "4": "四",
+      "5": "五"
+    },
+    "persistent-workspaces": {
+      "*": [1, 2, 3, 4, 5]
+    }
+  },
+
+  // ── Reloj centrado, solo hora ───────────────────────────────────────────
+  "clock": {
+    "format": "{:%H:%M}",
+    "format-alt": "{:%a %d %b}",
+    "tooltip-format": "<tt><small>{calendar}</small></tt>",
+    "calendar": {
+      "mode": "month",
+      "format": {
+        "months":   "<span color='#c4a265'><b>{}</b></span>",
+        "days":     "<span color='#d4c5a9'>{}</span>",
+        "weekdays": "<span color='#c7362a'><b>{}</b></span>",
+        "today":    "<span color='#c7362a'><b><u>{}</u></b></span>"
+      }
+    },
+    "actions": {
+      "on-click-right": "mode",
+      "on-scroll-up":   "shift_up",
+      "on-scroll-down": "shift_down"
+    }
+  },
+
+  // ── Separador | ─────────────────────────────────────────────────────────
+  "custom/sep": {
+    "format": "|",
+    "interval": "once",
+    "tooltip": false
+  },
+
+  // ── Brillo (solo icono) ─────────────────────────────────────────────────
+  "backlight": {
+    "format": "{icon}",
+    "format-icons": ["󰃞", "󰃟", "󰃠"],
+    "tooltip-format": "Brillo: {percent}%",
+    "on-scroll-up":   "brightnessctl set +5%",
+    "on-scroll-down": "brightnessctl set 5%-"
+  },
+
+  // ── Bluetooth (solo icono) ──────────────────────────────────────────────
+  "bluetooth": {
+    "format":           "󰂯",
+    "format-connected": "󰂱",
+    "format-off":       "󰂲",
+    "tooltip-format":   "{controller_alias}\n{num_connections} conectado(s)",
+    "on-click": "blueman-manager"
+  },
+
+  // ── Red (solo icono) ────────────────────────────────────────────────────
+  "network": {
+    "format-wifi":         "󰤨",
+    "format-ethernet":     "󰈀",
+    "format-disconnected": "󰤭",
+    "tooltip-format-wifi":     "{essid} {signalStrength}%\n{ipaddr}",
+    "tooltip-format-ethernet": "{ifname} — {ipaddr}",
+    "on-click": "nm-connection-editor"
+  },
+
+  // ── Audio (solo icono) ──────────────────────────────────────────────────
+  "pulseaudio": {
+    "format":       "{icon}",
+    "format-muted": "󰝟",
+    "format-icons": {
+      "headphone": "󰋋",
+      "headset":   "󰋎",
+      "default":   ["󰕿", "󰖀", "󰕾"]
+    },
+    "tooltip-format": "Volumen: {volume}%",
+    "on-click":       "pavucontrol",
+    "on-scroll-up":   "pactl set-sink-volume @DEFAULT_SINK@ +2%",
+    "on-scroll-down": "pactl set-sink-volume @DEFAULT_SINK@ -2%"
+  },
+
+  // ── CPU (solo icono) ────────────────────────────────────────────────────
+  "cpu": {
+    "format":         "󰍛",
+    "tooltip-format": "CPU: {usage}%",
+    "interval":       2
+  },
+
+  // ── RAM (solo icono) ────────────────────────────────────────────────────
+  "memory": {
+    "format":         "󰘚",
+    "tooltip-format": "RAM: {used:0.1f}G / {total:0.1f}G ({percentage}%)",
+    "interval":       5
+  },
+
+  // ── Idle inhibitor ──────────────────────────────────────────────────────
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": {
+      "activated":   "",
+      "deactivated": ""
+    }
+  },
+
+  // ── Media Player (Music Pill) ───────────────────────────────────────────
+  "mpris": {
+    "format": "󰎆 {title}",
+    "format-paused": "󰎊 {title}",
+    "max-length": 25,
+    "tooltip": false
+  },
+
+  // ── Tray ────────────────────────────────────────────────────────────────
+  "tray": {
+    "icon-size": 15,
+    "spacing":   6
+  },
+
+  // ── Botón sesión (extremo derecho, fondo rojo) ──────────────────────────
+  "custom/session": {
+    "format": "⏻",
+    "tooltip": false,
+    "on-click": "~/.local/bin/rofi-powermenu.sh"
+  }
 }
+{{- end }}

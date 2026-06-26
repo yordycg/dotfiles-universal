@@ -1,149 +1,166 @@
 /* =============================================================================
- * Waybar Style - Catppuccin Floating Capsule Style
+ * Waybar Style - iamdothash Minimalist Dynamic Style
  * ============================================================================= */
 
-@import "colors.css";
+@import "current-colors.css";
 
-/* Mapeo de colores semánticos dinámicos (Wallust) */
-@define-color bg       alpha(@base00, 0.70); /* Fondo traslúcido dinámico */
-@define-color border   alpha(@base0D, 0.20); /* Borde con acento sutil dinámico */
+/* Mapeo de colores dinámicos con Wallust */
+@define-color bg       alpha(@base00, 0.92); /* Fondo oscuro casi opaco dinámico */
+@define-color border   alpha(#ffffff, 0.06); /* Borde inferior sutil */
+@define-color fg       @base05;              /* Blanco cálido/crema dinámico */
+@define-color fg-dim   alpha(@base05, 0.40); /* Gris tierra apagado para inactivos */
+@define-color accent   @base08;              /* Color de acento dinámico (rojo del wallpaper) */
+@define-color sep      alpha(#ffffff, 0.20); /* Separadores | */
 
-@define-color red      @base08;
-@define-color green    @base0B;
-@define-color yellow   @base0A;
-@define-color blue     @base0D;
-@define-color purple   @base0E;
-@define-color aqua     @base0C;
-@define-color gray     @base03;
-@define-color fg       @base05;
-
+/* ── Reset ───────────────────────────────────────────────────────────────────*/
 * {
-    border: none;
+    border:        none;
     border-radius: 0;
-    font-family: "JetBrainsMono Nerd Font", monospace;
-    font-size: 13px;
-    min-height: 0;
+    font-family:   "JetBrainsMono Nerd Font", "Noto Sans CJK JP", monospace;
+    font-size:     12px;
+    min-height:    0;
+    padding:       0;
+    margin:        0;
 }
 
-/* Contenedor principal flotante */
+/* ── Barra principal ─────────────────────────────────────────────────────────*/
 window#waybar {
-    background: @bg;
-    color: @fg;
-    border: 1px solid @border;
-    border-radius: 14px;
-    margin: 8px 12px 0 12px; /* Margen superior y lateral para flotar */
-    transition: all 0.3s ease;
+    background:    @bg;
+    color:         @fg;
+    border-bottom: 1px solid @border;
 }
 
-/* Contenedor interno de espacios de trabajo (Píldora izquierda) */
+.modules-left  { padding-left:  0; }
+.modules-right { padding-right: 0; }
+
+/* ── Ícono cuadrado outline (launcher) ───────────────────────────────────────*/
+#custom-launcher {
+    color:        @accent;
+    font-size:    15px;
+    padding:      0 12px;
+    border-right: 1px solid @border;
+    transition:   color 0.15s;
+}
+
+#custom-launcher:hover {
+    color: @fg;
+}
+
+/* ── Workspaces ──────────────────────────────────────────────────────────────*/
 #workspaces {
-    background: rgba(17, 17, 27, 0.4);
-    border-radius: 10px;
-    margin: 4px 6px;
-    padding: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+    padding: 0 4px;
 }
 
 #workspaces button {
-    padding: 0 10px;
-    color: @gray;
+    padding:    0 7px;
+    color:      @fg-dim;
     background: transparent;
-    border-radius: 8px;
-    transition: all 0.2s ease;
+    font-size:  14px;
+    transition: all 0.12s ease;
+    min-width:  22px;
 }
 
-/* Corrección de la clase activa para Hyprland (antes .focused) */
 #workspaces button.active {
-    color: #11111b; /* Texto oscuro sobre fondo claro */
-    background: @blue; /* Botón azul brillante */
+    color:       @accent;
     font-weight: bold;
 }
 
-#workspaces button.urgent {
-    background-color: @red;
-    color: #11111b;
-}
-
-#workspaces button:hover {
-    background: rgba(255, 255, 255, 0.08);
+#workspaces button.occupied {
     color: @fg;
 }
 
-/* Píldoras individuales para cada módulo de información */
-#clock, #battery, #cpu, #memory, #temperature, #backlight, #network, #pulseaudio, #idle_inhibitor, #tray, #window {
-    background: rgba(17, 17, 27, 0.4);
-    border-radius: 10px;
-    margin: 4px 3px;
-    padding: 0 12px;
-    border: 1px solid rgba(255, 255, 255, 0.03);
+#workspaces button.urgent {
+    color: @accent;
 }
 
-/* Personalización de colores por píldora */
-#window {
-    background: transparent;
-    border: none;
-    color: @purple;
-    font-weight: bold;
+#workspaces button:hover {
+    color:      @fg;
+    background: alpha(@accent, 0.10);
 }
 
+/* ── Reloj centrado ──────────────────────────────────────────────────────────*/
 #clock {
-    color: @aqua;
-    font-weight: bold;
+    color:          @fg;
+    font-size:      13px;
+    font-weight:    bold;
+    letter-spacing: 0.05em;
+    padding:        0 20px;
 }
 
-#pulseaudio {
-    color: @blue;
+/* ── Separador | ─────────────────────────────────────────────────────────────*/
+#custom-sep {
+    color:     @sep;
+    padding:   0 1px;
+    font-size: 11px;
 }
 
-#pulseaudio.muted {
-    color: @gray;
-}
-
-#network {
-    color: @green;
-}
-
-#cpu {
-    color: @yellow;
-}
-
-#memory {
-    color: @purple;
-}
-
-#temperature {
-    color: @aqua;
-}
-
-#backlight {
-    color: @yellow;
-}
-
-#battery {
-    color: @green;
-}
-
-#battery.critical:not(.charging) {
-    background-color: @red;
-    color: #11111b;
-    animation: blink 0.5s linear infinite alternate;
-}
-
-#idle_inhibitor {
-    color: @gray;
-}
-
-#idle_inhibitor.activated {
-    color: @red;
-}
-
+/* ── Módulos (solo iconos, padding uniforme) ─────────────────────────────────*/
+#backlight,
+#bluetooth,
+#network,
+#pulseaudio,
+#cpu,
+#memory,
+#idle_inhibitor,
 #tray {
-    padding: 0 8px;
+    color:     @fg;
+    padding:   0 9px;
+    font-size: 14px;
 }
 
-@keyframes blink {
-    to {
-        background-color: @fg;
-        color: #11111b;
-    }
+/* Estados especiales */
+#network.disconnected  { color: @accent; }
+#pulseaudio.muted      { color: @fg-dim; }
+#bluetooth.off         { color: @fg-dim; }
+#idle_inhibitor        { color: @fg-dim; }
+#idle_inhibitor.activated { color: @accent; }
+
+/* ── Tray ────────────────────────────────────────────────────────────────────*/
+#tray {
+    padding: 0 6px;
+    border-left: 1px solid @border;
 }
+
+#tray > .passive      { -gtk-icon-effect: dim; }
+#tray > .needs-attention { -gtk-icon-effect: highlight; }
+
+/* ── Reproductor de música (Píldora dinámica de acento) ───────────────────────*/
+#mpris {
+    background:    @accent;
+    color:         @base00; /* Texto oscuro sobre el acento de color */
+    padding:       0 12px;
+    font-size:     12px;
+    font-weight:   bold;
+    border-radius: 12px;
+    margin:        3px 4px 3px 0;
+    transition:    all 0.15s ease;
+}
+
+#mpris.paused {
+    background:    @fg-dim;
+    color:         @bg;
+}
+
+/* ── Botón de sesión (icono en extremo derecho) ───────────────────────────────*/
+#custom-session {
+    color:        @accent;
+    padding:      0 12px;
+    font-size:    14px;
+    transition:   color 0.15s;
+}
+
+#custom-session:hover {
+    color: @fg;
+}
+
+/* ── Tooltips ────────────────────────────────────────────────────────────────*/
+tooltip {
+    background:    alpha(@base00, 0.96);
+    border:        1px solid @border;
+    border-radius: 4px;
+    color:         @fg;
+    font-size:     12px;
+    padding:       4px 8px;
+}
+
+tooltip label { color: @fg; }
