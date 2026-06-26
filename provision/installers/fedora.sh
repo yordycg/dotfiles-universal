@@ -94,6 +94,12 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo dnf copr enable -y solopasha/hyprland
     fi
 
+    # Habilitar COPR errornointernet/quickshell para Quickshell
+    if ! dnf copr list | grep -q "errornointernet/quickshell"; then
+        log_info "Habilitando COPR errornointernet/quickshell (Quickshell)..."
+        run sudo dnf copr enable -y errornointernet/quickshell
+    fi
+
     # Configurar exclusiones en el COPR solopasha para evitar conflictos en Fedora 44+
     solopasha_repo="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:solopasha:hyprland.repo"
     if [ -f "$solopasha_repo" ] && ! grep -q "exclude=" "$solopasha_repo"; then

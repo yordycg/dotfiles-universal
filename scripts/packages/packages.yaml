@@ -118,6 +118,7 @@ fedora:
     - mate-polkit
     - papirus-icon-theme
     - imv
+    - quickshell
 
   kde:
     # Core

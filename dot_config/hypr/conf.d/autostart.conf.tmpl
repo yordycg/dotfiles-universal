@@ -5,7 +5,13 @@
 # =============================================================================
 
 # ── Status bar ────────────────────────────────────────────────────────────────
+{{- if .isDesktop }}
+exec-once = qs -n -d -c desktop
+exec-once = qs -n -d -c song-slide
+exec-once = qs -n -d -c clipboard-ripple
+{{- else }}
 exec-once = waybar
+{{- end }}
 
 # ── Wallpaper (swww con transición al cambiar) ────────────────────────────────
 exec-once = swww-daemon

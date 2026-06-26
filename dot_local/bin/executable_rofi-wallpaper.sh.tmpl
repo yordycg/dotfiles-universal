@@ -95,6 +95,9 @@ if [ -n "$selection" ]; then
         fi
         pkill -USR1 kitty   # Reload kitty config
         pkill -USR2 waybar  # Reload waybar styles without restarting
+        if pgrep -x "quickshell" > /dev/null || pgrep -x "qs" > /dev/null; then
+            qs -c desktop ipc call theme reload 2>/dev/null || true
+        fi
         if command -v makoctl &> /dev/null && pgrep -x "mako" > /dev/null; then
             makoctl reload  # Reload mako configuration and colors
         fi

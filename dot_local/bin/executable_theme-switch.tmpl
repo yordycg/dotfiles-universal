@@ -57,6 +57,7 @@ elif pgrep -x "sway" > /dev/null; then
     swaymsg reload
 fi
 pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
+(pgrep -x quickshell >/dev/null || pgrep -x qs >/dev/null) && qs -c desktop ipc call theme reload 2>/dev/null || true
 pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
 {{- end }}
 
