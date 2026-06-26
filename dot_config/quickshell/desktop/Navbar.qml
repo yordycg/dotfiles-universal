@@ -13,6 +13,7 @@ Item {
     id: root
 
     required property var theme
+    readonly property var outerRoot: root
 
     readonly property color paper:   theme.paper
     readonly property color ink:     theme.ink
@@ -179,6 +180,7 @@ Item {
     property int cpuVal: 0
     property int memVal: 0
     property int batVal: 0
+    property bool hasBattery: false
     property string batState: "Unknown"
     // Instantaneous power draw in watts; magnitude only — direction is in batState.
     property real batPower: 0
@@ -1097,29 +1099,32 @@ Item {
         id: tel
         running: false
         command: ["bash", "-lc",
-            "bat=0; bst=Unknown; pwr=0; "
+            "bat=0; bst=Unknown; pwr=0; has_bat=0; "
             + "if [ -d /sys/class/power_supply/BAT0 ]; then "
+            + "  has_bat=1; "
             + "  bat=$(cat /sys/class/power_supply/BAT0/capacity 2>/dev/null || echo 0); "
             + "  bst=$(cat /sys/class/power_supply/BAT0/status 2>/dev/null || echo Unknown); "
             + "  pwr=$(cat /sys/class/power_supply/BAT0/power_now 2>/dev/null || echo 0); "
             + "elif [ -d /sys/class/power_supply/BAT1 ]; then "
+            + "  has_bat=1; "
             + "  bat=$(cat /sys/class/power_supply/BAT1/capacity 2>/dev/null || echo 0); "
             + "  bst=$(cat /sys/class/power_supply/BAT1/status 2>/dev/null || echo Unknown); "
             + "  pwr=$(cat /sys/class/power_supply/BAT1/power_now 2>/dev/null || echo 0); "
             + "fi; "
             + "pwr=${pwr#-}; "  // some kernels prefix '-' on discharge; magnitude is enough, sign comes from $bst
-            + "printf '%d|%s|%s|%s|%s|%s|%d' "
+            + "printf '%d|%s|%s|%s|%s|%s|%d|%d' "
             + "  \"$bat\" \"$bst\" "
-            + "  \"$(date +%H)\" \"$(date +%M)\" \"$(date +%d)\" \"$(date +%b | tr a-z A-Z)\" \"$pwr\""]
+            + "  \"$(date +%H)\" \"$(date +%M)\" \"$(date +%d)\" \"$(date +%b | tr a-z A-Z)\" \"$pwr\" \"$has_bat\""]
         stdout: StdioCollector {
             onStreamFinished: {
                 const p = this.text.split("|");
-                if (p.length === 7) {
+                if (p.length === 8) {
                     root.batVal = parseInt(p[0]) || 0;
                     root.batState = p[1] || "Unknown";
                     root.hh = p[2]; root.mm = p[3];
                     root.dd = p[4]; root.mon = p[5];
                     root.batPower = (parseInt(p[6]) || 0) / 1e6;
+                    root.hasBattery = parseInt(p[7]) === 1;
                 }
             }
         }
@@ -1758,7 +1763,7 @@ Item {
         model: Quickshell.screens
         delegate: Component {
             Bar {
-                root: root
+                root: outerRoot
                 visible: root.barVariant === "zen"
             }
         }
@@ -1767,7 +1772,7 @@ Item {
         model: Quickshell.screens
         delegate: Component {
             BarHacker {
-                root: root
+                root: outerRoot
                 visible: root.barVariant === "hackerman"
             }
         }
@@ -1776,7 +1781,7 @@ Item {
         model: Quickshell.screens
         delegate: Component {
             BarWhiterose {
-                root: root
+                root: outerRoot
                 visible: root.barVariant === "whiterose"
             }
         }

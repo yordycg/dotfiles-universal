@@ -442,6 +442,7 @@ PanelWindow {
 
             HackerStat {
                 root: hk.root
+                visible: hk.root.hasBattery
                 label: "BAT"
                 value: hk.root.batVal + "%"
                 gauge: hk.root.batVal
@@ -636,6 +637,7 @@ PanelWindow {
                 onClicked: { if (hk.root.weatherVisible) hk.root.weatherVisible = false; else hk.root.openWeather(); } }
         }
         Text {
+            visible: hk.root.hasBattery
             Layout.alignment: Qt.AlignHCenter
             text: hk.root.batVal + ""
             color: hk.root.batVal <= 10 ? hk.root.seal : hk.root.batVal <= 20 ? hk.root.indigo : hk.root.ink

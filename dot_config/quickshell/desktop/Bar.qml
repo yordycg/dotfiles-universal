@@ -575,6 +575,7 @@ PanelWindow {
 
             Module {
                 root: bar.root
+                visible: bar.root.hasBattery
                 glyph: bar.root.batteryIcon()
                 // Hide power below 0.05 W: idle Full / Not charging
                 // states often report a sub-noise trickle that just

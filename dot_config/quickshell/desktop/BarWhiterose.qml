@@ -328,6 +328,7 @@ PanelWindow {
             }
             WhiteRoseCell {
                 root: wr.root
+                visible: wr.root.hasBattery
                 glyph: wr.root.batteryIcon()
                 tooltip: wr.batteryTip()
                 strong: wr.root.batVal <= 10
@@ -514,6 +515,7 @@ PanelWindow {
         }
         WhiteRoseCell {
             root: wr.root
+            visible: wr.root.hasBattery
             glyph: wr.root.batteryIcon()
             tooltip: wr.batteryTip()
             strong: wr.root.batVal <= 10

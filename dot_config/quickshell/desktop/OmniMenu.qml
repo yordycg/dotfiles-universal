@@ -178,7 +178,8 @@ Item {
     // No search field in quickMode — tiles are always the full set so
     // grid arithmetic (gridCols * row) stays predictable. Kept as a
     // separate property so non-quick code paths don't need to branch.
-    readonly property var filteredQuickTiles: root.quickTilesBase
+    // If no physical battery is present, dynamically filter out the battery tile.
+    readonly property var filteredQuickTiles: (root.navbar && root.navbar.hasBattery) ? root.quickTilesBase : root.quickTilesBase.filter(t => t.key !== "battery")
 
     // Same launch envelope as activate() so popup IPCs (qs ipc call …)
     // get fired off-process and quickshell can close immediately.
