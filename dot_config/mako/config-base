@@ -1,0 +1,26 @@
+# =============================================================================
+# ~/.config/mako/config-base
+# Configuración estática para Mako — Kanagawa Dragon
+# =============================================================================
+
+font=JetBrainsMono Nerd Font 10
+width=300
+height=150
+margin=20
+padding=15
+border-size=2
+border-radius=8
+icons=1
+max-icon-size=48
+default-timeout=5000
+ignore-timeout=0
+
+# Colors (Static Kanagawa Dragon)
+background-color=#080808B3
+text-color=#d4c5a9
+border-color=#c7362a
+progress-color=over #c7362a
+
+[urgency=high]
+border-color=#c7362a
+default-timeout=0

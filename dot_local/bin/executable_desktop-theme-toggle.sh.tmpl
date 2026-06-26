@@ -1,0 +1,126 @@
+#!/usr/bin/env bash
+
+# =============================================================================
+# desktop-theme-toggle.sh — Conmutador Global de Temas
+# Intercambia enlaces simbólicos entre el tema estático (Kanagawa Dragon)
+# y el tema dinámico (Wallust) para todas las aplicaciones del escritorio.
+# =============================================================================
+
+# Directorios de configuración
+WAYBAR_DIR="$HOME/.config/waybar"
+ROFI_DIR="$HOME/.config/rofi"
+KITTY_DIR="$HOME/.config/kitty"
+MAKO_DIR="$HOME/.config/mako"
+HYPR_DIR="$HOME/.config/hypr/conf.d"
+SWAY_DIR="$HOME/.config/sway"
+
+# Enlaces y destinos
+# 1. Waybar
+WAYBAR_LINK="$WAYBAR_DIR/current-colors.css"
+# 2. Rofi
+ROFI_LINK="$ROFI_DIR/current-colors.rasi"
+# 3. Kitty
+KITTY_LINK="$KITTY_DIR/current-colors.conf"
+# 4. Mako (Se enlaza la configuración completa)
+MAKO_LINK="$MAKO_DIR/config"
+# 5. Hyprland
+HYPR_LINK="$HYPR_DIR/current-theme-colors.conf"
+# 6. Sway
+SWAY_LINK="$SWAY_DIR/current-colors"
+
+show_help() {
+    echo "Uso: $(basename "$0") [opción]"
+    echo "Opciones:"
+    echo "  --static    Activa el tema base estático (Kanagawa Dragon)"
+    echo "  --dynamic   Activa el tema dinámico (colores del wallpaper)"
+    echo "  --toggle    Alterna entre estático y dinámico (por defecto)"
+}
+
+MODE="toggle"
+if [ "$1" = "--static" ]; then
+    MODE="static"
+elif [ "$1" = "--dynamic" ]; then
+    MODE="dynamic"
+elif [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+    show_help
+    exit 0
+fi
+
+# Determinar el modo actual leyendo el enlace de Waybar
+CURRENT_TARGET=""
+if [ -L "$WAYBAR_LINK" ]; then
+    CURRENT_TARGET=$(readlink "$WAYBAR_LINK")
+fi
+
+if [ "$MODE" = "static" ] || { [ "$MODE" = "toggle" ] && [ "$(basename "$CURRENT_TARGET")" != "colors-base.css" ]; }; then
+    # ── ACTIVAR MODO ESTÁTICO (KANAGAWA DRAGON) ────────────────────────────────
+    
+    # 1. Waybar
+    ln -sf "colors-base.css" "$WAYBAR_LINK"
+    # 2. Rofi
+    ln -sf "colors-base.rasi" "$ROFI_LINK"
+    # 3. Kitty
+    ln -sf "colors-base.conf" "$KITTY_LINK"
+    # 4. Mako
+    ln -sf "config-base" "$MAKO_LINK"
+    # 5. Hyprland
+    ln -sf "theme-colors-base.conf" "$HYPR_LINK"
+    # 6. Sway
+    ln -sf "colors-base" "$SWAY_LINK"
+
+    if command -v notify-send &>/dev/null; then
+        notify-send -i preferences-desktop-theme "Escritorio" "Modo Estático Activado (Kanagawa Dragon)"
+    fi
+    echo "Tema global cambiado a: Kanagawa Dragon (Estático)"
+else
+    # ── ACTIVAR MODO DINÁMICO (WALLPAPER / WALLUST) ───────────────────────────
+    
+    # Asegurar que los archivos dinámicos existan para evitar enlaces rotos
+    [ -f "$WAYBAR_DIR/colors.css" ] || cp "$WAYBAR_DIR/colors-base.css" "$WAYBAR_DIR/colors.css"
+    [ -f "$ROFI_DIR/colors.rasi" ] || cp "$ROFI_DIR/colors-base.rasi" "$ROFI_DIR/colors.rasi"
+    [ -f "$KITTY_DIR/colors.conf" ] || cp "$KITTY_DIR/colors-base.conf" "$KITTY_DIR/colors.conf"
+    [ -f "$MAKO_DIR/config-dynamic" ] || cp "$MAKO_DIR/config-base" "$MAKO_DIR/config-dynamic"
+    [ -f "$HYPR_DIR/theme-colors.conf" ] || cp "$HYPR_DIR/theme-colors-base.conf" "$HYPR_DIR/theme-colors.conf"
+    [ -f "$SWAY_DIR/colors" ] || cp "$SWAY_DIR/colors-base" "$SWAY_DIR/colors"
+
+    # 1. Waybar
+    ln -sf "colors.css" "$WAYBAR_LINK"
+    # 2. Rofi
+    ln -sf "colors.rasi" "$ROFI_LINK"
+    # 3. Kitty
+    ln -sf "colors.conf" "$KITTY_LINK"
+    # 4. Mako
+    ln -sf "config-dynamic" "$MAKO_LINK"
+    # 5. Hyprland
+    ln -sf "theme-colors.conf" "$HYPR_LINK"
+    # 6. Sway
+    ln -sf "colors" "$SWAY_LINK"
+
+    if command -v notify-send &>/dev/null; then
+        notify-send -i preferences-desktop-theme "Escritorio" "Modo Dinámico Activado (Colores del Wallpaper)"
+    fi
+    echo "Tema global cambiado a: Dinámico (Wallust)"
+fi
+
+# ── RECARGAR CONFIGURACIÓN EN TODAS LAS APPS ──────────────────────────────────
+
+# 1. Recargar Waybar
+pkill -USR2 waybar || killall -HUP waybar
+
+# 2. Recargar Mako
+if pgrep -x "mako" > /dev/null; then
+    makoctl reload
+fi
+
+# 3. Recargar Kitty
+pkill -USR1 kitty
+
+# 4. Recargar Hyprland (si está corriendo)
+if pgrep -x "Hyprland" > /dev/null; then
+    hyprctl reload
+fi
+
+# 5. Recargar Sway (si está corriendo)
+if pgrep -x "sway" > /dev/null; then
+    swaymsg reload
+fi
