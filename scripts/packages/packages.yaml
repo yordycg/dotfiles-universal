@@ -37,6 +37,7 @@ fedora:
     - mosh
     - unzip
     - sqlite
+    - ollama
 
   desktop:
     - distrobox

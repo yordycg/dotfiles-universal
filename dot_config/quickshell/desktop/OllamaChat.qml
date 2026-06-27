@@ -44,7 +44,7 @@ Item {
     readonly property bool running: chatProc.running
 
     property int _gen: 0
-    readonly property string model_: "qwen3.5:0.8b"
+    readonly property string model_: "qwen2.5-coder:1.5b"
     readonly property string triggerChar: ollamaChat.mode === "command" ? "$" : "?"
 
     // Tracks whether THIS session actually invoked inference (vs. just
