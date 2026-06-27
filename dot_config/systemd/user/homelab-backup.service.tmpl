@@ -6,10 +6,10 @@ After=network-online.target
 [Service]
 Type=oneshot
 EnvironmentFile=%h/.config/homelab/backup.env
-{{- $infraDir := joinPath .chezmoi.homeDir ".local/share/homelab-infra" -}}
+{{ $infraDir := joinPath .chezmoi.homeDir ".local/share/homelab-infra" -}}
 {{- if not (stat $infraDir) -}}
 {{-   $infraDir = joinPath .chezmoi.homeDir "homelab-infra" -}}
-{{- end -}}
+{{- end }}
 ExecStart={{ $infraDir }}/manage.sh backup
 Environment=PATH=/usr/local/bin:/usr/bin:/bin:%h/.local/bin
 
