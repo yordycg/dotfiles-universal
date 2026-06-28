@@ -32,23 +32,23 @@ button:hover, button:focus {
     outline: none;
 }
 
-/* Icons styling using standard wlogout class/ids */
+/* Icons styling using HyDE white icons */
 #lock {
-    background-image: image(url("/usr/share/wlogout/icons/lock.png"), url("/usr/local/share/wlogout/icons/lock.png"));
+    background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/lock_white.png"), url("/usr/share/wlogout/icons/lock.png"));
 }
 
 #logout {
-    background-image: image(url("/usr/share/wlogout/icons/logout.png"), url("/usr/local/share/wlogout/icons/logout.png"));
+    background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/logout_white.png"), url("/usr/share/wlogout/icons/logout.png"));
 }
 
 #suspend {
-    background-image: image(url("/usr/share/wlogout/icons/suspend.png"), url("/usr/local/share/wlogout/icons/suspend.png"));
+    background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/suspend_white.png"), url("/usr/share/wlogout/icons/suspend.png"));
 }
 
 #reboot {
-    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+    background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/reboot_white.png"), url("/usr/share/wlogout/icons/reboot.png"));
 }
 
 #shutdown {
-    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+    background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/shutdown_white.png"), url("/usr/share/wlogout/icons/shutdown.png"));
 }
