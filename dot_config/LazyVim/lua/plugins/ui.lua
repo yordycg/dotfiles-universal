@@ -1,5 +1,9 @@
 return {
-  -- Catppuccin para Neovim
+  -- =========================================================================
+  -- Colección de Colores y Temas (Instalación)
+  -- =========================================================================
+
+  -- 1. Catppuccin
   {
     "catppuccin/nvim",
     name = "catppuccin",
@@ -30,13 +34,51 @@ return {
     },
   },
 
-  -- Decirle a LazyVim que use este colorscheme
+  -- 2. Kanagawa
+  {
+    "rebelot/kanagawa.nvim",
+    priority = 1000,
+    opts = {
+      theme = "dragon", -- wave | dragon | lotus
+      background = { dark = "dragon", light = "lotus" },
+    },
+  },
+
+  -- 3. One Dark
+  {
+    "navarasu/onedark.nvim",
+    priority = 1000,
+    opts = {
+      style = "darker", -- dark, darker, cool, deep, warm, warmer, light
+    },
+  },
+
+  -- 4. Nord
+  {
+    "shaunsingh/nord.nvim",
+    priority = 1000,
+  },
+
+  -- 5. y9nika (Tema personalizado solicitado)
+  {
+    "y9san9/y9nika.nvim",
+    priority = 1000,
+  },
+
+  -- =========================================================================
+  -- Configuración de LazyVim (Tema Activo)
+  -- =========================================================================
+
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "catppuccin",
+      colorscheme = "y9nika", -- <- Puedes cambiar este valor manualmente por el tema que desees
     },
   },
+
+  -- =========================================================================
+  -- Plugins de Interfaz de Usuario (UI)
+  -- =========================================================================
 
   -- Dashboard
   {
