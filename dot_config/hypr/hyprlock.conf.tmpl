@@ -2,6 +2,13 @@
 # hyprlock.conf — Pantalla de Bloqueo
 # =============================================================================
 
+# Colores de respaldo (Fallback)
+$accent = rgb(cba6f7)
+$foreground = rgb(cfcfcf)
+
+# Importar colores dinámicos de wallust
+source = ~/.config/hypr/conf.d/hyprlock-colors.conf
+
 general {
     disable_loading_bar = false
     hide_cursor         = true
@@ -28,9 +35,9 @@ input-field {
     dots_spacing      = 0.15
     dots_center       = false
 
-    outer_color = rgba({{ get . "accentColor" | default "cba6f7" }}ff)
-    inner_color = rgba(20203099)
-    font_color  = rgb(cfcfcf)
+    outer_color = $accent
+    inner_color = rgba(20, 20, 30, 0.6)
+    font_color  = $foreground
     fade_on_empty = true
 
     placeholder_text = <i>Contraseña...</i>
@@ -44,7 +51,7 @@ input-field {
 label {
     monitor =
     text     = cmd[update:1000] echo "$(date +'%H:%M')"
-    color    = rgba({{ get . "accentColor" | default "cba6f7" }}ff)
+    color    = $accent
     font_size = 64
     font_family = JetBrainsMono Nerd Font Bold
 
@@ -56,7 +63,7 @@ label {
 label {
     monitor =
     text        = {{ .chezmoi.username }}
-    color       = rgba(cfcfcfcc)
+    color       = $foreground
     font_size   = 16
     font_family = JetBrainsMono Nerd Font
 

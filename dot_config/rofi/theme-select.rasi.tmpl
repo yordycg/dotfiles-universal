@@ -1,0 +1,111 @@
+/**
+ * Rofi Theme Selector - Horizontal Card Layout (HyDE Style)
+ */
+
+configuration {
+    show-icons:                 true;
+    font:                        "JetBrainsMono Nerd Font 10";
+}
+
+@theme "/dev/null"
+@import "{{ .chezmoi.homeDir }}/.config/rofi/colors.rasi"
+
+* {
+    /* Fallback colors */
+    bg:                          #080808B3;
+    bg-alt:                      #1e1e2eB3;
+    fg:                          #cdd6f4;
+    accent:                      #b4befe;
+
+    background-color:            transparent;
+    text-color:                  @fg;
+}
+
+window {
+    transparency:                "real";
+    location:                    center;
+    anchor:                      center;
+    fullscreen:                  false;
+    width:                       860px;
+    height:                      260px;
+
+    enabled:                     true;
+    border:                      2px solid;
+    border-radius:               16px;
+    border-color:                @accent;
+    background-color:            @bg;
+    cursor:                      "default";
+}
+
+mainbox {
+    enabled:                     true;
+    spacing:                     15px;
+    padding:                     25px;
+    children:                    [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled:                     true;
+    spacing:                     10px;
+    padding:                     10px 15px;
+    border-radius:               10px;
+    background-color:            @bg-alt;
+    children:                    [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:                     true;
+}
+
+entry {
+    enabled:                     true;
+    placeholder:                 "Buscar tema...";
+}
+
+listview {
+    enabled:                     true;
+    columns:                     4;
+    lines:                       1;
+    cycle:                       true;
+    dynamic:                     true;
+    scrollbar:                   false;
+    layout:                      vertical; /* horizontal cards using columns */
+    reverse:                     false;
+    fixed-height:                true;
+    fixed-columns:               true;
+    
+    spacing:                     15px;
+    background-color:            transparent;
+}
+
+element {
+    enabled:                     true;
+    orientation:                 vertical;
+    spacing:                     12px;
+    padding:                     20px 10px;
+    border-radius:               12px;
+    background-color:            rgba(255, 255, 255, 0.02);
+    border:                      1px solid;
+    border-color:                rgba(255, 255, 255, 0.05);
+    cursor:                      pointer;
+}
+
+element selected.normal {
+    background-color:            @bg-alt;
+    border:                      2px solid;
+    border-color:                @accent;
+    text-color:                  @fg;
+}
+
+element-icon {
+    size:                        48px;
+    cursor:                      inherit;
+    horizontal-align:            0.5;
+}
+
+element-text {
+    enabled:                     true;
+    cursor:                      inherit;
+    horizontal-align:            0.5;
+    vertical-align:              0.5;
+}

@@ -1,107 +1,92 @@
 /**
- * Rofi Wallpaper Theme - Senior Grid
+ * Rofi Wallpaper Theme - HyDE Style Horizontal Cards (No Search, Full Width)
+ * Optimized with dynamic height to prevent clipping on different DPIs.
  */
 
 configuration {
     show-icons:                 true;
+    drun-display-format:         "{name}";
     font:                        "JetBrainsMono Nerd Font 10";
 }
 
 @theme "/dev/null"
-@import "{{ .chezmoi.homeDir }}/.config/rofi/current-colors.rasi"
+@import "{{ .chezmoi.homeDir }}/.config/rofi/colors.rasi"
 
 * {
-    /* Colores estáticos de respaldo - Tema Kanagawa Dragon */
+    /* Fallback colors */
     bg:                          #080808B3;
-    bg-alt:                      #5a5040B3;
-    fg:                          #d4c5a9;
-    accent:                      #c7362a;
+    bg-alt:                      #1e1e2eB3;
+    fg:                          #cdd6f4;
+    accent:                      #b4befe;
 
     background-color:            transparent;
     text-color:                  @fg;
 }
 
 window {
+    enabled:                     true;
+    fullscreen:                  false;
     transparency:                "real";
+    cursor:                      "default";
+    background-color:            rgba(8, 8, 8, 0.95); /* Fondo de barra de ancho completo */
+    width:                       100%;
+    /* Sin altura fija para permitir que se ajuste dinámicamente según el DPI del monitor */
     location:                    center;
     anchor:                      center;
-    fullscreen:                  false;
-    width:                       1000px;
-    height:                      600px;
-    x-offset:                    0px;
-    y-offset:                    0px;
-
-    enabled:                     true;
-    border:                      2px solid;
-    border-radius:               12px;
-    border-color:                @accent;
-    background-color:            @bg;
-    cursor:                      "default";
 }
 
 mainbox {
     enabled:                     true;
-    spacing:                     10px;
-    padding:                     20px;
-    children:                    [ "inputbar", "listview" ];
-}
-
-inputbar {
-    enabled:                     true;
-    spacing:                     10px;
-    padding:                     10px;
-    border-radius:               8px;
-    background-color:            @bg-alt;
-    children:                    [ "prompt", "entry" ];
-}
-
-prompt {
-    enabled:                     true;
-}
-
-entry {
-    enabled:                     true;
-    placeholder:                 "Search wallpapers...";
+    padding:                     25px 80px; /* Márgenes laterales */
+    children:                    [ "listview" ];
+    background-color:            transparent;
 }
 
 listview {
     enabled:                     true;
-    columns:                     3;
-    lines:                       2;
+    spacing:                     3em;
+    columns:                     9; /* 9 columnas a lo ancho de la pantalla */
+    lines:                       1;
     cycle:                       true;
     dynamic:                     true;
     scrollbar:                   false;
-    layout:                      vertical;
+    layout:                      vertical; /* Fila horizontal de tarjetas usando las columnas */
     reverse:                     false;
-    fixed-height:                true;
+    fixed-height:                false; /* Altura dinámica */
     fixed-columns:               true;
-    
-    spacing:                     15px;
     background-color:            transparent;
+    text-color:                  @fg;
 }
 
 element {
     enabled:                     true;
-    orientation:                 vertical;
-    spacing:                     10px;
-    padding:                     15px;
-    border-radius:               10px;
-    background-color:            transparent;
+    spacing:                     0.5em;
+    padding:                     0.8em;
     cursor:                      pointer;
+    background-color:            transparent;
+    text-color:                  @fg;
+    orientation:                 vertical;
+    border-radius:               12px;
 }
 
 element selected.normal {
-    background-color:            @bg-alt;
-    border:                      2px solid;
-    border-color:                @accent;
+    background-color:            @accent; /* Activa la card completa con fondo de acento */
+    text-color:                  #080808; /* Texto oscuro para contraste */
 }
 
 element-icon {
-    size:                        250px;
     cursor:                      inherit;
-    horizontal-align:            0.5;
+    size:                        10em; /* Tamaño de miniatura cuadrada en ems */
+    background-color:            transparent;
+    text-color:                  inherit;
+    expand:                      false;
+    border-radius:               8px;
 }
 
 element-text {
-    enabled:                     false; /* Hide text to focus on thumbnails */
+    vertical-align:              0.5;
+    horizontal-align:            0.5;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
 }

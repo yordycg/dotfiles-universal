@@ -13,3 +13,5 @@ hyprland = { template = "hyprland.wl", target = "~/.config/hypr/conf.d/theme-col
 mako = { template = "mako.wl", target = "~/.config/mako/config-dynamic" }
 rofi = { template = "rofi.wl", target = "~/.config/rofi/colors.rasi" }
 quickshell = { template = "quickshell.wl", target = "~/.config/quickshell/colors.toml" }
+hyprlock = { template = "hyprlock.wl", target = "~/.config/hypr/conf.d/hyprlock-colors.conf" }
+btop = { template = "btop.wl", target = "~/.config/btop/themes/wallust.theme" }

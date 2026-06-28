@@ -1,0 +1,54 @@
+@import "{{ .chezmoi.homeDir }}/.config/waybar/colors.css";
+
+* {
+    background-image: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: 14px;
+}
+
+window {
+    background-color: rgba(10, 10, 10, 0.4); /* fallback */
+    background-color: alpha(@background, 0.4); /* Frosted glass effect when combined with Hyprland blur */
+}
+
+button {
+    color: @foreground;
+    background-color: rgba(255, 255, 255, 0.03);
+    border-style: solid;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.07);
+    border-radius: 16px;
+    margin: 15px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 32%;
+}
+
+button:hover, button:focus {
+    background-color: alpha(@accent, 0.25);
+    border-color: @accent;
+    color: @accent;
+    outline: none;
+}
+
+/* Icons styling using standard wlogout class/ids */
+#lock {
+    background-image: image(url("/usr/share/wlogout/icons/lock.png"), url("/usr/local/share/wlogout/icons/lock.png"));
+}
+
+#logout {
+    background-image: image(url("/usr/share/wlogout/icons/logout.png"), url("/usr/local/share/wlogout/icons/logout.png"));
+}
+
+#suspend {
+    background-image: image(url("/usr/share/wlogout/icons/suspend.png"), url("/usr/local/share/wlogout/icons/suspend.png"));
+}
+
+#reboot {
+    background-image: image(url("/usr/share/wlogout/icons/reboot.png"), url("/usr/local/share/wlogout/icons/reboot.png"));
+}
+
+#shutdown {
+    background-image: image(url("/usr/share/wlogout/icons/shutdown.png"), url("/usr/local/share/wlogout/icons/shutdown.png"));
+}

@@ -1,0 +1,30 @@
+{
+    "label" : "lock",
+    "action" : "pgrep -x Hyprland >/dev/null && hyprlock || swaylock -c #282828",
+    "text" : "Lock",
+    "keybind" : "l"
+}
+{
+    "label" : "logout",
+    "action" : "pgrep -x Hyprland >/dev/null && hyprctl dispatch exit || swaymsg exit",
+    "text" : "Logout",
+    "keybind" : "e"
+}
+{
+    "label" : "suspend",
+    "action" : "mpc -q pause; amixer set Master mute; systemctl suspend",
+    "text" : "Suspend",
+    "keybind" : "u"
+}
+{
+    "label" : "reboot",
+    "action" : "systemctl reboot",
+    "text" : "Reboot",
+    "keybind" : "r"
+}
+{
+    "label" : "shutdown",
+    "action" : "systemctl poweroff",
+    "text" : "Shutdown",
+    "keybind" : "s"
+}

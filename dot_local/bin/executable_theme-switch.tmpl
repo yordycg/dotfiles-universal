@@ -17,13 +17,24 @@ THEME="${1:-}"
 
 # --- 2. Selección de Tema ---
 if [ -z "$THEME" ]; then
-    if ! command -v fzf &> /dev/null; then
-        echo "⚠ fzf no encontrado. Instálalo o pasa un tema como argumento."
-        exit 1
+    # Si estamos en sesión gráfica y rofi está disponible, lo usamos
+    if { [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; } && command -v rofi &> /dev/null; then
+        list_themes() {
+            flavours list | tr ' ' '\n' | grep -v '^$' | while read -r t; do
+                echo -en "$t\0icon\x1fpreferences-desktop-theme\n"
+            done
+        }
+        THEME=$(list_themes | rofi -dmenu -i -p "🎨 Tema:" -theme "$HOME/.config/rofi/theme-select.rasi")
     fi
-    
-    # flavours list devuelve todo en una línea, lo convertimos a lista vertical
-    THEME=$(flavours list | tr ' ' '\n' | grep -v '^$' | fzf --height 40% --reverse --header "Selecciona un tema base16:")
+
+    # Si no se seleccionó nada en rofi (o no está disponible), hacemos fallback a fzf
+    if [ -z "$THEME" ]; then
+        if ! command -v fzf &> /dev/null; then
+            echo "⚠ fzf/rofi no encontrado o cancelado. Instálalo o pasa un tema como argumento."
+            exit 1
+        fi
+        THEME=$(flavours list | tr ' ' '\n' | grep -v '^$' | fzf --height 40% --reverse --header "Selecciona un tema base16:")
+    fi
 fi
 
 # Salir si se canceló fzf o no se seleccionó nada
@@ -42,12 +53,9 @@ flavours apply "$THEME"
 if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
     echo "→ Propagando tema al servidor Homelab..."
     # Crear directorios remotos si no existen
-    ssh homelab "mkdir -p ~/.config/tmux ~/.config/shell"
+    ssh homelab "mkdir -p ~/.config/shell"
     # Copiar archivos de colores generados por flavours
-    scp "$HOME/.config/tmux/colors.conf" "homelab:~/.config/tmux/colors.conf" >/dev/null 2>&1
     scp "$HOME/.config/shell/fzf_colors.sh" "homelab:~/.config/shell/fzf_colors.sh" >/dev/null 2>&1
-    # Recargar tmux en el servidor
-    ssh homelab "tmux source-file ~/.config/tmux/colors.conf" >/dev/null 2>&1
 fi
 
 # --- 5. Reload de Apps Gráficas Locales ---
@@ -61,11 +69,7 @@ pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
 pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
 {{- end }}
 
-# --- 6. Reload de Tmux Local ---
-if [ -n "${TMUX:-}" ]; then
-  echo "→ Reloading Tmux colors..."
-  tmux source-file ~/.config/tmux/colors.conf
-fi
+# --- 6. Reload de Tmux Local (Desactivado para mantener tema estático) ---
 
 echo "✓ Theme applied: $THEME"
 {{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
