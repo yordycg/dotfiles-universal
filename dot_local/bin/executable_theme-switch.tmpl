@@ -1,77 +1,126 @@
 #!/usr/bin/env bash
 # {{ .chezmoi.sourceDir }}/dot_local/bin/executable_theme-switch.tmpl
-# Usage: theme-switch catppuccin-mocha
 
-# Ensure ~/.local/share/mise/shims, ~/.local/bin and ~/.cargo/bin are in PATH
+# Asegurar rutas de mise, cargo y locales para ejecuciones desde el compositor
 export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
-# --- 1. Verificación de Entorno ---
-# Si no hay flavours, no podemos generar ni listar temas.
-if ! command -v flavours &> /dev/null; then
-    echo "🎨 En este entorno (WSL/Servidor), los colores son gestionados por la terminal anfitriona."
-    echo "   Para cambiar el tema del Homelab, ejecútalo desde tu Laptop principal."
-    exit 0
-fi
+THEMES_DIR="$HOME/.config/themes"
+ACTIVE_THEME_FILE="$HOME/.cache/themes/active_theme"
+mkdir -p "$HOME/.cache/themes"
 
+# --- 1. Selección de Tema ---
 THEME="${1:-}"
 
-# --- 2. Selección de Tema ---
 if [ -z "$THEME" ]; then
+    # Listar temas y mostrar en Rofi usando el swatch como icono
+    list_themes() {
+        find "$THEMES_DIR" -maxdepth 1 -mindepth 1 -type d | while read -r d; do
+            name=$(basename "$d")
+            swatch="$d/swatch.png"
+            echo -en "$name\0icon\x1f$swatch\n"
+        done
+    }
+    
     # Si estamos en sesión gráfica y rofi está disponible, lo usamos
     if { [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; } && command -v rofi &> /dev/null; then
-        list_themes() {
-            flavours list | tr ' ' '\n' | grep -v '^$' | while read -r t; do
-                echo -en "$t\0icon\x1fpreferences-desktop-theme\n"
-            done
-        }
         THEME=$(list_themes | rofi -dmenu -i -p "🎨 Tema:" -theme "$HOME/.config/rofi/theme-select.rasi")
-    fi
-
-    # Si no se seleccionó nada en rofi (o no está disponible), hacemos fallback a fzf
-    if [ -z "$THEME" ]; then
+    else
+        # Fallback a fzf si no hay entorno gráfico
         if ! command -v fzf &> /dev/null; then
             echo "⚠ fzf/rofi no encontrado o cancelado. Instálalo o pasa un tema como argumento."
             exit 1
         fi
-        THEME=$(flavours list | tr ' ' '\n' | grep -v '^$' | fzf --height 40% --reverse --header "Selecciona un tema base16:")
+        THEME=$(find "$THEMES_DIR" -maxdepth 1 -mindepth 1 -type d | xargs -n1 basename | fzf --height 40% --reverse --header "Selecciona un tema:")
     fi
 fi
 
-# Salir si se canceló fzf o no se seleccionó nada
+# Salir si se canceló
 if [ -z "$THEME" ]; then
     echo "Operación cancelada."
     exit 0
 fi
 
-echo "→ Switching to theme: $THEME"
-
-# --- 3. Aplicar Tema Local ---
-flavours apply "$THEME"
-
-{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
-# --- 4. Propagación Remota (Homelab) ---
-if ping -c 1 -W 1 homelab >/dev/null 2>&1; then
-    echo "→ Propagando tema al servidor Homelab..."
-    # Crear directorios remotos si no existen
-    ssh homelab "mkdir -p ~/.config/shell"
-    # Copiar archivos de colores generados por flavours
-    scp "$HOME/.config/shell/fzf_colors.sh" "homelab:~/.config/shell/fzf_colors.sh" >/dev/null 2>&1
+THEME_PATH="$THEMES_DIR/$THEME"
+if [ ! -d "$THEME_PATH" ]; then
+    echo "Error: El tema '$THEME' no existe en $THEMES_DIR"
+    exit 1
 fi
 
-# --- 5. Reload de Apps Gráficas Locales ---
-if pgrep -x "Hyprland" > /dev/null; then
-    hyprctl reload
-elif pgrep -x "sway" > /dev/null; then
-    swaymsg reload
+echo "→ Aplicando tema: $THEME"
+
+# Guardar tema activo en cache para que el selector de wallpapers sepa qué directorio filtrar
+echo "$THEME" > "$ACTIVE_THEME_FILE"
+
+# --- 2. Compilar Plantillas de Wallust con los colores del tema ---
+# Usamos un script inline de Python para mapear la paleta de colores del tema (.ini)
+# a los archivos de colores base de cada aplicación en tu sistema.
+python3 -c '
+import os, sys, re
+theme_path = "'"$THEME_PATH"'"
+colors = {}
+with open(os.path.join(theme_path, "colors.ini")) as f:
+    for line in f:
+        if "=" in line:
+            k, v = line.strip().split("=")
+            colors[k] = v
+
+# Asegurar que cursor tenga un valor por defecto si no está definido
+if "cursor" not in colors:
+    colors["cursor"] = colors.get("accent", colors.get("foreground", "#ffffff"))
+
+# Mapeo de plantillas del repositorio a sus destinos locales base
+templates = {
+    "dot_config/wallust/templates/waybar.wl": ".config/waybar/colors-base.css",
+    "dot_config/wallust/templates/kitty.wl": ".config/kitty/colors-base.conf",
+    "dot_config/wallust/templates/hyprland.wl": ".config/hypr/conf.d/theme-colors-base.conf",
+    "dot_config/wallust/templates/fzf.wl": ".config/shell/fzf_colors.sh",
+    "dot_config/wallust/templates/mako.wl": ".config/mako/config-base",
+    "dot_config/wallust/templates/rofi.wl": ".config/rofi/colors-base.rasi",
+    "dot_config/wallust/templates/quickshell.wl": ".config/quickshell/colors-base.toml",
+    "dot_config/wallust/templates/sway.wl": ".config/sway/colors-base",
+    "dot_config/wallust/templates/hyprlock.wl": ".config/hypr/conf.d/hyprlock-colors-base.conf"
+}
+
+home = os.path.expanduser("~")
+chezmoi_dir = "'"{{ .chezmoi.sourceDir }}"'"
+
+for t_rel, dest_rel in templates.items():
+    t_path = os.path.join(chezmoi_dir, t_rel)
+    dest_path = os.path.join(home, dest_rel)
+    if not os.path.exists(t_path):
+        continue
+    os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+    
+    with open(t_path) as f:
+        content = f.read()
+        
+    for k, v in colors.items():
+        v_stripped = v.lstrip("#")
+        # 1. Primero reemplazar la versión con "| strip" (sin el caracter #)
+        content = re.sub(r"\{\{\s*" + k + r"\s*\|\s*strip\s*\}\}", v_stripped, content)
+        # 2. Luego reemplazar la versión normal (con el caracter #)
+        content = re.sub(r"\{\{\s*" + k + r"\s*\}\}", v, content)
+        
+    with open(dest_path, "w") as f:
+        f.write(content)
+'
+
+# --- 3. Aplicar el Tema Localmente ---
+# Si estás en modo estático (Kanagawa/Base), forzamos la recarga usando el conmutador de tema
+# para que copie los nuevos archivos base a los archivos activos y recargue las aplicaciones.
+if [ -f "$HOME/.config/waybar/current-colors.css" ]; then
+    CURRENT_TARGET=$(readlink "$HOME/.config/waybar/current-colors.css" 2>/dev/null || echo "")
+    if [ "$(basename "$CURRENT_TARGET")" = "colors-base.css" ]; then
+        echo "→ Recargando componentes del escritorio en modo estático..."
+        desktop-theme-toggle.sh --static &> /dev/null
+    fi
 fi
-pgrep -x waybar > /dev/null && pkill -SIGUSR2 waybar
-(pgrep -x quickshell >/dev/null || pgrep -x qs >/dev/null) && qs -c desktop ipc call theme reload 2>/dev/null || true
-pgrep -x kitty > /dev/null && pkill -SIGUSR1 kitty
-{{- end }}
 
-# --- 6. Reload de Tmux Local (Desactivado para mantener tema estático) ---
+# --- 4. Abrir el Selector de Wallpapers Filtrado ---
+if [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; then
+    echo "→ Lanzando selector de wallpapers..."
+    # Ejecuta el script de wallpapers en segundo plano de forma silenciosa
+    ~/.local/bin/rofi-wallpaper.sh -s &> /dev/null &
+fi
 
-echo "✓ Theme applied: $THEME"
-{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
-echo "  (Neovim might require restart or :colorscheme catppuccin)"
-{{- end }}
+echo "✓ Tema '$THEME' cargado correctamente."

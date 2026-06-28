@@ -1,9 +1,11 @@
 /**
- * Rofi Theme Selector - Horizontal Card Layout (HyDE Style)
+ * Rofi Theme Selector - HyDE Style Horizontal Cards (No Search, Full Width)
+ * Styled with swatches, centered on screen, 4 columns.
  */
 
 configuration {
     show-icons:                 true;
+    drun-display-format:         "{name}";
     font:                        "JetBrainsMono Nerd Font 10";
 }
 
@@ -22,90 +24,69 @@ configuration {
 }
 
 window {
+    enabled:                     true;
+    fullscreen:                  false;
     transparency:                "real";
+    cursor:                      "default";
+    background-color:            rgba(8, 8, 8, 0.95); /* Full width bar background */
+    width:                       100%;
     location:                    center;
     anchor:                      center;
-    fullscreen:                  false;
-    width:                       860px;
-    height:                      260px;
-
-    enabled:                     true;
-    border:                      2px solid;
-    border-radius:               16px;
-    border-color:                @accent;
-    background-color:            @bg;
-    cursor:                      "default";
 }
 
 mainbox {
     enabled:                     true;
-    spacing:                     15px;
-    padding:                     25px;
-    children:                    [ "inputbar", "listview" ];
-}
-
-inputbar {
-    enabled:                     true;
-    spacing:                     10px;
-    padding:                     10px 15px;
-    border-radius:               10px;
-    background-color:            @bg-alt;
-    children:                    [ "prompt", "entry" ];
-}
-
-prompt {
-    enabled:                     true;
-}
-
-entry {
-    enabled:                     true;
-    placeholder:                 "Buscar tema...";
+    padding:                     35px 120px; /* Margins */
+    children:                    [ "listview" ];
+    background-color:            transparent;
 }
 
 listview {
     enabled:                     true;
-    columns:                     4;
+    spacing:                     4em;
+    columns:                     4; /* 4 columns for our 4 curated themes */
     lines:                       1;
     cycle:                       true;
     dynamic:                     true;
     scrollbar:                   false;
-    layout:                      vertical; /* horizontal cards using columns */
+    layout:                      vertical;
     reverse:                     false;
-    fixed-height:                true;
+    fixed-height:                false;
     fixed-columns:               true;
-    
-    spacing:                     15px;
     background-color:            transparent;
+    text-color:                  @fg;
 }
 
 element {
     enabled:                     true;
-    orientation:                 vertical;
-    spacing:                     12px;
-    padding:                     20px 10px;
-    border-radius:               12px;
-    background-color:            rgba(255, 255, 255, 0.02);
-    border:                      1px solid;
-    border-color:                rgba(255, 255, 255, 0.05);
+    spacing:                     0.8em;
+    padding:                     1.2em;
     cursor:                      pointer;
+    background-color:            transparent;
+    text-color:                  @fg;
+    orientation:                 vertical;
+    border-radius:               16px;
 }
 
 element selected.normal {
-    background-color:            @bg-alt;
-    border:                      2px solid;
-    border-color:                @accent;
-    text-color:                  @fg;
+    background-color:            @accent; /* Highlight the entire card */
+    text-color:                  #080808; /* Dark text for contrast */
 }
 
 element-icon {
-    size:                        48px;
     cursor:                      inherit;
-    horizontal-align:            0.5;
+    size:                        11em; /* Size of the swatch image */
+    background-color:            transparent;
+    text-color:                  inherit;
+    expand:                      false;
+    border-radius:               10px;
 }
 
 element-text {
-    enabled:                     true;
-    cursor:                      inherit;
-    horizontal-align:            0.5;
     vertical-align:              0.5;
+    horizontal-align:            0.5;
+    cursor:                      inherit;
+    background-color:            transparent;
+    text-color:                  inherit;
+    font:                        "JetBrainsMono Nerd Font Bold 12";
 }

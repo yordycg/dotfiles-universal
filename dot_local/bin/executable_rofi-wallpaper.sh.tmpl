@@ -7,7 +7,17 @@ export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$HOME/.cargo/bin:$PA
 # Scans wallpapers, generates square thumbnails, and applies selection via swww.
 # Supports CLI arguments for next, prev, random, and color theme modes (0, 1, 2, 3).
 
-WALLPAPER_DIR="$HOME/workspace/assets/wallpapers"
+ACTIVE_THEME_FILE="$HOME/.cache/themes/active_theme"
+ACTIVE_THEME="kanagawa"
+if [ -f "$ACTIVE_THEME_FILE" ]; then
+    ACTIVE_THEME=$(cat "$ACTIVE_THEME_FILE")
+fi
+WALLPAPER_DIR="$HOME/.config/themes/$ACTIVE_THEME/wallpapers"
+
+# Si el directorio del tema no existe o está vacío, hacemos fallback al directorio global
+if [ ! -d "$WALLPAPER_DIR" ] || [ -z "$(ls -A "$WALLPAPER_DIR" 2>/dev/null)" ]; then
+    WALLPAPER_DIR="$HOME/workspace/assets/wallpapers"
+fi
 THUMB_DIR="$HOME/.cache/wallpaper-thumbnails"
 ROFI_THEME="$HOME/.config/rofi/wallpaper.rasi"
 CACHE_FILE="$HOME/.cache/.current_wallpaper"
@@ -84,22 +94,22 @@ apply_wallpaper() {
     
     # 2. Actualizar colores con wallust
     if command -v wallust &> /dev/null; then
-        echo "Running wallust with filter: $filter"
-        wallust run --palette "$filter" --skip-sequences "$wp_path"
+        echo "Running wallust..."
+        wallust run --palette "$filter" --skip-sequences "$wp_path" &> /dev/null
         
         # 3. Recargar aplicaciones para aplicar nuevos colores
         if pgrep -x "Hyprland" > /dev/null; then
-            hyprctl reload
+            hyprctl reload &> /dev/null
         elif pgrep -x "sway" > /dev/null; then
-            swaymsg reload
+            swaymsg reload &> /dev/null
         fi
-        pkill -USR1 kitty   # Recargar kitty
-        pkill -USR2 waybar  # Recargar waybar sin reiniciar el proceso
+        pkill -USR1 kitty &> /dev/null
+        pkill -USR2 waybar &> /dev/null
         if pgrep -x "quickshell" > /dev/null || pgrep -x "qs" > /dev/null; then
             qs -c desktop ipc call theme reload 2>/dev/null || true
         fi
         if command -v makoctl &> /dev/null && pgrep -x "mako" > /dev/null; then
-            makoctl reload  # Recargar notificaciones Mako
+            makoctl reload &> /dev/null
         fi
     fi
 }
