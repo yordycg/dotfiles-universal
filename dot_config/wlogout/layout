@@ -11,20 +11,14 @@
     "keybind" : "e"
 }
 {
-    "label" : "suspend",
-    "action" : "mpc -q pause; amixer set Master mute; systemctl suspend",
-    "text" : "Suspend",
-    "keybind" : "u"
+    "label" : "shutdown",
+    "action" : "systemctl poweroff",
+    "text" : "Shutdown",
+    "keybind" : "s"
 }
 {
     "label" : "reboot",
     "action" : "systemctl reboot",
     "text" : "Reboot",
     "keybind" : "r"
-}
-{
-    "label" : "shutdown",
-    "action" : "systemctl poweroff",
-    "text" : "Shutdown",
-    "keybind" : "s"
 }

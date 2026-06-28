@@ -3,7 +3,7 @@
 * {
     background-image: none;
     font-family: "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 21px;
+    font-size: ${fntSize}px;
 }
 
 window {
@@ -36,48 +36,48 @@ button:hover {
     transition: all 0.3s cubic-bezier(.55,0.0,.28,1.682);
 }
 
-/* Hover pop-out offsets and border rounding for 2x2 grid explosion (Static 1080p fallback values) */
+/* Hover pop-out offsets and border rounding for 2x2 grid explosion */
 button:hover#lock {
-    border-radius: 15px 15px 0px 15px;
-    margin: 216px 0px 0px 614px;
+    border-radius: ${active_rad}px ${active_rad}px 0px ${active_rad}px;
+    margin: ${y_hvr}px 0px 0px ${x_hvr}px;
 }
 
 button:hover#logout {
-    border-radius: 15px 0px 15px 15px;
-    margin: 0px 0px 216px 614px;
+    border-radius: ${active_rad}px 0px ${active_rad}px ${active_rad}px;
+    margin: 0px 0px ${y_hvr}px ${x_hvr}px;
 }
 
 button:hover#shutdown {
-    border-radius: 15px 15px 15px 0px;
-    margin: 216px 614px 0px 0px;
+    border-radius: ${active_rad}px ${active_rad}px ${active_rad}px 0px;
+    margin: ${y_hvr}px ${x_hvr}px 0px 0px;
 }
 
 button:hover#reboot {
-    border-radius: 0px 15px 15px 15px;
-    margin: 0px 614px 216px 0px;
+    border-radius: 0px ${active_rad}px ${active_rad}px ${active_rad}px;
+    margin: 0px ${x_hvr}px ${y_hvr}px 0px;
 }
 
-/* Default positions and outer-corner rounding (Static 1080p fallback values) */
+/* Default positions and outer-corner rounding (forming a single large square in center) */
 #lock {
     background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/lock_white.png"), url("/usr/share/wlogout/icons/lock.png"));
-    border-radius: 30px 0px 0px 0px;
-    margin: 270px 0px 0px 672px;
+    border-radius: ${button_rad}px 0px 0px 0px;
+    margin: ${y_mgn}px 0px 0px ${x_mgn}px;
 }
 
 #logout {
     background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/logout_white.png"), url("/usr/share/wlogout/icons/logout.png"));
-    border-radius: 0px 0px 0px 30px;
-    margin: 0px 0px 270px 672px;
+    border-radius: 0px 0px 0px ${button_rad}px;
+    margin: 0px 0px ${y_mgn}px ${x_mgn}px;
 }
 
 #shutdown {
     background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/shutdown_white.png"), url("/usr/share/wlogout/icons/shutdown.png"));
-    border-radius: 0px 30px 0px 0px;
-    margin: 270px 672px 0px 0px;
+    border-radius: 0px ${button_rad}px 0px 0px;
+    margin: ${y_mgn}px ${x_mgn}px 0px 0px;
 }
 
 #reboot {
     background-image: image(url("{{ .chezmoi.homeDir }}/.config/wlogout/icons/reboot_white.png"), url("/usr/share/wlogout/icons/reboot.png"));
-    border-radius: 0px 0px 30px 0px;
-    margin: 0px 672px 270px 0px;
+    border-radius: 0px 0px ${button_rad}px 0px;
+    margin: 0px ${x_mgn}px ${y_mgn}px 0px;
 }
