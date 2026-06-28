@@ -238,8 +238,23 @@ case "$1" in
             done
         }
 
-        # 3. Launch Rofi using the HyDE-style theme
-        selection=$(list_wallpapers | rofi -dmenu -i -p "󰸉 " -theme "$ROFI_THEME" -select "$(basename "$current_wp")")
+        # 3. Calcular columnas y margen lateral dinámicamente para centrar tarjetas manteniendo la barra al 100%
+        num_wallpapers=${#wallpapers[@]}
+        if [ $num_wallpapers -lt 9 ]; then
+            r_cols=$num_wallpapers
+            # Cada tarjeta con su espaciado ocupa aproximadamente un 10% del ancho
+            r_margin=$(( (100 - (num_wallpapers * 10)) / 2 ))
+            [ $r_margin -lt 0 ] && r_margin=0
+        else
+            r_cols=9
+            r_margin=0
+        fi
+
+        # 4. Launch Rofi using the HyDE-style theme
+        selection=$(list_wallpapers | rofi -dmenu -i -p "󰸉 " \
+            -theme "$ROFI_THEME" \
+            -theme-str "window { width: 100%; } listview { columns: ${r_cols}; margin: 0px ${r_margin}% 0px ${r_margin}%; }" \
+            -select "$(basename "$current_wp")")
 
         if [ -n "$selection" ]; then
             apply_wallpaper "$WALLPAPER_DIR/$selection"

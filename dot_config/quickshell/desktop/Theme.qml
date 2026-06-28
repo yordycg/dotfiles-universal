@@ -9,7 +9,7 @@ import "Palette.js" as Palette
 Item {
     id: theme
 
-    readonly property string colorsPath: Quickshell.env("HOME") + "/.config/quickshell/colors.toml"
+    readonly property string colorsPath: Quickshell.env("HOME") + "/.config/quickshell/current-colors.toml"
 
     // Our own persisted round/sharp toggle. Flipped from the omni menu
     // (or any client) via the `corners` IpcHandler below. We don't read
@@ -40,12 +40,8 @@ Item {
     property color sealRaw: "#c4746e"
     property real  driftAmount: 0
 
-    readonly property string themeModeStatePath:
-        Quickshell.env("HOME") + "/.local/state/quickshell-desktop/theme-mode"
-    property string themeMode: "wallpaper" // "wallpaper" | "static"
-
     function printTheme() {
-        console.warn("DEBUG_THEME_VALUES: themeMode=" + theme.themeMode + " paper=" + theme.paper + " bg=" + theme.bg + " fg=" + theme.fg + " accent=" + theme.accent);
+        console.warn("DEBUG_THEME_VALUES: paper=" + theme.paper + " bg=" + theme.bg + " fg=" + theme.fg + " accent=" + theme.accent);
     }
 
     function resetToDefault() {
@@ -60,63 +56,8 @@ Item {
         console.log("Theme: resetToDefault finished. New paper:", theme.paper);
     }
 
-    function setThemeMode(mode, triggerExternal) {
-        if (triggerExternal === undefined) triggerExternal = true;
-        const want = (mode === "static" || mode === "default") ? "static" : "wallpaper";
-        theme.themeMode = want;
-        console.log("Theme: setThemeMode called with mode:", mode, "resolved to want:", want, "triggerExternal:", triggerExternal);
-        
-        let cmd = "mkdir -p " + JSON.stringify(theme.themeModeStatePath.replace(/\/[^/]+$/, ""))
-            + " && printf '%s' " + JSON.stringify(want)
-            + " > " + JSON.stringify(theme.themeModeStatePath);
-            
-        if (triggerExternal) {
-            cmd += " && desktop-theme-toggle.sh --" + (want === "static" ? "static" : "dynamic");
-        }
-        
-        themeModeWriter.command = ["bash", "-lc", cmd];
-        themeModeWriter.running = false;
-        themeModeWriter.running = true;
-
-        if (want === "static") {
-            theme.resetToDefault();
-        } else {
-            paletteFile.reload();
-        }
-    }
-    function toggleThemeMode(triggerExternal) {
-        if (triggerExternal === undefined) triggerExternal = true;
-        theme.setThemeMode(theme.themeMode === "wallpaper" ? "static" : "wallpaper", triggerExternal);
-    }
-
-    Process { id: themeModeWriter; running: false }
-    Process {
-        id: themeModeReader
-        running: true
-        command: ["cat", theme.themeModeStatePath]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const m = this.text.trim();
-                theme.themeMode = (m === "static") ? "static" : "wallpaper";
-                console.log("Theme: themeModeReader loaded mode from file:", m, "setting themeMode to:", theme.themeMode);
-                if (theme.themeMode === "static") {
-                    theme.resetToDefault();
-                } else {
-                    paletteFile.reload();
-                }
-            }
-        }
-        onExited: function(code) {
-            if (code !== 0) {
-                console.log("Theme: themeModeReader file not found, defaulting to wallpaper");
-                theme.themeMode = "wallpaper";
-                paletteFile.reload();
-            }
-        }
-    }
-
     readonly property color seal: {
-        let c = theme.sealRaw;
+        let c = theme.indigo;
         return Qt.hsva(c.hsvHue, Math.min(1, c.hsvSaturation + theme.driftAmount * 0.05), c.hsvValue, c.a);
     }
 
@@ -157,12 +98,8 @@ Item {
         path: theme.colorsPath
         watchChanges: false
         onLoaded: {
-            console.log("Theme: paletteFile loaded. themeMode is:", theme.themeMode);
-            if (theme.themeMode === "wallpaper") {
-                console.log("Theme: applying wallpaper palette. Current paper:", theme.paper);
-                Palette.apply(theme, Palette.parse(paletteFile.text()));
-                console.log("Theme: applied wallpaper palette. New paper:", theme.paper);
-            }
+            console.log("Theme: paletteFile loaded. Applying colors.");
+            Palette.apply(theme, Palette.parse(paletteFile.text()));
         }
     }
 
@@ -202,6 +139,9 @@ Item {
         onTriggered: driftAnim.restart()
     }
 
+    // Load colors at startup
+    Component.onCompleted: paletteFile.reload()
+
     SequentialAnimation {
         id: driftAnim
         NumberAnimation {
@@ -225,22 +165,23 @@ Item {
             try { p = JSON.parse(payload); }
             catch (e) { console.warn("theme.apply: bad payload —", e); return; }
             if (!p || !p.colors) return;
-            if (theme.themeMode === "wallpaper") {
-                Palette.apply(theme, Palette.mapKeys(p.colors));
-            }
+            Palette.apply(theme, Palette.mapKeys(p.colors));
             if (p.name && p.name !== theme.lastAppliedName) {
                 theme.lastAppliedName = p.name;
                 driftDelay.restart();
             }
         }
         function reload(): void {
-            if (theme.themeMode === "wallpaper") {
-                paletteFile.reload();
-            }
+            paletteFile.reload();
             driftDelay.restart();
         }
-        function setMode(mode: string): void { theme.setThemeMode(mode, false); }
-        function toggleMode(): void { theme.toggleThemeMode(false); }
+        function setMode(mode: string): void {
+            // No-op since themeMode is removed, but we reload just in case
+            paletteFile.reload();
+        }
+        function toggleMode(): void {
+            // No-op
+        }
         function debug(): void { theme.printTheme(); }
     }
 }

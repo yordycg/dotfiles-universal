@@ -2,9 +2,12 @@
 
 # =============================================================================
 # desktop-theme-toggle.sh — Conmutador Global de Temas
-# Intercambia enlaces simbólicos entre el tema estático (Kanagawa Dragon)
+# Intercambia enlaces simbólicos entre el tema estático (curado)
 # y el tema dinámico (Wallust) para todas las aplicaciones del escritorio.
 # =============================================================================
+
+# Asegurar rutas de mise, cargo y locales
+export PATH="$HOME/.local/share/mise/shims:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 # Directorios de configuración
 WAYBAR_DIR="$HOME/.config/waybar"
@@ -13,6 +16,7 @@ KITTY_DIR="$HOME/.config/kitty"
 MAKO_DIR="$HOME/.config/mako"
 HYPR_DIR="$HOME/.config/hypr/conf.d"
 SWAY_DIR="$HOME/.config/sway"
+QUICKSHELL_DIR="$HOME/.config/quickshell"
 
 # Enlaces y destinos
 # 1. Waybar
@@ -27,11 +31,13 @@ MAKO_LINK="$MAKO_DIR/config"
 HYPR_LINK="$HYPR_DIR/current-theme-colors.conf"
 # 6. Sway
 SWAY_LINK="$SWAY_DIR/current-colors"
+# 7. Quickshell
+QUICKSHELL_LINK="$QUICKSHELL_DIR/current-colors.toml"
 
 show_help() {
     echo "Uso: $(basename "$0") [opción]"
     echo "Opciones:"
-    echo "  --static    Activa el tema base estático (Kanagawa Dragon)"
+    echo "  --static    Activa el tema base estático"
     echo "  --dynamic   Activa el tema dinámico (colores del wallpaper)"
     echo "  --toggle    Alterna entre estático y dinámico (por defecto)"
 }
@@ -53,7 +59,7 @@ if [ -L "$WAYBAR_LINK" ]; then
 fi
 
 if [ "$MODE" = "static" ] || { [ "$MODE" = "toggle" ] && [ "$(basename "$CURRENT_TARGET")" != "colors-base.css" ]; }; then
-    # ── ACTIVAR MODO ESTÁTICO (KANAGAWA DRAGON) ────────────────────────────────
+    # ── ACTIVAR MODO ESTÁTICO (TEMA CURADO SELECCIONADO) ─────────────────────
     
     # 1. Waybar
     ln -sf "colors-base.css" "$WAYBAR_LINK"
@@ -67,16 +73,13 @@ if [ "$MODE" = "static" ] || { [ "$MODE" = "toggle" ] && [ "$(basename "$CURRENT
     ln -sf "theme-colors-base.conf" "$HYPR_LINK"
     # 6. Sway
     ln -sf "colors-base" "$SWAY_LINK"
-
     # 7. Quickshell
-    if pgrep -x "quickshell" >/dev/null || pgrep -x "qs" >/dev/null; then
-        qs -c desktop ipc call theme setMode static 2>/dev/null || true
-    fi
+    ln -sf "colors-base.toml" "$QUICKSHELL_LINK"
 
     if command -v notify-send &>/dev/null; then
-        notify-send -i preferences-desktop-theme "Escritorio" "Modo Estático Activado (Kanagawa Dragon)"
+        notify-send -i preferences-desktop-theme "Escritorio" "Modo Estático Activado (Tema Curado)"
     fi
-    echo "Tema global cambiado a: Kanagawa Dragon (Estático)"
+    echo "Tema global cambiado a: Estático"
 else
     # ── ACTIVAR MODO DINÁMICO (WALLPAPER / WALLUST) ───────────────────────────
     
@@ -87,6 +90,7 @@ else
     [ -f "$MAKO_DIR/config-dynamic" ] || cp "$MAKO_DIR/config-base" "$MAKO_DIR/config-dynamic"
     [ -f "$HYPR_DIR/theme-colors.conf" ] || cp "$HYPR_DIR/theme-colors-base.conf" "$HYPR_DIR/theme-colors.conf"
     [ -f "$SWAY_DIR/colors" ] || cp "$SWAY_DIR/colors-base" "$SWAY_DIR/colors"
+    [ -f "$QUICKSHELL_DIR/colors.toml" ] || cp "$QUICKSHELL_DIR/colors-base.toml" "$QUICKSHELL_DIR/colors.toml"
 
     # 1. Waybar
     ln -sf "colors.css" "$WAYBAR_LINK"
@@ -100,11 +104,8 @@ else
     ln -sf "theme-colors.conf" "$HYPR_LINK"
     # 6. Sway
     ln -sf "colors" "$SWAY_LINK"
-
     # 7. Quickshell
-    if pgrep -x "quickshell" >/dev/null || pgrep -x "qs" >/dev/null; then
-        qs -c desktop ipc call theme setMode wallpaper 2>/dev/null || true
-    fi
+    ln -sf "colors.toml" "$QUICKSHELL_LINK"
 
     if command -v notify-send &>/dev/null; then
         notify-send -i preferences-desktop-theme "Escritorio" "Modo Dinámico Activado (Colores del Wallpaper)"
@@ -133,4 +134,9 @@ fi
 # 5. Recargar Sway (si está corriendo)
 if pgrep -x "sway" > /dev/null; then
     swaymsg reload
+fi
+
+# 6. Recargar Quickshell (si está corriendo)
+if pgrep -x "quickshell" >/dev/null || pgrep -x "qs" >/dev/null; then
+    qs -c desktop ipc call theme reload 2>/dev/null || true
 fi

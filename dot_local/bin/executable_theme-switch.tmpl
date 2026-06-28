@@ -62,7 +62,7 @@ with open(os.path.join(theme_path, "colors.ini")) as f:
     for line in f:
         if "=" in line:
             k, v = line.strip().split("=")
-            colors[k] = v
+            colors[k.strip()] = v.strip().strip("\"").strip(chr(39))
 
 # Asegurar que cursor tenga un valor por defecto si no está definido
 if "cursor" not in colors:
@@ -82,7 +82,7 @@ templates = {
 }
 
 home = os.path.expanduser("~")
-chezmoi_dir = "'"{{ .chezmoi.sourceDir }}"'"
+chezmoi_dir = "{{ .chezmoi.sourceDir }}"
 
 for t_rel, dest_rel in templates.items():
     t_path = os.path.join(chezmoi_dir, t_rel)
@@ -105,16 +105,10 @@ for t_rel, dest_rel in templates.items():
         f.write(content)
 '
 
-# --- 3. Aplicar el Tema Localmente ---
-# Si estás en modo estático (Kanagawa/Base), forzamos la recarga usando el conmutador de tema
-# para que copie los nuevos archivos base a los archivos activos y recargue las aplicaciones.
-if [ -f "$HOME/.config/waybar/current-colors.css" ]; then
-    CURRENT_TARGET=$(readlink "$HOME/.config/waybar/current-colors.css" 2>/dev/null || echo "")
-    if [ "$(basename "$CURRENT_TARGET")" = "colors-base.css" ]; then
-        echo "→ Recargando componentes del escritorio en modo estático..."
-        desktop-theme-toggle.sh --static &> /dev/null
-    fi
-fi
+# --- 3. Aplicar el Tema ---
+# Forzamos la aplicación del modo estático para que el tema curado se aplique de inmediato
+echo "→ Aplicando componentes del escritorio en modo estático..."
+desktop-theme-toggle.sh --static &> /dev/null
 
 # --- 4. Abrir el Selector de Wallpapers Filtrado ---
 if [ -n "$WAYLAND_DISPLAY" ] || [ -n "$DISPLAY" ]; then

@@ -411,12 +411,12 @@ Item {
             processes.killPid(item.pid, false);
             return;
         }
-        // Theme apply — fire and forget; omarchy-theme-set rebuilds
+        // Theme apply — fire and forget; theme-switch rebuilds
         // configs and reloads all the live apps that listen for it.
         if (item.isTheme) {
             const launcher = root.hasUwsm ? "setsid -f uwsm-app --" : "setsid -f";
             runner.command = ["sh", "-c",
-                launcher + " omarchy-theme-set \"$1\" >/dev/null 2>&1",
+                launcher + " ~/.local/bin/theme-switch \"$1\" >/dev/null 2>&1",
                 "sh", item.themeName];
             runner.running = false;
             runner.running = true;

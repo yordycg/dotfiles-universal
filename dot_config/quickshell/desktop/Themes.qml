@@ -36,18 +36,16 @@ Item {
         // ships one, otherwise the first file in the backgrounds/
         // subdir (sort+head for deterministic pick).
         probeProc.command = ["sh", "-c",
-              "cur=$(cat \"$HOME/.config/omarchy/current/theme/colors.toml\" 2>/dev/null); "
-            + "for d in \"$OMARCHY_PATH/themes\"/*/ \"$HOME/.local/share/omarchy/themes\"/*/ \"$HOME/.config/omarchy/themes\"/*/; do "
+              "cur=$(cat \"$HOME/.cache/themes/active_theme\" 2>/dev/null || echo \"kanagawa\"); "
+            + "for d in \"$HOME/.config/themes\"/*/; do "
             + "  [ -d \"$d\" ] || continue; "
             + "  name=$(basename \"$d\"); "
-            + "  c=$(cat \"$d/colors.toml\" 2>/dev/null); "
-            + "  marker=' '; [ -n \"$c\" ] && [ \"$c\" = \"$cur\" ] && marker='*'; "
+            + "  marker=' '; [ \"$name\" = \"$cur\" ] && marker='*'; "
             + "  prev=''; "
-            + "  if [ -f \"$d/preview.png\" ]; then prev=\"$d/preview.png\"; "
-            + "  elif [ -f \"$d/preview.jpg\" ]; then prev=\"$d/preview.jpg\"; "
-            + "  elif [ -d \"$d/backgrounds\" ]; then "
-            + "    prev=$(find \"$d/backgrounds\" -maxdepth 1 -type f -size +0c \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' -o -iname '*.avif' -o -iname '*.gif' \\) 2>/dev/null | sort | head -n1); "
+            + "  if [ -d \"$d/wallpapers\" ]; then "
+            + "    prev=$(find \"$d/wallpapers\" -maxdepth 1 -type f -size +0c \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' -o -iname '*.avif' -o -iname '*.gif' \\) 2>/dev/null | sort | head -n1); "
             + "  fi; "
+            + "  c=$(cat \"$d/colors.ini\" 2>/dev/null); "
             + "  printf '===%s\\t%s\\t%s\\n%s\\n' \"$name\" \"$marker\" \"$prev\" \"$c\"; "
             + "done"];
         probeProc.running = false;
