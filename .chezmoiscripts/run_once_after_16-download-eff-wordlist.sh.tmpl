@@ -1,0 +1,23 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_16-download-eff-wordlist.sh.tmpl
+# Descarga automática de la EFF Wordlist para passage-rofi
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+WORDLIST_DIR="$HOME/.local/share/passage-rofi"
+WORDLIST_PATH="$WORDLIST_DIR/eff_large_wordlist.txt"
+
+if [ ! -f "$WORDLIST_PATH" ]; then
+    log_step "Descargando EFF Wordlist para passage-rofi..."
+    mkdir -p "$WORDLIST_DIR"
+    if curl -sSL -o "$WORDLIST_PATH" https://www.eff.org/files/2016/07/18/eff_large_wordlist.txt; then
+        log_ok "EFF Wordlist descargada con éxito en $WORDLIST_PATH."
+    else
+        log_err "Error al descargar la EFF Wordlist. Se reintentará en el próximo apply."
+    fi
+fi
+{{- end }}

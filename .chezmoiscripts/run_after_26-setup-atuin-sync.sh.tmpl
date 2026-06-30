@@ -37,16 +37,24 @@ if [ -z "$PASSAGE_CMD" ]; then
     exit 0
 fi
 
-# 3. Detectar credenciales en la bóveda
-ATUIN_USER=$("$PASSAGE_CMD" atuin/username 2>/dev/null || echo "")
-ATUIN_PASS=$("$PASSAGE_CMD" atuin/password 2>/dev/null || echo "")
-ATUIN_KEY=$("$PASSAGE_CMD" atuin/key 2>/dev/null || echo "")
+# 3. Detectar credenciales en la bóveda (Estructura consolidada)
+ATUIN_DATA=$("$PASSAGE_CMD" atuin 2>/dev/null || echo "")
+
+ATUIN_PASS=""
+ATUIN_USER=""
+ATUIN_KEY=""
+
+if [ -n "$ATUIN_DATA" ]; then
+    ATUIN_PASS=$(echo "$ATUIN_DATA" | head -n1)
+    ATUIN_USER=$(echo "$ATUIN_DATA" | grep "^username:" | cut -d' ' -f2- || echo "")
+    ATUIN_KEY=$(echo "$ATUIN_DATA" | grep "^key:" | cut -d' ' -f2- || echo "")
+fi
 
 if [ -z "$ATUIN_USER" ] || [ -z "$ATUIN_PASS" ] || [ -z "$ATUIN_KEY" ]; then
     log_info "No se encontraron credenciales completas de Atuin en la bóveda."
-    log_info "Si ya creaste tu cuenta, puedes guardarla ejecutando:"
-    log_info "  passage insert atuin/<tu_usuario> (dentro escribe tu contraseña)"
-    log_info "  passage insert atuin/key          (dentro pega tu frase de seguridad)"
+    log_info "Si ya creaste tu cuenta, puedes guardarla de forma consolidada ejecutando:"
+    log_info "  passage insert -m atuin"
+    log_info "  (En la línea 1 escribe tu contraseña, en la 2 'username: tu_usuario' y en la 3 'key: tu_llave')"
     exit 0
 fi
 
