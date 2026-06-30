@@ -8,6 +8,9 @@ alias path='echo $PATH | tr ":" "\n"'
 alias ports='ss -tulnp'
 alias myip='curl -s ifconfig.me'
 
+# -- Others -------------------------------------
+alias ff='fastfetch'
+
 # -- Workspace ----------------------------------
 alias ws='cd ~/workspace'
 alias as='cd ~/workspace/assets'
@@ -58,7 +61,7 @@ alias lv='env NVIM_APPNAME=LazyVim nvim'
 alias nv='NVIM_APPNAME=nvim-personal nvim'
 alias v='nv'
 alias v.='nv .'
-alias reload='source ~/.zshrc && echo "ZSH Reloaded!"'
+alias reload='source ~/.zshrc'
 
 # -- Lenguajes & Dev (Senior Lean) ------------
 alias pn='pnpm'

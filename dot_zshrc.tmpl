@@ -34,8 +34,3 @@ source "$HOME/.config/zsh/history.zsh"
 {{- if .isWSL }}
 source "$HOME/.config/zsh/wsl.zsh"
 {{- end }}
-
-# -- FINALIZACIÓN: FASTFETCH --
-if [[ -z "$TMUX" && -x $(command -v fastfetch) ]]; then
-    fastfetch
-fi

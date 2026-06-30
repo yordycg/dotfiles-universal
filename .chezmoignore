@@ -64,6 +64,7 @@ provision/**
 {{- end }}
 
 # ── Archivos generados dinámicamente (todos los sistemas) ────────
+.config/LazyVim/lazy-lock.json
 .config/kitty/colors.conf
 .config/tmux/colors.conf
 .config/waybar/colors.css
