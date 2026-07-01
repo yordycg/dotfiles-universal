@@ -15,7 +15,7 @@ general {
     col.inactive_border = rgba({{ get . "borderInactive" | default "181616" }}aa)
 
     layout = dwindle            # dwindle (espiral) o master
-    resize_on_border = true     # Redimensionar arrastrando el borde
+    resize_on_border = false    # Deshabilitado para la estética limpia de Omarchy
     allow_tearing = false
 }
 
@@ -29,23 +29,19 @@ decoration {
     # ── Blur (desenfoque gaussiano) ───────────────────────────────────
     blur {
         enabled = true
-        size = 8
+        size = 2
         passes = 2
-        vibrancy = 0.1696
-        noise = 0.0117
-        contrast = 0.8917
-        brightness = 0.8172
-        xray = false            # Si true: el blur traspasa ventanas
+        brightness = 0.60
+        contrast = 0.75
+        special = true
     }
 
     # ── Sombras ───────────────────────────────────────────────────────
-    # Sintaxis 0.42+ (drop_shadow fue deprecado)
     shadow {
         enabled = true
-        range = 12
+        range = 2
         render_power = 3
         color = rgba(1a1a1aee)
-        color_inactive = rgba(1a1a1a88)
     }
 }
 
