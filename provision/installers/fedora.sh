@@ -100,6 +100,12 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo dnf copr enable -y errornointernet/quickshell
     fi
 
+    # Habilitar COPR errornointernet/walker para Walker
+    if ! dnf copr list | grep -q "errornointernet/walker"; then
+        log_info "Habilitando COPR errornointernet/walker (Walker)..."
+        run sudo dnf copr enable -y errornointernet/walker
+    fi
+
     # Configurar exclusiones en el COPR solopasha para evitar conflictos en Fedora 44+
     solopasha_repo="/etc/yum.repos.d/_copr:copr.fedorainfracloud.org:solopasha:hyprland.repo"
     if [ -f "$solopasha_repo" ] && ! grep -q "exclude=" "$solopasha_repo"; then

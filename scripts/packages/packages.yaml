@@ -123,6 +123,14 @@ fedora:
     - imv
     - quickshell
     - wlogout
+    - walker
+    - elephant
+    - elephant-calc
+    - elephant-files
+    - elephant-websearch
+    - elephant-clipboard
+    - elephant-symbols
+    - elephant-desktopapplications
 
   kde:
     # Core

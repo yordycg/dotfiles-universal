@@ -40,3 +40,7 @@ exec-once = hypridle
 
 # ── Keyring de GNOME ─────────────────────────────────────────────────────────
 exec-once = /usr/bin/gnome-keyring-daemon --start --components=secrets
+
+# ── Launcher Walker (Precarga de Servicio y Daemon Elephant) ──────────────────
+exec-once = elephant &>/dev/null
+exec-once = walker --gapplication-service &>/dev/null
