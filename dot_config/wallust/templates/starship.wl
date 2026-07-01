@@ -22,7 +22,7 @@ format = "[$branch]($style) "
 style = "italic accent"
 
 [git_status]
-format     = '([$ahead_behind]($style) )[$all_status]($style)'
+format     = '[$all_status]($style)'
 style      = "accent"
 ahead      = "⇡${count} "
 diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
