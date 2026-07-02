@@ -18,15 +18,24 @@ hdocker() {
     ssh -t "$host" "$REMOTE_PATH; lazydocker"
 }
 
-# Selector inteligente de sesiones Tmux (Local)
-ts() {
+# Selector inteligente y creador de sesiones Tmux (Local)
+ta() {
+  if [[ -n "$1" ]]; then
+    if [[ -n "$TMUX" ]]; then
+      tmux switch-client -t "$1" 2>/dev/null || (tmux new-session -d -s "$1" && tmux switch-client -t "$1")
+    else
+      tmux attach-session -t "$1" 2>/dev/null || tmux new-session -s "$1"
+    fi
+    return
+  fi
+
   local session
   session=$(tmux list-sessions -F "#{session_name}" 2>/dev/null | \
     fzf --height=40% --reverse --header="Jump to session" --prompt="Sessions: ")
-  
+
   if [[ -n "$session" ]]; then
     if [[ -z "$TMUX" ]]; then
-      tmux attach -t "$session"
+      tmux attach-session -t "$session"
     else
       tmux switch-client -t "$session"
     fi

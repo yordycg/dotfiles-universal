@@ -18,22 +18,32 @@ if systemctl --user &>/dev/null; then
     # Recargar el demonio para detectar el nuevo archivo de servicio
     systemctl --user daemon-reload
     
-    # 1. Habilitar lingering para que los servicios de usuario corran en segundo plano
-    if ! loginctl user-status "$USER" 2>/dev/null | grep -q "Linger: yes"; then
-        log_info "Habilitando lingering (permanencia de procesos) para el usuario $USER..."
-        loginctl enable-linger "$USER" || sudo loginctl enable-linger "$USER"
-        log_ok "Lingering habilitado correctamente."
+    # 1. Lingering: check robusto usando la property directamente
+    linger_status="$(loginctl show-user "$USER" --property=Linger --value 2>/dev/null || echo "unknown")"
+
+    if [[ "$linger_status" != "yes" ]]; then
+        log_info "Habilitando lingering para el usuario $USER..."
+        # No abortamos el script entero si esto falla: el lingering
+        # es deseable pero no debe bloquear el enable del servicio.
+        if ! loginctl enable-linger "$USER" 2>/dev/null; then
+            log_warn "No se pudo habilitar lingering sin privilegios elevados. Intenta manualmente: sudo loginctl enable-linger $USER"
+        else
+            log_ok "Lingering habilitado correctamente."
+        fi
     else
-        log_info "Lingering ya está habilitado para el usuario $USER."
+        log_info "Lingering ya esta habilitado para el usuario $USER."
     fi
 
-    # 2. Habilitar el servicio tmux.service
+    # 2. Habilitar y arrancar el servicio tmux.service ahora mismo
+    #   (--now evita esperar al proximo reinicio para verificar que funciona)
     if ! systemctl --user is-enabled tmux &>/dev/null; then
         log_info "Habilitando servicio tmux.service..."
-        systemctl --user enable tmux
-        log_ok "Servicio de tmux habilitado correctamente."
+        systemctl --user enable --now tmux
+        log_ok "Servicio de tmux habilitado y arrancado correctamente."
     else
         log_info "El servicio tmux.service ya está habilitado."
+        # Nos aseguramos de que tambien este corriendo, no solo habilitado
+        systemctl --user restart tmux
     fi
 else
     log_warn "Systemd de usuario no disponible o no activo. Saltando configuración del servicio de Tmux."

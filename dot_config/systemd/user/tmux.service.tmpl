@@ -5,12 +5,21 @@ After=network.target
 
 [Service]
 Type=forking
-# Arranca el servidor de tmux en segundo plano
+
+Environment="PATH={{ .chezmoi.homeDir }}/.local/share/mise/shims:{{ .chezmoi.homeDir }}/.local/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME={{ .chezmoi.homeDir }}"
+
 ExecStart=/usr/bin/tmux new-session -s default -d
-# Guarda la sesión de resurrect de forma limpia antes de apagar (solo si el servidor está activo)
-ExecStop=/usr/bin/bash -c '/usr/bin/tmux has-session &>/dev/null && {{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/save.sh || true'
-# Detiene el servidor de forma limpia
-ExecStop=/usr/bin/tmux kill-server
+
+ExecStartPost=/usr/bin/env TMUX=/tmp/tmux-%U/default,, /usr/bin/bash -c '\
+  sleep 1; \
+  {{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/restore.sh; \
+  /usr/bin/tmux list-sessions -F "#{session_name}" 2>/dev/null | grep -qv "^default$" && /usr/bin/tmux kill-session -t default; \
+  true'
+
+ExecStop=-/usr/bin/bash -c '/usr/bin/tmux has-session &>/dev/null && {{ .chezmoi.homeDir }}/.config/tmux/plugins/tmux-resurrect/scripts/save.sh'
+ExecStop=-/usr/bin/tmux kill-server
+TimeoutStopSec=15
 KillMode=mixed
 Restart=on-failure
 
