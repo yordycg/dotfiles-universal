@@ -1,7 +1,7 @@
-{{ if and (eq .chezmoi.os "linux") (not .isServer) -}}
+{{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
-# scripts/run_once_after_90-setup-tmux-service.sh.tmpl
+# scripts/run_after_90-setup-tmux-service.sh.tmpl
 # Configura y habilita el servicio de tmux de systemd de usuario
 # =============================================================================
 # Hash de dependencia para forzar ejecución al cambiar el archivo de servicio:
@@ -10,6 +10,11 @@
 set -euo pipefail
 
 {{ include "provision/lib/logging.sh" }}
+
+# Asegurar que systemctl --user pueda encontrar el bus de sesion,
+# independiente del entorno desde el que chezmoi haya lanzado este script.
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+export DBUS_SESSION_BUS_ADDRESS="${DBUS_SESSION_BUS_ADDRESS:-unix:path=${XDG_RUNTIME_DIR}/bus}"
 
 # Comprobar si systemd de usuario está disponible y activo
 if systemctl --user &>/dev/null; then
@@ -34,18 +39,23 @@ if systemctl --user &>/dev/null; then
         log_info "Lingering ya esta habilitado para el usuario $USER."
     fi
 
-    # 2. Habilitar y arrancar el servicio tmux.service ahora mismo
-    #   (--now evita esperar al proximo reinicio para verificar que funciona)
+    # 2. Habilitar y arrancar el servicio tmux.service
     if ! systemctl --user is-enabled tmux &>/dev/null; then
         log_info "Habilitando servicio tmux.service..."
         systemctl --user enable --now tmux
         log_ok "Servicio de tmux habilitado y arrancado correctamente."
     else
         log_info "El servicio tmux.service ya está habilitado."
-        # Nos aseguramos de que tambien este corriendo, no solo habilitado
-        systemctl --user restart tmux
+        # Nos aseguramos de que esté corriendo sin reiniciar (para no matar sesiones activas)
+        if ! systemctl --user is-active tmux &>/dev/null; then
+            log_info "Iniciando servicio tmux.service (estaba habilitado pero detenido)..."
+            systemctl --user start tmux
+            log_ok "Servicio tmux.service iniciado."
+        else
+            log_info "El servicio tmux.service ya está corriendo."
+        fi
     fi
 else
-    log_warn "Systemd de usuario no disponible o no activo. Saltando configuración del servicio de Tmux."
+    log_warn "Systemd de usuario no disponible o no activo. Saltando la configuración del servicio tmux."
 fi
 {{ end -}}
