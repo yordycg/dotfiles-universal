@@ -1,11 +1,19 @@
-{{ if eq .chezmoi.os "linux" -}}
+{{/*
+  DESACTIVADO (julio 2026): se abandonó el modelo cliente/servidor.
+  Ahora se usa un flujo mono-máquina con restauración perezosa de
+  tmux-continuum (ver tmux.conf.tmpl + funciones en tmux.sh).
+  Para reactivar en el futuro (ej. volver a un nodo servidor headless),
+  cambiar `false` por la condición real, p.ej.:
+  {{ if and (eq .chezmoi.os "linux") .isServer -}}
+*/}}
+{{ if false -}}
 #!/usr/bin/env bash
 # =============================================================================
 # scripts/run_after_90-setup-tmux-service.sh.tmpl
 # Configura y habilita el servicio de tmux de systemd de usuario
 # =============================================================================
 # Hash de dependencia para forzar ejecución al cambiar el archivo de servicio:
-# {{ include "dot_config/systemd/user/tmux.service.tmpl" | sha256sum }}
+# {{ include "dot_config/systemd/user/tmux.service.tmpl.disabled" | sha256sum }}
 
 set -euo pipefail
 
