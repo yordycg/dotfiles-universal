@@ -78,8 +78,7 @@ templates = {
     "dot_config/wallust/templates/rofi.wl": ".config/rofi/colors-base.rasi",
     "dot_config/wallust/templates/quickshell.wl": ".config/quickshell/colors-base.toml",
     "dot_config/wallust/templates/sway.wl": ".config/sway/colors-base",
-    "dot_config/wallust/templates/hyprlock.wl": ".config/hypr/conf.d/hyprlock-colors-base.conf",
-    "dot_config/wallust/templates/starship.wl": ".config/starship/active.toml"
+    "dot_config/wallust/templates/hyprlock.wl": ".config/hypr/conf.d/hyprlock-colors-base.conf"
 }
 
 home = os.path.expanduser("~")
@@ -104,6 +103,44 @@ for t_rel, dest_rel in templates.items():
         
     with open(dest_path, "w") as f:
         f.write(content)
+
+# --- Procesamiento especial para Starship ---
+starship_tmpl = os.path.join(chezmoi_dir, "dot_config/wallust/templates/starship.wl")
+starship_dest = os.path.join(home, ".config/starship/active.toml")
+current_theme_file = os.path.join(home, ".config/starship/current_theme")
+
+current_starship_theme = "cyan-minimal"
+if os.path.exists(current_theme_file):
+    try:
+        with open(current_theme_file) as f:
+            current_starship_theme = f.read().strip()
+    except Exception:
+        pass
+
+# Eliminar destino si existe (sea archivo o enlace) para evitar seguir el enlace y sobrescribir el tema base
+if os.path.islink(starship_dest) or os.path.exists(starship_dest):
+    try:
+        os.remove(starship_dest)
+    except OSError:
+        pass
+
+if current_starship_theme == "cyan-minimal" and os.path.exists(starship_tmpl):
+    with open(starship_tmpl) as f:
+        content = f.read()
+    for k, v in colors.items():
+        v_stripped = v.lstrip("#")
+        content = re.sub(r"\{\{\s*" + k + r"\s*\|\s*strip\s*\}\}", v_stripped, content)
+        content = re.sub(r"\{\{\s*" + k + r"\s*\}\}", v, content)
+    os.makedirs(os.path.dirname(starship_dest), exist_ok=True)
+    with open(starship_dest, "w") as f:
+        f.write(content)
+else:
+    theme_source = os.path.join(home, f".config/starship/{current_starship_theme}.toml")
+    if os.path.exists(theme_source):
+        try:
+            os.symlink(theme_source, starship_dest)
+        except Exception:
+            pass
 '
 
 # --- 3. Aplicar el Tema ---
