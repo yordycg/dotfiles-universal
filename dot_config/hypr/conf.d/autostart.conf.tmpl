@@ -37,6 +37,7 @@ exec-once = gsettings set org.gnome.desktop.interface cursor-theme '{{ get . "cu
 
 # ── Idle management (hypridle) ────────────────────────────────────────────────
 exec-once = hypridle
+exec-once = hypridle-audio-inhibit.sh
 
 # ── Keyring de GNOME ─────────────────────────────────────────────────────────
 exec-once = /usr/bin/gnome-keyring-daemon --start --components=secrets
