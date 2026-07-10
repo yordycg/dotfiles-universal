@@ -50,6 +50,9 @@ return {
     priority = 1000,
     opts = {
       style = "darker", -- dark, darker, cool, deep, warm, warmer, light
+      code_style = {
+        comments = "none",
+      },
     },
   },
 
@@ -72,7 +75,7 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "y9nika", -- <- Puedes cambiar este valor manualmente por el tema que desees
+      colorscheme = "onedark", -- <- Puedes cambiar este valor manualmente por el tema que desees
     },
   },
 
