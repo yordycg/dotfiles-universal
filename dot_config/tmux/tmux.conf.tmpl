@@ -1,6 +1,5 @@
 # ==============================================================================
 # TMUX UNIVERSAL CONFIG
-# Fusión: Legacy 2024 + Reset Pro + Dotbar Theme
 # ==============================================================================
 
 # --- General Settings & Fixes ---
@@ -102,7 +101,7 @@ set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @plugin 'omerxx/tmux-sessionx'
-set -g @plugin 'vaaleyard/tmux-dotbar'
+# set -g @plugin 'vaaleyard/tmux-dotbar'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 
@@ -118,28 +117,25 @@ set -g @continuum-save-interval '10'
 set -g @sessionx-bind 's'
 set -g @sessionx-zoxide-mode 'on'
 
-# --- Theme (Managed by flavours) ---
-# if-shell "test -f ~/.config/tmux/colors.conf" "source-file ~/.config/tmux/colors.conf"
+# --- Theme & Layout (Dynamic Modular System) ---
+# Si no existen los enlaces simbólicos por defecto, los inicializamos en el primer arranque
+if-shell "test ! -f ~/.config/tmux/active_palette.conf" "run-shell 'ln -sf ~/.config/tmux/palettes/kanagawa-dragon.conf ~/.config/tmux/active_palette.conf'"
+if-shell "test ! -f ~/.config/tmux/active_layout.conf" "run-shell 'ln -sf ~/.config/tmux/layouts/minimal.conf ~/.config/tmux/active_layout.conf'"
 
-# Theme (Dotbar) Customization
-set -g @tmux-dotbar-position top
-set -g @tmux-dotbar-bold-current-window true
-set -g @tmux-dotbar-ssh-icon-only true
-set -g @tmux-dotbar-right false
+# 1. Cargar la Paleta Activa (Define colores @thm_*)
+source-file "~/.config/tmux/active_palette.conf"
 
-# Colores Predeterminados (Kanagawa Dragon - dotbar)
-set -g @tmux-dotbar-bg "#1d1c19"               # Fondo de la barra (Gris carbón)
-set -g @tmux-dotbar-fg "#a6a69c"               # Pestañas inactivas (Gris terroso)
-set -g @tmux-dotbar-fg-current "#c4746e"       # Pestaña activa (Rojo Seal)
-set -g @tmux-dotbar-fg-session "#658594"       # Nombre de sesión (Azul Pizarra)
-set -g @tmux-dotbar-fg-prefix "#c4746e"        # Prefix activo (Rojo Seal)
+# 2. Definir Iconos Compartidos (estáticos) para los Layouts
+set -g @icon_session ""
+set -g @icon_prefix "󰌌"
+set -g @icon_zoom "󰊓"
+set -g @icon_ssh "󰌘"
 
-# Pane borders y estilos de selección (Kanagawa Dragon)
-set -g pane-border-style "fg=#2a2828"
-set -g pane-active-border-style "fg=#658594"  # Azul Pizarra para panel activo
-set -g message-style "fg=#c8c093,bg=#1d1c19"   # Oro para comandos
-set -g clock-mode-colour "#658594"
-set -g mode-style "fg=#181616,bg=#658594"      # Azul Pizarra para selección
+
+
+# 4. Cargar el Layout Activo (Define la estructura y barra de estado)
+source-file "~/.config/tmux/active_layout.conf"
+
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \

@@ -1,0 +1,20 @@
+# Wallust Tmux Colors
+set -g @thm_bg "{{background}}"
+set -g @thm_fg "{{foreground}}"
+set -g @thm_black "{{color0}}"
+set -g @thm_red "{{color1}}"
+set -g @thm_green "{{color2}}"
+set -g @thm_yellow "{{color3}}"
+set -g @thm_blue "{{color4}}"
+set -g @thm_magenta "{{color5}}"
+set -g @thm_cyan "{{color6}}"
+set -g @thm_white "{{color7}}"
+set -g @thm_gray "{{color8}}"
+set -g @thm_accent "{{color4}}"
+
+# Estilos de borde y selección específicos
+set -g pane-border-style "fg={{color8}}"
+set -g pane-active-border-style "fg={{color4}}"
+set -g message-style "fg={{color3}},bg={{background}}"
+set -g clock-mode-colour "{{color4}}"
+set -g mode-style "fg={{background}},bg={{color4}}"

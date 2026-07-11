@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# ~/.config/tmux/scripts/tmux-set-theme
+
+# Si no recibe argumentos, llama secuencialmente a los selectores fzf
+"$HOME/.config/tmux/scripts/tmux-set-palette" "$1"
+"$HOME/.config/tmux/scripts/tmux-set-layout" "$2"

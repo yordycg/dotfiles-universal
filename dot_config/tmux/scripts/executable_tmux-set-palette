@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# ~/.config/tmux/scripts/tmux-set-palette
+
+PALETTE_DIR="$HOME/.config/tmux/palettes"
+STATE_DIR="$HOME/.config/tmux/state"
+ACTIVE_SYM="$HOME/.config/tmux/active_palette.conf"
+
+mkdir -p "$STATE_DIR"
+
+if [[ -z "$1" ]]; then
+    if ! command -v fzf &>/dev/null; then
+        echo "Error: fzf no está instalado y no se especificó paleta."
+        exit 1
+    fi
+    palette=$(find "$PALETTE_DIR" -name "*.conf" -exec basename {} .conf \; | fzf --reverse --prompt="Seleccionar paleta tmux > ")
+else
+    palette="$1"
+fi
+
+if [[ -n "$palette" ]]; then
+    target="$PALETTE_DIR/${palette}.conf"
+    if [[ -f "$target" ]]; then
+        ln -sf "$target" "$ACTIVE_SYM"
+        echo "$palette" > "$STATE_DIR/current-palette"
+        tmux source-file "$HOME/.config/tmux/tmux.conf" 2>/dev/null && echo "✓ Paleta '$palette' aplicada."
+    else
+        echo "Error: La paleta '$palette' no existe."
+        exit 1
+    fi
+fi

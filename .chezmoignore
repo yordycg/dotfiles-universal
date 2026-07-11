@@ -69,3 +69,6 @@ provision/**
 .config/hypr/conf.d/theme-colors.conf
 .config/mako/config
 .config/rofi/colors.rasi
+.config/tmux/active_palette.conf
+.config/tmux/active_layout.conf
+.config/tmux/state/**

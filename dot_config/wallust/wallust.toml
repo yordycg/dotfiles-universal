@@ -15,3 +15,5 @@ rofi = { template = "rofi.wl", target = "~/.config/rofi/colors.rasi" }
 quickshell = { template = "quickshell.wl", target = "~/.config/quickshell/colors.toml" }
 hyprlock = { template = "hyprlock.wl", target = "~/.config/hypr/conf.d/hyprlock-colors.conf" }
 btop = { template = "btop.wl", target = "~/.config/btop/themes/wallust.theme" }
+tmux = { template = "tmux.wl", target = "~/.config/tmux/palettes/wallust.conf" }
+
