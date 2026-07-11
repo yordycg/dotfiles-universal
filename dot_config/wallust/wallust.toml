@@ -5,15 +5,15 @@ threshold = 20
 filter = "dark16"
 
 [templates]
-sway = { template = "sway.wl", target = "~/.config/sway/colors" }
-kitty = { template = "kitty.wl", target = "~/.config/kitty/colors.conf" }
-waybar = { template = "waybar.wl", target = "~/.config/waybar/colors.css" }
-fzf = { template = "fzf.wl", target = "~/.config/shell/fzf_colors.sh" }
-hyprland = { template = "hyprland.wl", target = "~/.config/hypr/conf.d/theme-colors.conf" }
-mako = { template = "mako.wl", target = "~/.config/mako/config-dynamic" }
-rofi = { template = "rofi.wl", target = "~/.config/rofi/colors.rasi" }
-quickshell = { template = "quickshell.wl", target = "~/.config/quickshell/colors.toml" }
-hyprlock = { template = "hyprlock.wl", target = "~/.config/hypr/conf.d/hyprlock-colors.conf" }
-btop = { template = "btop.wl", target = "~/.config/btop/themes/wallust.theme" }
-tmux = { template = "tmux.wl", target = "~/.config/tmux/palettes/wallust.conf" }
-
+sway = { template = "sway.wl", target = "~/.config/themes/current/sway" }
+kitty = { template = "kitty.wl", target = "~/.config/themes/current/kitty.conf" }
+waybar = { template = "waybar.wl", target = "~/.config/themes/current/waybar.css" }
+fzf = { template = "fzf.wl", target = "~/.config/themes/current/fzf_colors.sh" }
+hyprland = { template = "hyprland.wl", target = "~/.config/themes/current/hyprland.conf" }
+mako = { template = "mako.wl", target = "~/.config/themes/current/mako" }
+rofi = { template = "rofi.wl", target = "~/.config/themes/current/rofi.rasi" }
+quickshell = { template = "quickshell.wl", target = "~/.config/themes/current/quickshell.toml" }
+hyprlock = { template = "hyprlock.wl", target = "~/.config/themes/current/hyprlock.conf" }
+btop = { template = "btop.wl", target = "~/.config/themes/current/btop.theme" }
+tmux = { template = "tmux.wl", target = "~/.config/themes/current/tmux.conf" }
+starship = { template = "starship.wl", target = "~/.config/themes/current/starship.toml" }

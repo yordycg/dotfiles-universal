@@ -1,0 +1,461 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+# =============================================================================
+# theme-manager — Gestor Simplificado de Temas, Wallpapers y Modos
+# =============================================================================
+
+import os
+import re
+import sys
+import glob
+import shutil
+import random
+import subprocess
+
+# Directorios y Archivos del Estado XDG
+HOME = os.path.expanduser("~")
+STATE_DIR = os.path.join(HOME, ".local/state/theme-manager")
+STATE_FILE = os.path.join(STATE_DIR, "state.toml")
+THEMES_DIR = os.path.join(HOME, ".config/themes")
+CURRENT_DIR = os.path.join(THEMES_DIR, "current")
+THUMB_DIR = os.path.join(HOME, ".cache/wallpaper-thumbnails")
+ROFI_THEME = os.path.join(HOME, ".config/rofi/wallpaper.rasi")
+
+# Rutas de origen en Chezmoi para compilar plantillas estáticas
+CHEZMOI_DIR = "{{ .chezmoi.sourceDir }}"
+WALLUST_TOML = os.path.join(CHEZMOI_DIR, "dot_config/wallust/wallust.toml")
+TEMPLATES_DIR = os.path.join(CHEZMOI_DIR, "dot_config/wallust/templates")
+
+# Asegurar directorios
+os.makedirs(STATE_DIR, exist_ok=True)
+os.makedirs(CURRENT_DIR, exist_ok=True)
+os.makedirs(THUMB_DIR, exist_ok=True)
+
+# ── 1. Manejo del Estado (state.toml) ─────────────────────────────────────────
+
+def load_state():
+    state = {
+        "theme": "kanagawa",
+        "mode": "static",           # static | dynamic
+        "wallpaper": "",
+        "wallpaper_scope": "global" # global | theme
+    }
+    if os.path.exists(STATE_FILE):
+        with open(STATE_FILE, "r", encoding="utf-8") as f:
+            for line in f:
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    state[k.strip()] = v.strip().strip('"').strip("'")
+    return state
+
+def save_state(state):
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        f.write("[active]\n")
+        for k, v in state.items():
+            f.write(f'{k} = "{v}"\n')
+
+# ── 2. Helpers de Listado ─────────────────────────────────────────────────────
+
+def get_themes_list():
+    themes = []
+    if os.path.exists(THEMES_DIR):
+        for d in os.listdir(THEMES_DIR):
+            if os.path.isdir(os.path.join(THEMES_DIR, d)) and d != "current":
+                themes.append(d)
+    return sorted(themes)
+
+# ── 3. Interfaz Rofi Común ───────────────────────────────────────────────────
+
+def run_rofi(prompt, options, theme=None, theme_str=None):
+    cmd = ["rofi", "-dmenu", "-i", "-p", prompt]
+    if theme and os.path.exists(theme):
+        cmd += ["-theme", theme]
+    if theme_str:
+        cmd += ["-theme-str", theme_str]
+        
+    proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    out, _ = proc.communicate(input="\n".join(options))
+    return out.strip()
+
+# ── 4. Motor Central: Aplicar y Recargar (theme-manager apply) ───────────────
+
+def apply_theme():
+    state = load_state()
+    mode = state.get("mode", "static")
+    wallpaper = state.get("wallpaper", "")
+    active_theme = state.get("theme", "kanagawa")
+
+    # Fallback de wallpaper si está vacío
+    if not wallpaper:
+        cache_wp = os.path.join(HOME, ".cache/.current_wallpaper")
+        if os.path.exists(cache_wp):
+            try:
+                with open(cache_wp, "r", encoding="utf-8") as f:
+                    wallpaper = f.read().strip()
+            except Exception:
+                pass
+                
+    if not wallpaper:
+        wp_dir = os.path.join(THEMES_DIR, active_theme, "wallpapers")
+        if not os.path.exists(wp_dir) or not os.listdir(wp_dir):
+            wp_dir = os.path.join(HOME, "workspace/assets/wallpapers")
+        if os.path.exists(wp_dir):
+            wps = glob.glob(os.path.join(wp_dir, "*"))
+            wps = [w for w in wps if w.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+            if wps:
+                wallpaper = wps[0]
+                
+    if wallpaper and wallpaper != state.get("wallpaper", ""):
+        state["wallpaper"] = wallpaper
+        save_state(state)
+
+    print(f"=== Aplicando Tema [Modo: {mode}] ===")
+
+    # Parsear destinos de wallust.toml
+    targets = {}
+    if os.path.exists(WALLUST_TOML):
+        with open(WALLUST_TOML, "r", encoding="utf-8") as f:
+            for line in f:
+                m_tpl = re.search(r'template\s*=\s*"([^"]+)"', line)
+                m_tgt = re.search(r'target\s*=\s*"([^"]+)"', line)
+                if m_tpl and m_tgt:
+                    tpl = m_tpl.group(1)
+                    tgt = m_tgt.group(1)
+                    targets[tpl] = os.path.expandvars(os.path.expanduser(tgt))
+
+    if mode == "static":
+        # Compilación Estática
+        print(f"Compilando tema estático: {active_theme}")
+        theme_path = os.path.join(THEMES_DIR, active_theme)
+        colors_ini = os.path.join(theme_path, "colors.ini")
+        
+        if not os.path.exists(colors_ini):
+            print(f"Error: {colors_ini} no encontrado.")
+            sys.exit(1)
+            
+        colors = {}
+        with open(colors_ini, "r", encoding="utf-8") as f:
+            for line in f:
+                if "=" in line:
+                    k, v = line.strip().split("=", 1)
+                    colors[k.strip()] = v.strip().strip('"').strip("'")
+                    
+        if "cursor" not in colors:
+            colors["cursor"] = colors.get("accent", colors.get("foreground", "#ffffff"))
+
+        # Glob dinámico para compilar cualquier plantilla .wl en templates/
+        for t_file in glob.glob(os.path.join(TEMPLATES_DIR, "*.wl")):
+            base_name = os.path.basename(t_file)
+            dest_path = targets.get(base_name, os.path.join(CURRENT_DIR, base_name.replace(".wl", "")))
+            os.makedirs(os.path.dirname(dest_path), exist_ok=True)
+            
+            with open(t_file, "r", encoding="utf-8") as f:
+                content = f.read()
+                
+            for k, v in colors.items():
+                v_stripped = v.lstrip("#")
+                content = re.sub(r"\{\{\s*" + k + r"\s*\|\s*strip\s*\}\}", v_stripped, content)
+                content = re.sub(r"\{\{\s*" + k + r"\s*\}\}", v, content)
+                
+            with open(dest_path, "w", encoding="utf-8") as f:
+                f.write(content)
+                
+    else:
+        # Compilación Dinámica (Wallust - Siempre oscuro por defecto)
+        if not wallpaper or not os.path.exists(wallpaper):
+            print(f"Error: No se encontró el wallpaper '{wallpaper}' para Wallust.")
+            sys.exit(1)
+            
+        print(f"Ejecutando Wallust sobre {wallpaper} (filtro: dark16)")
+        subprocess.run(["wallust", "run", "--palette", "dark16", "--skip-sequences", wallpaper], capture_output=True)
+
+    # Aplicar wallpaper con swww
+    if wallpaper and os.path.exists(wallpaper):
+        print(f"Aplicando wallpaper con swww: {wallpaper}")
+        subprocess.run(["swww", "img", wallpaper, "--transition-type", "grow", "--transition-pos", "center", "--transition-duration", "1.5"], capture_output=True)
+        # Sincronizar cache heredada
+        with open(os.path.join(HOME, ".cache/.current_wallpaper"), "w", encoding="utf-8") as f:
+            f.write(wallpaper)
+
+    # Crear enlaces simbólicos fijos permanentemente
+    links = {
+        os.path.join(HOME, ".config/waybar/current-colors.css"): os.path.join(CURRENT_DIR, "waybar.css"),
+        os.path.join(HOME, ".config/kitty/current-colors.conf"): os.path.join(CURRENT_DIR, "kitty.conf"),
+        os.path.join(HOME, ".config/rofi/current-colors.rasi"): os.path.join(CURRENT_DIR, "rofi.rasi"),
+        os.path.join(HOME, ".config/mako/config"): os.path.join(CURRENT_DIR, "mako"),
+        os.path.join(HOME, ".config/hypr/conf.d/current-theme-colors.conf"): os.path.join(CURRENT_DIR, "hyprland.conf"),
+        os.path.join(HOME, ".config/sway/current-colors"): os.path.join(CURRENT_DIR, "sway"),
+        os.path.join(HOME, ".config/quickshell/current-colors.toml"): os.path.join(CURRENT_DIR, "quickshell.toml"),
+        os.path.join(HOME, ".config/shell/fzf_colors.sh"): os.path.join(CURRENT_DIR, "fzf_colors.sh"),
+        os.path.join(HOME, ".config/hypr/conf.d/hyprlock-colors.conf"): os.path.join(CURRENT_DIR, "hyprlock.conf"),
+        os.path.join(HOME, ".config/btop/themes/wallust.theme"): os.path.join(CURRENT_DIR, "btop.theme"),
+        os.path.join(HOME, ".config/tmux/active_palette.conf"): os.path.join(CURRENT_DIR, "tmux.conf")
+    }
+
+    for l_path, t_path in list(links.items()):
+        if os.path.exists(t_path):
+            os.makedirs(os.path.dirname(l_path), exist_ok=True)
+            if os.path.islink(l_path) or os.path.exists(l_path):
+                try:
+                    os.remove(l_path)
+                except Exception:
+                    pass
+            try:
+                os.symlink(t_path, l_path)
+            except Exception as e:
+                print(f"No se pudo crear el enlace {l_path}: {e}")
+
+    # Procesamiento especial para Starship
+    starship_dest = os.path.join(HOME, ".config/starship/active.toml")
+    current_theme_file = os.path.join(HOME, ".config/starship/current_theme")
+    current_starship_theme = "cyan-minimal"
+    if os.path.exists(current_theme_file):
+        try:
+            with open(current_theme_file, "r", encoding="utf-8") as f:
+                current_starship_theme = f.read().strip()
+        except Exception:
+            pass
+
+    if os.path.islink(starship_dest) or os.path.exists(starship_dest):
+        try:
+            os.remove(starship_dest)
+        except OSError:
+            pass
+
+    if current_starship_theme == "cyan-minimal":
+        starship_src = os.path.join(CURRENT_DIR, "starship.toml")
+        if os.path.exists(starship_src):
+            try:
+                os.symlink(starship_src, starship_dest)
+            except Exception:
+                pass
+    else:
+        theme_source = os.path.join(HOME, f".config/starship/{current_starship_theme}.toml")
+        if os.path.exists(theme_source):
+            try:
+                os.symlink(theme_source, starship_dest)
+            except Exception:
+                pass
+
+    # Notificar recargas
+    print("Recargando aplicaciones en caliente...")
+    subprocess.run(["pkill", "-USR1", "kitty"], capture_output=True)
+    subprocess.run(["pkill", "-USR2", "waybar"], capture_output=True)
+    if subprocess.run(["pgrep", "-x", "mako"], capture_output=True).returncode == 0:
+        subprocess.run(["makoctl", "reload"], capture_output=True)
+    if subprocess.run(["pgrep", "-x", "Hyprland"], capture_output=True).returncode == 0:
+        subprocess.run(["hyprctl", "reload"], capture_output=True)
+    if subprocess.run(["pgrep", "-x", "sway"], capture_output=True).returncode == 0:
+        subprocess.run(["swaymsg", "reload"], capture_output=True)
+    if subprocess.run(["pgrep", "-x", "quickshell"], capture_output=True).returncode == 0 or subprocess.run(["pgrep", "-x", "qs"], capture_output=True).returncode == 0:
+        subprocess.run(["qs", "-c", "desktop", "ipc", "call", "theme", "reload"], capture_output=True)
+
+    # Recarga e redibujado de tmux
+    print("Sincronizando y forzando redibujado en Tmux...")
+    subprocess.run(["tmux", "source-file", os.path.join(HOME, ".config/tmux/tmux.conf")], capture_output=True)
+    subprocess.run(["tmux", "refresh-client", "-S"], capture_output=True)
+    print("=== Tema aplicado exitosamente ===")
+
+# ── 5. Subcomandos del CLI ───────────────────────────────────────────────────
+
+def cmd_theme(args):
+    # Selección de Tema Estático
+    theme_name = args[0] if len(args) > 0 else ""
+    
+    if not theme_name:
+        themes = get_themes_list()
+        if (os.environ.get("WAYLAND_DISPLAY") or os.environ.get("DISPLAY")) and shutil.which("rofi"):
+            rofi_opts = []
+            for t in themes:
+                swatch = os.path.join(THEMES_DIR, t, "swatch.png")
+                if os.path.exists(swatch):
+                    rofi_opts.append(f"{t}\0icon\x1f{swatch}")
+                else:
+                    rofi_opts.append(t)
+            theme_name = run_rofi("🎨 Tema:", rofi_opts, theme=os.path.join(HOME, ".config/rofi/theme-select.rasi"))
+        elif shutil.which("fzf"):
+            fzf_proc = subprocess.Popen(["fzf", "--height", "40%", "--reverse", "--header", "Selecciona un tema:"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True)
+            theme_name, _ = fzf_proc.communicate(input="\n".join(themes))
+            theme_name = theme_name.strip()
+            
+    if not theme_name:
+        print("Operación cancelada.")
+        return
+
+    theme_path = os.path.join(THEMES_DIR, theme_name)
+    if not os.path.exists(theme_path):
+        print(f"Error: El tema '{theme_name}' no existe en {THEMES_DIR}")
+        sys.exit(1)
+
+    print(f"Guardando tema estático: {theme_name}")
+    state = load_state()
+    state["theme"] = theme_name
+    state["mode"] = "static"
+    save_state(state)
+    
+    # Guardar en cache heredada
+    cache_theme = os.path.join(HOME, ".cache/themes/active_theme")
+    os.makedirs(os.path.dirname(cache_theme), exist_ok=True)
+    with open(cache_theme, "w", encoding="utf-8") as f:
+        f.write(theme_name)
+
+    apply_theme()
+    print(f"✓ Tema '{theme_name}' cargado.")
+
+def cmd_wallpaper(args):
+    # Selección o navegación de wallpapers
+    opt = args[0] if len(args) > 0 else ""
+    
+    state = load_state()
+    active_theme = state.get("theme", "kanagawa")
+    scope = state.get("wallpaper_scope", "global")
+    current_wp = state.get("wallpaper", "")
+
+    # Directorio de wallpapers
+    if scope == "theme":
+        wp_dir = os.path.join(THEMES_DIR, active_theme, "wallpapers")
+    else:
+        wp_dir = os.path.join(HOME, "workspace/assets/wallpapers")
+        
+    if not os.path.exists(wp_dir) or not os.listdir(wp_dir):
+        wp_dir = os.path.join(HOME, "workspace/assets/wallpapers")
+        scope = "global"
+        state["wallpaper_scope"] = "global"
+        save_state(state)
+
+    wps = glob.glob(os.path.join(wp_dir, "*"))
+    wps = sorted([w for w in wps if w.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))])
+
+    if not wps:
+        print(f"No se encontraron wallpapers en {wp_dir}")
+        return
+
+    # Buscar índice actual
+    current_index = -1
+    for i, wp in enumerate(wps):
+        if wp == current_wp:
+            current_index = i
+            break
+
+    if opt in ("-n", "--next"):
+        next_idx = 0 if current_index == -1 else (current_index + 1) % len(wps)
+        state["wallpaper"] = wps[next_idx]
+        save_state(state)
+        apply_theme()
+    elif opt in ("-p", "--prev"):
+        prev_idx = 0 if current_index == -1 else (current_index - 1 + len(wps)) % len(wps)
+        state["wallpaper"] = wps[prev_idx]
+        save_state(state)
+        apply_theme()
+    elif opt in ("-r", "--random"):
+        rand_idx = random.randint(0, len(wps) - 1)
+        state["wallpaper"] = wps[rand_idx]
+        save_state(state)
+        apply_theme()
+    elif opt == "--restore":
+        apply_theme()
+    elif opt in ("-s", "--select", ""):
+        # Selector Rofi interactivo
+        # Generar thumbnails
+        for img in wps:
+            fn = os.path.basename(img)
+            thumb = os.path.join(THUMB_DIR, fn + ".png")
+            if not os.path.exists(thumb):
+                if shutil.which("magick"):
+                    subprocess.run(["magick", img, "-strip", "-thumbnail", "200x200^", "-gravity", "center", "-extent", "200x200", thumb], capture_output=True)
+                elif shutil.which("ffmpeg"):
+                    subprocess.run(["ffmpeg", "-i", img, "-vf", "thumbnail,scale=200:200:force_original_aspect_ratio=increase,crop=200:200", "-frames:v", "1", thumb, "-y"], capture_output=True)
+
+        rofi_opts = []
+        if scope == "theme":
+            rofi_opts.append(f"󰸉 Alternar a carpeta GLOBAL\0icon\x1ffolder-open")
+        else:
+            rofi_opts.append(f"󰸉 Alternar a carpeta del TEMA ({active_theme})\0icon\x1ffolder-open")
+
+        for img in wps:
+            fn = os.path.basename(img)
+            thumb = os.path.join(THUMB_DIR, fn + ".png")
+            rofi_opts.append(f"{fn}\0icon\x1f{thumb}")
+
+        r_cols = min(len(wps) + 1, 9)
+        r_margin = max(0, (100 - (r_cols * 10)) // 2)
+        
+        # Corrección Chezmoi: Evitar corchetes dobles en template.
+        theme_str = "window " + "{" + " width: 100%; " + "} listview " + "{" + f" columns: {r_cols}; margin: 0px {r_margin}% 0px {r_margin}%; " + "}"
+        selection = run_rofi("󰸉 ", rofi_opts, theme=ROFI_THEME, theme_str=theme_str)
+
+        if selection:
+            if selection == "󰸉 Alternar a carpeta GLOBAL":
+                state["wallpaper_scope"] = "global"
+                save_state(state)
+                cmd_wallpaper(["-s"])
+            elif selection.startswith("󰸉 Alternar a carpeta del TEMA"):
+                state["wallpaper_scope"] = "theme"
+                save_state(state)
+                cmd_wallpaper(["-s"])
+            else:
+                state["wallpaper"] = os.path.join(wp_dir, selection)
+                save_state(state)
+                apply_theme()
+    else:
+        # Si se le pasa un path directo de wallpaper
+        if os.path.exists(opt):
+            state["wallpaper"] = os.path.abspath(opt)
+            save_state(state)
+            apply_theme()
+        else:
+            print("Opción de wallpaper inválida.")
+
+def cmd_mode(args):
+    # Conmutación directa entre Estático y Dinámico (Toggle / Parámetros)
+    opt = args[0] if len(args) > 0 else ""
+    
+    state = load_state()
+    current_mode = state.get("mode", "static")
+
+    if opt == "--static":
+        target_mode = "static"
+    elif opt == "--dynamic":
+        target_mode = "dynamic"
+    elif opt in ("--toggle", ""):
+        target_mode = "dynamic" if current_mode != "dynamic" else "static"
+    else:
+        if opt in ("static", "dynamic"):
+            target_mode = opt
+        else:
+            print("Error: Modo inválido. Elige 'static' o 'dynamic'.")
+            sys.exit(1)
+            
+    print(f"Cambiando modo a: {target_mode}")
+    state["mode"] = target_mode
+    save_state(state)
+    
+    if shutil.which("notify-send"):
+        msg = "Modo Estático Activado (Tema Curado)" if target_mode == "static" else "Modo Dinámico Activado (Colores del Wallpaper)"
+        subprocess.run(["notify-send", "-i", "preferences-desktop-theme", "Escritorio", msg], capture_output=True)
+        
+    apply_theme()
+
+# ── 6. Entrada Principal (Routing) ───────────────────────────────────────────
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        # Sin argumentos: Abrir selector interactivo de temas directamente
+        cmd_theme([])
+        sys.exit(0)
+
+    subcmd = sys.argv[1].lower()
+    args = sys.argv[2:]
+
+    if subcmd == "theme":
+        cmd_theme(args)
+    elif subcmd == "wallpaper":
+        cmd_wallpaper(args)
+    elif subcmd == "mode":
+        cmd_mode(args)
+    elif subcmd == "apply":
+        apply_theme()
+    else:
+        print(f"Subcomando desconocido: {subcmd}")
+        print("Uso: theme-manager [theme | wallpaper | mode | apply] [opciones]")
+        sys.exit(1)
