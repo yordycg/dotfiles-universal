@@ -58,7 +58,7 @@ alias czs='chezmoi source-path'
 
 # -- Editores ----------------------------------
 alias lv='env NVIM_APPNAME=LazyVim nvim'
-alias nv='NVIM_APPNAME=nvim-personal nvim'
+alias nv='env NVIM_APPNAME=nvim-personal nvim'
 alias v='nv'
 alias v.='nv .'
 alias reload='source ~/.zshrc'
