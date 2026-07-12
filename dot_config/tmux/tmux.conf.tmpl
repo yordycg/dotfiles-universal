@@ -104,6 +104,8 @@ set -g @plugin 'omerxx/tmux-sessionx'
 # set -g @plugin 'vaaleyard/tmux-dotbar'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
+set -g @plugin 'sainnhe/tmux-fzf'
+set -g @plugin 'omerxx/tmux-floax'
 
 # --- Plugin Configuration ---
 set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.config/tmux/plugins/'
@@ -114,8 +116,24 @@ set -g @resurrect-strategy-nvim 'session'
 set -g @continuum-restore 'on'
 set -g @continuum-save-interval '10'
 
+# SessionX (Fuzzy Session Selector & Command Palette)
 set -g @sessionx-bind 's'
 set -g @sessionx-zoxide-mode 'on'
+set -g @sessionx-window-height '55%'
+set -g @sessionx-window-width '55%'
+set -g @sessionx-preview-enabled 'false'
+set -g @sessionx-auto-accept 'off'
+set -g @sessionx-filter-current 'false'
+set -g @sessionx-custom-paths '/home/yordycg/workspace'
+set -g @sessionx-custom-paths-subdirectories 'true'
+
+# Floax (Floating Terminal Overlay)
+set -g @floax-width '80%'
+set -g @floax-height '80%'
+set -g @floax-border-color '#{@thm_blue}'
+set -g @floax-text-color '#{@thm_fg}'
+set -g @floax-bind 'p'
+set -g @floax-change-path 'true'
 
 # --- Theme & Layout (Dynamic Modular System) ---
 # Si no existen los enlaces simbólicos por defecto, los inicializamos en el primer arranque
