@@ -19,6 +19,15 @@ return {
       notes_subdir = "000 Zettelkasten",
       new_notes_location = "notes_subdir",
 
+      -- Usa el título del link como nombre de archivo .md
+      note_id_func = function(title)
+        if title ~= nil then
+          return title
+        else
+          return tostring(os.time())
+        end
+      end,
+
       daily_notes = {
         folder = "Diario",
         date_format = "%Y-%m-%d",
