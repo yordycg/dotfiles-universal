@@ -18,6 +18,7 @@ com.stremio.Stremio
 # io.github.miruproject.miru # No longer available on Flathub EOL
 info.febvre.Komikku
 hu.irl.cameractrls
+md.obsidian.Obsidian
 
 
 
