@@ -13,6 +13,6 @@ return {
   },
   parsers = { "c", "cpp" },
   formatters = { c = { "clang_format" }, cpp = { "clang_format" } },
-  linters = { c = { "cpplint" }, cpp = { "cpplint" } },
-  mason = { "clangd", "clang-format", "cpplint" },
+  linters = {},
+  mason = { "clangd", "clang-format" },
 }
