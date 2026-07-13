@@ -66,6 +66,8 @@ return {
         function() require("util.obsidian-extras").move_note_to_folder() end,
         desc = "Mover nota a otra carpeta",
       },
+      { "gf", "<cmd>ObsidianFollowLink<cr>", desc = "Seguir/Crear nota del enlace" },
+      { "<leader>gf", "<cmd>ObsidianFollowLink<cr>", desc = "Seguir/Crear nota del enlace" },
     },
   },
   {
