@@ -27,7 +27,13 @@ sync_repo() {
     else
         log_info "Actualizando $name..."
         cd "$path"
-        git remote set-url origin "$github_url"
+        local CURRENT_URL
+        CURRENT_URL=$(git remote get-url origin 2>/dev/null || echo "")
+        if [[ "$name" == "Obsidian Notes" && "$CURRENT_URL" =~ ^https://.*github\.com/yordycg/obsidian-notes ]]; then
+            log_info "Manteniendo URL HTTPS con token para $name"
+        else
+            git remote set-url origin "$github_url"
+        fi
 
         # Limpiar cualquier pushurl configurado previamente para usar el por defecto de GitHub
         git config --unset-all remote.origin.pushurl || true
