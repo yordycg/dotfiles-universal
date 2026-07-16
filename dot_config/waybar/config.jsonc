@@ -45,7 +45,7 @@
     "max-length": 25,
   },
   "pulseaudio": {
-    "format": "{icon}",
+    "format": "{icon} {volume}%",
     "format-bluetooth": " {volume}%",
     "format-muted": "󰝟",
     "format-icons": {

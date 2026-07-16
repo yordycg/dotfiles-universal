@@ -5,7 +5,7 @@
 -- Set programs that you use
 local terminal = "kitty"
 local fileManager = "thunar" -- dolphin
-local menu = "rofi -show drun"
+local menu = "./.config/rofi/type-2/launcher.sh"
 
 ---------------------
 ---- KEYBINDINGS ----
@@ -82,3 +82,11 @@ hl.bind("XF86AudioNext", hl.dsp.exec_cmd("playerctl next"), { locked = true })
 hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
+
+-- Notification Center
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("swaync-client -t -sw"))
+hl.bind(mainMod .. " + CONTROL + SHIFT + A", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
+
+-- Browser
+hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
+hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("brave"))

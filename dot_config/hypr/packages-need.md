@@ -13,3 +13,7 @@ hyprexpo:expo
 swaync-client
 hyprpicker
 awww
+geist (font)
+iosevka (font)
+rubik (font)
+papirus-dark (icons - podemos cambiar el color)
