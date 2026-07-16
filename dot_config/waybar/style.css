@@ -1,0 +1,43 @@
+@import "colors/custom/gruvbox-material.css";
+
+* {
+  all: unset;
+  font-family: "JetBrains Mono Nerd Font", monospace;
+}
+
+window#waybar {
+  background-color: @bg0;
+  color: @fg;
+}
+
+#workspaces {
+  min-width: 100px;
+  font-size: 0.4rem;
+  padding: 2px 4px;
+  margin: 11px 0;
+  border-radius: 99px;
+}
+
+#workspaces button {
+  background-color: @bg4;
+  color: transparent;
+  padding: 0px 5px;
+  border-radius: 99px;
+  margin: 0 2px;
+  min-width: 4px;
+}
+
+#workspaces button.active {
+  background-color: @blue;
+  min-width: 1.4rem;
+  font-weight: 800;
+  transition: none;
+}
+
+.modules-left {
+  margin-left: 12px;
+}
+
+.modules-right {
+  margin-right: 12px;
+}
