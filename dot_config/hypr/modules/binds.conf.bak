@@ -1,0 +1,82 @@
+# -- Binds -- #
+
+# -- Mod keys
+$mainMod = ALT
+$mod = SUPER
+
+# Greetings
+bind = $mainMod, X, exec, kitty --override font_size=35 --title=greeting ~/.local/bin/workflow-greeting & sleep 0.5 # Allow window to appear
+
+# Kill
+bind = $mainMod, K, exec, hyprctl kill
+
+# Terminal
+bind = $mainMod, Return, exec, kitty
+# bind = $mainMod CTRL SHIFT, Return, exec, alacritty
+# bind = $mainMod SHIFT, Return, exec, foot
+
+# Screenshots
+bind = $mainMod, F12, exec, hyprshot -m output
+bind = $mainMod SHIFT, F12, exec, hyprshot -m region # regional screenshot
+
+# File manager
+bind = $mainMod, E, exec, thunar
+bind = $mainMod SHIFT, e, exec, nautilus
+
+# App launcher
+bind = $mainMod, D, exec, pkill rofi || rofi -show drun -theme ~/.local/share/rofi/themes/grid.rasi
+bind = $mainMod SHIFT, D, exec, fuzzel
+
+# Calculator
+bind = $mainMod, C, exec, rofi -show calc -theme ~/.local/share/rofi/themes/minimal.rasi
+
+# Bar
+bind = $mainMod, R, exec, ~/.config/waybar/scripts/launch.sh
+bind = SUPER SHIFT, R, exec, ~/.config/ags/reload.sh
+bind = $mainMod SHIFT, R, exec, ./.config/waybar/scripts/waybar-layout-switcher
+
+# Titlebars
+$hyprbars = /var/cache/hyprpm/user0/hyprland-plugins/hyprbars.so
+
+bind = $mainMod, Y, exec, hyprctl plugin load $hyprbars
+bind = $mainMod SHIFT, Y, exec, hyprctl plugin unload $hyprbars
+
+# Overview
+bind = $mainMod, Q, hyprexpo:expo, toggle
+
+# Layout
+bind = $mainMod, J, exec, hyrctl keyword general:layout scrolling
+bind = $mainMod SHIFT, J, exec, hyrctl keyword general:layout master
+
+# Browser
+bind = $mainMod, B, exec firefox
+bind = $mainMod SHIFT, B, exec brave
+
+# Wallpaper switcher
+bind = $mainMod SHIFT, T, exec, pkill rofi || ~/.config/colorschemes/wallpaper-selector.sh
+
+# Theme switcher
+bind = $mainMod, T, exec, pkill rofi || ~/.config/colorscheme/main-menu.sh
+
+# Overwatch (control center)
+bind = $mainMod, A, exec, swaync-client -t -sw
+bind = $mainMod CONTROL SHIFT, A, exec, swaync-client -R && swaync-client -rs
+
+# Color picker
+bind = $mainMod, H, exec, hyprpicker -a
+
+# Logout menu
+bind = CTRL ALT, DELETE, exec, pkill wlogout || wlogout -l .config/wlogout/layout -C .config/wlogout/theme.css -b 5 -p layer-shell -B 400 -T 400
+
+# Zoom
+bind = $mod, mouse_down, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')
+bind = $mod, mouse_up, exec, hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')
+bind = $mod SHIFT, mouse_up, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, mouse_down, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, minus, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, KP_SUBTRACT, exec, hyprctl -q keyword cursor:zoom_factor 1
+bind = $mod SHIFT, 0, exec, hyprctl -q keyword cursor:zoom_factor 1
+
+# Alt + Tab menu
+bind = ALT, Tab, exec, snappy=switcher next
+bind = ALT SHIFT, Tab, exec, snappy=switcher prev

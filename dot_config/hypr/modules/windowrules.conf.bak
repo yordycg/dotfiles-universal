@@ -1,0 +1,53 @@
+# -- Window and layer rules -- #
+
+# -- Window rules
+
+# Ignore maximize request
+#windowrulev2 =  suppressevent maximize, class:.*
+
+# Remove the right-click menu blurring in Chromium browsers
+#windowrulev2 = noblur, class:^()$, title:^()$
+
+# Remove the weird pop-up behavior in VSCode
+#windowrulev2 = stayfocused, class:^(codium)$
+#windowrule = minsize 1 1, class:^(codium)$
+
+# Make file picker windows floating
+#windowrulev2 = float, center, title:^(Open File|Open Folder|Open|Save|Save As|Export|Import|Choose File|Rename|script-fu|kdenlive|brave), class:^(.*)$
+#windowrulev2 = float, center class:(xdg-desktop-portal-gtk)
+#windowrulev2 = float, center class:(xdg-desktop-portal-hyprland)
+#windowrulev2 = noborder, class:(Xdg-desktop-portal-gtk)
+
+# Disable borders for swaync
+#windowrulv2 = noborder, class:(swaync)
+
+# Fix some dragging issues with XWayland
+#windowrule = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
+
+# Make browser opaque
+#windowrule = opacity 1.0 override, class:(zen|librewolf|firefox|brave)
+
+windowrule = match:title font-switcher, float on
+windowrule = match:title font-switcher, center on
+windowrule = match:title font-switcher, size 200 300
+
+# -- Layer rules
+
+# Blur Waybar
+layerrule = match:namespace waybar, blur on
+layerrule = match:namespace waybar, ignore_alpha 0.5
+
+layerrule = match:namespace waybar, animation fade
+
+# Blur swaync
+layerrule = match:namespace swaync-control-center, blur on
+layerrule = match:namespace swaync-notification-window, blur on
+
+layerrule = match:namespace swaync-control-center, ignore_alpha 0.5
+layerrule = match:namespace swaync-notification-window, ignore_alpha 0.5
+
+# Blur wlogout
+layerrule = match:namespace logout_dialog, animation fade
+layerrule = match:namespace logout_dialog, blur on
+
+# Rofi
