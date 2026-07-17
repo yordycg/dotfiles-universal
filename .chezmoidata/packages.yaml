@@ -8,6 +8,7 @@ fedora:
     - git
     - curl
     - wget
+    - unzip
     - tmux
     - zsh
     - jq
@@ -25,12 +26,11 @@ fedora:
     - openssl-devel
     - readline-devel
     - sqlite-devel
-  system_tools:
+  terminal_ux:
     - gnupg2
     - pinentry
     - gh
     - fzf
-    - unzip
     - sqlite
     - fastfetch
   desktop_gui:
@@ -77,6 +77,7 @@ arch:
     - git
     - curl
     - wget
+    - unzip
     - tmux
     - zsh
     - jq
@@ -88,12 +89,11 @@ arch:
     - openssl
     - readline
     - sqlite
-  system_tools:
+  terminal_ux:
     - gnupg
     - pinentry
     - github-cli
     - fzf
-    - unzip
     - sqlite
     - fastfetch
   desktop_gui:
@@ -142,6 +142,7 @@ debian:
     - git
     - curl
     - wget
+    - unzip
     - tmux
     - zsh
     - jq
@@ -169,6 +170,5 @@ debian:
     - gh
     - fzf
     - mosh
-    - unzip
     - sqlite3
     - fastfetch
