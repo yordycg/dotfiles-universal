@@ -14,6 +14,6 @@ if ! command -v paru &>/dev/null; then
 fi
 
 echo "→ Sincronizando paquetes de AUR usando Paru..."
-paru -S --noconfirm --needed {{ range .packages.arch.aur }}{{ . }} {{ end }}
+paru -S --noconfirm --needed {{ range .arch.aur }}{{ . }} {{ end }}
 echo "✓ Paquetes de AUR sincronizados."
 {{- end }}
