@@ -92,8 +92,28 @@ hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("brave"))
 
 -- Screenshot
-fl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("hyprshot -m output"))
-fl.bind(mainMod .. " + SHIFT + F12", hl.dsp.exec_cmd("hyprshot -m region"))
+hl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("hyprshot -m output"))
+hl.bind(mainMod .. " + SHIFT + F12", hl.dsp.exec_cmd("hyprshot -m region"))
+
+-- Calculator (rofi-calc)
+hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort"))
+
+-- Interactive Kill
+hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("hyprctl kill"))
+
+-- Color Picker
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("hyprpicker -a"))
+
+-- Logout Menu (wlogout)
+hl.bind("CTRL ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || wlogout -l .config/wlogout/layout -C .config/wlogout/theme.css -b 5 -p layer-shell -B 400 -T 400"))
+
+-- Zoom factor controls
+local superMod = "SUPER"
+hl.bind(superMod .. " + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"))
+hl.bind(superMod .. " + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"))
+hl.bind(superMod .. " + SHIFT + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
+hl.bind(superMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
+hl.bind(superMod .. " + SHIFT + 0", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
 
 -- Bars
 local hyprbars = "/home/yordycg/.local/share/hyprland-plugins/hyprbars.so"
@@ -102,5 +122,5 @@ hl.bind(mainMod .. " + SHIFT + Y", hl.dsp.exec_cmd("hyprctl plugin unload " .. h
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
 
 -- Selector TAB
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy=switcher next"))
-hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy=switcher prev"))
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next"))
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev"))
