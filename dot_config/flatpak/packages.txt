@@ -7,18 +7,12 @@ com.discordapp.Discord
 org.videolan.VLC
 com.spotify.Client
 org.onlyoffice.desktopeditors
-com.github.hluk.copyq
 com.usebruno.Bruno
 com.brave.Browser
 com.microsoft.Edge
+com.google.Chrome
+org.ferdium.Ferdium
 us.zoom.Zoom
-# io.github.alainm23.whatsapp-for-linux # No longer available on Flathub
-com.rtosta.zapzap
 com.stremio.Stremio
-# io.github.miruproject.miru # No longer available on Flathub EOL
-info.febvre.Komikku
 hu.irl.cameractrls
 md.obsidian.Obsidian
-
-
-

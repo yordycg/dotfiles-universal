@@ -1,0 +1,173 @@
+# Matriz global de paquetes curada para la filosofía Clean Host.
+# Estructurada por distribución para evitar fallos de nomenclatura en los gestores de paquetes.
+
+fedora:
+  base:
+    - tailscale
+    - age
+    - git
+    - curl
+    - wget
+    - tmux
+    - zsh
+    - jq
+    - pwgen
+  dev_headers:
+    - gcc
+    - gcc-c++
+    - make
+    - cmake
+    - pkgconfig
+    - aquamarine-devel
+    - hyprlang-devel
+    - hyprutils-devel
+    - hyprwayland-scanner
+    - openssl-devel
+    - readline-devel
+    - sqlite-devel
+  system_tools:
+    - gnupg2
+    - pinentry
+    - gh
+    - fzf
+    - unzip
+    - sqlite
+    - fastfetch
+  desktop_gui:
+    - distrobox
+    - podman
+    - podman-compose
+    - flatpak
+    - kitty
+    - qt5ct
+    - qt6ct
+    - kvantum
+  hyprland:
+    - hyprland
+    - hyprpaper
+    - hyprlock
+    - hypridle
+    - hyprpicker
+    - hyprsunset
+    - hyprpolkitagent
+    - xdg-desktop-portal-hyprland
+    - waybar
+    - rofi-wayland
+    - grim
+    - slurp
+    - wl-clipboard
+    - cliphist
+    - brightnessctl
+    - pavucontrol
+    - mate-polkit
+    - papirus-icon-theme
+    - imv
+    - wlogout
+    - quickshell
+    - SwayNotificationCenter
+    - awww
+    - thunar
+    - udiskie
+    - code
+
+arch:
+  base:
+    - tailscale
+    - age
+    - git
+    - curl
+    - wget
+    - tmux
+    - zsh
+    - jq
+    - pwgen
+  dev_headers:
+    - base-devel
+    - cmake
+    - pkgconf
+    - openssl
+    - readline
+    - sqlite
+  system_tools:
+    - gnupg
+    - pinentry
+    - github-cli
+    - fzf
+    - unzip
+    - sqlite
+    - fastfetch
+  desktop_gui:
+    - distrobox
+    - podman
+    - podman-compose
+    - flatpak
+    - kitty
+    - qt5ct
+    - qt6ct
+    - kvantum
+    - code
+  hyprland:
+    - hyprland
+    - hyprpaper
+    - hyprlock
+    - hypridle
+    - hyprpicker
+    - xdg-desktop-portal-hyprland
+    - qt5-wayland
+    - qt6-wayland
+    - waybar
+    - rofi-wayland
+    - grim
+    - slurp
+    - wl-clipboard
+    - cliphist
+    - brightnessctl
+    - pavucontrol
+    - polkit-kde-agent
+    - papirus-icon-theme
+    - imv
+    - wlogout
+    - swaynotificationcenter
+    - thunar
+    - udiskie
+  aur:
+    - quickshell-git
+    - hyprshot
+
+debian:
+  base:
+    - tailscale
+    - age
+    - git
+    - curl
+    - wget
+    - tmux
+    - zsh
+    - jq
+    - pwgen
+  dev_toolchain:
+    - python3-venv
+    - gcc
+    - g++
+    - make
+    - build-essential
+    - libssl-dev
+    - zlib1g-dev
+    - libbz2-dev
+    - libreadline-dev
+    - libsqlite3-dev
+    - llvm
+    - libncurses5-dev
+    - libncursesw5-dev
+    - xz-utils
+    - libffi-dev
+    - liblzma-dev
+  terminal_ux:
+    - gnupg
+    - pinentry-curses
+    - gh
+    - fzf
+    - mosh
+    - unzip
+    - sqlite3
+    - fastfetch

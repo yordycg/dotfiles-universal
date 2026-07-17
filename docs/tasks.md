@@ -7,8 +7,8 @@
 
 ## Fase 2: Core de Chezmoi
 - [x] Agregar variables a `.chezmoi.yaml.tmpl` (profile, distro - auto-detectadas sin prompts)
-- [ ] Validar generación de variables locales con `chezmoi execute-template`
-- [ ] Crear `.chezmoidata/packages.yaml` con la matriz de paquetes (Arch / Fedora)
+- [x] Validar generación de variables locales con `chezmoi execute-template`
+- [x] Crear `.chezmoidata/packages.yaml` con la matriz de paquetes (Arch / Fedora)
 - [ ] Adaptar script `.chezmoiscripts/run_once_before_00-provision-system.sh.tmpl`
 - [ ] Validar aprovisionamiento silencioso en seco (`chezmoi apply --dry-run`)
 
