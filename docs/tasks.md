@@ -22,5 +22,3 @@
 
 ## Fase 4: Tareas Pendientes del Roadmap
 - [ ] Integrar `passage` en iOS y extensión de Firefox (PassFF)
-- [ ] Centralizar temas GTK/Qt y cursor en variables de `.chezmoi.yaml.tmpl`
-- [ ] Adaptar plantillas de estilo (`settings.ini.tmpl`, `index.theme.tmpl`) al tematizado centralizado
