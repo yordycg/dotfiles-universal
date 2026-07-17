@@ -126,14 +126,14 @@ arch:
     - polkit-kde-agent
     - papirus-icon-theme
     - imv
-    - wlogout
-    - swaynotificationcenter
+    - swaync
     - thunar
     - udiskie
   aur:
     - quickshell-git
     - hyprshot
     - awww-git
+    - wlogout
 
 debian:
   base:
