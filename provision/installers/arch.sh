@@ -17,6 +17,11 @@ if ! grep -q "^ParallelDownloads" /etc/pacman.conf 2>/dev/null; then
 fi
 
 # ── 1. Dependencias del Aprovisionador ────────────────────────────────────────
+if pacman -Qi yq &>/dev/null; then
+    log_info "Removiendo paquete yq conflictivo (Python)..."
+    run sudo pacman -R --noconfirm yq
+fi
+
 if ! command -v go-yq &>/dev/null; then
     log_info "Instalando go-yq (Procesador YAML de Go)..."
     run sudo pacman -S --noconfirm go-yq
