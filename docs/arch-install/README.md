@@ -14,13 +14,22 @@ A diferencia de otras distribuciones como Fedora o Ubuntu, **Arch Linux no propo
 
 ## 🛠️ Fase -1: Preparación del Medio de Instalación (Live USB)
 
-### 1. Descarga de la ISO Oficial
+### 1. Descarga y Verificación de la ISO Oficial
 1. Visita la página oficial de descargas: [archlinux.org/download](https://archlinux.org/download/).
-2. Descarga el archivo `.iso` mediante Torrent o HTTP desde algún mirror cercano.
-3. *(Opcional pero recomendado)* Verifica la integridad de la ISO descargada comparando su firma SHA256:
+2. Descarga el archivo `.iso` y su archivo de firma `.sig` (PGP signature) asociado en la misma carpeta.
+3. Importa la clave pública del desarrollador firmante de Arch Linux (usualmente Pierre Schmitz):
    ```bash
-   sha256sum archlinux-YYYY.MM.DD-x86_64.iso
+   gpg --auto-key-locate wkd --locate-keys pierre@archlinux.org
    ```
+4. Verifica la autenticidad de la ISO ejecutando:
+   ```bash
+   gpg --verify archlinux-YYYY.MM.DD-x86_64.iso.sig archlinux-YYYY.MM.DD-x86_64.iso
+   ```
+   Deberías ver una salida que indique `gpg: Good signature from "Pierre Schmitz <pierre@archlinux.org>"`.
+
+> [!NOTE]
+> **Resolución de problemas de GPG:**
+> Si obtienes el error `can't connect to 'socket://.../log-socket': No such file or directory`, edita tu archivo local `~/.gnupg/gpg.conf` y comenta la línea que define el `log-file socket://...` anteponiendo un `#`.
 
 ### 2. Grabación de la ISO con Ventoy (Recomendado)
 [Ventoy](https://www.ventoy.net/) es la herramienta ideal de administración multi-ISO. Te permite preparar un USB una sola vez y luego simplemente copiar y pegar archivos `.iso` sin formatear el dispositivo.
