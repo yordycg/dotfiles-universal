@@ -1,0 +1,83 @@
+@import "/home/yordycg/.config/waybar/colors.css";
+
+* {
+    background-image: none;
+    font-family: "JetBrainsMono Nerd Font", sans-serif;
+    font-size: ${fntSize}px;
+}
+
+window {
+    background-color: rgba(10, 10, 10, 0.4); /* fallback */
+    background-color: alpha(@background, 0.4); /* Frosted glass effect with Hyprland blur */
+}
+
+button {
+    color: @foreground;
+    background-color: alpha(@background, 0.75);
+    outline-style: none;
+    border: none;
+    border-width: 0px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 25%;
+    border-radius: 0px;
+    box-shadow: none;
+    text-shadow: none;
+}
+
+/* Remove button:focus highlight to prevent preselection on startup */
+button:focus {
+    outline: none;
+}
+
+button:hover {
+    background-color: alpha(@accent, 0.35);
+    background-size: 30%;
+    transition: all 0.3s cubic-bezier(.55,0.0,.28,1.682);
+}
+
+/* Hover pop-out offsets and border rounding for 2x2 grid explosion */
+button:hover#lock {
+    border-radius: ${active_rad}px ${active_rad}px 0px ${active_rad}px;
+    margin: ${y_hvr}px 0px 0px ${x_hvr}px;
+}
+
+button:hover#logout {
+    border-radius: ${active_rad}px 0px ${active_rad}px ${active_rad}px;
+    margin: 0px 0px ${y_hvr}px ${x_hvr}px;
+}
+
+button:hover#shutdown {
+    border-radius: ${active_rad}px ${active_rad}px ${active_rad}px 0px;
+    margin: ${y_hvr}px ${x_hvr}px 0px 0px;
+}
+
+button:hover#reboot {
+    border-radius: 0px ${active_rad}px ${active_rad}px ${active_rad}px;
+    margin: 0px ${x_hvr}px ${y_hvr}px 0px;
+}
+
+/* Default positions and outer-corner rounding (forming a single large square in center) */
+#lock {
+    background-image: image(url("/home/yordycg/.config/wlogout/icons/lock_white.png"), url("/usr/share/wlogout/icons/lock.png"));
+    border-radius: ${button_rad}px 0px 0px 0px;
+    margin: ${y_mgn}px 0px 0px ${x_mgn}px;
+}
+
+#logout {
+    background-image: image(url("/home/yordycg/.config/wlogout/icons/logout_white.png"), url("/usr/share/wlogout/icons/logout.png"));
+    border-radius: 0px 0px 0px ${button_rad}px;
+    margin: 0px 0px ${y_mgn}px ${x_mgn}px;
+}
+
+#shutdown {
+    background-image: image(url("/home/yordycg/.config/wlogout/icons/shutdown_white.png"), url("/usr/share/wlogout/icons/shutdown.png"));
+    border-radius: 0px ${button_rad}px 0px 0px;
+    margin: ${y_mgn}px ${x_mgn}px 0px 0px;
+}
+
+#reboot {
+    background-image: image(url("/home/yordycg/.config/wlogout/icons/reboot_white.png"), url("/usr/share/wlogout/icons/reboot.png"));
+    border-radius: 0px 0px ${button_rad}px 0px;
+    margin: 0px ${x_mgn}px ${y_mgn}px 0px;
+}

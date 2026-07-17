@@ -106,6 +106,7 @@ arch:
     - qt6ct
     - kvantum
     - code
+    - firefox
   hyprland:
     - hyprland
     - hyprpaper
@@ -134,6 +135,7 @@ arch:
     - hyprshot
     - awww-git
     - wlogout
+    - snappy-switcher
 
 debian:
   base:
