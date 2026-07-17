@@ -13,12 +13,12 @@
 - [x] Validar aprovisionamiento silencioso en seco (`chezmoi apply --dry-run`)
 
 ## Fase 3: Modularización de Hyprland (Lua)
-- [ ] Crear plantilla `decorations.lua.tmpl` (Modo ECO vs FULL)
-- [ ] Crear plantilla `animations.lua.tmpl` (Desactivar animaciones en ECO)
-- [ ] Crear plantilla `autostarts.lua.tmpl` (Daemons condicionales por distro/perfil)
-- [ ] Crear plantilla `monitors.lua.tmpl` (Monitores por hostname)
-- [ ] Integrar atajos de capturas (`hyprshot`) y calc (`rofi-calc`) en `binds.lua`
-- [ ] Integrar atajos de Alt+Tab (`snappy`) en `binds.lua`
+- [x] Crear plantilla `decorations.lua.tmpl` (Modo ECO vs FULL)
+- [x] Crear plantilla `animations.lua.tmpl` (Desactivar animaciones en ECO)
+- [x] Crear plantilla `autostarts.lua.tmpl` (Daemons condicionales por distro/perfil)
+- [x] Crear plantilla `monitors.lua.tmpl` (Monitores por hostname)
+- [x] Integrar atajos de capturas (`hyprshot`) y calc (`rofi-calc`) en `binds.lua`
+- [x] Integrar atajos de Alt+Tab (`snappy`) en `binds.lua`
 
 ## Fase 4: Entornos Declarativos (Distrobox)
 - [ ] Crear plantilla `distrobox.ini.tmpl` (Declaración de contenedores base)
