@@ -3,6 +3,7 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
+{{- if eq .chezmoi.hostname "fedora-D" }}
 hl.monitor({
 	output = "DP-2",
 	mode = "preferred",
@@ -28,3 +29,12 @@ hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-3", persistent = true })
 hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-3", persistent = true })
 hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-3", persistent = true })
 hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-3", persistent = true })
+{{- else }}
+-- Fallback automático para portátiles o nuevos hosts
+hl.monitor({
+	output = "",
+	mode = "preferred",
+	position = "auto",
+	scale = "auto",
+})
+{{- end }}
