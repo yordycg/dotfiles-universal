@@ -55,8 +55,8 @@ provision/**
 .config/sway/**
 {{- end }}
 
-# Ignorar Hyprland si no está seleccionado O si el nodo NO es Desktop
-{{- if or (and (ne .desktopEnv "hyprland") (ne .desktopEnv "both")) (not .isDesktop) }}
+# Ignorar Hyprland si no está seleccionado O si el nodo NO es GUI
+{{- if or (and (ne .desktopEnv "hyprland") (ne .desktopEnv "both")) (not .isGUI) }}
 .config/hypr/**
 {{- end }}
 
