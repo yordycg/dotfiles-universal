@@ -8,12 +8,8 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("waybar") -- waybar
 	hl.exec_cmd("hyprpm reload") -- plugins
 
-	-- Wallpaper Daemon based on profile (ECO vs FULL)
-	{{- if eq .node.profile "laptop" }}
-	hl.exec_cmd("hyprpaper") -- Wallpaper daemon for ECO mode (laptop)
-	{{- else }}
-	hl.exec_cmd("awww-daemon") -- Wallpaper daemon for FULL mode (desktop)
-	{{- end }}
+	-- Wallpaper Daemon (unificado para desktop y laptop)
+	hl.exec_cmd("hyprpaper") -- Wallpaper daemon (cargará ~/.config/hypr/default.jpg)
 
 	-- Polkit Agent based on distro
 	{{- if eq .node.distro "fedora" }}
