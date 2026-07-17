@@ -13,10 +13,11 @@
 {{- if stat $roleFile -}}
 {{-   $nodeRole = include $roleFile | trim -}}
 {{- end -}}
+{{- $envRole := env "CHEZMOI_ROLE" -}}
 
 {{- $isWSL     := env "WSL_DISTRO_NAME" | not | not -}}
-{{- $isServer  := or (eq $nodeRole "server") -}}
-{{- $hasBattery := stat "/sys/class/power_supply/BAT0" | not | not -}}
+{{- $isServer  := or (eq $envRole "server") (eq $nodeRole "server") -}}
+{{- $hasBattery := or (stat "/sys/class/power_supply/BAT0") (stat "/sys/class/power_supply/BAT1") | not | not -}}
 {{- $isLaptop  := and (not $isWSL) (not $isServer) $hasBattery -}}
 {{- $isDesktop := and (not $isWSL) (not $isServer) (not $hasBattery) -}}
 
@@ -25,10 +26,22 @@
 {{- $isGUI         := $isNativeLinux -}}
 {{- $isHeadless    := or $isServer $isWSL -}}
 
-{{/* ── PASO 2.5: Identificar Entorno Gráfico ────────────────── */}}
+{{/* Detección de Perfil y Distro */}}
+{{- $profile := "desktop" -}}
+{{- if $isServer -}}
+{{-   $profile = "server" -}}
+{{- else if $isLaptop -}}
+{{-   $profile = "laptop" -}}
+{{- end -}}
+
+{{- $distro := "arch" -}}
+{{- if hasKey .chezmoi.osRelease "id" -}}
+{{-   $distro = .chezmoi.osRelease.id -}}
+{{- end -}}
+
 {{- $desktopEnv := "none" -}}
 {{- if $isGUI -}}
-{{-   $desktopEnv = promptStringOnce . "desktopEnv" "Entorno de escritorio (kde, sway, hyprland, both, gnome, none)" "sway" -}}
+{{-   $desktopEnv = "hyprland" -}}
 {{- end -}}
 
 {{- $hasGUI      := or $isLaptop $isDesktop -}}
@@ -54,21 +67,18 @@ age:
 {{- end }}
 
 data:
+  # ── Estructura Multi-Nodo Nueva ──
+  node:
+    profile: {{ $profile | quote }}
+    distro: {{ $distro | quote }}
+    hostname: {{ .chezmoi.hostname | quote }}
+
   # ── Escenarios ──
   isWSL:     {{ $isWSL }}
   isServer:  {{ $isServer }}
   isLaptop:  {{ $isLaptop }}
   isDesktop: {{ $isDesktop }}
   desktopEnv: {{ $desktopEnv | quote }}
-  kdeTheme: "mactahoe"
-
-  # ── Tema de Escritorio ──
-  gtkTheme: "Adwaita-dark"
-  cursorTheme: "Adwaita"
-  iconTheme: "Papirus-Dark"
-  accentColor: "cba6f7"
-  accentColorAlt: "89b4fa"
-  borderInactive: "313244"
 
   # ── Capacidades ──
   hasGUI:      {{ $hasGUI }}
@@ -87,16 +97,9 @@ data:
   # ── Metadata ───────────────────────────────────────────────
   os:       {{ .chezmoi.os }}
   hostname: {{ .chezmoi.hostname }}
-  fontSizeTerminal: {{ if $isDesktop }}15{{ else }}13{{ end }}
 
   # ── Identidad ──────────────────────────────────────────────
   gitName:          {{ env "CHEZMOI_GIT_NAME" | default "yordycg" | quote }}
   gitEmail:         {{ env "CHEZMOI_GIT_EMAIL" | default "yordy.carmona8@gmail.com" | quote }}
   homelab_ip_ts:    {{ env "CHEZMOI_HOMELAB_TS_IP" | default "100.110.207.73" | quote }}
   homelab_ip_local: {{ env "CHEZMOI_HOMELAB_LOCAL_IP" | default "192.168.18.99" | quote }}
-  adguard_ip:       {{ if or $isServer $isWSL -}}
-                      {{- env "CHEZMOI_HOMELAB_TS_IP" | default "100.110.207.73" | quote -}}
-                    {{- else -}}
-                      {{- env "CHEZMOI_HOMELAB_LOCAL_IP" | default "192.168.18.99" | quote -}}
-                    {{- end }}
-  # Los tokens se extraen bajo demanda en los templates que los necesiten
