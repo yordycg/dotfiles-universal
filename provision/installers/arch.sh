@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/logging.sh"
-PACKAGES_FILE="$SCRIPT_DIR/../../.chezmoidata/packages.yaml"
+PACKAGES_FILE="${CHEZMOI_SOURCE_DIR:-$SCRIPT_DIR/../..}/.chezmoidata/packages.yaml"
 
 # ── 0. Optimización de Pacman ────────────────────────────────────────────────
 if ! grep -q "^ParallelDownloads" /etc/pacman.conf 2>/dev/null; then
@@ -34,7 +34,7 @@ install_section() {
     log_info "Instalando sección Arch: $section"
     
     local packages
-    packages=$(go-yq e ".arch.${section}[]" "$PACKAGES_FILE" 2>/dev/null || echo "")
+    packages=$(go-yq ".arch.${section}[]" "$PACKAGES_FILE" || echo "")
     
     if [ -z "$packages" ]; then
         log_info "Sección $section vacía, omitiendo."
