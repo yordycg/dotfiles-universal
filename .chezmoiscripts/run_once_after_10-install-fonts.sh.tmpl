@@ -33,7 +33,7 @@ fi
 # ── 2. Instalación ───────────────────────────────────────────────────────────
 VERSION="3.3.0"
 FONTS_DIR="${HOME}/.local/share/fonts"
-declare -a fonts=(JetBrainsMono FiraCode Lilex CaskaydiaCove)
+declare -a fonts=(JetBrainsMono FiraCode Lilex CaskaydiaCove Iosevka GeistMono)
 
 mkdir -p "$FONTS_DIR"
 
@@ -82,6 +82,19 @@ if [ ! -d "$FONTS_DIR/omarchy" ]; then
     else
         log_info "No se pudo descargar la fuente Omarchy."
         rm -rf "$FONTS_DIR/omarchy"
+    fi
+fi
+
+# ── 5. Fuente Rubik ─────────────────────────────────────────────────────────
+if [ ! -d "$FONTS_DIR/Rubik" ]; then
+    log_info "Descargando Rubik..."
+    mkdir -p "$FONTS_DIR/Rubik"
+    if wget -q --show-progress -O "$FONTS_DIR/Rubik/Rubik[wght].ttf" "https://github.com/google/fonts/raw/main/ofl/rubik/Rubik%5Bwght%5D.ttf" && \
+       wget -q --show-progress -O "$FONTS_DIR/Rubik/Rubik-Italic[wght].ttf" "https://github.com/google/fonts/raw/main/ofl/rubik/Rubik-Italic%5Bwght%5D.ttf"; then
+        log_ok "Fuente Rubik descargada."
+    else
+        log_info "No se pudo descargar la fuente Rubik."
+        rm -rf "$FONTS_DIR/Rubik"
     fi
 fi
 

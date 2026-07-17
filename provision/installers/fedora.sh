@@ -94,6 +94,12 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo dnf copr enable -y solopasha/hyprland
     fi
 
+    # Habilitar COPR scottames/awww para awww (wallpaper daemon)
+    if ! dnf copr list | grep -q "scottames/awww"; then
+        log_info "Habilitando COPR scottames/awww (awww)..."
+        run sudo dnf copr enable -y scottames/awww
+    fi
+
     # Habilitar COPR errornointernet/quickshell para Quickshell
     if ! dnf copr list | grep -q "errornointernet/quickshell"; then
         log_info "Habilitando COPR errornointernet/quickshell (Quickshell)..."

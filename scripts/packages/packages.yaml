@@ -124,6 +124,12 @@ fedora:
     - quickshell
     - wlogout
     - walker
+    - SwayNotificationCenter
+    - awww
+    - thunar
+    - nautilus
+    - hyprshot
+    - udiskie
     - elephant
     - elephant-calc
     - elephant-files
