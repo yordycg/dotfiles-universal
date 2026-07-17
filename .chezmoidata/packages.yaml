@@ -133,6 +133,7 @@ arch:
   aur:
     - quickshell-git
     - hyprshot
+    - awww-git
 
 debian:
   base:
