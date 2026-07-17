@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/logging.sh"
-PACKAGES_FILE="$SCRIPT_DIR/../../scripts/packages/packages.yaml"
+PACKAGES_FILE="$SCRIPT_DIR/../../.chezmoidata/packages.yaml"
 
 # ── 0. Optimización de DNF ────────────────────────────────────────────────────
 if ! grep -q "max_parallel_downloads" /etc/dnf/dnf.conf 2>/dev/null; then
@@ -82,12 +82,6 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
     fi
 
-    # Habilitar COPR para nwg-look y herramientas de Sway modernas
-    if ! dnf copr list | grep -q "tofik/nwg-shell"; then
-        log_info "Habilitando COPR tofik/nwg-shell (para nwg-look)..."
-        run sudo dnf copr enable -y tofik/nwg-shell
-    fi
-
     # Habilitar COPR solopasha/hyprland para swww y waypaper
     if ! dnf copr list | grep -q "solopasha/hyprland"; then
         log_info "Habilitando COPR solopasha/hyprland (swww + waypaper)..."
@@ -104,12 +98,6 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     if ! dnf copr list | grep -q "errornointernet/quickshell"; then
         log_info "Habilitando COPR errornointernet/quickshell (Quickshell)..."
         run sudo dnf copr enable -y errornointernet/quickshell
-    fi
-
-    # Habilitar COPR errornointernet/walker para Walker
-    if ! dnf copr list | grep -q "errornointernet/walker"; then
-        log_info "Habilitando COPR errornointernet/walker (Walker)..."
-        run sudo dnf copr enable -y errornointernet/walker
     fi
 
     # Configurar exclusiones en el COPR solopasha para evitar conflictos en Fedora 44+
@@ -131,34 +119,11 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         run sudo dnf copr enable -y atim/xpadneo
     fi
 
-    install_section "desktop"
+    install_section "desktop_gui"
     
-    # Perfil de Entorno Gráfico Específico (Sway, KDE o Ambos)
-    if [ "${NODE_DESKTOP_ENV:-}" = "sway" ]; then
-        install_section "sway"
-    elif [ "${NODE_DESKTOP_ENV:-}" = "hyprland" ]; then
-        if [ "${NODE_IS_DESKTOP:-}" = "true" ]; then
-            log_info "Instalando Hyprland (nodo Desktop detectado)..."
-            install_section "hyprland"
-        else
-            log_warn "Hyprland seleccionado pero este nodo no es Desktop (sin GPU dedicada)."
-            log_warn "Instalando Sway como fallback para este nodo..."
-            install_section "sway"
-        fi
-    elif [ "${NODE_DESKTOP_ENV:-}" = "kde" ]; then
-        install_section "kde"
-    elif [ "${NODE_DESKTOP_ENV:-}" = "both" ]; then
-        if [ "${NODE_IS_DESKTOP:-}" = "true" ]; then
-            # Desktop: Sway + Hyprland (para poder comparar/alternar)
-            log_info "Modo 'both' en Desktop: instalando Sway + Hyprland..."
-            install_section "sway"
-            install_section "hyprland"
-        else
-            # Laptop: Sway + KDE (comportamiento original)
-            log_info "Modo 'both' en Laptop: instalando Sway + KDE..."
-            install_section "sway"
-            install_section "kde"
-        fi
+    if [ "${NODE_DESKTOP_ENV:-}" = "hyprland" ]; then
+        log_info "Instalando Hyprland..."
+        install_section "hyprland"
     fi
 
     # Activar servicios instalados condicionalmente

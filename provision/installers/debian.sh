@@ -7,7 +7,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../lib/logging.sh"
-PACKAGES_FILE="$SCRIPT_DIR/../../scripts/packages/packages.yaml"
+PACKAGES_FILE="$SCRIPT_DIR/../../.chezmoidata/packages.yaml"
 
 # ── 1. Preparación del Gestor de Paquetes ────────────────────────────────────
 log_info "Instalando dependencias de transporte y detección..."
@@ -83,7 +83,7 @@ fi
 # Perfil Desktop (Opcional en Debian)
 if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     log_info "Capacidad GUI detectada. Buscando sección desktop..."
-    # install_section "desktop" # Reservado para futuras ampliaciones
+    # install_section "desktop_gui" # Reservado para futuras ampliaciones
 fi
 
 # Instalar distrobox en todos los sistemas (servidor y clientes)

@@ -34,6 +34,7 @@ A continuación se detalla la estructura física del repositorio:
 ├── docs/                           # Documentación de arquitectura interna
 │   ├── tasks.md                    # Tablero Kanban y roadmap de tareas activas
 │   ├── chezmoi_repository_architecture.md # Este plano de arquitectura
+│   ├── arch-install-guide.md       # Guía de instalación de Arch Linux & Dual Boot (Senior)
 │   ├── bootstrap-guide.md          # Guía de instalación y bootstrap en limpio
 │   ├── bootstrap-execution-flow.md # Flujo de inicialización detallado paso a paso
 │   ├── kde-customization-guide.md  # Guía de personalización estética manual de KDE

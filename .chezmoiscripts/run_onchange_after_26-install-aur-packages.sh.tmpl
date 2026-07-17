@@ -1,0 +1,19 @@
+{{- if eq .node.distro "arch" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_onchange_after_26-install-aur-packages.sh.tmpl
+# Instalación y actualización automática de paquetes del AUR
+# =============================================================================
+# Hash de la matriz de paquetes: {{ include ".chezmoidata/packages.yaml" | sha256sum }}
+
+set -euo pipefail
+
+if ! command -v paru &>/dev/null; then
+    echo "! Paru no encontrado, omitiendo instalación de paquetes AUR."
+    exit 0
+fi
+
+echo "→ Sincronizando paquetes de AUR usando Paru..."
+paru -S --noconfirm --needed {{ range .packages.arch.aur }}{{ . }} {{ end }}
+echo "✓ Paquetes de AUR sincronizados."
+{{- end }}

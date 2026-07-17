@@ -1,0 +1,28 @@
+{{- if eq .node.distro "arch" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_25-install-aur-helper.sh.tmpl
+# Instalación del helper de AUR (paru) en espacio de usuario
+# =============================================================================
+set -euo pipefail
+
+if command -v paru &>/dev/null; then
+    echo "→ Paru ya está instalado. Saltando."
+    exit 0
+fi
+
+echo "→ Instalando Paru (AUR Helper en Rust)..."
+
+# Dependencias para compilar/instalar paru-bin
+sudo pacman -S --noconfirm --needed git base-devel
+
+TEMP_DIR=$(mktemp -d)
+git clone https://aur.archlinux.org/paru-bin.git "$TEMP_DIR"
+cd "$TEMP_DIR"
+
+# makepkg no se puede correr como root. Se ejecuta con el usuario actual.
+makepkg -si --noconfirm
+
+rm -rf "$TEMP_DIR"
+echo "✓ Paru instalado correctamente."
+{{- end }}

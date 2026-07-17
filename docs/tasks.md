@@ -9,8 +9,8 @@
 - [x] Agregar variables a `.chezmoi.yaml.tmpl` (profile, distro - auto-detectadas sin prompts)
 - [x] Validar generación de variables locales con `chezmoi execute-template`
 - [x] Crear `.chezmoidata/packages.yaml` con la matriz de paquetes (Arch / Fedora)
-- [ ] Adaptar script `.chezmoiscripts/run_once_before_00-provision-system.sh.tmpl`
-- [ ] Validar aprovisionamiento silencioso en seco (`chezmoi apply --dry-run`)
+- [x] Adaptar script `.chezmoiscripts/run_once_before_00-provision-system.sh.tmpl`
+- [x] Validar aprovisionamiento silencioso en seco (`chezmoi apply --dry-run`)
 
 ## Fase 3: Modularización de Hyprland (Lua)
 - [ ] Crear plantilla `decorations.lua.tmpl` (Modo ECO vs FULL)
