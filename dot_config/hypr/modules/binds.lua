@@ -90,3 +90,17 @@ hl.bind(mainMod .. " + CONTROL + SHIFT + A", hl.dsp.exec_cmd("swaync-client -R &
 -- Browser
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
 hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("brave"))
+
+-- Screenshot
+fl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("hyprshot -m output"))
+fl.bind(mainMod .. " + SHIFT + F12", hl.dsp.exec_cmd("hyprshot -m region"))
+
+-- Bars
+local hyprbars = "/home/yordycg/.local/share/hyprland-plugins/hyprbars.so"
+hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("hyprctl plugin load " .. hyprbars))
+hl.bind(mainMod .. " + SHIFT + Y", hl.dsp.exec_cmd("hyprctl plugin unload " .. hyprbars))
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
+
+-- Selector TAB
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy=switcher next"))
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy=switcher prev"))

@@ -19,6 +19,13 @@ fedora:
     - gcc
     - gcc-c++
     - make
+    - cmake
+    - cpio
+    - pkgconfig
+    - aquamarine-devel
+    - hyprlang-devel
+    - hyprutils-devel
+    - hyprwayland-scanner
     - openssl-devel
     - zlib-devel
     - bzip2-devel
