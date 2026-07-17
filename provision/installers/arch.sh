@@ -17,10 +17,10 @@ if ! grep -q "^ParallelDownloads" /etc/pacman.conf 2>/dev/null; then
 fi
 
 # ── 1. Dependencias del Aprovisionador ────────────────────────────────────────
-if ! command -v yq &>/dev/null; then
-    log_info "Instalando yq (Procesador YAML)..."
-    run sudo pacman -S --noconfirm yq
-    log_ok "yq instalado."
+if ! command -v go-yq &>/dev/null; then
+    log_info "Instalando go-yq (Procesador YAML de Go)..."
+    run sudo pacman -S --noconfirm go-yq
+    log_ok "go-yq instalado."
 fi
 
 # ── 2. Función de Instalación por Sección ────────────────────────────────────
@@ -29,7 +29,7 @@ install_section() {
     log_info "Instalando sección Arch: $section"
     
     local packages
-    packages=$(yq e ".arch.${section}[]" "$PACKAGES_FILE" 2>/dev/null || echo "")
+    packages=$(go-yq e ".arch.${section}[]" "$PACKAGES_FILE" 2>/dev/null || echo "")
     
     if [ -z "$packages" ]; then
         log_info "Sección $section vacía, omitiendo."
