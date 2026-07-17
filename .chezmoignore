@@ -21,8 +21,6 @@ provision/**
 .config/mako/**
 .config/kitty/**
 .config/gammastep/**
-.config/wallust/**
-.config/flavours/**
 .config/gtk-3.0/**
 .config/gtk-4.0/**
 .mozilla/**
@@ -47,7 +45,6 @@ provision/**
 .config/wofi/**
 .config/mako/**
 .config/gammastep/**
-.config/wallust/**
 {{- end }}
 
 # Ignorar Sway si no está seleccionado
@@ -62,7 +59,6 @@ provision/**
 
 # ── Archivos generados dinámicamente (todos los sistemas) ────────
 .config/LazyVim/lazy-lock.json
-.config/kitty/colors.conf
 .config/tmux/colors.conf
 .config/waybar/colors.css
 .config/sway/colors

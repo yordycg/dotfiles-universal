@@ -20,12 +20,7 @@
 - [x] Integrar atajos de capturas (`hyprshot`) y calc (`rofi-calc`) en `binds.lua`
 - [x] Integrar atajos de Alt+Tab (`snappy`) en `binds.lua`
 
-## Fase 4: Entornos Declarativos (Distrobox)
-- [ ] Crear plantilla `distrobox.ini.tmpl` (Declaración de contenedores base)
-- [ ] Crear script `.chezmoiscripts/run_onchange_after_30-distrobox-assemble.sh`
-- [ ] Validar creación automática de contenedores con `distrobox assemble`
-
-## Fase 5: Tareas Pendientes del Roadmap
+## Fase 4: Tareas Pendientes del Roadmap
 - [ ] Integrar `passage` en iOS y extensión de Firefox (PassFF)
 - [ ] Centralizar temas GTK/Qt y cursor en variables de `.chezmoi.yaml.tmpl`
 - [ ] Adaptar plantillas de estilo (`settings.ini.tmpl`, `index.theme.tmpl`) al tematizado centralizado

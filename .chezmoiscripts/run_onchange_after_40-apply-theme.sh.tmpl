@@ -11,8 +11,7 @@ exit 0
 set -euo pipefail
 
 # -- Trigger de Cambio --
-# Este script se ejecutara solo si cambia el config de flavours
-# Hash: {{ include "dot_config/flavours/config.toml.tmpl" | sha256sum }}
+# Se ejecuta cuando cambia este script o las variables asociadas
 
 {{ include "provision/lib/logging.sh" }}
 
@@ -93,13 +92,6 @@ if command -v gsettings &>/dev/null; then
     log_ok "GSettings sincronizados (nwg-look actualizado)."
 fi
 
-# ── 5. Sincronización de Colores (Flavours) ──────────────────────────────────
-if command -v flavours &>/dev/null; then
-    log_info "Sincronizando paleta de terminal con Flavours..."
-    # Intentamos aplicar el esquema catppuccin-mocha si esta disponible
-    flavours apply catppuccin-mocha || log_info "Flavours: Esquema no encontrado, omitiendo..."
-    log_ok "Colores de terminal actualizados."
-fi
 
 # ── 6. Asegurar existencia de archivos dinámicos de Hyprland ─────────────────
 log_info "Asegurando archivo de colores dinámicos para Hyprland..."
