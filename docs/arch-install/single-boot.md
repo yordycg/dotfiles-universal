@@ -65,15 +65,15 @@ lsblk
 *(Identifica tu unidad, por ejemplo `/dev/nvme0n1` o `/dev/sda`).*
 
 #### 2. Crear las Particiones
-Usa `cfdisk` para limpiar el disco y crear dos particiones:
+Usa `cfdisk` para limpiar el disco y definir la tabla de particiones:
 ```bash
 cfdisk /dev/nvme0n1
 ```
-* Selecciona **label type: gpt**.
-* Elimina cualquier partición existente si el disco no está vacío.
-* **Partición 1 (EFI):** Crea una partición de **512 MB a 1 GB**, de tipo **EFI System**.
-* **Partición 2 (Raíz):** Crea una partición con el resto del espacio disponible, de tipo **Linux filesystem**.
-* Selecciona **Write** (escribe `yes`) y luego **Quit**.
+* **Tipo de tabla:** Si te pregunta por el tipo de tabla de particiones (*Select label type*), selecciona **`gpt`**. Si detecta una tabla previa, entrará directamente.
+* **Limpiar el disco:** Selecciona cada una de las particiones existentes y muévete al menú inferior para elegir **`Delete`** hasta que solo quede una línea de **`Free space`**.
+* **Partición 1 (EFI):** Selecciona el `Free space` -> **`New`** -> Escribe **`1G`** (recomendado para dar holgura a múltiples kernels) -> Presiona Enter. Luego, muévete a **`Type`** y selecciona **`EFI System`**.
+* **Partición 2 (Raíz):** Selecciona el `Free space` restante -> **`New`** -> Deja el tamaño por defecto (el resto de tu disco) -> Presiona Enter. (El tipo por defecto será *Linux filesystem*, lo cual es correcto).
+* **Guardar y Salir:** Muévete a **`Write`** -> Escribe la palabra **`yes`** completa y presiona Enter. Luego selecciona **`Quit`** y sal.
 
 #### 3. Formatear las Particiones
 Asumiendo que tus particiones creadas son `/dev/nvme0n1p1` (EFI) y `/dev/nvme0n1p2` (Raíz):
@@ -122,11 +122,11 @@ mount /dev/nvme0n1p1 /mnt/boot
 ```
 
 #### 6. Configurar el Swapfile (Opcional si usas zram más adelante)
-Si prefieres un archivo swap en disco bajo Btrfs:
+Si prefieres un archivo swap en disco bajo Btrfs (necesario si quieres una red de seguridad contra desbordamientos de memoria):
 ```bash
 chattr +C /mnt/swap                     # Desactiva Copy-on-Write para el directorio swap, obligatorio
 truncate -s 0 /mnt/swap/swapfile
-fallocate -l 8G /mnt/swap/swapfile      # Reemplaza 8G por el tamaño que necesites (ej. igual a tu RAM)
+fallocate -l 8G /mnt/swap/swapfile      # 8G es ideal para paginación de seguridad (cámbialo al tamaño de tu RAM si vas a usar Hibernación)
 chmod 600 /mnt/swap/swapfile
 mkswap /mnt/swap/swapfile
 swapon /mnt/swap/swapfile
@@ -152,13 +152,15 @@ archinstall
    * **Si usaste la Opción A (Automática):** Selecciona tu disco → "Erase all selected drives" → Selecciona **Btrfs** como filesystem.
    * **Si usaste la Opción B (Manual Avanzada):** Selecciona **"Use a pre-mounted configuration"** apuntando a `/mnt`. El instalador respetará tu estructura de subvolúmenes montada.
 2. **Bootloader:** Selecciona **GRUB** (la opción predeterminada y más robusta).
-3. **Profile:** Selecciona `Desktop` → `KDE` (Plasma 6).
+3. **Profile:** Selecciona `Desktop` → `KDE` (Plasma 6). Selecciona **`plasma-meta`** como paquete de Plasma.
 4. **Display Manager:** Selecciona `SDDM`.
 5. **Audio:** Selecciona `Pipewire` (estándar moderno).
-6. **Network Configuration:** Selecciona `NetworkManager` (necesario para gestionar conexiones desde el entorno gráfico).
+6. **Network Configuration:** Selecciona `NetworkManager` (el default backend basado en `wpa_supplicant`, necesario para gestionar conexiones de red).
 7. **Kernel:** Selecciona `linux` (estable) o `linux-zen` (optimizado para escritorio).
-8. **Graphics Driver:** Elige según tu hardware (NVIDIA, AMD u Open Source).
-9. **Additional Packages:** Añade `git`, `neovim`, `sudo` y `zram-generator` (si prefieres swap comprimido en RAM en lugar de swapfile en disco).
+8. **Graphics Driver:** Elige `Intel` para la gráfica integrada de tu ThinkPad (o `All open-source`).
+9. **Additional Packages:** Añade **`konsole dolphin git neovim sudo`**. 
+   > [!IMPORTANT]
+   > Dado que `plasma-meta` es minimalista, no instala por defecto aplicaciones adicionales. Si no agregas `konsole` (terminal) y `dolphin` (administrador de archivos) aquí, el sistema gráfico inicial no tendrá forma de abrir la consola.
 10. **Create User:** Crea tu usuario principal (ej: `yordycg`), asígnale una contraseña segura y actívale la opción **"Sudo privileges"**.
 
 Al finalizar la instalación, `archinstall` te preguntará si quieres acceder al entorno chroot para realizar configuraciones adicionales. **Selecciona Sí.**
@@ -180,6 +182,9 @@ grub-mkconfig -o /boot/grub/grub.cfg
 # Salir de chroot
 exit
 
+# Apagar el swapfile para liberar el montaje (evita el error 'target is busy')
+swapoff -a
+
 # Desmontar todo y reiniciar
 umount -R /mnt
 reboot
@@ -191,10 +196,17 @@ Retira el USB de Ventoy. Tu máquina arrancará directamente a la pantalla de in
 
 ## ⏰ Fase 5: Post-instalación y Dotfiles
 
-Una vez dentro de tu sesión gráfica de KDE, abre la terminal (`kitty` o `konsole`) y ejecuta el aprovisionamiento automático mediante Chezmoi para aplicar todas tus configuraciones, atajos y perfiles:
+Una vez dentro de tu sesión gráfica de KDE, abre la terminal (`konsole`) y ejecuta el aprovisionamiento automático mediante Chezmoi para aplicar todas tus configuraciones, atajos y perfiles:
 
 ```bash
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply yordycg
 ```
 
 Si todo finaliza correctamente, cierra sesión y cámbiate de "Plasma" a **"Hyprland"** en el selector de la esquina de tu pantalla de inicio de sesión de SDDM.
+
+> [!TIP]
+> **Troubleshooting: ¿Entraste a KDE y no tienes terminal (Konsole) instalada?**
+> 1. Presiona la combinación física de teclas: **`Ctrl + Alt + Fn + F3`** para abrir la consola de texto TTY.
+> 2. Inicia sesión con tu usuario y contraseña.
+> 3. Instálalas manualmente corriendo: `sudo pacman -S konsole dolphin`.
+> 4. Vuelve al entorno gráfico presionando **`Ctrl + Alt + Fn + F1`** (o `F2`).
