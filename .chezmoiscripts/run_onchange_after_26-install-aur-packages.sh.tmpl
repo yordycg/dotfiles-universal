@@ -8,12 +8,16 @@
 
 set -euo pipefail
 
-if ! command -v paru &>/dev/null; then
-    echo "! Paru no encontrado, omitiendo instalación de paquetes AUR."
+if command -v paru &>/dev/null && paru --version &>/dev/null; then
+    AUR_HELPER="paru"
+elif command -v yay &>/dev/null; then
+    AUR_HELPER="yay"
+else
+    echo "! Ningún helper de AUR funcional (paru/yay) encontrado. Omitiendo instalación de paquetes AUR."
     exit 0
 fi
 
-echo "→ Sincronizando paquetes de AUR usando Paru..."
-paru -S --noconfirm --needed {{ range .arch.aur }}{{ . }} {{ end }}
+echo "→ Sincronizando paquetes de AUR usando $AUR_HELPER..."
+$AUR_HELPER -S --noconfirm --needed {{ range .arch.aur }}{{ . }} {{ end }}
 echo "✓ Paquetes de AUR sincronizados."
 {{- end }}
