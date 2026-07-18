@@ -63,8 +63,13 @@ provision/**
 .config/waybar/colors.css
 .config/sway/colors
 .config/hypr/conf.d/theme-colors.conf
+.config/hypr/colors.lua
 .config/mako/config
-.config/rofi/colors.rasi
+.config/rofi/type-2/colors/colors.rasi
 .config/tmux/active_palette.conf
 .config/tmux/active_layout.conf
 .config/tmux/state/**
+.config/kitty/colors/colors.conf
+.config/swaync/colors/colors.css
+.config/wlogout/colors/colors.css
+

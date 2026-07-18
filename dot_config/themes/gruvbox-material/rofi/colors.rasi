@@ -1,0 +1,32 @@
+/**
+ * Gruvbox Material Rofi Palette
+ **/
+
+* {
+    bg0: #1d2021FF;
+    bg1: #282828FF;
+    bg2: #262a2bFF;
+    bg3: #45403dFF;
+    bg4: #2f3436FF;
+
+    fg:     #d4be98FF;
+    red:    #ea6962FF;
+    orange: #e78a4eFF;
+    yellow: #d8a657FF;
+    green:  #a9b665FF;
+    aqua:   #89b482FF;
+    blue:   #7daea3FF;
+    purple: #d3869bFF;
+
+    grey0: #a89984FF;
+    grey1: #928374FF;
+    grey2: #7c6f64FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @green;   /* Acento principal de Gruvbox */
+    active:         @blue;
+    urgent:         @red;
+}

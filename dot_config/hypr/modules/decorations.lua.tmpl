@@ -1,3 +1,5 @@
+local colors = require("colors")
+
 -----------------------
 ---- LOOK AND FEEL ----
 -----------------------
@@ -11,8 +13,8 @@ hl.config({
 		border_size = 1,
 
 		col = {
-			active_border = "rgb(45403d)",
-			inactive_border = "rgba(45403d99)",
+			active_border = colors.active_border,
+			inactive_border = colors.inactive_border,
 		},
 
 		-- Set to true to enable resizing windows by clicking and dragging on borders and gaps

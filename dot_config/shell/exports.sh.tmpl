@@ -91,3 +91,13 @@ export SDL_VIDEODRIVER="wayland"
 export CLUTTER_BACKEND="wayland"
 {{ end -}}
 
+# -- Starship Layout Configuration (Context-Aware) --
+if [ -n "$SSH_CONNECTION" ]; then
+    # Conexión remota por SSH: Usar prompt detallado
+    export STARSHIP_CONFIG="$HOME/.config/starship/default.toml"
+else
+    # Entorno Local / Contenedores locales: Usar prompt minimalista
+    export STARSHIP_CONFIG="$HOME/.config/starship/cyan-minimal.toml"
+fi
+
+

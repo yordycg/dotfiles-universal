@@ -1,4 +1,4 @@
-@import "/home/yordycg/.config/waybar/colors.css";
+@import "/home/yordycg/.config/wlogout/colors/colors.css";
 
 * {
     background-image: none;
@@ -8,12 +8,12 @@
 
 window {
     background-color: rgba(10, 10, 10, 0.4); /* fallback */
-    background-color: alpha(@background, 0.4); /* Frosted glass effect with Hyprland blur */
+    background-color: alpha(@bg1, 0.4); /* Frosted glass effect with Hyprland blur */
 }
 
 button {
-    color: @foreground;
-    background-color: alpha(@background, 0.75);
+    color: @fg;
+    background-color: alpha(@bg1, 0.75);
     outline-style: none;
     border: none;
     border-width: 0px;
@@ -31,10 +31,11 @@ button:focus {
 }
 
 button:hover {
-    background-color: alpha(@accent, 0.35);
+    background-color: alpha(@green, 0.35);
     background-size: 30%;
     transition: all 0.3s cubic-bezier(.55,0.0,.28,1.682);
 }
+
 
 /* Hover pop-out offsets and border rounding for 2x2 grid explosion */
 button:hover#lock {
