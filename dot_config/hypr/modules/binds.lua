@@ -124,3 +124,8 @@ hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggl
 -- Selector TAB
 hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next"))
 hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev"))
+
+-- Tmux Workspaces (Dotfiles, Notas de Obsidian y Learning Path)
+hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Dotfiles Workspace' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'dotfiles'"))
+hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Obsidian Notes' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'notes'"))
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Learning Workspace' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'learn'"))

@@ -43,3 +43,11 @@ hl.layer_rule({
 	animation = "slide right",
 	dim_around = true,
 })
+
+hl.window_rule({
+	name = "workspace-workspaces-float",
+	match = { class = "workspace-float" },
+	float = true,
+	center = true,
+	size = "90% 90%",
+})

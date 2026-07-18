@@ -32,6 +32,14 @@ if [ ! -d "$OBSIDIAN_DIR/.git" ]; then
     run git clone "git@github.com:yordycg/obsidian-notes.git" "$OBSIDIAN_DIR" || log_warn "No se pudo clonar Obsidian Notes. Verifica conexión y llaves SSH."
 fi
 
+# Clonar Learning Path (Estudio)
+LEARNING_DIR="$HOME/workspace/personal/learning-path"
+if [ ! -d "$LEARNING_DIR/.git" ]; then
+    log_info "Clonando repositorio de Aprendizaje en $LEARNING_DIR..."
+    mkdir -p "$(dirname "$LEARNING_DIR")"
+    run git clone "git@github.com:yordycg/learning-path.git" "$LEARNING_DIR" || log_warn "No se pudo clonar Learning Path. Verifica conexión y llaves SSH."
+fi
+
 # ── 2. Crear Enlaces para Pictures ──────────────────────────────────────────
 mkdir -p "$HOME/Pictures"
 

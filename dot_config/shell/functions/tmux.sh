@@ -104,13 +104,15 @@ notes() {
 # Workflow de Estudio (Learning Path) en Tmux + Neovim
 learn() {
     local path_dir="$HOME/workspace/personal/learning-path"
+    
     if [ ! -d "$path_dir" ]; then
-        echo -e "\033[0;31m  ✗ El directorio de aprendizaje no existe: $path_dir\033[0m"
+        echo -e "\033[0;31m  ✗ El repositorio de aprendizaje no existe en: $path_dir\033[0m"
+        echo -e "\033[0;36m  → Por favor ejecuta 'chezmoi apply' o clónalo manualmente.\033[0m"
         return 1
     fi
     
     if ! command -v tmux &>/dev/null; then
-        (cd "$path_dir" && git pull -q --rebase && lv)
+        (cd "$path_dir" && git pull -q --rebase && nv)
         return 0
     fi
 
@@ -119,9 +121,9 @@ learn() {
         echo -e "\033[0;36m  → Sincronizando repositorio antes de abrir...\033[0m"
         (cd "$path_dir" && git pull -q --rebase)
         
-        # Ventana 1: Editor con LazyVim (lv)
+        # Ventana 1: Editor con tu Neovim personal (nv)
         tmux new-session -d -s learn -n "editor" -c "$path_dir"
-        tmux send-keys -t learn:editor "lv" C-m
+        tmux send-keys -t learn:editor "nv" C-m
         
         # Ventana 2: Terminal de soporte
         tmux new-window -t learn -n "terminal" -c "$path_dir"
@@ -172,5 +174,53 @@ dotfiles() {
         tmux switch-client -t dotfiles
     else
         tmux attach-session -t dotfiles
+    fi
+}
+
+# Workflow de Proyectos General (Universal con 3 paneles de "omarchy")
+work() {
+    # 1. Determinar el directorio del proyecto (argumento o $PWD)
+    local proj_dir="${1:-$PWD}"
+    
+    # Resolver ruta absoluta de forma segura
+    proj_dir=$(cd "$proj_dir" 2>/dev/null && pwd || echo "")
+    if [ -z "$proj_dir" ] || [ ! -d "$proj_dir" ]; then
+        echo -e "\033[0;31m  ✗ Directorio no válido: $proj_dir\033[0m"
+        return 1
+    fi
+
+    # Nombre de la sesión basado en la carpeta (reemplazando puntos por guiones)
+    local proj_name
+    proj_name=$(basename "$proj_dir" | tr '.' '-')
+
+    # Si no hay tmux, abrir el editor de forma normal
+    if ! command -v tmux &>/dev/null; then
+        (cd "$proj_dir" && lv)
+        return 0
+    fi
+
+    # 2. Si la sesión no existe, la creamos con la estructura de 3 paneles
+    if ! tmux has-session -t "$proj_name" 2>/dev/null; then
+        echo -e "\033[0;36m  → Creando espacio de trabajo para '$proj_name' (3 paneles)...\033[0m"
+        
+        # Panel 1: Crear sesión y abrir editor arriba a la izquierda
+        tmux new-session -d -s "$proj_name" -c "$proj_dir"
+        tmux send-keys -t "$proj_name" "lv" C-m
+        
+        # Panel 2: Dividir a la derecha (50/50)
+        tmux split-window -h -p 50 -c "$proj_dir"
+        
+        # Panel 3: Dividir verticalmente abajo a todo lo ancho (30% alto para logs/server)
+        tmux split-window -f -v -p 30 -c "$proj_dir"
+        
+        # Volver a enfocar el panel del editor arriba a la izquierda
+        tmux select-pane -t "$proj_name:1.1"
+    fi
+
+    # 3. Adjuntar/cambiar a la sesión
+    if [ -n "$TMUX" ]; then
+        tmux switch-client -t "$proj_name"
+    else
+        tmux attach-session -t "$proj_name"
     fi
 }
