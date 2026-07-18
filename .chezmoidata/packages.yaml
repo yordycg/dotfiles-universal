@@ -44,7 +44,7 @@ fedora:
     - kvantum
   hyprland:
     - hyprland
-    - hyprpaper
+    - swaybg
     - hyprlock
     - hypridle
     - hyprpicker
@@ -65,7 +65,6 @@ fedora:
     - wlogout
     - quickshell
     - SwayNotificationCenter
-    - awww
     - thunar
     - udiskie
     - code
@@ -109,7 +108,7 @@ arch:
     - firefox
   hyprland:
     - hyprland
-    - hyprpaper
+    - swaybg
     - hyprlock
     - hypridle
     - hyprpicker
@@ -133,7 +132,6 @@ arch:
   aur:
     - quickshell-git
     - hyprshot
-    - awww-git
     - wlogout
     - snappy-switcher
 

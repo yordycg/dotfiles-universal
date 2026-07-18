@@ -85,16 +85,5 @@ if [ ! -d "$HOME/Pictures/Wallpapers" ]; then
     log_ok "Enlace de Wallpapers creado en ~/Pictures/Wallpapers."
 fi
 
-# Asegurar default.jpg para autostart y hyprpaper
-if [ -d "$HOME/Pictures/Wallpapers" ]; then
-    # Usar pokemon_01.jpg como default.jpg según preferencia del usuario
-    if [ -f "$HOME/Pictures/Wallpapers/pokemon_01.jpg" ]; then
-        TARGET_ACTUAL=$(readlink "$HOME/Pictures/Wallpapers/default.jpg" || echo "")
-        if [ "$TARGET_ACTUAL" != "pokemon_01.jpg" ] && [ "$TARGET_ACTUAL" != "$HOME/Pictures/Wallpapers/pokemon_01.jpg" ]; then
-            log_info "Actualizando enlace de fondo por defecto..."
-            ln -sf "$HOME/Pictures/Wallpapers/pokemon_01.jpg" "$HOME/Pictures/Wallpapers/default.jpg"
-            log_ok "Establecido pokemon_01.jpg como default.jpg."
-        fi
-    fi
-fi
+# Sincronizacion finalizada
 {{- end }}

@@ -103,12 +103,17 @@ fi
 # ── 8. Wallpaper ──────────────────────────────────────────────────────────────
 WALLPAPER=$(find "$THEME_DIR/wallpapers" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -n 1 || echo "")
 if [ -n "$WALLPAPER" ]; then
-    echo -e "${CYAN}→ Cambiando fondo de pantalla...${NC}"
+    echo -e "${CYAN}→ Cambiando fondo de pantalla con swaybg...${NC}"
     ln -sf "$WALLPAPER" "$HOME/.config/hypr/wallpaper"
-    if pgrep -x "hyprpaper" >/dev/null; then
-        hyprctl hyprpaper preload "$WALLPAPER" >/dev/null 2>&1 || true
-        hyprctl hyprpaper wallpaper ",$WALLPAPER" >/dev/null 2>&1 || true
-        hyprctl hyprpaper unload all >/dev/null 2>&1 || true
+    if command -v swaybg &>/dev/null; then
+        OLD_SWAYBG_PIDS=$(pgrep -x "swaybg" || echo "")
+        swaybg -i "$WALLPAPER" -m fill >/dev/null 2>&1 &
+        sleep 0.15
+        if [ -n "$OLD_SWAYBG_PIDS" ]; then
+            kill $OLD_SWAYBG_PIDS >/dev/null 2>&1 || true
+        fi
+    else
+        echo -e "${YELLOW}Warning: swaybg is not installed. Skipping wallpaper update.${NC}"
     fi
 fi
 
