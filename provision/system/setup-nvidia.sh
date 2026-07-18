@@ -25,9 +25,9 @@ if [ -f /etc/fedora-release ]; then
         run sudo akmods
     fi
 elif [ -f /etc/arch-release ]; then
-    if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null; then
-        log_info "→ Arch Linux detectado. Instalando driver nvidia..."
-        run sudo pacman -S --noconfirm --needed nvidia
+    if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null && ! pacman -Qi nvidia-dkms &>/dev/null; then
+        log_info "→ Arch Linux detectado. Instalando driver nvidia-dkms..."
+        run sudo pacman -S --noconfirm --needed nvidia-dkms
         log_info "→ Regenerando initramfs con mkinitcpio..."
         run sudo mkinitcpio -P
     fi
