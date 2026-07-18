@@ -24,6 +24,11 @@ hl.env("QT_QPA_PLATFORM", "wayland;xcb")
 hl.env("QT_WAYLAND_DISABLE_WINDOWDECORATION", "1")
 hl.env("QT_QPA_PLATFORMTHEME", "qt5ct")
 
--- NVIDIA specific
-hl.env("LIBVA_DRIVER_NAME", "nvidia")
-hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+-- NVIDIA specific (Only if nvidia GPU is physically present)
+local handle = io.popen("lspci | grep -qi nvidia && echo 'yes' || echo 'no'")
+local result = handle:read("*a")
+handle:close()
+if string.match(result, "yes") then
+	hl.env("LIBVA_DRIVER_NAME", "nvidia")
+	hl.env("__GLX_VENDOR_LIBRARY_NAME", "nvidia")
+end

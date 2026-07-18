@@ -4,7 +4,8 @@
 # Configura de forma portátil Ollama para usar GPU NVIDIA en sistemas híbridos.
 # compatible con cualquier distribución que use Systemd.
 # =============================================================================
-set -euo pipefail
+# Desactivado temporalmente a petición del usuario (máquinas poco potentes para LLMs locales)
+exit 0
 
 # 1. Comprobar si el sistema utiliza Systemd
 if ! command -v systemctl &>/dev/null; then

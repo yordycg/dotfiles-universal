@@ -22,6 +22,12 @@ set -euo pipefail
 
 {{ include "provision/lib/logging.sh" }}
 
+# Redirección de logs a un archivo físico y a la consola a la vez (Tee-style)
+LOG_DIR="$HOME/.cache/chezmoi-scripts"
+mkdir -p "$LOG_DIR"
+LOG_FILE="$LOG_DIR/provision-system.log"
+exec > >(tee -i "$LOG_FILE") 2>&1
+
 # Exportar variables de contexto para los scripts hijos
 export NODE_HAS_GUI="{{ .hasGUI }}"
 export NODE_IS_SERVER="{{ .isServer }}"
@@ -60,13 +66,13 @@ else
     log_warn "Distribución no soportada oficialmente para auto-instalación de paquetes."
 fi
 
-# 2. Configurar Tailscale
-log_step "2/8. Configurando Tailscale VPN..."
-bash "$PROVISION_DIR/system/setup-tailscale.sh"
+# 2. Configurar Tailscale (Pausado temporalmente al no usar Nodo 1 central)
+# log_step "2/8. Configurando Tailscale VPN..."
+# bash "$PROVISION_DIR/system/setup-tailscale.sh"
 
-# 3. Confianza SSL (Homelab PKI)
-log_step "3/8. Configurando Confianza SSL (Homelab PKI)..."
-bash "$PROVISION_DIR/system/trust-homelab-ca.sh"
+# 3. Confianza SSL (Homelab PKI) (Desactivado al usar passage en lugar de Bitwarden/Vaultwarden)
+# log_step "3/8. Configurando Confianza SSL (Homelab PKI)..."
+# bash "$PROVISION_DIR/system/trust-homelab-ca.sh"
 
 # 4. Configurar Snapper para snapshots automáticos
 if [ "$NODE_IS_SERVER" != "true" ] && [ "$NODE_IS_WSL" != "true" ]; then

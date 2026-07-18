@@ -1,0 +1,26 @@
+{{ if and (eq .chezmoi.os "linux") .hasGUI -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_after_95-apply-default-theme.sh.tmpl
+# Auto-aplicación y refresco del tema visual al finalizar el apply
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+CURRENT_THEME_FILE="$HOME/.config/themes/.current-theme"
+THEME_SCRIPT="$HOME/.config/themes/apply-theme.sh"
+
+if [ -f "$THEME_SCRIPT" ]; then
+    if [ ! -f "$CURRENT_THEME_FILE" ]; then
+        log_step "Primer arranque: aplicando tema por defecto (gruvbox-material)..."
+        bash "$THEME_SCRIPT" "gruvbox-material"
+    else
+        ACTIVE_THEME=$(cat "$CURRENT_THEME_FILE")
+        log_step "Refrescando enlaces del tema activo: $ACTIVE_THEME..."
+        bash "$THEME_SCRIPT" "$ACTIVE_THEME"
+    fi
+else
+    log_warn "Selector de temas no encontrado en $THEME_SCRIPT. Saltando auto-aplicación."
+fi
+{{- end }}
