@@ -76,6 +76,28 @@ echo ""
 # Rofi theme
 # Swaync theme
 # GTK/Qt theme
+if [ -f "$THEME_DIR/gtk-theme" ]; then
+    GTK_THEME_NAME=$(cat "$THEME_DIR/gtk-theme")
+    echo -e "${CYAN}-> Setting GKT theme to '$GTK_THEME_NAME'...${NC}"
+    gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME_NAME" > /dev/null 2>&1
+else
+    echo -e "${YELLOW}-> GTK theme file not found. Skipping.${NC}"
+fi
+echo ""
+
+GTK4_SRC="$THEME_DIR/gtk-4.0"
+GTK4_DST="$HOME/.config/gtk-4.0"
+
+if [[ -d "$GTK4_SRC" ]]; then
+    echo -e "${CYAN}-> Linking GTK4 theme files...${NC}"
+    mkdir -p "$GTK4_DST"
+    ln -sf "$GTK4_SRC/gtk.css" "$GTK4_DST/gtk.css"
+    ln -sf "$GTK4_SRC/gtk-dark.css" "$GTK4_DST/gtk-dark.css"
+    ln -sf "$GTK4_SRC/assets" "$GTK4_DST/assets"
+else
+    echo -e "${YELLOW}->No GTK4 theme file not found in $GTK4_SRC. Skipping.${NC}"
+fi
+echo ""
 
 # Wallpaper | NOTE: para el caso de cuando queramos integrar temas segun el wallpaper
 echo -e "${CYAN}-> Setting wallpaper...${NC}"
@@ -85,3 +107,20 @@ WALLPAPER_DIR="$THEME_DIR/wallpapers"
 touch "$WALLPAPER_STATE"
 #...
 ```
+
+## Recomendaciones para la Futura Integración de GTK
+
+Cuando decidamos activar la sección de temas GTK en `apply-theme.sh`, se sugieren las siguientes optimizaciones sobre el borrador propuesto:
+
+1. **Esquema de Color Oscuro para Libadwaita:**
+   Además de definir `gtk-theme`, se debe configurar el esquema de color preferido de la interfaz para forzar la compatibilidad con aplicaciones de Libadwaita modernas (como los diálogos del sistema):
+   ```bash
+   gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
+   ```
+
+2. **Evitar enlaces anidados en Assets (GTK4):**
+   Al enlazar la carpeta `assets` a `~/.config/gtk-4.0/assets`, es recomendable utilizar la bandera `-n` de `ln` (`ln -sfn`) para evitar que se cree un enlace simbólico recursivo dentro de la carpeta si esta ya existía de una ejecución anterior:
+   ```bash
+   ln -sfn "$GTK4_SRC/assets" "$GTK4_DST/assets"
+   ```
+
