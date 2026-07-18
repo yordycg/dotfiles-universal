@@ -1,7 +1,3 @@
-# ==============================================================================
-# TMUX UNIVERSAL CONFIG
-# ==============================================================================
-
 # --- General Settings & Fixes ---
 set-environment -g PATH "{{ .chezmoi.homeDir }}/.local/share/mise/shims:{{ .chezmoi.homeDir }}/.local/share/mise/bin:/usr/local/bin:/usr/bin:/bin"
 set -g default-terminal "tmux-256color"
@@ -28,29 +24,16 @@ set -g automatic-rename off
 # --- Keybindings TMUX ---
 # General and System
 # ctrl+b ? - Mostrar lista de todos los atajos activos
-# ctrl+b : - Abrir cli de tmux
-# ctrl+b d - Desacoplar (detach) la session actual
-# ctrl+b D - Elegir un cliente (?) especifico para desacoplarlo.
-# ctrl+b t - Mostrar reloj digital gigante
-# ctrl+b [ - Entrar en modo copia
-# ctrl+b ] - Pega el ultimo texto copiado
 # Session Managment
-# ctrl+b s - Abrir selector de sessions (sesionx ?)
 # ctrl+b $ - Renombrar la session actual
 # ctrl+b ( - Cambia a la session/cliente anterior
 # ctrl+b ) - Cambia a la session/cliente siguiente
-# ctrl+b L - Cambia a la ultima session utilizada
 # Windows Managment
-# ctrl+b c - Crear una nueva ventana (usar current path)
 # ctrl+b , - Renombrar la ventana actual
 # ctrl+b & - Cerrar (matar) la ventana actual, pide confirmacion
 # ctrl+b n - Ir a la siguiente ventana
 # ctrl+b p - Ir a la ventana anterior
-# ctrl+b l - Ir a la ultima ventana activa
 # ctrl+b w - Abrir el selector de ventanas y sessiones (choose-tree ?)
-# ctrl+b [0 - 9] - Saltar directamente a la ventana con ese numero
-# ctrl+b f - Busca texto en todas las ventanas abiertas
-# ctrl+b . - Mover la ventana actual a un indice numerico especifico
 # Windows Layouts
 # ctrl+b Space - Cambia al siguiente layout (cicla entre horizontal y vertical)
 # ctrl+b Alt+1 - Layout equitativo horizontal
@@ -59,16 +42,8 @@ set -g automatic-rename off
 # ctrl+b Alt+4 - Layout principal vertical, secundarios abajo
 # ctrl+b Alt+5 - Layout en rejilla (?)
 # Panes Managment
-# ctrl+b % - Split vertical |
-# ctrl+b " - Split horizontal ---
-# ctrl+b x - Cierra el panel actual, pide confirmacion
-# ctrl+b z - Zoom en el panel actual
 # ctrl+b o - Saltar al siguiente panel de la ventana
-# ctrl+b ; - Salta al ultimo panel activo
 # ctrl+b ! - Convierte el panel actual en una ventana independiente
-# ctrl+b q - Muestra los numeros de los paneles, pulsar numero para enfocarlo
-# ctrl+b { - Intercambia el panel actual con el anterior
-# ctrl+b } - Intercambia el panel actual con el siguiente
 # ctrl+b Flechas - Moverse al panel continuo
 # ctrl+b ctrl+Flechas- Redimensionar el panel actual
 
@@ -136,24 +111,14 @@ set -g @floax-bind 'p'
 set -g @floax-change-path 'true'
 
 # --- Theme & Layout (Dynamic Modular System) ---
-# Si no existen los enlaces simbólicos por defecto, los inicializamos en el primer arranque
-if-shell "test ! -f ~/.config/tmux/active_palette.conf" "run-shell 'ln -sf ~/.config/tmux/palettes/kanagawa-dragon.conf ~/.config/tmux/active_palette.conf'"
-if-shell "test ! -f ~/.config/tmux/active_layout.conf" "run-shell 'ln -sf ~/.config/tmux/layouts/minimal.conf ~/.config/tmux/active_layout.conf'"
+source-file "~/.config/tmux/colors.conf"
+source-file "~/.config/tmux/layouts/rectangular.conf"
 
-# 1. Cargar la Paleta Activa (Define colores @thm_*)
-source-file "~/.config/tmux/active_palette.conf"
-
-# 2. Definir Iconos Compartidos (estáticos) para los Layouts
+# Definir Iconos Compartidos (estáticos) para los Layouts
 set -g @icon_session ""
 set -g @icon_prefix "󰌌"
 set -g @icon_zoom "󰊓"
 set -g @icon_ssh "󰌘"
-
-
-
-# 4. Cargar el Layout Activo (Define la estructura y barra de estado)
-source-file "~/.config/tmux/active_layout.conf"
-
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \

@@ -93,7 +93,7 @@ fi
 # ── 7. Tmux ──────────────────────────────────────────────────────────────────
 if [ -f "$THEME_DIR/tmux/colors.conf" ]; then
     echo -e "${CYAN}→ Aplicando colores a Tmux...${NC}"
-    ln -sf "$THEME_DIR/tmux/colors.conf" "$HOME/.config/tmux/active_palette.conf"
+    ln -sf "$THEME_DIR/tmux/colors.conf" "$HOME/.config/tmux/colors.conf"
     if pgrep -x "tmux" >/dev/null || [ -n "${TMUX:-}" ]; then
         tmux source-file "$HOME/.config/tmux/tmux.conf" || echo -e "${YELLOW}Warning: Failed to source Tmux configuration${NC}"
     fi
