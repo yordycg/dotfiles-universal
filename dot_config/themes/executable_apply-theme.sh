@@ -65,7 +65,8 @@ if [ -f "$THEME_DIR/swaync/colors.css" ]; then
     if pgrep -x "swaync" >/dev/null; then
         swaync-client -rs || echo -e "${YELLOW}Warning: Failed to reload SwayNC config${NC}"
     else
-        echo -e "${YELLOW}Warning: SwayNC daemon is not running. Skipping client reload.${NC}"
+        echo -e "${YELLOW}Warning: SwayNC daemon is not running. Attempting to start it...${NC}"
+        hyprctl dispatch "hl.dsp.exec_cmd('swaync')" >/dev/null 2>&1 || true
     fi
 fi
 
