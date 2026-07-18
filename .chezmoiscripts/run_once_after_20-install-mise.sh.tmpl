@@ -42,18 +42,20 @@ fi
 
 export GITHUB_TOKEN="$GITHUB_TOKEN"
 export MISE_PYTHON_GITHUB_ATTESTATIONS=false
+export MISE_YES=yes # Evitar prompts interactivos de confirmación en Mise
+
 MISE_BIN="$HOME/.local/bin/mise"
 
 if [ ! -f "$MISE_BIN" ]; then
     log_info "Instalando Mise..."
-    curl -fsSL https://mise.run | sh -s -- --quiet
+    run curl -fsSL https://mise.run | sh -s -- --quiet
 else
     log_info "Actualizando Mise..."
-    "$MISE_BIN" self-update || true
+    run "$MISE_BIN" self-update || true
 fi
 
 log_info "Sincronizando herramientas y CLIs globales..."
-"$MISE_BIN" install -y
+run "$MISE_BIN" install -y
 
 eval "$("$MISE_BIN" activate bash)"
 
@@ -61,26 +63,26 @@ eval "$("$MISE_BIN" activate bash)"
 NPM_PATH=$(command -v npm 2>/dev/null || echo "")
 if [ -n "$NPM_PATH" ] && [[ "$NPM_PATH" == *"/mise/"* ]] && npm --version &>/dev/null; then
     log_info "Instalando paquetes globales de Node en mise..."
-    npm install -g neovim @bitwarden/cli --silent || true
+    run npm install -g neovim @bitwarden/cli --silent || true
 fi
 
 PIP_PATH=$(command -v pip 2>/dev/null || echo "")
 if [ -n "$PIP_PATH" ] && [[ "$PIP_PATH" == *"/mise/"* ]] && pip --version &>/dev/null; then
     log_info "Instalando paquetes globales de Python en mise..."
-    pip install pynvim --quiet || true
+    run pip install pynvim --quiet || true
 fi
 
 # ── 3. Antigravity CLI (Sustituto de Gemini) ──────────────────────────────────
 if command -v gemini &>/dev/null; then
     log_info "Eliminando Gemini CLI legacy..."
     if command -v npm &>/dev/null && npm --version &>/dev/null; then
-        npm uninstall -g @google/gemini-cli --silent || true
+        run npm uninstall -g @google/gemini-cli --silent || true
     fi
 fi
 
 if ! command -v agy &>/dev/null; then
     log_info "Instalando Antigravity CLI..."
-    curl -fsSL https://antigravity.google/cli/install.sh | bash
+    run curl -fsSL https://antigravity.google/cli/install.sh | bash
 fi
 
 # Guardar estado exitoso
