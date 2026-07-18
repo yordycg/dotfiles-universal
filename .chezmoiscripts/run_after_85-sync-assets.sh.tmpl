@@ -12,6 +12,8 @@ exit 0  # Sin entorno gráfico no necesitamos wallpapers ni Obsidian
 
 {{ include "provision/lib/logging.sh" }}
 
+log_step "Recursos Gráficos (Assets)"
+
 # ── 1. Clonar Repositorios Core de Assets si no existen ─────────────────────
 WALLPAPERS_DIR="$HOME/workspace/assets/wallpapers"
 OBSIDIAN_DIR="$HOME/workspace/assets/obsidian-notes"
