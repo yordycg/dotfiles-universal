@@ -20,22 +20,22 @@ log_info "GPU NVIDIA detectada. Configurando controladores propietarios..."
 if [ -f /etc/fedora-release ]; then
     if ! rpm -q akmod-nvidia &>/dev/null; then
         log_info "→ Fedora detectado. Instalando akmod-nvidia..."
-        sudo dnf install -y akmod-nvidia
+        run sudo dnf install -y akmod-nvidia
         log_info "→ Compilando módulos de kernel con akmods..."
-        sudo akmods
+        run sudo akmods
     fi
 elif [ -f /etc/arch-release ]; then
     if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null; then
         log_info "→ Arch Linux detectado. Instalando driver nvidia..."
-        sudo pacman -S --noconfirm --needed nvidia
+        run sudo pacman -S --noconfirm --needed nvidia
         log_info "→ Regenerando initramfs con mkinitcpio..."
-        sudo mkinitcpio -P
+        run sudo mkinitcpio -P
     fi
 elif [ -f /etc/debian_version ]; then
     if ! dpkg -s nvidia-driver &>/dev/null; then
         log_info "→ Debian/Ubuntu detectado. Instalando nvidia-driver..."
-        sudo apt-get update -y -q
-        sudo apt-get install -y -q nvidia-driver
+        run sudo apt-get update -y -q
+        run sudo apt-get install -y -q nvidia-driver
     fi
 else
     log_warn "Distribución no compatible con la auto-instalación del driver NVIDIA."
@@ -56,7 +56,7 @@ if [ -f /etc/fedora-release ] && command -v mokutil &>/dev/null; then
         # Si no existe ninguna llave MOK, la generamos (sin --force para evitar sobrescritura accidental)
         if ! sudo test -f "$MOK_DER"; then
             log_info "→ Llave MOK de akmods no encontrada. Generándola..."
-            sudo kmodgenca -a
+            run sudo kmodgenca -a
             
             # Buscar de nuevo la llave generada
             MOK_DER="/etc/pki/akmods/certs/public_key.der"
@@ -67,13 +67,13 @@ if [ -f /etc/fedora-release ] && command -v mokutil &>/dev/null; then
 
         # Comprobar si la llave ya está en la BIOS/UEFI (MOK) usando sudo
         if ! sudo mokutil --test-key "$MOK_DER" &>/dev/null; then
-            log_warn "====================================================================="
-            log_warn "🔑 LLAVE MOK DE AKMODS NO REGISTRADA EN LA BIOS"
-            log_warn "Se te solicitará crear una contraseña temporal para importar la llave MOK."
-            log_warn "RECUERDA esta contraseña, ya que la deberás escribir en el menú de la"
-            log_warn "pantalla azul (MOKManager) en el próximo reinicio."
-            log_warn "====================================================================="
-            # Intentamos importar (si ya estaba en cola para el próximo reinicio, continuará sin errores)
+            log_warn "╔═════════════════════════════════════════════════════════════════════╗"
+            log_warn "║ 🔑 LLAVE MOK DE AKMODS NO REGISTRADA EN LA BIOS                     ║"
+            log_warn "║ Se te solicitará crear una contraseña temporal para importar MOK.  ║"
+            log_warn "║ RECUERDA esta contraseña, ya que la deberás escribir en el menú de  ║"
+            log_warn "║ la pantalla azul (MOKManager) en el próximo reinicio.               ║"
+            log_warn "╚═════════════════════════════════════════════════════════════════════╝"
+            # mokutil --import es interactivo y no debe canalizarse por run
             sudo mokutil --import "$MOK_DER" || log_info "→ La llave ya está encolada para el próximo reinicio."
         else
             log_ok "→ Llave MOK de akmods ya está registrada y autorizada en la BIOS."

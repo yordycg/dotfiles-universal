@@ -38,6 +38,12 @@ run() {
     if [ "$DRY_RUN" = "1" ]; then
         log_info "[DRY-RUN] $*"
     else
-        "$@"
+        "$@" 2>&1 | indent
     fi
 }
+
+# Filtro para indentar outputs de comandos externos (mueve toda la salida 6 espacios a la derecha)
+indent() {
+    sed 's/^/      /'
+}
+

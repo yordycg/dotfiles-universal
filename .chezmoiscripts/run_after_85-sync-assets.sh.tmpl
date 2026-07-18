@@ -20,14 +20,14 @@ OBSIDIAN_DIR="$HOME/workspace/assets/obsidian-notes"
 if [ ! -d "$WALLPAPERS_DIR/.git" ]; then
     log_info "Clonando repositorio de Wallpapers en $WALLPAPERS_DIR..."
     mkdir -p "$(dirname "$WALLPAPERS_DIR")"
-    git clone "git@github.com:yordycg/wallpapers.git" "$WALLPAPERS_DIR" || log_warn "No se pudo clonar Wallpapers. Verifica conexión y llaves SSH."
+    run git clone "git@github.com:yordycg/wallpapers.git" "$WALLPAPERS_DIR" || log_warn "No se pudo clonar Wallpapers. Verifica conexión y llaves SSH."
 fi
 
 # Clonar Obsidian Notes
 if [ ! -d "$OBSIDIAN_DIR/.git" ]; then
     log_info "Clonando repositorio de Obsidian Notes en $OBSIDIAN_DIR..."
     mkdir -p "$(dirname "$OBSIDIAN_DIR")"
-    git clone "git@github.com:yordycg/obsidian-notes.git" "$OBSIDIAN_DIR" || log_warn "No se pudo clonar Obsidian Notes. Verifica conexión y llaves SSH."
+    run git clone "git@github.com:yordycg/obsidian-notes.git" "$OBSIDIAN_DIR" || log_warn "No se pudo clonar Obsidian Notes. Verifica conexión y llaves SSH."
 fi
 
 # ── 2. Crear Enlaces para Pictures ──────────────────────────────────────────
