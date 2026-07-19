@@ -5,6 +5,10 @@
 -- See https://wiki.hypr.land/Configuring/Basics/Autostart/
 
 hl.on("hyprland.start", function()
+	-- D-Bus & Gnome Keyring
+	hl.exec_cmd("dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+	hl.exec_cmd("gnome-keyring-daemon --start --components=secrets")
+
 	hl.exec_cmd("waybar") -- waybar
 	hl.exec_cmd("hyprpm reload") -- plugins
 
