@@ -22,3 +22,6 @@
 
 ## Fase 4: Tareas Pendientes del Roadmap
 - [ ] Integrar `passage` en iOS y extensión de Firefox (PassFF)
+- [ ] Implementar patrón de errores tolerantes (Soft Fails) en scripts de aprovisionamiento
+  - Crear un wrapper `run_tolerant` en `provision/lib/logging.sh` para pasos de instalación no críticos.
+  - Adaptar scripts en `.chezmoiscripts/` y `provision/system/` para reportar advertencias y continuar la ejecución en lugar de abortar con exit status 1.
