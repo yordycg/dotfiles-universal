@@ -3,34 +3,38 @@
 ------------------
 
 -- See https://wiki.hypr.land/Configuring/Basics/Monitors/
-{{- if eq .chezmoi.hostname "fedora-D" }}
+{{- if eq .node.profile "desktop" }}
+-- Monitor Principal (Acer Z271 a 144Hz)
 hl.monitor({
 	output = "DP-2",
-	mode = "preferred",
-	position = "auto",
-	scale = "auto",
+	mode = "1920x1080@143.98",
+	position = "0x0",
+	scale = "1.00",
 })
 
+-- Monitor Secundario (HUAWEI AD80HW a 75Hz)
 hl.monitor({
-	output = "HDMI-A-3",
-	mode = "preferred",
-	position = "auto",
-	scale = "auto",
+	output = "HDMI-A-1",
+	mode = "1920x1080@74.97",
+	position = "1920x0",
+	scale = "1.00",
 })
 
--- Workspace on monitors
+-- Reglas de Workspaces para el Monitor Principal
 hl.workspace_rule({ workspace = "1", monitor = "DP-2", persistent = true })
 hl.workspace_rule({ workspace = "2", monitor = "DP-2", persistent = true })
 hl.workspace_rule({ workspace = "3", monitor = "DP-2", persistent = true })
 hl.workspace_rule({ workspace = "4", monitor = "DP-2", persistent = true })
 hl.workspace_rule({ workspace = "5", monitor = "DP-2", persistent = true })
-hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-3", persistent = true })
-hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-3", persistent = true })
-hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-3", persistent = true })
-hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-3", persistent = true })
-hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-3", persistent = true })
+
+-- Reglas de Workspaces para el Monitor Secundario
+hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-1", persistent = true })
+hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-1", persistent = true })
 {{- else }}
--- Fallback automático para portátiles o nuevos hosts
+-- Fallback automático para portátiles o perfiles no-desktop
 hl.monitor({
 	output = "",
 	mode = "preferred",
