@@ -1,9 +1,8 @@
 {{ if eq .chezmoi.os "linux" -}}
 #!/usr/bin/env bash
 # =============================================================================
-# .chezmoiscripts/run_after_50-setup-ssh.sh.tmpl
+# .chezmoiscripts/run_after_05-setup-ssh.sh.tmpl
 # Registro de identidad SSH en GitHub y Forgejo.
-# NO genera llaves — las llaves se siembran manualmente en cada nodo.
 # =============================================================================
 set -euo pipefail
 
@@ -21,20 +20,6 @@ HOSTNAME="{{ .chezmoi.hostname }}"
 KEY_TITLE="SSH Key: ${HOSTNAME}"
 SSH_CONFIG_FILE="$HOME/.ssh/config"
 
-# ── Caché: evitar trabajo repetido ───────────────────────────────────────────
-CACHE_DIR="$HOME/.cache/chezmoi-scripts"
-mkdir -p "$CACHE_DIR"
-STATE_FILE="$CACHE_DIR/ssh-state"
-
-# El estado se basa en la existencia y fingerprint de la llave pública
-if [ -f "$SSH_KEY_PUB_PATH" ] && [ -f "$STATE_FILE" ]; then
-    CURRENT_FP=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" 2>/dev/null | awk '{print $2}' || echo "")
-    CACHED_FP=$(cat "$STATE_FILE" 2>/dev/null || echo "")
-    if [ "$CURRENT_FP" = "$CACHED_FP" ] && [ -n "$CURRENT_FP" ]; then
-        exit 0  # Llave ya registrada en sesión anterior — silencio
-    fi
-fi
-
 # ── 1. Verificar que la llave existe ─────────────────────────────────────────
 log_step "Identidad SSH — ${HOSTNAME}"
 
@@ -47,23 +32,10 @@ fi
 
 log_ok "Llave SSH encontrada: $SSH_KEY_PATH"
 
-# ── 2. Extraer tokens de secretos ────────────────────────────────────────────
-GITHUB_TOKEN=""
-FORGEJO_TOKEN=""
-
-# Buscar passage de forma robusta
-PASSAGE_CMD="passage"
-if [ -f "$HOME/.local/bin/passage" ]; then
-    PASSAGE_CMD="$HOME/.local/bin/passage"
-fi
-
-if command -v "$PASSAGE_CMD" &>/dev/null; then
-    GITHUB_TOKEN=$("$PASSAGE_CMD" chezmoi/github_token 2>/dev/null || echo "")
-    FORGEJO_TOKEN=$("$PASSAGE_CMD" chezmoi/forgejo_token 2>/dev/null || echo "")
-elif command -v pass &>/dev/null; then
-    GITHUB_TOKEN=$(pass chezmoi/github_token 2>/dev/null || echo "")
-    FORGEJO_TOKEN=$(pass chezmoi/forgejo_token 2>/dev/null || echo "")
-fi
+# ── 2. Extraer tokens de secretos (Descifrado nativo de Chezmoi en memoria) ──
+{{- $secrets := include (joinPath .chezmoi.sourceDir "dot_config/homelab/private_secrets.yaml.age") | decrypt | fromYaml }}
+GITHUB_TOKEN="{{ $secrets.github_token }}"
+FORGEJO_TOKEN="{{ $secrets.forgejo_token }}"
 
 # ── 3. GitHub — autenticación ────────────────────────────────────────────────
 if command -v gh &>/dev/null; then
@@ -82,13 +54,23 @@ if command -v gh &>/dev/null; then
     fi
 
     # ── 4. Registrar llave pública en GitHub ─────────────────────────────────
-    if gh auth status &>/dev/null; then
-        if ! gh ssh-key list 2>/dev/null | grep -qF "$KEY_TITLE"; then
-            log_info "Registrando llave en GitHub con título: $KEY_TITLE"
-            if gh ssh-key add "$SSH_KEY_PUB_PATH" --title "$KEY_TITLE" 2>/dev/null; then
-                log_ok "Llave registrada en GitHub."
-            else
-                log_warn "No se pudo registrar la llave en GitHub (puede que ya exista con otro título)."
+    # Evitamos llamadas lentas de red si la llave no ha cambiado
+    CACHE_DIR="$HOME/.cache/chezmoi-scripts"
+    mkdir -p "$CACHE_DIR"
+    STATE_FILE="$CACHE_DIR/ssh-state"
+    
+    CURRENT_FP=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" 2>/dev/null | awk '{print $2}' || echo "")
+    CACHED_FP=$(cat "$STATE_FILE" 2>/dev/null || echo "")
+
+    if [ "$CURRENT_FP" != "$CACHED_FP" ]; then
+        if gh auth status &>/dev/null; then
+            if ! gh ssh-key list 2>/dev/null | grep -qF "$KEY_TITLE"; then
+                log_info "Registrando llave en GitHub con título: $KEY_TITLE"
+                if gh ssh-key add "$SSH_KEY_PUB_PATH" --title "$KEY_TITLE" 2>/dev/null; then
+                    log_ok "Llave registrada en GitHub."
+                else
+                    log_warn "No se pudo registrar la llave en GitHub (puede que ya exista con otro título)."
+                fi
             fi
         fi
     fi
@@ -96,35 +78,39 @@ fi
 
 # ── 5. Forgejo — registrar llave pública ─────────────────────────────────────
 if [ -n "$FORGEJO_TOKEN" ]; then
-    FORGEJO_URL="http://{{ .homelab_ip_local }}:3080/api/v1"
-    HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" || echo "000")
+    # Comprobamos la caché
+    CURRENT_FP=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" 2>/dev/null | awk '{print $2}' || echo "")
+    CACHED_FP=$(cat "$STATE_FILE" 2>/dev/null || echo "")
 
-    if [ "$HTTP_STATUS" = "000" ]; then
-        FORGEJO_URL="http://{{ .homelab_ip_ts }}:3080/api/v1"
+    if [ "$CURRENT_FP" != "$CACHED_FP" ]; then
+        FORGEJO_URL="http://{{ .homelab_ip_local }}:3080/api/v1"
         HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" || echo "000")
-    fi
 
-    if [ "$HTTP_STATUS" != "000" ]; then
-        KEY_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" | awk '{print $2}')
-        ALREADY_REGISTERED=$(curl -s \
-            -H "Authorization: token $FORGEJO_TOKEN" \
-            "$FORGEJO_URL/user/keys" | grep -c "$KEY_FINGERPRINT" || echo "0")
-
-        if [ "$ALREADY_REGISTERED" = "0" ]; then
-            log_info "Registrando llave en Forgejo..."
-            curl -s -X POST "$FORGEJO_URL/user/keys" \
-                -H "Authorization: token $FORGEJO_TOKEN" \
-                -H "Content-Type: application/json" \
-                -d "{\"key\":\"$(cat "$SSH_KEY_PUB_PATH")\",\"read_only\":false,\"title\":\"$KEY_TITLE\"}" \
-                > /dev/null
-            log_ok "Llave registrada en Forgejo."
+        if [ "$HTTP_STATUS" = "000" ]; then
+            FORGEJO_URL="http://{{ .homelab_ip_ts }}:3080/api/v1"
+            HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 2 "$FORGEJO_URL/user" || echo "000")
         fi
-    else
-        log_warn "Forgejo no alcanzable. La llave se registrará en el próximo apply."
+
+        if [ "$HTTP_STATUS" != "000" ]; then
+            KEY_FINGERPRINT=$(ssh-keygen -lf "$SSH_KEY_PUB_PATH" | awk '{print $2}')
+            ALREADY_REGISTERED=$(curl -s \
+                -H "Authorization: token $FORGEJO_TOKEN" \
+                "$FORGEJO_URL/user/keys" | grep -c "$KEY_FINGERPRINT" || echo "0")
+
+            if [ "$ALREADY_REGISTERED" = "0" ]; then
+                log_info "Registrando llave en Forgejo..."
+                curl -s -X POST "$FORGEJO_URL/user/keys" \
+                    -H "Authorization: token $FORGEJO_TOKEN" \
+                    -H "Content-Type: application/json" \
+                    -d "{\"key\":\"$(cat "$SSH_KEY_PUB_PATH")\",\"read_only\":false,\"title\":\"$KEY_TITLE\"}" \
+                    > /dev/null
+                log_ok "Llave registrada en Forgejo."
+            fi
+        else
+            log_warn "Forgejo no alcanzable. La llave se registrará en el próximo apply."
+        fi
     fi
 fi
-
-
 
 # ── Guardar estado exitoso ────────────────────────────────────────────────────
 # Guardamos el fingerprint de la llave actual para evitar re-registro innecesario
