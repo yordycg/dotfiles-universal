@@ -51,3 +51,35 @@ hl.window_rule({
 	center = true,
 	size = "90% 90%",
 })
+
+-- ============================================
+-- Opacidad dinámica por monitor (simétrica)
+-- Requiere: decoration.active_opacity / inactive_opacity
+-- ya definidos en tu config (ej: 0.97 / 0.8)
+-- ============================================
+
+-- Regla estática: ventanas con el tag "dimmed" quedan 100% opacas
+hl.window_rule({
+  name = "dimmed-monitor-opacity",
+  match = { tag = "dimmed" },
+  opacity = "1.0 override 1.0 override",
+})
+
+-- Al cambiar de ventana activa, taggeamos/destaggeamos según el monitor
+hl.on("window.active", function(w)
+  if not w or w.monitor == nil then return end
+  local active_mon_id = w.monitor.id
+
+  for _, win in ipairs(hl.get_windows()) do
+    if win.address and win.monitor ~= nil then
+      local sel = "address:" .. win.address
+      if win.monitor.id == active_mon_id then
+        -- Monitor activo -> sin tag -> usa decoration.active/inactive_opacity normal
+        hl.dispatch(hl.dsp.window.tag({ tag = "-dimmed", window = sel }))
+      else
+        -- Monitor inactivo -> con tag -> opacidad forzada a 1.0
+        hl.dispatch(hl.dsp.window.tag({ tag = "+dimmed", window = sel }))
+      end
+    end
+  end
+end)
