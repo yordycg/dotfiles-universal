@@ -106,7 +106,6 @@ arch:
     - qt5ct
     - qt6ct
     - kvantum
-    - code
     - firefox
   hyprland:
     - hyprland
@@ -136,6 +135,7 @@ arch:
     - hyprshot
     - wlogout
     - snappy-switcher
+    - visual-studio-code-bin
 
 debian:
   base:
