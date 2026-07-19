@@ -38,19 +38,29 @@ GITHUB_TOKEN="{{ $secrets.github_token }}"
 FORGEJO_TOKEN="{{ $secrets.forgejo_token }}"
 
 # ── 3. GitHub — autenticación ────────────────────────────────────────────────
+setup_local_git_credentials() {
+    log_info "Configurando credenciales de GitHub en ~/.gitconfig.local..."
+    touch "$HOME/.gitconfig.local"
+    git config --file "$HOME/.gitconfig.local" --replace-all credential."https://github.com".helper ""
+    git config --file "$HOME/.gitconfig.local" --add credential."https://github.com".helper "!gh auth git-credential"
+    git config --file "$HOME/.gitconfig.local" --replace-all credential."https://gist.github.com".helper ""
+    git config --file "$HOME/.gitconfig.local" --add credential."https://gist.github.com".helper "!gh auth git-credential"
+    log_ok "Credenciales locales configuradas."
+}
+
 if command -v gh &>/dev/null; then
     if ! gh auth status &>/dev/null; then
         if [ -n "$GITHUB_TOKEN" ]; then
             log_info "Autenticando en GitHub con token..."
             echo "$GITHUB_TOKEN" | gh auth login --with-token
-            gh auth setup-git
+            setup_local_git_credentials
             log_ok "Autenticado en GitHub."
         else
             log_warn "GitHub CLI no autenticado y no hay token en secrets."
             log_warn "Ejecuta manualmente: gh auth login"
         fi
     else
-        gh auth setup-git > /dev/null 2>&1 || true
+        setup_local_git_credentials
     fi
 
     # ── 4. Registrar llave pública en GitHub ─────────────────────────────────

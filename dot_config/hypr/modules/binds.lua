@@ -4,7 +4,7 @@
 
 -- Set programs that you use
 local terminal = "kitty"
-local fileManager = "thunar" -- dolphin
+local fileManager = "thunar" -- dolphin | nautilus
 local menu = "./.config/rofi/type-2/launcher.sh"
 
 ---------------------
@@ -22,7 +22,7 @@ hl.bind(
 )
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd(menu))
+hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/yordycg/.config/waybar/scripts/launch.sh"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
