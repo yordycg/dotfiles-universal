@@ -25,12 +25,40 @@ if [ -f /etc/fedora-release ]; then
         run sudo akmods
     fi
 elif [ -f /etc/arch-release ]; then
-    if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null && ! pacman -Qi nvidia-dkms &>/dev/null; then
-        log_info "→ Arch Linux detectado. Instalando driver nvidia-dkms..."
-        run sudo pacman -S --noconfirm --needed nvidia-dkms
-        log_info "→ Regenerando initramfs con mkinitcpio..."
-        run sudo mkinitcpio -P
+    log_info "→ Arch Linux detectado. Asegurando cabeceras del kernel (headers)..."
+    if [[ "$(uname -r)" == *zen* ]]; then
+        HEADERS="linux-zen-headers"
+    elif [[ "$(uname -r)" == *lts* ]]; then
+        HEADERS="linux-lts-headers"
+    elif [[ "$(uname -r)" == *hardened* ]]; then
+        HEADERS="linux-hardened-headers"
+    else
+        HEADERS="linux-headers"
     fi
+    run sudo pacman -S --noconfirm --needed "$HEADERS"
+
+    if ! pacman -Qi nvidia &>/dev/null && ! pacman -Qi nvidia-lts &>/dev/null && ! pacman -Qi nvidia-dkms &>/dev/null && ! pacman -Qi nvidia-open &>/dev/null && ! pacman -Qi nvidia-open-dkms &>/dev/null; then
+        log_info "→ Instalando driver nvidia-dkms..."
+        run sudo pacman -S --noconfirm --needed nvidia-dkms
+    fi
+
+    # Configurar KMS (Kernel Mode Setting) para NVIDIA
+    if [ -f /etc/mkinitcpio.conf ]; then
+        if ! grep -q "nvidia" /etc/mkinitcpio.conf; then
+            log_info "→ Configurando KMS para NVIDIA en /etc/mkinitcpio.conf..."
+            run sudo sed -i.bak 's/^MODULES=(\([^)]*\))/MODULES=(\1 nvidia nvidia_modeset nvidia_uvm nvidia_drm)/' /etc/mkinitcpio.conf
+        fi
+    fi
+
+    # Configurar nvidia-drm.modeset=1
+    if [ ! -f /etc/modprobe.d/nvidia.conf ] || ! grep -q "options nvidia-drm modeset=1" /etc/modprobe.d/nvidia.conf; then
+        log_info "→ Configurando nvidia-drm modeset en /etc/modprobe.d/nvidia.conf..."
+        run sudo mkdir -p /etc/modprobe.d
+        run sudo bash -c 'echo "options nvidia-drm modeset=1" >> /etc/modprobe.d/nvidia.conf'
+    fi
+
+    log_info "→ Regenerando initramfs con mkinitcpio..."
+    run sudo mkinitcpio -P
 elif [ -f /etc/debian_version ]; then
     if ! dpkg -s nvidia-driver &>/dev/null; then
         log_info "→ Debian/Ubuntu detectado. Instalando nvidia-driver..."
