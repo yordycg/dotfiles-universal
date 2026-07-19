@@ -14,6 +14,7 @@ fedora:
     - jq
     - pwgen
     - tree
+    - less
   dev_headers:
     - gcc
     - gcc-c++
@@ -43,6 +44,7 @@ fedora:
     - qt5ct
     - qt6ct
     - kvantum
+    - gnome-keyring
   hyprland:
     - hyprland
     - swaybg
@@ -83,6 +85,7 @@ arch:
     - jq
     - pwgen
     - tree
+    - less
   dev_headers:
     - base-devel
     - cmake
@@ -107,6 +110,7 @@ arch:
     - qt6ct
     - kvantum
     - firefox
+    - gnome-keyring
   hyprland:
     - hyprland
     - swaybg
@@ -150,6 +154,7 @@ debian:
     - jq
     - pwgen
     - tree
+    - less
   dev_toolchain:
     - python3-venv
     - gcc
