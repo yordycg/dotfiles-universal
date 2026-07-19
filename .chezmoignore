@@ -72,4 +72,6 @@ provision/**
 .config/kitty/colors/colors.conf
 .config/swaync/colors/colors.css
 .config/wlogout/colors/colors.css
-
+.config/gtk-3.0/settings.ini
+.config/gtk-4.0/settings.ini
+.mozilla/firefox/profiles.ini
