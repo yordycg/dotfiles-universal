@@ -13,6 +13,7 @@ fedora:
     - zsh
     - jq
     - pwgen
+    - tree
   dev_headers:
     - gcc
     - gcc-c++
@@ -81,6 +82,7 @@ arch:
     - zsh
     - jq
     - pwgen
+    - tree
   dev_headers:
     - base-devel
     - cmake
@@ -147,6 +149,7 @@ debian:
     - zsh
     - jq
     - pwgen
+    - tree
   dev_toolchain:
     - python3-venv
     - gcc
