@@ -83,3 +83,46 @@ hl.on("window.active", function(w)
     end
   end
 end)
+
+-- PIP rule
+hl.window_rule({
+  name = "pip-auto-pin",
+  match = { title = "^(Picture-in-Picture)$" },
+  float = true,
+  pin = true,
+  size = "600 338",
+  move = "100%-615 100%-353",
+})
+
+-- Dialogos y Selectores - archivos flotantes
+hl.window_rule({
+  name = "system-dialogs-float",
+  match = {
+    class = "^(pavucontrol|blueman-manager|nm-connection-editor|org.kde.polkit-kde-authentication-agent-1|hyprpolkitagent)$",
+  },
+  float = true,
+  center = true,
+})
+
+hl.window_rule({
+  name = "file-pickers-float",
+  match = {
+    title = "^(Open File|Save File|Select a File|Open Folder).*$",
+  },
+  float = true,
+  center = true,
+})
+
+-- Blur - capas UI
+hl.layer_rule({
+  name = "ui-layers-blur",
+  match = { namespace = "^(rofi|swaync-control-center|swaync-notification-window|waybar)$" },
+  blur = true,
+})
+
+-- Opacity - juegos y reproductores videos
+hl.window_rule({
+  name = "media-games-full-opacity",
+  match = { class = "^(mpv|vlc|Steam|heroic)$" },
+  opacity = "1.0 override 1.0 override",
+})

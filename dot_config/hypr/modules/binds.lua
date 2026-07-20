@@ -5,17 +5,17 @@
 -- Set programs that you use
 local terminal = "kitty"
 local fileManager = "thunar" -- dolphin | nautilus
-local menu = "./.config/rofi/type-2/launcher.sh"
+local menu = "/home/yordycg/.config/rofi/type-2/launcher.sh"
 
 ---------------------
 ---- KEYBINDINGS ----
 ---------------------
 
-local mainMod = "ALT" -- Sets "Windows" key as main modifier
+local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + W", hl.dsp.window.close())
+hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(
 	mainMod .. " + M",
 	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
@@ -25,13 +25,29 @@ hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/yordycg/.config/waybar/scripts/launch.sh"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
-hl.bind(mainMod .. " + J", hl.dsp.layout("togglesplit")) -- dwindle only
+hl.bind(mainMod .. " + ALT + J", hl.dsp.layout("togglesplit")) -- dwindle only
+hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen()) -- fullscreen
+hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy")) -- gestor portapapeles
 
--- Move focus with mainMod + arrow keys
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+-- Move focus with mainMod + arrow keys / Vim keys
+hl.bind(mainMod .. " + LEFT", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + RIGHT", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + UP", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + DOWN", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
+hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
+
+-- Move window with mainMod + SHIFT + arrow keys / Vim keys
+hl.bind(mainMod .. " + SHIFT + H", hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + L", hl.dsp.window.move({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + K", hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + J", hl.dsp.window.move({ direction = "down" }))
+hl.bind(mainMod .. " + SHIFT + LEFT", hl.dsp.window.move({ direction = "left" }))
+hl.bind(mainMod .. " + SHIFT + RIGHT", hl.dsp.window.move({ direction = "right" }))
+hl.bind(mainMod .. " + SHIFT + UP", hl.dsp.window.move({ direction = "up" }))
+hl.bind(mainMod .. " + SHIFT + DOWN", hl.dsp.window.move({ direction = "down" }))
 
 -- Switch workspaces with mainMod + [0-9]
 -- Move active window to a workspace with mainMod + SHIFT + [0-9]
@@ -84,8 +100,8 @@ hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tru
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
 -- Notification Center
-hl.bind(mainMod .. " + A", hl.dsp.exec_cmd("swaync-client -t -sw"))
-hl.bind(mainMod .. " + CONTROL + SHIFT + A", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
+hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
+hl.bind(mainMod .. " + CONTROL + SHIFT + N", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
 
 -- Browser
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
@@ -99,31 +115,30 @@ hl.bind(mainMod .. " + SHIFT + F12", hl.dsp.exec_cmd("hyprshot -m region"))
 hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort"))
 
 -- Interactive Kill
-hl.bind(mainMod .. " + K", hl.dsp.exec_cmd("hyprctl kill"))
+hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd("hyprctl kill"))
 
 -- Color Picker
-hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("hyprpicker -a"))
+hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 
 -- Logout Menu (wlogout)
 hl.bind("CONTROL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || wlogout -l .config/wlogout/layout -C .config/wlogout/style.css -b 5 -p layer-shell -B 400 -T 400"))
 
 -- Zoom factor controls
-local superMod = "SUPER"
-hl.bind(superMod .. " + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"))
-hl.bind(superMod .. " + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"))
-hl.bind(superMod .. " + SHIFT + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
-hl.bind(superMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
-hl.bind(superMod .. " + SHIFT + 0", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
+hl.bind(mainMod .. " + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"))
+hl.bind(mainMod .. " + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"))
+hl.bind(mainMod .. " + SHIFT + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
+hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
+hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
 
 -- Bars
 local hyprbars = "/home/yordycg/.local/share/hyprland-plugins/hyprbars.so"
 hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("hyprctl plugin load " .. hyprbars))
 hl.bind(mainMod .. " + SHIFT + Y", hl.dsp.exec_cmd("hyprctl plugin unload " .. hyprbars))
-hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
+hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
 
 -- Selector TAB
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next"))
-hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev"))
+hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod super"))
+hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev --mod super"))
 
 -- Tmux Workspaces (Dotfiles, Notas de Obsidian y Learning Path)
 hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Dotfiles Workspace' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'dotfiles'"))
