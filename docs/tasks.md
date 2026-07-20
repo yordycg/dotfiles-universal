@@ -25,3 +25,7 @@
 - [ ] Implementar patrón de errores tolerantes (Soft Fails) en scripts de aprovisionamiento
   - Crear un wrapper `run_tolerant` en `provision/lib/logging.sh` para pasos de instalación no críticos.
   - Adaptar scripts en `.chezmoiscripts/` y `provision/system/` para reportar advertencias y continuar la ejecución en lugar de abortar con exit status 1.
+- [ ] Implementar sistema de Captura Rápida de Notas (Inbox) en Obsidian Vault y Sincronización con iOS
+  - Crear script ejecutable para generar/abrir notas en `~/workspace/assets/obsidian/Inbox/` nombradas por fecha/hora (`YYYY-MM-DD_HHMMSS.md`).
+  - Configurar regla de ventana flotante en Hyprland e integrar bind en Lua (`binds.lua`) para abrir Neovim en terminal flotante dedicada.
+  - Configurar integración con iOS usando **Working Copy** + **Atajos de Apple (Shortcuts)** para enviar notas rápidas desde el iPhone al repositorio de Obsidian vía Git.
