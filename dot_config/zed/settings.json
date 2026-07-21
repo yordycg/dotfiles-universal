@@ -1,0 +1,107 @@
+{
+  // --- Apariencia & Tipografía ---
+  "theme": {
+    "mode": "dark",
+    "light": "One Light",
+    "dark": "One Dark"
+  },
+  "icon_theme": "Material Icon Theme",
+  "buffer_font_family": "JetBrains Mono",
+  "buffer_font_size": 15.0,
+  "buffer_line_height": {
+    "custom": 1.6
+  },
+  "ui_font_family": "Inter",
+  "ui_font_size": 14,
+  "cursor_shape": "bar",
+  "cursor_blink": false,
+  "wrap_guides": [100],
+  "preferred_line_length": 100,
+
+  // --- Paneles & Layout ---
+  "git_panel": {
+    "dock": "right",
+    "tree_view": true
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "terminal": {
+    "font_family": "JetBrains Mono",
+    "font_size": 14.0
+  },
+
+  // --- Modo Vim & WhichKey ---
+  "vim_mode": true,
+  "relative_line_numbers": "enabled",
+  "which_key": {
+    "enabled": true,
+    "delay_ms": 400
+  },
+
+  // --- Edición & Guardado Automático ---
+  "autosave": "on_focus_change",
+  "format_on_save": "language_server",
+  "tab_size": 2,
+  "hard_tabs": false,
+  "soft_wrap": "editor_width",
+  "colorize_brackets": true,
+
+  // --- Git & Ayudas Visuales (Inlay Hints + Inline Blame) ---
+  "git": {
+    "git_gutter": "tracked_files",
+    "inline_blame": {
+      "enabled": true,
+      "delay_ms": 500
+    }
+  },
+  "inlay_hints": {
+    "enabled": true,
+    "show_type_hints": true,
+    "show_parameter_hints": true
+  },
+
+  // --- Telemetría & Actualizaciones ---
+  "auto_update": false,
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false
+  },
+
+  // --- Reglas Específicas por Lenguaje (Senior Best Practices) ---
+  "languages": {
+    "Go": {
+      "tab_size": 4,
+      "hard_tabs": true,
+      "format_on_save": "language_server"
+    },
+    "Python": {
+      "tab_size": 4,
+      "formatter": {
+        "language_server": {
+          "name": "ruff"
+        }
+      }
+    },
+    "Rust": {
+      "tab_size": 4,
+      "format_on_save": "language_server"
+    },
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    },
+    "TypeScript": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"]
+        }
+      }
+    }
+  }
+}

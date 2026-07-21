@@ -1,0 +1,73 @@
+[
+  // 1. Navegación entre Paneles (Consistencia Total)
+  {
+    "context": "Dock || Terminal || Editor || ProjectPanel",
+    "bindings": {
+      "ctrl-h": "workspace::ActivatePaneLeft",
+      "ctrl-l": "workspace::ActivatePaneRight",
+      "ctrl-k": "workspace::ActivatePaneUp",
+      "ctrl-j": "workspace::ActivatePaneDown"
+    }
+  },
+
+  // 2. Modo Insert de Vim: Escape Rápido (Tu marca personal)
+  {
+    "context": "Editor && vim_mode == insert && !menu",
+    "bindings": {
+      "j k": "vim::NormalBefore",
+      "j j": "vim::NormalBefore"
+    }
+  },
+
+  // 3. Atajos Globales y Navegación de Buffers (Inspirados en LazyVim & Nvim-Personal)
+  {
+    "context": "Workspace",
+    "bindings": {
+      "alt-s": "zed::OpenSettingsFile",
+      "alt-k": "zed::OpenKeymapFile",
+      "ctrl-`": "terminal_panel::ToggleFocus",
+      "shift-h": "pane::ActivatePrevItem",
+      "shift-l": "pane::ActivateNextItem"
+    }
+  },
+
+  // 4. Modo Normal de Vim: Leader Key (Espacio) (Portado de tu Nvim-Personal)
+  {
+    "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
+    "bindings": {
+      // Explorador & Archivos
+      "space e": "project_panel::ToggleFocus",
+      "space f f": "file_finder::Toggle",
+      "space p a": "editor::CopyPath",
+      "space b d": "pane::CloseActiveItem",
+
+      // Mover líneas (Alt+j / Alt+k)
+      "alt-j": "editor::MoveLineDown",
+      "alt-k": "editor::MoveLineUp",
+
+      // Git & Diffs
+      "space g g": "git_panel::ToggleFocus",
+      "space g s": "git_panel::ToggleFocus",
+      "space g h d": "editor::ToggleSelectedDiffHunks",
+
+      // LSP & Acciones de Código (De tu nvim-personal)
+      "space c a": "editor::ToggleCodeActions",
+      "space .": "editor::ToggleCodeActions",
+      "space c r": "editor::Rename",
+      "space o r": "editor::OrganizeImports",
+      "g d": "editor::GoToDefinition",
+      "g D": "editor::GoToDefinitionSplit",
+      "g i": "editor::GoToImplementation",
+      "g r": "editor::FindAllReferences",
+      "] d": "editor::GoToDiagnostic",
+      "[ d": "editor::GoToPreviousDiagnostic",
+      "space t d": "editor::ToggleDiagnostics",
+
+      // Alternar Ayudas Visuales
+      "space t i": "editor::ToggleInlayHints",
+      "space u w": "editor::ToggleSoftWrap",
+      "space f p": "projects::OpenRecent",
+      "space s b": "buffer_search::Deploy"
+    }
+  }
+]
