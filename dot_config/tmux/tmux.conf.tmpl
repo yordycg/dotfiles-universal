@@ -119,6 +119,7 @@ set -g @icon_zoom "󰊓"
 set -g @icon_ssh "󰌘"
 
 bind-key f run-shell "~/.local/bin/tmux-sessionizer"
+bind-key L display-popup -E -w 85% -h 80% -b rounded -T " 󰌌  Lazy-Tmux " "lazy-tmux"
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \
