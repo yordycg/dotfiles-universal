@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tmux-sessionizer v2.2 — dynamic height + floating fzf popup
+# tmux-sessionizer v2.3 — comfortable dynamic height + zero-error exit on cancel
 set -euo pipefail
 
 WORKSPACE="$HOME/workspace"
@@ -15,7 +15,7 @@ should_ignore() {
     return 1
 }
 
-# --- 1. Si no estamos en popup-child y estamos dentro de TMUX, calcular altura dinámica y lanzar popup ---
+# --- 1. Si no estamos en popup-child y estamos dentro de TMUX, calcular altura y lanzar popup ---
 if [[ "${1:-}" != "--popup-child" ]] && [[ -n "${TMUX:-}" ]]; then
     declare -A session_by_path
     if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
@@ -34,10 +34,10 @@ if [[ "${1:-}" != "--popup-child" ]] && [[ -n "${TMUX:-}" ]]; then
         done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null)
     fi
 
-    # Altura dinámica: elementos + 5 líneas de padding/UI (mínimo 8, máximo 20)
-    height=$(( count + 5 ))
-    if (( height < 8 )); then height=8; fi
-    if (( height > 20 )); then height=20; fi
+    # Altura cómoda: mínimo 14 líneas, máximo 24 líneas
+    height=$(( count + 8 ))
+    if (( height < 14 )); then height=14; fi
+    if (( height > 24 )); then height=24; fi
 
     exec tmux display-popup -E -w 55% -h "$height" -b rounded -T " 󰌌  Tmux Sessionizer " "$0 --popup-child"
 fi
@@ -80,11 +80,12 @@ else
 
     if [[ ${#entries[@]} -eq 0 ]]; then
         echo "No hay sesiones ni directorios disponibles" >&2
-        exit 1
+        exit 0
     fi
 
     PREVIEW_CMD='p=$(echo {} | awk -F"\t" "{print \$NF}"); if [ -d "$p" ]; then eza --tree --level=2 --icons --group-directories-first "$p" 2>/dev/null || ls -la "$p"; fi'
 
+    # Capturar fzf sin fallar en cancel (Esc devuelve exit 130, lo capturamos con || true)
     chosen=$(printf '%s\n' "${entries[@]}" | fzf \
         --delimiter=$'\t' \
         --with-nth=1 \
@@ -96,9 +97,11 @@ else
         --color=header:italic,prompt:blue,pointer:bright-blue \
         --preview="$PREVIEW_CMD" \
         --preview-window="right:50%:wrap:hidden" \
-        --bind="ctrl-p:toggle-preview")
+        --bind="ctrl-p:toggle-preview" || true)
 
-    [[ -z "$chosen" ]] && exit 0
+    if [[ -z "${chosen:-}" ]]; then
+        exit 0
+    fi
 
     selected_path=$(echo "$chosen" | awk -F'\t' '{print $NF}')
 
