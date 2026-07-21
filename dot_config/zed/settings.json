@@ -77,11 +77,17 @@
     "toml": true,
     "dockerfile": true,
     "sql": true,
-    "html": true
+    "html": true,
+    "c": true,
+    "make": true,
+    "csv": true
   },
 
-  // --- Reglas Específicas por Lenguaje (Senior Best Practices) ---
+  // --- Reglas Específicas por Lenguaje (Backend & Data Engineering Stack) ---
   "languages": {
+    "C": {
+      "format_on_save": "language_server"
+    },
     "Go": {
       "tab_size": 4,
       "hard_tabs": true,
@@ -98,6 +104,10 @@
     "Rust": {
       "tab_size": 4,
       "format_on_save": "language_server"
+    },
+    "SQL": {
+      "tab_size": 2,
+      "format_on_save": "on"
     },
     "JavaScript": {
       "formatter": {
