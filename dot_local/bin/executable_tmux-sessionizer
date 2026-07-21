@@ -92,10 +92,11 @@ else
         --pointer="❯" \
         --marker="✓" \
         --border=none \
-        --header="[Enter]: Seleccionar  |  [Esc]: Salir" \
+        --header="[Enter]: Seleccionar  |  [Esc]: Salir  |  [Ctrl-P]: Vista previa" \
         --color=header:italic,prompt:blue,pointer:bright-blue \
         --preview="$PREVIEW_CMD" \
-        --preview-window="right:50%:wrap:hidden:toggle")
+        --preview-window="right:50%:wrap:hidden" \
+        --bind="ctrl-p:toggle-preview")
 
     [[ -z "$chosen" ]] && exit 0
 
