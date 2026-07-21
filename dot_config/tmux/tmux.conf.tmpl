@@ -76,7 +76,6 @@ set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
 set -g @plugin 'omerxx/tmux-sessionx'
-# set -g @plugin 'vaaleyard/tmux-dotbar'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'sainnhe/tmux-fzf'
@@ -94,13 +93,12 @@ set -g @continuum-save-interval '10'
 # SessionX (Fuzzy Session Selector & Command Palette)
 set -g @sessionx-bind 's'
 set -g @sessionx-zoxide-mode 'on'
+set -g @sessionx-fzf-builtin-tmux 'on'
 set -g @sessionx-window-height '55%'
 set -g @sessionx-window-width '55%'
 set -g @sessionx-preview-enabled 'false'
 set -g @sessionx-auto-accept 'off'
 set -g @sessionx-filter-current 'false'
-set -g @sessionx-custom-paths '/home/yordycg/workspace'
-set -g @sessionx-custom-paths-subdirectories 'true'
 
 # Floax (Floating Terminal Overlay)
 set -g @floax-width '80%'
@@ -125,6 +123,3 @@ if "test ! -d ~/.config/tmux/plugins/tpm" \
    "run 'git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm && ~/.config/tmux/plugins/tpm/bin/install_plugins'"
 
 run '~/.config/tmux/plugins/tpm/tpm'
-
-# Force SessionX bind to 's' after TPM loads
-bind s run-shell "~/.config/tmux/plugins/tmux-sessionx/scripts/sessionx.sh"
