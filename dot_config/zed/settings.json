@@ -68,6 +68,18 @@
     "metrics": false
   },
 
+  // --- Extensiones Declarativas Sincronizadas ---
+  "auto_install_extensions": {
+    "material-icon-theme": true,
+    "catppuccin": true,
+    "catppuccin-icons": true,
+    "tokyo-night": true,
+    "toml": true,
+    "dockerfile": true,
+    "sql": true,
+    "html": true
+  },
+
   // --- Reglas Específicas por Lenguaje (Senior Best Practices) ---
   "languages": {
     "Go": {
