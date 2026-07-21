@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# tmux-sessionizer v2 — fusiona sesiones activas + candidatos de directorio
+# Uso:
+#   tmux-sessionizer            -> fzf combinado (sesiones vivas primero, luego candidatos)
+#   tmux-sessionizer /ruta/dir  -> crea/cambia sesión directo a ese dir
+
+set -euo pipefail
+
+WORKSPACE="$HOME/workspace"
+DEPTH=2                                  # nivel donde viven tus proyectos reales
+IGNORE_NAMES=("wallpapers" ".git" "node_modules" "target" "dist")
+
+should_ignore() {
+    local base
+    base=$(basename "$1")
+    for ig in "${IGNORE_NAMES[@]}"; do
+        [[ "$base" == "$ig" ]] && return 0
+    done
+    return 1
+}
+
+# --- Modo directo: llamado con un path explícito ---
+if [[ $# -eq 1 ]]; then
+    selected_path=$1
+    selected_name=$(basename "$selected_path" | tr . _ | tr ' ' _)
+else
+    # --- 1. Mapear sesiones activas: path -> nombre ---
+    declare -A session_by_path
+    if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
+        while IFS=$'\t' read -r name path; do
+            [[ -n "$name" ]] && session_by_path["$path"]="$name"
+        done <<< "$tmux_list"
+    fi
+
+    entries=()
+
+    # --- 2. Sesiones existentes primero, marcadas con punto ---
+    for path in "${!session_by_path[@]}"; do
+        name="${session_by_path[$path]}"
+        entries+=("* ${name}  (${path/#$HOME/\~})"$'\t'"$path")
+    done
+
+    # --- 3. Candidatos de nivel $DEPTH (donde viven tus proyectos reales) ---
+    while IFS= read -r dir; do
+        should_ignore "$dir" && continue
+        [[ -n "${session_by_path[$dir]:-}" ]] && continue   # ya es sesión, no duplicar
+        entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
+    done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null | sort)
+
+    # --- 4. Fallback: dirs de nivel 1 SIN subcarpetas (proyectos sueltos, ej: ipvg si es hoja) ---
+    while IFS= read -r dir; do
+        should_ignore "$dir" && continue
+        [[ -n "${session_by_path[$dir]:-}" ]] && continue
+        if ! find "$dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -q .; then
+            entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
+        fi
+    done < <(find "$WORKSPACE" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+
+    if [[ ${#entries[@]} -eq 0 ]]; then
+        echo "No hay sesiones ni directorios disponibles" >&2
+        exit 1
+    fi
+
+    chosen=$(printf '%s\n' "${entries[@]}" | fzf --delimiter=$'\t' --with-nth=1 --prompt="sesion/dir > ")
+    [[ -z "$chosen" ]] && exit 0
+
+    selected_path=$(echo "$chosen" | awk -F'\t' '{print $NF}')
+
+    if [[ -n "${session_by_path[$selected_path]:-}" ]]; then
+        selected_name="${session_by_path[$selected_path]}"
+    else
+        selected_name=$(basename "$selected_path" | tr . _ | tr ' ' _)
+    fi
+fi
+
+# --- Crear / cambiar de sesion ---
+tmux_running=$(pgrep tmux || true)
+
+if [[ -z "${TMUX:-}" ]] && [[ -z "$tmux_running" ]]; then
+    tmux new-session -s "$selected_name" -c "$selected_path"
+    exit 0
+fi
+
+if ! tmux has-session -t="$selected_name" 2>/dev/null; then
+    tmux new-session -ds "$selected_name" -c "$selected_path"
+fi
+
+if [[ -n "${TMUX:-}" ]]; then
+    tmux switch-client -t "$selected_name"
+else
+    tmux attach-session -t "$selected_name"
+fi
