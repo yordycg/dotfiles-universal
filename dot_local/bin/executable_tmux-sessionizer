@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# tmux-sessionizer v2.1 — floating fzf + active sessions + workspace projects
+# tmux-sessionizer v2.2 — dynamic height + floating fzf popup
 set -euo pipefail
 
 WORKSPACE="$HOME/workspace"
-DEPTH=2                                  # Nivel donde viven tus proyectos reales
+DEPTH=2
 IGNORE_NAMES=("wallpapers" ".git" "node_modules" "target" "dist" ".venv" "venv")
 
 should_ignore() {
@@ -15,12 +15,39 @@ should_ignore() {
     return 1
 }
 
-# --- Modo directo: llamado con un path explícito ---
-if [[ $# -eq 1 ]]; then
+# --- 1. Si no estamos en popup-child y estamos dentro de TMUX, calcular altura dinámica y lanzar popup ---
+if [[ "${1:-}" != "--popup-child" ]] && [[ -n "${TMUX:-}" ]]; then
+    declare -A session_by_path
+    if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
+        while IFS=$'\t' read -r name path; do
+            [[ -n "$name" ]] && session_by_path["$path"]="$name"
+        done <<< "$tmux_list"
+    fi
+
+    count=${#session_by_path[@]}
+
+    if [[ -d "$WORKSPACE" ]]; then
+        while IFS= read -r dir; do
+            should_ignore "$dir" && continue
+            [[ -n "${session_by_path[$dir]:-}" ]] && continue
+            ((count++))
+        done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null)
+    fi
+
+    # Altura dinámica: elementos + 5 líneas de padding/UI (mínimo 8, máximo 20)
+    height=$(( count + 5 ))
+    if (( height < 8 )); then height=8; fi
+    if (( height > 20 )); then height=20; fi
+
+    exec tmux display-popup -E -w 55% -h "$height" -b rounded -T " 󰌌  Tmux Sessionizer " "$0 --popup-child"
+fi
+
+# Si se pasó un argumento de ruta directa (ej: tmux-sessionizer /ruta/dir)
+if [[ $# -eq 1 ]] && [[ "$1" != "--popup-child" ]]; then
     selected_path=$1
     selected_name=$(basename "$selected_path" | tr . _ | tr ' ' _)
 else
-    # --- 1. Mapear sesiones activas: path -> nombre ---
+    # --- Interfaz FZF dentro del popup ---
     declare -A session_by_path
     if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
         while IFS=$'\t' read -r name path; do
@@ -30,21 +57,18 @@ else
 
     entries=()
 
-    # --- 2. Sesiones existentes primero ---
     for path in "${!session_by_path[@]}"; do
         name="${session_by_path[$path]}"
         entries+=("󰌌  ${name}  (${path/#$HOME/\~})"$'\t'"$path")
     done
 
-    # --- 3. Candidatos de nivel $DEPTH (donde viven tus proyectos reales) ---
     if [[ -d "$WORKSPACE" ]]; then
         while IFS= read -r dir; do
             should_ignore "$dir" && continue
-            [[ -n "${session_by_path[$dir]:-}" ]] && continue   # ya es sesión, no duplicar
+            [[ -n "${session_by_path[$dir]:-}" ]] && continue
             entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
         done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null | sort)
 
-        # --- 4. Fallback: dirs de nivel 1 SIN subcarpetas ---
         while IFS= read -r dir; do
             should_ignore "$dir" && continue
             [[ -n "${session_by_path[$dir]:-}" ]] && continue
@@ -67,11 +91,11 @@ else
         --prompt="   sesión/dir > " \
         --pointer="❯" \
         --marker="✓" \
-        --border=rounded \
+        --border=none \
         --header="[Enter]: Seleccionar  |  [Esc]: Salir" \
         --color=header:italic,prompt:blue,pointer:bright-blue \
         --preview="$PREVIEW_CMD" \
-        --preview-window="right:45%:wrap")
+        --preview-window="right:50%:wrap:hidden:toggle")
 
     [[ -z "$chosen" ]] && exit 0
 
@@ -84,7 +108,7 @@ else
     fi
 fi
 
-# --- Crear / cambiar de sesion ---
+# --- Crear / cambiar de sesión ---
 tmux_running=$(pgrep tmux || true)
 
 if [[ -z "${TMUX:-}" ]] && [[ -z "$tmux_running" ]]; then
