@@ -25,9 +25,9 @@
   {
     "context": "ProjectPanel && not_editing",
     "bindings": {
-      "space e": "workspace::ToggleLeftDock",
-      "escape": "workspace::ToggleLeftDock",
-      "q": "workspace::ToggleLeftDock",
+      "space e": "project_panel::ToggleFocus",
+      "escape": "project_panel::ToggleFocus",
+      "q": "project_panel::ToggleFocus",
       "j": "menu::SelectNext",
       "k": "menu::SelectPrev",
       "h": "project_panel::CollapseSelectedEntry",
@@ -61,12 +61,12 @@
     }
   },
 
-  // 5. Modo Normal de Vim: Leader Key (Espacio) (Toggle Verdadero con workspace::ToggleLeftDock)
+  // 5. Modo Normal de Vim: Leader Key (Espacio)
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
     "bindings": {
-      // Explorador (Toggle de la barra lateral izquierda)
-      "space e": "workspace::ToggleLeftDock",
+      // Explorador (Abre y enfoca el explorador de archivos)
+      "space e": "project_panel::ToggleFocus",
       "space f f": "file_finder::Toggle",
       "space f p": "projects::OpenRecent",
       "space p a": "editor::CopyPath",

@@ -15,12 +15,15 @@
   "preferred_line_length": 100,
 
   // --- Paneles & Layout ---
+  "project_panel": {
+    "dock": "left"
+  },
   "git_panel": {
     "dock": "right",
     "tree_view": true
   },
   "collaboration_panel": {
-    "dock": "left"
+    "dock": "right"
   },
   "terminal": {
     "font_family": "JetBrains Mono",
@@ -43,7 +46,7 @@
   "soft_wrap": "editor_width",
   "colorize_brackets": true,
 
-  // --- Git & Ayudas Visuales (Inlay Hints + Inline Blame) ---
+  // --- Git & Ayudas Visuales ---
   "git": {
     "git_gutter": "tracked_files",
     "inline_blame": {
@@ -64,22 +67,7 @@
     "metrics": false
   },
 
-  // --- Extensiones Declarativas Sincronizadas ---
-  "auto_install_extensions": {
-    "material-icon-theme": true,
-    "catppuccin": true,
-    "catppuccin-icons": true,
-    "tokyo-night": true,
-    "toml": true,
-    "dockerfile": true,
-    "sql": true,
-    "html": true,
-    "c": true,
-    "make": true,
-    "csv": true
-  },
-
-  // --- Reglas Específicas por Lenguaje (Backend & Data Engineering Stack) ---
+  // --- Reglas Específicas por Lenguaje ---
   "languages": {
     "C": {
       "format_on_save": "language_server"
