@@ -118,7 +118,7 @@ set -g @icon_prefix "󰌌"
 set -g @icon_zoom "󰊓"
 set -g @icon_ssh "󰌘"
 
-bind-key f run-shell "tmux neww tmux-sessionizer"
+bind-key f run-shell "tmux neww ~/.local/bin/tmux-sessionizer"
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \
