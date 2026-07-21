@@ -1,10 +1,6 @@
 {
   // --- Apariencia & Tipografía ---
-  "theme": {
-    "mode": "dark",
-    "light": "One Light",
-    "dark": "One Dark"
-  },
+  "theme": "One Dark",
   "icon_theme": "Material Icon Theme",
   "buffer_font_family": "JetBrains Mono",
   "buffer_font_size": 15.0,
