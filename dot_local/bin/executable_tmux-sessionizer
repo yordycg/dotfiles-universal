@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# tmux-sessionizer v2.3 — comfortable dynamic height + zero-error exit on cancel
+# tmux-sessionizer v2.4 — dynamic height + floating popup + session deletion (Ctrl-D)
 set -euo pipefail
 
 WORKSPACE="$HOME/workspace"
@@ -15,39 +15,8 @@ should_ignore() {
     return 1
 }
 
-# --- 1. Si no estamos en popup-child y estamos dentro de TMUX, calcular altura y lanzar popup ---
-if [[ "${1:-}" != "--popup-child" ]] && [[ -n "${TMUX:-}" ]]; then
-    declare -A session_by_path
-    if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
-        while IFS=$'\t' read -r name path; do
-            [[ -n "$name" ]] && session_by_path["$path"]="$name"
-        done <<< "$tmux_list"
-    fi
-
-    count=${#session_by_path[@]}
-
-    if [[ -d "$WORKSPACE" ]]; then
-        while IFS= read -r dir; do
-            should_ignore "$dir" && continue
-            [[ -n "${session_by_path[$dir]:-}" ]] && continue
-            ((count++))
-        done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null)
-    fi
-
-    # Altura cómoda: mínimo 14 líneas, máximo 24 líneas
-    height=$(( count + 8 ))
-    if (( height < 14 )); then height=14; fi
-    if (( height > 24 )); then height=24; fi
-
-    exec tmux display-popup -E -w 55% -h "$height" -b rounded -T " 󰌌  Tmux Sessionizer " "$0 --popup-child"
-fi
-
-# Si se pasó un argumento de ruta directa (ej: tmux-sessionizer /ruta/dir)
-if [[ $# -eq 1 ]] && [[ "$1" != "--popup-child" ]]; then
-    selected_path=$1
-    selected_name=$(basename "$selected_path" | tr . _ | tr ' ' _)
-else
-    # --- Interfaz FZF dentro del popup ---
+# --- Generar lista de entradas (usado para render inicial y reload) ---
+generate_entries() {
     declare -A session_by_path
     if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
         while IFS=$'\t' read -r name path; do
@@ -78,26 +47,55 @@ else
         done < <(find "$WORKSPACE" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
     fi
 
-    if [[ ${#entries[@]} -eq 0 ]]; then
-        echo "No hay sesiones ni directorios disponibles" >&2
-        exit 0
+    printf '%s\n' "${entries[@]}"
+}
+
+# --- Subcomando interno para imprimir lista (para +reload de fzf) ---
+if [[ "${1:-}" == "--list" ]]; then
+    generate_entries
+    exit 0
+fi
+
+# --- 1. Si no estamos en popup-child y estamos dentro de TMUX, calcular altura y lanzar popup ---
+if [[ "${1:-}" != "--popup-child" ]] && [[ -n "${TMUX:-}" ]]; then
+    count=$(generate_entries | wc -l)
+
+    height=$(( count + 8 ))
+    if (( height < 14 )); then height=14; fi
+    if (( height > 24 )); then height=24; fi
+
+    exec tmux display-popup -E -w 55% -h "$height" -b rounded -T " 󰌌  Tmux Sessionizer " "$0 --popup-child"
+fi
+
+# Si se pasó un argumento de ruta directa (ej: tmux-sessionizer /ruta/dir)
+if [[ $# -eq 1 ]] && [[ "$1" != "--popup-child" ]]; then
+    selected_path=$1
+    selected_name=$(basename "$selected_path" | tr . _ | tr ' ' _)
+else
+    # --- Interfaz FZF dentro del popup ---
+    declare -A session_by_path
+    if tmux_list=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null); then
+        while IFS=$'\t' read -r name path; do
+            [[ -n "$name" ]] && session_by_path["$path"]="$name"
+        done <<< "$tmux_list"
     fi
 
     PREVIEW_CMD='p=$(echo {} | awk -F"\t" "{print \$NF}"); if [ -d "$p" ]; then eza --tree --level=2 --icons --group-directories-first "$p" 2>/dev/null || ls -la "$p"; fi'
+    KILL_CMD='p=$(echo {} | awk -F"\t" "{print \$NF}"); s=$(tmux list-sessions -F "#{session_name}	#{session_path}" 2>/dev/null | grep "$p" | awk -F"\t" "{print \$1}"); [ -n "$s" ] && tmux kill-session -t "$s"'
 
-    # Capturar fzf sin fallar en cancel (Esc devuelve exit 130, lo capturamos con || true)
-    chosen=$(printf '%s\n' "${entries[@]}" | fzf \
+    chosen=$(generate_entries | fzf \
         --delimiter=$'\t' \
         --with-nth=1 \
         --prompt="   sesión/dir > " \
         --pointer="❯" \
         --marker="✓" \
         --border=none \
-        --header="[Enter]: Seleccionar  |  [Esc]: Salir  |  [Ctrl-P]: Vista previa" \
+        --header="[Enter]: Ir  |  [Ctrl-D]: Eliminar  |  [Ctrl-P]: Vista previa  |  [Esc]: Salir" \
         --color=header:italic,prompt:blue,pointer:bright-blue \
         --preview="$PREVIEW_CMD" \
         --preview-window="right:50%:wrap:hidden" \
-        --bind="ctrl-p:toggle-preview" || true)
+        --bind="ctrl-p:toggle-preview" \
+        --bind="ctrl-d:execute($KILL_CMD)+reload($0 --list)" || true)
 
     if [[ -z "${chosen:-}" ]]; then
         exit 0
