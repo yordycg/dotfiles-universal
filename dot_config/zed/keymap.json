@@ -10,7 +10,26 @@
     }
   },
 
-  // 2. Modo Insert de Vim: Escape Rápido (Tu marca personal)
+  // 2. Navegación y Toggle en el Explorador de Archivos (ProjectPanel)
+  {
+    "context": "ProjectPanel && not_editing",
+    "bindings": {
+      "space e": "project_panel::ToggleFocus",
+      "escape": "project_panel::ToggleFocus",
+      "q": "project_panel::ToggleFocus",
+      "j": "menu::SelectNext",
+      "k": "menu::SelectPrev",
+      "h": "project_panel::CollapseSelectedEntry",
+      "l": "project_panel::ExpandSelectedEntry",
+      "o": "project_panel::OpenPermanent",
+      "a": "project_panel::NewFile",
+      "A": "project_panel::NewDirectory",
+      "r": "project_panel::Rename",
+      "d": "project_panel::Delete"
+    }
+  },
+
+  // 3. Modo Insert de Vim: Escape Rápido (Tu marca personal)
   {
     "context": "Editor && vim_mode == insert && !menu",
     "bindings": {
@@ -19,7 +38,7 @@
     }
   },
 
-  // 3. Atajos Globales y Navegación de Buffers (Inspirados en LazyVim & Nvim-Personal)
+  // 4. Atajos Globales y Navegación de Buffers
   {
     "context": "Workspace",
     "bindings": {
@@ -31,7 +50,7 @@
     }
   },
 
-  // 4. Modo Normal de Vim: Leader Key (Espacio) (Portado de tu Nvim-Personal)
+  // 5. Modo Normal de Vim: Leader Key (Espacio)
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
     "bindings": {
