@@ -1,7 +1,7 @@
 [
-  // 1. Navegación entre Paneles (Consistencia Total)
+  // 1. Navegación entre Paneles (Sin afectar la Terminal)
   {
-    "context": "Dock || Terminal || Editor || ProjectPanel",
+    "context": "Dock || Editor || ProjectPanel",
     "bindings": {
       "ctrl-h": "workspace::ActivatePaneLeft",
       "ctrl-l": "workspace::ActivatePaneRight",
@@ -10,13 +10,24 @@
     }
   },
 
+  // 1b. Navegación desde la Terminal (Usando Ctrl+Alt para no romper Backspace/Enter)
+  {
+    "context": "Terminal",
+    "bindings": {
+      "ctrl-alt-h": "workspace::ActivatePaneLeft",
+      "ctrl-alt-l": "workspace::ActivatePaneRight",
+      "ctrl-alt-k": "workspace::ActivatePaneUp",
+      "ctrl-alt-j": "workspace::ActivatePaneDown"
+    }
+  },
+
   // 2. Navegación y Toggle en el Explorador de Archivos (ProjectPanel)
   {
     "context": "ProjectPanel && not_editing",
     "bindings": {
-      "space e": "project_panel::ToggleFocus",
-      "escape": "project_panel::ToggleFocus",
-      "q": "project_panel::ToggleFocus",
+      "space e": "workspace::ToggleLeftDock",
+      "escape": "workspace::ToggleLeftDock",
+      "q": "workspace::ToggleLeftDock",
       "j": "menu::SelectNext",
       "k": "menu::SelectPrev",
       "h": "project_panel::CollapseSelectedEntry",
@@ -38,25 +49,26 @@
     }
   },
 
-  // 4. Atajos Globales y Navegación de Buffers
+  // 4. Atajos Globales y Navegación de Buffers (Bracket Motions]b / [b)
   {
     "context": "Workspace",
     "bindings": {
       "alt-s": "zed::OpenSettingsFile",
       "alt-k": "zed::OpenKeymapFile",
       "ctrl-`": "terminal_panel::ToggleFocus",
-      "shift-h": "pane::ActivatePrevItem",
-      "shift-l": "pane::ActivateNextItem"
+      "] b": "pane::ActivateNextItem",
+      "[ b": "pane::ActivatePrevItem"
     }
   },
 
-  // 5. Modo Normal de Vim: Leader Key (Espacio)
+  // 5. Modo Normal de Vim: Leader Key (Espacio) (Toggle Verdadero con workspace::ToggleLeftDock)
   {
     "context": "Editor && vim_mode == normal && !VimWaiting && !menu",
     "bindings": {
-      // Explorador & Archivos
-      "space e": "project_panel::ToggleFocus",
+      // Explorador (Toggle de la barra lateral izquierda)
+      "space e": "workspace::ToggleLeftDock",
       "space f f": "file_finder::Toggle",
+      "space f p": "projects::OpenRecent",
       "space p a": "editor::CopyPath",
       "space b d": "pane::CloseActiveItem",
 
@@ -66,10 +78,9 @@
 
       // Git & Diffs
       "space g g": "git_panel::ToggleFocus",
-      "space g s": "git_panel::ToggleFocus",
       "space g h d": "editor::ToggleSelectedDiffHunks",
 
-      // LSP & Acciones de Código (De tu nvim-personal)
+      // LSP & Acciones de Código
       "space c a": "editor::ToggleCodeActions",
       "space .": "editor::ToggleCodeActions",
       "space c r": "editor::Rename",
@@ -85,7 +96,6 @@
       // Alternar Ayudas Visuales
       "space t i": "editor::ToggleInlayHints",
       "space u w": "editor::ToggleSoftWrap",
-      "space f p": "projects::OpenRecent",
       "space s b": "buffer_search::Deploy"
     }
   }
