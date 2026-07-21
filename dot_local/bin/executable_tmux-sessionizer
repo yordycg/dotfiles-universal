@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-# tmux-sessionizer v2 — fusiona sesiones activas + candidatos de directorio
-# Uso:
-#   tmux-sessionizer            -> fzf combinado (sesiones vivas primero, luego candidatos)
-#   tmux-sessionizer /ruta/dir  -> crea/cambia sesión directo a ese dir
-
+# tmux-sessionizer v2.1 — floating fzf + active sessions + workspace projects
 set -euo pipefail
 
 WORKSPACE="$HOME/workspace"
-DEPTH=2                                  # nivel donde viven tus proyectos reales
-IGNORE_NAMES=("wallpapers" ".git" "node_modules" "target" "dist")
+DEPTH=2                                  # Nivel donde viven tus proyectos reales
+IGNORE_NAMES=("wallpapers" ".git" "node_modules" "target" "dist" ".venv" "venv")
 
 should_ignore() {
     local base
@@ -34,34 +30,49 @@ else
 
     entries=()
 
-    # --- 2. Sesiones existentes primero, marcadas con punto ---
+    # --- 2. Sesiones existentes primero ---
     for path in "${!session_by_path[@]}"; do
         name="${session_by_path[$path]}"
-        entries+=("* ${name}  (${path/#$HOME/\~})"$'\t'"$path")
+        entries+=("󰌌  ${name}  (${path/#$HOME/\~})"$'\t'"$path")
     done
 
     # --- 3. Candidatos de nivel $DEPTH (donde viven tus proyectos reales) ---
-    while IFS= read -r dir; do
-        should_ignore "$dir" && continue
-        [[ -n "${session_by_path[$dir]:-}" ]] && continue   # ya es sesión, no duplicar
-        entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
-    done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null | sort)
+    if [[ -d "$WORKSPACE" ]]; then
+        while IFS= read -r dir; do
+            should_ignore "$dir" && continue
+            [[ -n "${session_by_path[$dir]:-}" ]] && continue   # ya es sesión, no duplicar
+            entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
+        done < <(find "$WORKSPACE" -mindepth "$DEPTH" -maxdepth "$DEPTH" -type d 2>/dev/null | sort)
 
-    # --- 4. Fallback: dirs de nivel 1 SIN subcarpetas (proyectos sueltos, ej: ipvg si es hoja) ---
-    while IFS= read -r dir; do
-        should_ignore "$dir" && continue
-        [[ -n "${session_by_path[$dir]:-}" ]] && continue
-        if ! find "$dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -q .; then
-            entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
-        fi
-    done < <(find "$WORKSPACE" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+        # --- 4. Fallback: dirs de nivel 1 SIN subcarpetas ---
+        while IFS= read -r dir; do
+            should_ignore "$dir" && continue
+            [[ -n "${session_by_path[$dir]:-}" ]] && continue
+            if ! find "$dir" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | grep -q .; then
+                entries+=("  ${dir/#$HOME/\~}"$'\t'"$dir")
+            fi
+        done < <(find "$WORKSPACE" -mindepth 1 -maxdepth 1 -type d 2>/dev/null | sort)
+    fi
 
     if [[ ${#entries[@]} -eq 0 ]]; then
         echo "No hay sesiones ni directorios disponibles" >&2
         exit 1
     fi
 
-    chosen=$(printf '%s\n' "${entries[@]}" | fzf --delimiter=$'\t' --with-nth=1 --prompt="sesion/dir > ")
+    PREVIEW_CMD='p=$(echo {} | awk -F"\t" "{print \$NF}"); if [ -d "$p" ]; then eza --tree --level=2 --icons --group-directories-first "$p" 2>/dev/null || ls -la "$p"; fi'
+
+    chosen=$(printf '%s\n' "${entries[@]}" | fzf \
+        --delimiter=$'\t' \
+        --with-nth=1 \
+        --prompt="   sesión/dir > " \
+        --pointer="❯" \
+        --marker="✓" \
+        --border=rounded \
+        --header="[Enter]: Seleccionar  |  [Esc]: Salir" \
+        --color=header:italic,prompt:blue,pointer:bright-blue \
+        --preview="$PREVIEW_CMD" \
+        --preview-window="right:45%:wrap")
+
     [[ -z "$chosen" ]] && exit 0
 
     selected_path=$(echo "$chosen" | awk -F'\t' '{print $NF}')
