@@ -31,4 +31,11 @@
   - Configurar integración con iOS usando **Working Copy** + **Atajos de Apple (Shortcuts)** para enviar notas rápidas desde el iPhone al repositorio de Obsidian vía Git.
 - [ ] Evaluar migración total de Tmux a `lazy-tmux`
   - Evaluar reemplazar la pila actual (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por una suite única e integrada basada en `lazy-tmux` (daemon de autosave + TUI picker).
+- [ ] Implementar herramienta `herdr`
+  - Evaluar e integrar `herdr` en la matriz de herramientas para gestión de proyectos y flujos de trabajo en terminal.
+- [ ] Implementar agente IA de código `opencode`
+  - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh.
+- [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
+  - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal.
+
 
