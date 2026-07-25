@@ -1,10 +1,10 @@
 [Desktop Entry]
 Categories=Development;
 Comment=Play with APIs, intuitively
-Exec=env GDK_BACKEND=x11 yaak-app-client %U
+Exec=env WEBKIT_DISABLE_COMPOSITING_MODE=1 GDK_BACKEND=x11 yaak-app-client %U
 Icon=yaak-app-client
 Name=Yaak
-StartupWMClass=Yaak-app
+StartupWMClass=yaak-app
 Terminal=false
 Type=Application
 GenericName=API Client
