@@ -140,6 +140,7 @@ arch:
     - wlogout
     - snappy-switcher
     - visual-studio-code-bin
+    - bruno-bin
 
 debian:
   base:

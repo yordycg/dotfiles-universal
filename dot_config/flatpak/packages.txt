@@ -7,7 +7,6 @@ com.discordapp.Discord
 org.videolan.VLC
 com.spotify.Client
 org.onlyoffice.desktopeditors
-com.usebruno.Bruno
 com.brave.Browser
 com.microsoft.Edge
 com.google.Chrome

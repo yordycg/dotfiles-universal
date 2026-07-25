@@ -124,8 +124,18 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 hl.bind("CONTROL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || /home/yordycg/.local/bin/wlogout.sh"))
 
 -- Zoom factor controls
-hl.bind(mainMod .. " + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"))
+hl.bind(
+	mainMod .. " + mouse_down",
+	hl.dsp.exec_cmd(
+		"hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"
+	)
+)
+hl.bind(
+	mainMod .. " + mouse_up",
+	hl.dsp.exec_cmd(
+		"hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '(.float * 0.9) | if . < 1 then 1 else . end')"
+	)
+)
 hl.bind(mainMod .. " + SHIFT + mouse_up", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
 hl.bind(mainMod .. " + SHIFT + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
 hl.bind(mainMod .. " + SHIFT + 0", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor 1"))
@@ -139,8 +149,3 @@ hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo t
 -- Selector TAB
 hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod super"))
 hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev --mod super"))
-
--- Tmux Workspaces (Dotfiles, Notas de Obsidian y Learning Path)
-hl.bind(mainMod .. " + SHIFT + D", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Dotfiles Workspace' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'dotfiles'"))
-hl.bind(mainMod .. " + SHIFT + N", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Obsidian Notes' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'notes'"))
-hl.bind(mainMod .. " + SHIFT + L", hl.dsp.exec_cmd("kitty --class 'workspace-float' --title 'Learning Workspace' -o remember_window_size=no -o initial_window_width=145c -o initial_window_height=40c zsh -ic 'learn'"))
