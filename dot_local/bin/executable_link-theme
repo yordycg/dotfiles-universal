@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
-# link-theme.sh — Enlazador Estático de Archivos de Tema (Silencioso)
-# Crea los symlinks correspondientes al tema en disco sin efectos secundarios.
+# link-theme — Static Theme Symlink Linker (Silent)
+# Creates symlinks corresponding to the target theme on disk without side effects.
 # =============================================================================
 set -euo pipefail
 
@@ -19,11 +19,11 @@ if [ ! -d "$THEME_DIR" ]; then
     exit 1
 fi
 
-# Guardar estado actual de forma silenciosa
+# Save current theme state
 mkdir -p "$THEMES_DIR"
 echo "$THEME" > "$THEMES_DIR/.current-theme"
 
-# Función segura para crear enlaces simbólicos asegurando directorios padres
+# Safe function to create symlinks ensuring parent directories exist
 safe_link() {
     local src="$1"
     local dest="$2"
