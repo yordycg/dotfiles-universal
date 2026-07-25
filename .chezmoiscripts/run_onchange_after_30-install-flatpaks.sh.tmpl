@@ -35,11 +35,6 @@ if [ -f "$PACKAGES_FILE" ]; then
     done < "$PACKAGES_FILE"
 fi
 
-# Parchear ejecutable de Bruno para deshabilitar GPU crash en NVIDIA/Wayland
-DESKTOP_BRUNO="{{ .chezmoi.homeDir }}/.local/share/flatpak/exports/share/applications/com.usebruno.Bruno.desktop"
-if [ -f "$DESKTOP_BRUNO" ]; then
-    sed -i 's/com.usebruno.Bruno @@u/com.usebruno.Bruno --disable-gpu @@u/g' "$DESKTOP_BRUNO" 2>/dev/null || true
-fi
 
 echo "✓ Aplicaciones Flatpak sincronizadas."
 {{ else -}}
