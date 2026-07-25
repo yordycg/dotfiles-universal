@@ -19,6 +19,9 @@ echo "→ Configurando Flatpak y aplicaciones gráficas..."
 # Añadir Flathub si no existe
 flatpak remote-add --user --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
 
+# Actualizar extensiones de runtime de Flatpak (drivers NVIDIA/Mesa)
+flatpak update --user -y || true
+
 # Instalar paquetes desde la lista
 PACKAGES_FILE="{{ .chezmoi.homeDir }}/.config/flatpak/packages.txt"
 
