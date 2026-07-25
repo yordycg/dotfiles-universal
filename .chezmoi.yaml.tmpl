@@ -56,7 +56,6 @@
 {{- end -}}
 {{- $hasKey := stat $keyPath | not | not -}}
 
-{{/* ── OUTPUT YAML ─────────────────────────────────────────────── */}}
 {{ if $hasKey -}}
 encryption: "age"
 age:
@@ -65,6 +64,9 @@ age:
 {{- else -}}
 # Encryption not configured: age key not found
 {{- end }}
+
+diff:
+  pager: "less -R"
 
 data:
   # ── Estructura Multi-Nodo Nueva ──
