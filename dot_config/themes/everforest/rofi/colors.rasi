@@ -1,0 +1,32 @@
+/**
+ * Everforest Dark Rofi Palette
+ **/
+
+* {
+    bg0: #2b3339FF;
+    bg1: #323c41FF;
+    bg2: #3a454aFF;
+    bg3: #445055FF;
+    bg4: #4c565aFF;
+
+    fg:     #d3c6aaFF;
+    red:    #e67e80FF;
+    orange: #e69875FF;
+    yellow: #dbbc7fFF;
+    green:  #a7c080FF;
+    aqua:   #83c092FF;
+    blue:   #7fbbb3FF;
+    purple: #d699b6FF;
+
+    grey0: #9da9a0FF;
+    grey1: #859289FF;
+    grey2: #7a8478FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @green;   /* Acento principal de Everforest */
+    active:         @blue;
+    urgent:         @red;
+}
