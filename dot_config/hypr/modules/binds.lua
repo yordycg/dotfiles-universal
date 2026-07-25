@@ -121,7 +121,7 @@ hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd("hyprctl kill"))
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 
 -- Logout Menu (wlogout)
-hl.bind("CONTROL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || wlogout -l .config/wlogout/layout -C .config/wlogout/style.css -b 5 -p layer-shell -B 400 -T 400"))
+hl.bind("CONTROL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || wlogout.sh"))
 
 -- Zoom factor controls
 hl.bind(mainMod .. " + mouse_down", hl.dsp.exec_cmd("hyprctl -q keyword cursor:zoom_factor $(hyprctl getoption cursor:zoom_factor -j | jq '.float * 1.1')"))

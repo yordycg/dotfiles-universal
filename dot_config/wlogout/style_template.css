@@ -1,4 +1,4 @@
-@import "/home/yordycg/.config/wlogout/colors/colors.css";
+@import "${HOME}/.config/wlogout/colors/colors.css";
 
 * {
     background-image: none;
@@ -60,25 +60,26 @@ button:hover#reboot {
 
 /* Default positions and outer-corner rounding (forming a single large square in center) */
 #lock {
-    background-image: image(url("/home/yordycg/.config/wlogout/icons/lock_white.png"), url("/usr/share/wlogout/icons/lock.png"));
+    background-image: image(url("${HOME}/.config/wlogout/icons/lock_white.png"), url("/usr/share/wlogout/icons/lock.png"));
     border-radius: ${button_rad}px 0px 0px 0px;
     margin: ${y_mgn}px 0px 0px ${x_mgn}px;
 }
 
 #logout {
-    background-image: image(url("/home/yordycg/.config/wlogout/icons/logout_white.png"), url("/usr/share/wlogout/icons/logout.png"));
+    background-image: image(url("${HOME}/.config/wlogout/icons/logout_white.png"), url("/usr/share/wlogout/icons/logout.png"));
     border-radius: 0px 0px 0px ${button_rad}px;
     margin: 0px 0px ${y_mgn}px ${x_mgn}px;
 }
 
 #shutdown {
-    background-image: image(url("/home/yordycg/.config/wlogout/icons/shutdown_white.png"), url("/usr/share/wlogout/icons/shutdown.png"));
+    background-image: image(url("${HOME}/.config/wlogout/icons/shutdown_white.png"), url("/usr/share/wlogout/icons/shutdown.png"));
     border-radius: 0px ${button_rad}px 0px 0px;
     margin: ${y_mgn}px ${x_mgn}px 0px 0px;
 }
 
 #reboot {
-    background-image: image(url("/home/yordycg/.config/wlogout/icons/reboot_white.png"), url("/usr/share/wlogout/icons/reboot.png"));
+    background-image: image(url("${HOME}/.config/wlogout/icons/reboot_white.png"), url("/usr/share/wlogout/icons/reboot.png"));
     border-radius: 0px 0px ${button_rad}px 0px;
     margin: 0px ${x_mgn}px ${y_mgn}px 0px;
 }
+
