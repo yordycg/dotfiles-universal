@@ -1,0 +1,32 @@
+/**
+ * Kanagawa-dragon Rofi Palette
+ **/
+
+* {
+    bg0: #181616FF;
+    bg1: #12120fFF;
+    bg2: #1d1c19FF;
+    bg3: #282727FF;
+    bg4: #393836FF;
+
+    fg:     #c5c9c5FF;
+    red:    #c4746eFF;
+    orange: #b6927bFF;
+    yellow: #c4b28aFF;
+    green:  #87a987FF;
+    aqua:   #8ea4a2FF;
+    blue:   #658594FF;
+    purple: #a292a3FF;
+
+    grey0: #737c73FF;
+    grey1: #625e5aFF;
+    grey2: #4a4744FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @green;
+    active:         @blue;
+    urgent:         @red;
+}

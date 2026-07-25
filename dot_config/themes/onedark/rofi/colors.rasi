@@ -1,0 +1,32 @@
+/**
+ * Onedark Rofi Palette
+ **/
+
+* {
+    bg0: #282c34FF;
+    bg1: #21252bFF;
+    bg2: #1b1d23FF;
+    bg3: #3e4451FF;
+    bg4: #4b5263FF;
+
+    fg:     #abb2bfFF;
+    red:    #e06c75FF;
+    orange: #d19a66FF;
+    yellow: #e5c07bFF;
+    green:  #98c379FF;
+    aqua:   #56b6c2FF;
+    blue:   #61afefFF;
+    purple: #c678ddFF;
+
+    grey0: #abb2bfFF;
+    grey1: #5c6370FF;
+    grey2: #4b5263FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @blue;
+    active:         @blue;
+    urgent:         @red;
+}

@@ -1,0 +1,32 @@
+/**
+ * Catppuccin Rofi Palette
+ **/
+
+* {
+    bg0: #1e1e2eFF;
+    bg1: #181825FF;
+    bg2: #11111bFF;
+    bg3: #313244FF;
+    bg4: #45475aFF;
+
+    fg:     #cdd6f4FF;
+    red:    #f38ba8FF;
+    orange: #fab387FF;
+    yellow: #f9e2afFF;
+    green:  #a6e3a1FF;
+    aqua:   #94e2d5FF;
+    blue:   #89b4faFF;
+    purple: #cba6f7FF;
+
+    grey0: #a6adc8FF;
+    grey1: #bac2deFF;
+    grey2: #585b70FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @green;
+    active:         @blue;
+    urgent:         @red;
+}

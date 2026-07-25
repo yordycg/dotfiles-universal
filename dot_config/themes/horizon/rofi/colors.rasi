@@ -1,0 +1,32 @@
+/**
+ * Horizon Rofi Palette
+ **/
+
+* {
+    bg0: #1c1e26FF;
+    bg1: #232530FF;
+    bg2: #2e303eFF;
+    bg3: #393c4eFF;
+    bg4: #474a5eFF;
+
+    fg:     #e0e0e0FF;
+    red:    #e95678FF;
+    orange: #fab795FF;
+    yellow: #fac39bFF;
+    green:  #29d398FF;
+    aqua:   #59e1e3FF;
+    blue:   #26bbd9FF;
+    purple: #ee64acFF;
+
+    grey0: #d5d8daFF;
+    grey1: #a6accdFF;
+    grey2: #6c6f93FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @red;
+    active:         @blue;
+    urgent:         @red;
+}

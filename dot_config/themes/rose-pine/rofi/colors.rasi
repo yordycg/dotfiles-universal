@@ -1,0 +1,32 @@
+/**
+ * Rose-pine Rofi Palette
+ **/
+
+* {
+    bg0: #191724FF;
+    bg1: #1f1d2eFF;
+    bg2: #26233aFF;
+    bg3: #393552FF;
+    bg4: #44415aFF;
+
+    fg:     #e0def4FF;
+    red:    #eb6f92FF;
+    orange: #f6c177FF;
+    yellow: #ebbcbaFF;
+    green:  #31748fFF;
+    aqua:   #9ccfd8FF;
+    blue:   #9ccfd8FF;
+    purple: #c4a7e7FF;
+
+    grey0: #908caaFF;
+    grey1: #6e6a86FF;
+    grey2: #26233aFF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @purple;
+    active:         @blue;
+    urgent:         @red;
+}

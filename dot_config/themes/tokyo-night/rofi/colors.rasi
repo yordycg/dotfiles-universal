@@ -1,0 +1,32 @@
+/**
+ * Tokyo-night Rofi Palette
+ **/
+
+* {
+    bg0: #1a1b26FF;
+    bg1: #24283bFF;
+    bg2: #1f2335FF;
+    bg3: #292e42FF;
+    bg4: #414868FF;
+
+    fg:     #c0caf5FF;
+    red:    #f7768eFF;
+    orange: #ff9e64FF;
+    yellow: #e0af68FF;
+    green:  #9ece6aFF;
+    aqua:   #73dacaFF;
+    blue:   #7aa2f7FF;
+    purple: #bb9af7FF;
+
+    grey0: #a9b1d6FF;
+    grey1: #787c99FF;
+    grey2: #565f89FF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @blue;
+    active:         @blue;
+    urgent:         @red;
+}

@@ -1,0 +1,32 @@
+/**
+ * Nord Rofi Palette
+ **/
+
+* {
+    bg0: #2e3440FF;
+    bg1: #3b4252FF;
+    bg2: #434c5eFF;
+    bg3: #4c566aFF;
+    bg4: #434c5eFF;
+
+    fg:     #d8dee9FF;
+    red:    #bf616aFF;
+    orange: #d08770FF;
+    yellow: #ebcb8bFF;
+    green:  #a3be8cFF;
+    aqua:   #8fbcbbFF;
+    blue:   #88c0d0FF;
+    purple: #b48eadFF;
+
+    grey0: #e5e9f0FF;
+    grey1: #eceff4FF;
+    grey2: #4c566aFF;
+
+    /* SEMANTIC MAPPINGS FOR ROFI */
+    background:     @bg0;
+    background-alt: @bg1;
+    foreground:     @fg;
+    selected:       @blue;
+    active:         @blue;
+    urgent:         @red;
+}

@@ -1,0 +1,33 @@
+@define-color bg0 #282c34;
+@define-color bg1 #21252b;
+@define-color bg2 #1b1d23;
+@define-color bg3 #3e4451;
+@define-color bg4 #4b5263;
+
+@define-color fg #abb2bf;
+@define-color red  #e06c75;
+@define-color orange #d19a66;
+@define-color yellow #e5c07b;
+@define-color green #98c379;
+@define-color aqua #56b6c2;
+@define-color blue #61afef;
+@define-color purple #c678dd;
+
+@define-color grey0 #abb2bf;
+@define-color grey1 #5c6370;
+@define-color grey2 #4b5263;
+
+/* Semantic aliases used by the config */
+@define-color background                @bg1;
+@define-color background-alt            @bg2;
+@define-color hover                     @bg3;
+@define-color selected                  @blue;
+
+@define-color text                      @fg;
+@define-color text-alt                  @grey0;
+
+@define-color notification-bg           @bg1;
+@define-color center-bg                 @bg0;
+@define-color center-notification-bg    @bg2;
+
+@define-color urgent                    @red;
