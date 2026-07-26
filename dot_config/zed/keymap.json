@@ -8,25 +8,22 @@
   {
     "context": "Workspace",
     "bindings": {
-      "ctrl-e": "project_panel::ToggleFocus",
-      "ctrl-t": "terminal_panel::ToggleFocus", // REVISAR nombre de acción
+      "ctrl-e": "project_panel::Toggle",
+      "ctrl-t": "terminal_panel::Toggle",
       "ctrl-shift-'": "workspace::NewTerminal"
     }
   },
 
   // Reveal del archivo actual en el árbol (lo que antes hacía tu ctrl+b)
   {
-    "context": "Editor",
+    "context": "!AcpThread > Editor && mode == full",
     "bindings": {
-      "ctrl-b": "project_panel::RevealInProjectPanel" // REVISAR nombre exacto
+      "ctrl-b": "pane::RevealInProjectPanel"
     }
   },
 
   // -----------------------------------------------------------------
-  // Estilo NERDTree: shortcuts de una sola letra cuando el explorador
-  // tiene el foco (igual que tenías en VSCode con filesExplorerFocus).
-  // "not_editing" evita que disparen mientras estás escribiendo el
-  // nombre de un archivo/carpeta nuevo. REVISAR ese predicado exacto.
+  // Estilo NERDTree
   // -----------------------------------------------------------------
   {
     "context": "ProjectPanel && not_editing",
@@ -34,7 +31,7 @@
       "a": "project_panel::NewFile",
       "shift-a": "project_panel::NewDirectory",
       "r": "project_panel::Rename",
-      "d": "project_panel::Trash", // o project_panel::Delete si preferís sin papelera
+      "d": "project_panel::Delete",
       "c": "project_panel::Copy",
       "p": "project_panel::Paste"
     }
@@ -57,8 +54,8 @@
   {
     "context": "Terminal",
     "bindings": {
-      "shift-a": "pane::ActivateNextItem", // REVISAR nombre de acción
-      "shift-b": "pane::ActivatePreviousItem", // REVISAR nombre de acción
+      "shift-a": "pane::ActivateNextItem",
+      "shift-b": "pane::ActivatePreviousItem",
       "shift-n": "workspace::NewTerminal"
     }
   }

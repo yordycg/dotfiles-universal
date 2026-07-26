@@ -9,18 +9,16 @@
   // ---------------------------------------------------------------------
   "theme": {
     "mode": "dark",
-    "dark": "Gruvbox Material Dark",
-    "light": "Gruvbox Material Light"
+    "dark": "Gruvbox Material",
+    "light": "Gruvbox Material",
   },
-  // REVISAR igual: instalá una extensión tipo "Material Icon Theme" y
-  // confirmá el nombre con "icon theme selector: toggle".
   "icon_theme": "Material Icon Theme",
 
   // ---------------------------------------------------------------------
   // FUENTES
   // ---------------------------------------------------------------------
   "buffer_font_family": "JetBrainsMono Nerd Font Mono",
-  "buffer_font_fallbacks": ["Nerd Font"],
+  "buffer_font_fallbacks": [".ZedMono"],
   "buffer_font_size": 16,
   "buffer_font_weight": 400,
   "buffer_line_height": "comfortable", // { "custom": 1.8 },
@@ -99,7 +97,7 @@
   // EDITOR: LAYOUT VISUAL
   // Sin minimap, sin scrollbar, sin breadcrumbs, números relativos
   // ---------------------------------------------------------------------
-  "relative_line_numbers": true,
+  "relative_line_numbers": "enabled",
   "current_line_highlight": "all",
   "cursor_shape": "bar",
   "cursor_blink": true,
@@ -116,7 +114,7 @@
 
   "show_whitespaces": "none",
   "preferred_line_length": 100,
-  "soft_wrap": "preferred_line_length",
+  "soft_wrap": "bounded",
   "wrap_guides": [100],
   "show_wrap_guides": true,
 
@@ -151,9 +149,6 @@
   },
 
   // Motor de predicciones activado, cambiar a "none" para apagar.
-  "features": {
-    "edit_prediction_provider": "zed"
-  },
   "edit_predictions_disabled_in": ["comment", "string"],
 
   // ---------------------------------------------------------------------
