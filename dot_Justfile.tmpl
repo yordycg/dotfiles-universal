@@ -29,8 +29,8 @@ save MSG="feat: update dotfiles":
 
 # ── Linux / Workspace ──────────────────────────────────────────────
 
-project-new NAME CATEGORY="personal" LANG="generic":
-    @scaffold-project.sh {{`{{NAME}}` }} {{`{{CATEGORY}}` }} {{`{{LANG}}` }}
+new-project NAME:
+    @new-project {{`{{NAME}}` }}
 
 install:
     @if [ -f /etc/fedora-release ]; then \
