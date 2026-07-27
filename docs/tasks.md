@@ -29,8 +29,8 @@
   - Crear script ejecutable para generar/abrir notas en `~/workspace/assets/obsidian/Inbox/` nombradas por fecha/hora (`YYYY-MM-DD_HHMMSS.md`).
   - Configurar regla de ventana flotante en Hyprland e integrar bind en Lua (`binds.lua`) para abrir Neovim en terminal flotante dedicada.
   - Configurar integración con iOS usando **Working Copy** + **Atajos de Apple (Shortcuts)** para enviar notas rápidas desde el iPhone al repositorio de Obsidian vía Git.
-- [ ] Evaluar migración total de Tmux a `lazy-tmux`
-  - Evaluar reemplazar la pila actual (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por una suite única e integrada basada en `lazy-tmux` (daemon de autosave + TUI picker).
+- [x] Evaluar migración total de Tmux a `lazy-tmux`
+  - Reemplazar la pila anterior (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por `lazy-tmux` en `tmux.conf.tmpl` y la matriz `packages.yaml`.
 - [ ] Implementar herramienta `herdr`
   - Evaluar e integrar `herdr` en la matriz de herramientas para gestión de proyectos y flujos de trabajo en terminal.
 - [ ] Implementar agente IA de código `opencode`

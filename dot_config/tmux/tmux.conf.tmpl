@@ -75,9 +75,9 @@ bind-key -n MouseDown3Pane run "wl-paste | tmux load-buffer - && tmux paste-buff
 set -g @plugin 'tmux-plugins/tpm'
 set -g @plugin 'tmux-plugins/tmux-sensible'
 set -g @plugin 'christoomey/vim-tmux-navigator'
-set -g @plugin 'omerxx/tmux-sessionx'
-set -g @plugin 'tmux-plugins/tmux-resurrect'
-set -g @plugin 'tmux-plugins/tmux-continuum'
+#set -g @plugin 'omerxx/tmux-sessionx'
+#set -g @plugin 'tmux-plugins/tmux-resurrect'
+#set -g @plugin 'tmux-plugins/tmux-continuum'
 set -g @plugin 'sainnhe/tmux-fzf'
 set -g @plugin 'omerxx/tmux-floax'
 
@@ -85,20 +85,20 @@ set -g @plugin 'omerxx/tmux-floax'
 set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.config/tmux/plugins/'
 
 # Resurrect & Continuum (Persistencia Indestructible)
-set -g @resurrect-capture-pane-contents 'on'
-set -g @resurrect-strategy-nvim 'session'
-set -g @continuum-restore 'on'
-set -g @continuum-save-interval '10'
+#set -g @resurrect-capture-pane-contents 'on'
+#set -g @resurrect-strategy-nvim 'session'
+#set -g @continuum-restore 'on'
+#set -g @continuum-save-interval '10'
 
 # SessionX (Fuzzy Session Selector & Command Palette)
-set -g @sessionx-bind 's'
-set -g @sessionx-zoxide-mode 'on'
-set -g @sessionx-fzf-builtin-tmux 'on'
-set -g @sessionx-window-height '55%'
-set -g @sessionx-window-width '55%'
-set -g @sessionx-preview-enabled 'false'
-set -g @sessionx-auto-accept 'off'
-set -g @sessionx-filter-current 'false'
+#set -g @sessionx-bind 's'
+#set -g @sessionx-zoxide-mode 'on'
+#set -g @sessionx-fzf-builtin-tmux 'on'
+#set -g @sessionx-window-height '55%'
+#set -g @sessionx-window-width '55%'
+#set -g @sessionx-preview-enabled 'false'
+#set -g @sessionx-auto-accept 'off'
+#set -g @sessionx-filter-current 'false'
 
 # Floax (Floating Terminal Overlay)
 set -g @floax-width '80%'
@@ -118,7 +118,11 @@ set -g @icon_prefix "󰌌"
 set -g @icon_zoom "󰊓"
 set -g @icon_ssh "󰌘"
 
-bind-key f run-shell "~/.local/bin/tmux-sessionizer"
+#bind-key f run-shell "~/.local/bin/tmux-sessionizer"
+
+# Lazy tmux confi
+bind-key C-s run-shell 'lazy-tmux save --all --scrollback && tmux display-message "All sessions saved!"'
+bind-key f display-popup -B -E 'lazy-tmux picker'
 
 # --- Auto-install TPM & Plugins ---
 if "test ! -d ~/.config/tmux/plugins/tpm" \

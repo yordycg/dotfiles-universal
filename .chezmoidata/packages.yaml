@@ -141,6 +141,7 @@ arch:
     - snappy-switcher
     - visual-studio-code-bin
     - yaak-bin
+    - lazy-tmux
 
 debian:
   base:
