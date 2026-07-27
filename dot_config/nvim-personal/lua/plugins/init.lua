@@ -2,7 +2,6 @@
 -- PLUGINS (vim.pack)
 -- ************************************************************************************************
 vim.pack.add {
-  -- Colorscheme / Theme
   {
     src = 'https://github.com/catppuccin/nvim',
     name = 'catppuccin',

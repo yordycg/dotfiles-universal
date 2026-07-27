@@ -2,6 +2,17 @@
 -- OPTIONS
 -- ************************************************************************************************
 
+require('catppuccin').setup({
+  transparent_background = true,
+  integrations = {
+    cmp = true,
+    gitsigns = true,
+    nvimtree = true,
+    treesitter = true,
+    fzf = true,
+  },
+})
+
 local function set_transparent() -- set UI component to transparent
   local group = {
     'Normal',
@@ -23,10 +34,14 @@ local function set_transparent() -- set UI component to transparent
   vim.api.nvim_set_hl(0, 'TabLineFill', { bg = 'none', fg = '#767676' })
 end
 
-set_transparent()
+vim.api.nvim_create_autocmd('ColorScheme', {
+  pattern = '*',
+  callback = set_transparent,
+})
 
 vim.opt.termguicolors = true
 vim.cmd.colorscheme 'catppuccin'
+set_transparent()
 
 vim.opt.number = true -- line number
 vim.opt.relativenumber = true -- relative line numbers
