@@ -120,8 +120,13 @@ hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd("hyprctl kill"))
 -- Color Picker
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 
+-- Wallpaper Switcher
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/wallpaper-switch.sh"))
+
 -- Logout Menu (wlogout)
-hl.bind("CONTROL + ALT + Delete", hl.dsp.exec_cmd("pkill wlogout || /home/yordycg/.local/bin/wlogout.sh"))
+hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd("pkill wlogout || " .. (os.getenv("HOME") or "") .. "/.local/bin/wlogout.sh"))
+
+
 
 -- Zoom factor controls
 hl.bind(

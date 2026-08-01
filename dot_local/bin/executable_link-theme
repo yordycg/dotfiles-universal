@@ -68,8 +68,3 @@ if [ -f "$THEME_DIR/tmux/colors.conf" ]; then
     safe_link "$THEME_DIR/tmux/colors.conf" "$HOME/.config/tmux/colors.conf"
 fi
 
-# 8. Wallpaper
-WALLPAPER=$(find "$THEME_DIR/wallpapers" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -n 1 || echo "")
-if [ -n "$WALLPAPER" ]; then
-    safe_link "$WALLPAPER" "$HOME/.config/hypr/wallpaper"
-fi

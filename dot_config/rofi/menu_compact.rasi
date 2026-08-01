@@ -1,0 +1,88 @@
+/*******************************************************************************
+ * Rofi Theme: Compact Quick Menu (WiFi / Bluetooth)
+ *******************************************************************************/
+
+configuration {
+    show-icons:      true;
+    hover-select:    true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+* {
+    bg-base:          rgba(30, 30, 46, 0.90);
+    bg-surface:       rgba(255, 255, 255, 0.06);
+    border-color:     rgba(255, 255, 255, 0.15);
+    fg-main:          #cdd6f4;
+    fg-muted:         #a6adc8;
+    accent-color:     #89b4fa;
+    font:             "Sans 11";
+    background-color: transparent;
+    text-color:       @fg-main;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    fullscreen:       false;
+    width:            480px;
+    border:           1px;
+    border-color:     @border-color;
+    border-radius:    14px;
+    background-color: @bg-base;
+}
+
+mainbox {
+    spacing:          10px;
+    padding:          16px;
+    children:         [ "inputbar", "listview" ];
+}
+
+inputbar {
+    spacing:          10px;
+    padding:          10px 14px;
+    border-radius:    8px;
+    background-color: @bg-surface;
+    border:           1px;
+    border-color:     @border-color;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    text-color:       @accent-color;
+    font:             "Sans Bold 11";
+}
+
+entry {
+    placeholder:      "Filtrar...";
+    placeholder-color: @fg-muted;
+}
+
+listview {
+    columns:          1;
+    lines:            8;
+    cycle:            true;
+    spacing:          6px;
+    scrollbar:        false;
+}
+
+element {
+    padding:          8px 12px;
+    border-radius:    8px;
+    background-color: transparent;
+    text-color:       @fg-main;
+    cursor:           pointer;
+}
+
+element selected {
+    background-color: rgba(137, 180, 250, 0.2);
+    text-color:       #ffffff;
+    border:           1px;
+    border-color:     @accent-color;
+}
+
+element-text {
+    horizontal-align: 0.0;
+    vertical-align:   0.5;
+}

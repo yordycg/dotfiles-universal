@@ -20,21 +20,15 @@ hl.monitor({
 	scale = "1.00",
 })
 
--- Reglas de Workspaces para el Monitor Principal
-hl.workspace_rule({ workspace = "1", monitor = "DP-2", persistent = true })
-hl.workspace_rule({ workspace = "2", monitor = "DP-2", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "DP-2", persistent = true })
-hl.workspace_rule({ workspace = "4", monitor = "DP-2", persistent = true })
-hl.workspace_rule({ workspace = "5", monitor = "DP-2", persistent = true })
-
--- Reglas de Workspaces para el Monitor Secundario
-hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-1", persistent = true })
+-- DP-2 gets 1-5, HDMI-A-1 gets 6-10
+for i = 1, 5 do
+    hl.workspace_rule({workspace = tostring(i), monitor = "DP-2", persistent = true, default = (i == 1) })
+end
+for i = 6, 10 do
+    hl.workspace_rule({workspace = tostring(i), monitor = "HDMI-A-1", persistent = true, default = (i == 6) })
+end
 {{- else }}
--- Fallback automático para portátiles o perfiles no-desktop
+-- Fallback automático para cualquier monitor
 hl.monitor({
 	output = "",
 	mode = "preferred",

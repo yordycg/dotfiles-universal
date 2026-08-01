@@ -1,0 +1,127 @@
+/*******************************************************************************
+ * Rofi Theme: Wallpaper Switcher Gallery
+ *******************************************************************************/
+
+configuration {
+    show-icons: true;
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
+* {
+    bg-base:          rgba(30, 30, 46, 0.85);
+    bg-surface:       rgba(255, 255, 255, 0.05);
+    border-color:     rgba(255, 255, 255, 0.15);
+    fg-main:          #cdd6f4;
+    fg-muted:         #a6adc8;
+    accent-color:     #89b4fa;
+    accent-hover:     rgba(137, 180, 250, 0.25);
+    font:             "Sans 11";
+    background-color: transparent;
+    text-color:       @fg-main;
+}
+
+window {
+    transparency:     "real";
+    location:         center;
+    anchor:           center;
+    fullscreen:       false;
+    width:            920px;
+    height:           580px;
+    x-offset:         0px;
+    y-offset:         0px;
+
+    enabled:          true;
+    border:           1px;
+    border-color:     @border-color;
+    border-radius:    16px;
+    background-color: @bg-base;
+    cursor:           "default";
+}
+
+mainbox {
+    enabled:          true;
+    spacing:          15px;
+    padding:          20px;
+    background-color: transparent;
+    children:         [ "inputbar", "listview" ];
+}
+
+inputbar {
+    enabled:          true;
+    spacing:          10px;
+    padding:          12px 16px;
+    border-radius:    10px;
+    background-color: @bg-surface;
+    border:           1px;
+    border-color:     @border-color;
+    text-color:       @fg-main;
+    children:         [ "prompt", "entry" ];
+}
+
+prompt {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       @accent-color;
+    font:             "Sans Bold 11";
+}
+
+entry {
+    enabled:          true;
+    background-color: transparent;
+    text-color:       @fg-main;
+    cursor:           text;
+    placeholder:      "Buscar fondo de pantalla...";
+    placeholder-color: @fg-muted;
+}
+
+listview {
+    enabled:          true;
+    columns:          4;
+    lines:            3;
+    cycle:            true;
+    dynamic:          true;
+    scrollbar:        false;
+    layout:           vertical;
+    reverse:          false;
+    fixed-height:     true;
+    fixed-columns:    true;
+    spacing:          14px;
+    background-color: transparent;
+}
+
+element {
+    enabled:          true;
+    orientation:      vertical;
+    spacing:          6px;
+    padding:          10px;
+    border-radius:    12px;
+    background-color: @bg-surface;
+    text-color:       @fg-main;
+    cursor:           pointer;
+    border:           1px;
+    border-color:     transparent;
+}
+
+element selected {
+    background-color: @accent-hover;
+    border-color:     @accent-color;
+    text-color:       #ffffff;
+}
+
+element-icon {
+    background-color: transparent;
+    size:             130px;
+    horizontal-align: 0.5;
+    cursor:           inherit;
+}
+
+element-text {
+    background-color: transparent;
+    text-color:       inherit;
+    font:             "Sans 10";
+    cursor:           inherit;
+    horizontal-align: 0.5;
+    vertical-align:   0.5;
+}

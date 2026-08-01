@@ -85,16 +85,5 @@ if [ -f "$THEME_DIR/tmux/colors.conf" ] && (pgrep -x "tmux" >/dev/null || [ -n "
     tmux source-file "$HOME/.config/tmux/colors.conf" || echo -e "${YELLOW}Warning: Failed to source Tmux colors${NC}"
 fi
 
-# 7. Change Wallpaper on the fly (Wayland only)
-WALLPAPER=$(find "$THEME_DIR/wallpapers" -type f \( -name "*.jpg" -o -name "*.png" \) 2>/dev/null | head -n 1 || echo "")
-if [ -n "$WALLPAPER" ] && [ -n "${WAYLAND_DISPLAY:-}" ] && command -v swaybg &>/dev/null; then
-    echo -e "${CYAN}→ Cambiando fondo de pantalla...${NC}"
-    OLD_SWAYBG_PIDS=$(pgrep -x "swaybg" || echo "")
-    swaybg -i "$WALLPAPER" -m fill >/dev/null 2>&1 &
-    sleep 0.15
-    if [ -n "$OLD_SWAYBG_PIDS" ]; then
-        kill $OLD_SWAYBG_PIDS >/dev/null 2>&1 || true
-    fi
-fi
-
 echo -e "${GREEN}✓ ¡Tema '$THEME' aplicado con éxito en caliente!${NC}"
+
