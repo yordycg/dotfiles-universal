@@ -16,10 +16,10 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 -- Example binds, see https://wiki.hypr.land/Configuring/Basics/Binds/ for more
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind(
-	mainMod .. " + M",
-	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
-)
+-- hl.bind(
+-- 	mainMod .. " + M",
+-- 	hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'")
+-- ) -- Handled by Tide-Island (togglePlayer)
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
@@ -29,11 +29,11 @@ hl.bind(mainMod .. " + ALT + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen()) -- fullscreen
 hl.bind(mainMod .. " + SHIFT + V", hl.dsp.exec_cmd("cliphist list | rofi -dmenu | cliphist decode | wl-copy")) -- gestor portapapeles
 
--- Move focus with mainMod + arrow keys / Vim keys
-hl.bind(mainMod .. " + LEFT", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + RIGHT", hl.dsp.focus({ direction = "right" }))
-hl.bind(mainMod .. " + UP", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + DOWN", hl.dsp.focus({ direction = "down" }))
+-- Move focus (Arrow keys handled by Tide-Island for swipe/clock; Vim keys H/J/K/L remain active below)
+-- hl.bind(mainMod .. " + LEFT", hl.dsp.focus({ direction = "left" }))
+-- hl.bind(mainMod .. " + RIGHT", hl.dsp.focus({ direction = "right" }))
+-- hl.bind(mainMod .. " + UP", hl.dsp.focus({ direction = "up" }))
+-- hl.bind(mainMod .. " + DOWN", hl.dsp.focus({ direction = "down" }))
 hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
 hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
@@ -99,8 +99,8 @@ hl.bind("XF86AudioPause", hl.dsp.exec_cmd("playerctl play-pause"), { locked = tr
 hl.bind("XF86AudioPlay", hl.dsp.exec_cmd("playerctl play-pause"), { locked = true })
 hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true })
 
--- Notification Center
-hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
+-- Notification Center (SUPER+N handled by Tide-Island)
+-- hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
 hl.bind(mainMod .. " + CONTROL + SHIFT + N", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
 
 -- Browser
@@ -111,8 +111,8 @@ hl.bind(mainMod .. " + SHIFT + B", hl.dsp.exec_cmd("brave"))
 hl.bind(mainMod .. " + F12", hl.dsp.exec_cmd("hyprshot -m output"))
 hl.bind(mainMod .. " + SHIFT + F12", hl.dsp.exec_cmd("hyprshot -m region"))
 
--- Calculator (rofi-calc)
-hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort"))
+-- Calculator (SUPER+C handled by Tide-Island toggleControlCenter)
+-- hl.bind(mainMod .. " + C", hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort"))
 
 -- Interactive Kill
 hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd("hyprctl kill"))
@@ -120,8 +120,8 @@ hl.bind(mainMod .. " + SHIFT + X", hl.dsp.exec_cmd("hyprctl kill"))
 -- Color Picker
 hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 
--- Wallpaper Switcher
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/wallpaper-switch.sh"))
+-- Wallpaper Switcher (SUPER+W handled by Tide-Island toggleWallpaperPicker)
+-- hl.bind(mainMod .. " + W", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/wallpaper-switch.sh"))
 
 -- Logout Menu (wlogout)
 hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd("pkill wlogout || " .. (os.getenv("HOME") or "") .. "/.local/bin/wlogout.sh"))
@@ -151,6 +151,6 @@ hl.bind(mainMod .. " + Y", hl.dsp.exec_cmd("hyprctl plugin load " .. hyprbars))
 hl.bind(mainMod .. " + SHIFT + Y", hl.dsp.exec_cmd("hyprctl plugin unload " .. hyprbars))
 hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo toggle"))
 
--- Selector TAB
-hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod super"))
+-- Selector TAB (SUPER+Tab handled by Tide-Island overview toggle)
+-- hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod super"))
 hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev --mod super"))

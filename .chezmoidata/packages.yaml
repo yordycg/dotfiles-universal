@@ -113,6 +113,7 @@ arch:
     - gnome-keyring
   hyprland:
     - hyprland
+    - awww
     - swaybg
     - hyprlock
     - hypridle
@@ -136,12 +137,14 @@ arch:
     - udiskie
   aur:
     - quickshell-git
+    - tide-island
     - hyprshot
     - wlogout
     - snappy-switcher
     - visual-studio-code-bin
     - yaak-bin
     - lazy-tmux
+
 
 debian:
   base:

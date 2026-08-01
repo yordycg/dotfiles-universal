@@ -19,3 +19,5 @@ require("modules.layouts")
 require("modules.misc")
 require("modules.input")
 require("modules.windowrules")
+require("modules.tide_island")
+

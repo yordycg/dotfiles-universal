@@ -12,8 +12,9 @@ hl.on("hyprland.start", function()
 	hl.exec_cmd("waybar") -- waybar
 	hl.exec_cmd("hyprpm reload") -- plugins
 
-	-- Wallpaper Daemon (unificado para desktop y laptop)
-	hl.exec_cmd("swaybg -i ~/.config/hypr/power-line-00.jpg -m fill") -- Wallpaper daemon (swaybg)
+	-- Wallpaper Daemon (awww)
+	hl.exec_cmd("sh -c 'if ! pgrep -x awww-daemon >/dev/null; then awww-daemon >/dev/null 2>&1 & sleep 1; fi'")
+
 
 	-- Polkit Agent based on distro
 	{{- if eq .node.distro "fedora" }}

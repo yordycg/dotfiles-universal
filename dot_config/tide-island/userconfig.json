@@ -1,0 +1,19 @@
+{
+    "clockFormat": "24",
+    "dynamicIslandLeftSwipeItems": [
+        "volume",
+        "workspace",
+        "time",
+        "date"
+    ],
+    "hoverExpandAction": 2,
+    "islandAutoHideEnabled": false,
+    "islandBackgroundOpacity": 90,
+    "islandHeight": 38,
+    "islandTopMargin": 5,
+    "islandWidth": 140,
+    "textFontFamily": "",
+    "titleFontSize": 18,
+    "wallpaperLibraryPath": "~/Pictures/Wallpapers",
+    "wallpaperPywalEnabled": false
+}
