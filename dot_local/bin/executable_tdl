@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# tdl - Tmux Development Layout (Neovim + OpenCode + Terminal)
+# tdl - Tmux Development Layout (Neovim Personal + OpenCode + Terminal)
 # Layout:
 # +------------------------------------+-----------------------+
 # |                                    |                       |
-# |           Neovim (65%)             |    OpenCode (35%)     |
+# |      Neovim Personal (65%)         |    OpenCode (35%)     |
 # |                                    |                       |
 # +------------------------------------+-----------------------+
 # |                    Terminal Shell (20%)                    |
@@ -14,7 +14,10 @@ set -euo pipefail
 # 1. Determine agent command (default: opencode, or argument passed)
 AGENT_CMD="${1:-opencode}"
 
-# 2. Get sanitized session/project name from current directory
+# 2. Determine editor command (defaults to nv / nvim-personal)
+EDITOR_CMD="env NVIM_APPNAME=nvim-personal nvim"
+
+# 3. Get sanitized session/project name from current directory
 PROJECT_DIR="$(pwd)"
 PROJECT_NAME="$(basename "$PROJECT_DIR" | tr '.: ' '---')"
 SESSION_NAME="${PROJECT_NAME:-dev}"
@@ -29,10 +32,10 @@ if [ -n "${TMUX:-}" ]; then
         tmux select-pane -U
         # 3. Split top pane horizontally: right (35% width) for OpenCode
         tmux split-window -h -p 35 "$AGENT_CMD"
-        # 4. Focus top-left pane for Neovim
+        # 4. Focus top-left pane for Neovim Personal
         tmux select-pane -L
-        # 5. Run Neovim in top-left pane
-        exec "${EDITOR:-nvim}"
+        # 5. Run Neovim Personal in top-left pane
+        exec $EDITOR_CMD
     else
         # Window already has multiple panes: open a new window in current dir
         tmux new-window -c "$PROJECT_DIR" -n "$PROJECT_NAME"
@@ -40,7 +43,7 @@ if [ -n "${TMUX:-}" ]; then
         tmux select-pane -U
         tmux split-window -h -p 35 "$AGENT_CMD"
         tmux select-pane -L
-        exec "${EDITOR:-nvim}"
+        exec $EDITOR_CMD
     fi
 else
     # --- OUTSIDE TMUX ---
@@ -58,8 +61,8 @@ else
         tmux split-window -t "$SESSION_NAME" -h -p 35 "$AGENT_CMD"
         # 4. Move focus to top-left pane
         tmux select-pane -t "$SESSION_NAME" -L
-        # 5. Send nvim to top-left pane
-        tmux send-keys -t "$SESSION_NAME" "${EDITOR:-nvim}" C-m
+        # 5. Send Neovim Personal command to top-left pane
+        tmux send-keys -t "$SESSION_NAME" "$EDITOR_CMD" C-m
         # Attach to the session
         exec tmux attach-session -t "=$SESSION_NAME"
     fi
