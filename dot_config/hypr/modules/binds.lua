@@ -23,7 +23,7 @@ hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/yordycg/.config/waybar/scripts/launch.sh"))
+-- hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("/home/yordycg/.config/waybar/scripts/launch.sh"))
 hl.bind(mainMod .. " + P", hl.dsp.window.pseudo())
 hl.bind(mainMod .. " + ALT + J", hl.dsp.layout("togglesplit")) -- dwindle only
 hl.bind(mainMod .. " + SHIFT + F", hl.dsp.window.fullscreen()) -- fullscreen
@@ -101,7 +101,7 @@ hl.bind("XF86AudioPrev", hl.dsp.exec_cmd("playerctl previous"), { locked = true 
 
 -- Notification Center (SUPER+N handled by Tide-Island)
 -- hl.bind(mainMod .. " + N", hl.dsp.exec_cmd("swaync-client -t -sw"))
-hl.bind(mainMod .. " + CONTROL + SHIFT + N", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
+-- hl.bind(mainMod .. " + CONTROL + SHIFT + N", hl.dsp.exec_cmd("swaync-client -R && swaync-client -rs"))
 
 -- Browser
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd("firefox"))
