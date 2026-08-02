@@ -11,30 +11,25 @@ PROJECT_DIR="$(pwd)"
 PROJECT_NAME="$(basename "$PROJECT_DIR" | tr '.: ' '---')"
 SESSION_NAME="${PROJECT_NAME:-dev}"
 
-setup_layout_panes() {
-    local target="${1:-}"
-    if [ -n "$target" ]; then
-        tmux split-window -t "$target" -h -p 40 "$AGENT_CMD"
-        tmux split-window -t "$target.1" -v -p 50
-        tmux select-pane -t "$target.0"
-    else
-        tmux split-window -h -p 40 "$AGENT_CMD"
-        tmux split-window -v -p 50
-        tmux select-pane -t 0
-    fi
-}
-
 if [ -n "${TMUX:-}" ]; then
     # --- INSIDE TMUX ---
     CURRENT_PANES=$(tmux display-message -p '#{window_panes}')
     if [ "$CURRENT_PANES" -eq 1 ]; then
-        # Transform current 1-pane window into 3-pane layout
-        tmux respawn-pane -k "${EDITOR:-nvim}"
-        setup_layout_panes
+        # Split right (40%) for OpenCode AI agent
+        tmux split-window -h -p 40 "$AGENT_CMD"
+        # Split bottom (50%) of the right pane for shell
+        tmux split-window -v -p 50
+        # Return focus to main pane (pane 0)
+        tmux select-pane -t 0
+        # Replace current shell in pane 0 with Neovim
+        exec "${EDITOR:-nvim}"
     else
         # Window already has multiple panes: open a new window in current dir
-        tmux new-window -c "$PROJECT_DIR" -n "$PROJECT_NAME" "${EDITOR:-nvim}"
-        setup_layout_panes
+        tmux new-window -c "$PROJECT_DIR" -n "$PROJECT_NAME"
+        tmux split-window -h -p 40 "$AGENT_CMD"
+        tmux split-window -v -p 50
+        tmux select-pane -t 0
+        exec "${EDITOR:-nvim}"
     fi
 else
     # --- OUTSIDE TMUX ---
@@ -42,11 +37,17 @@ else
         # Session exists, attach to it
         exec tmux attach-session -t "=$SESSION_NAME"
     else
-        # Create new detached session with nvim in main pane
-        tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR" -n "$PROJECT_NAME" "${EDITOR:-nvim}"
-        # Set up 3-pane layout
-        setup_layout_panes "$SESSION_NAME:0"
-        # Attach to new session
+        # Create new detached session
+        tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR" -n "$PROJECT_NAME"
+        # Split right (40%) for OpenCode AI agent
+        tmux split-window -t "$SESSION_NAME:0.0" -h -p 40 "$AGENT_CMD"
+        # Split bottom (50%) of right pane for shell
+        tmux split-window -t "$SESSION_NAME:0.1" -v -p 50
+        # Return focus to main pane
+        tmux select-pane -t "$SESSION_NAME:0.0"
+        # Send nvim to main pane
+        tmux send-keys -t "$SESSION_NAME:0.0" "${EDITOR:-nvim}" C-m
+        # Attach to the session
         exec tmux attach-session -t "=$SESSION_NAME"
     fi
 fi
