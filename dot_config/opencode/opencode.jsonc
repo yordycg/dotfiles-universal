@@ -1,0 +1,22 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "model": "google/gemini-2.5-flash",
+  "tui": {
+    "theme": "dark",
+    "show_diff": true,
+    "mouse_support": true
+  },
+  "lsp": {
+    "enabled": true
+  },
+  "agents": {
+    "build": {
+      "mode": "full",
+      "color": "#81a1c1"
+    },
+    "plan": {
+      "mode": "read_only",
+      "color": "#a3be8c"
+    }
+  }
+}

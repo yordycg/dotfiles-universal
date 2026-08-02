@@ -63,6 +63,11 @@ alias v='nv'
 alias v.='nv .'
 alias reload='source ~/.zshrc'
 
+# -- OpenCode & Layout AI ----------------------
+alias oc='opencode'
+alias ocp='opencode --agent plan'
+alias tdl='tdl'
+
 # -- Lenguajes & Dev (Senior Lean) ------------
 alias pn='pnpm'
 alias pnrd='pnpm run dev'

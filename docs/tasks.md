@@ -33,8 +33,8 @@
   - Reemplazar la pila anterior (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por `lazy-tmux` en `tmux.conf.tmpl` y la matriz `packages.yaml`.
 - [ ] Implementar herramienta `herdr`
   - Evaluar e integrar `herdr` en la matriz de herramientas para gestión de proyectos y flujos de trabajo en terminal.
-- [ ] Implementar agente IA de código `opencode`
-  - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh.
+- [x] Implementar agente IA de código `opencode`
+  - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh, además del layout Tmux (`tdl`).
 - [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
   - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal.
 
