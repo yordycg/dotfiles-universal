@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
-# tdl - Tmux Development Layout (Neovim + OpenCode + Shell)
+# tdl - Tmux Development Layout (Neovim + OpenCode + Terminal)
+# Layout:
+# +------------------------------------+-----------------------+
+# |                                    |                       |
+# |           Neovim (65%)             |    OpenCode (35%)     |
+# |                                    |                       |
+# +------------------------------------+-----------------------+
+# |                    Terminal Shell (20%)                    |
+# +------------------------------------------------------------+
 
 set -euo pipefail
 
@@ -15,19 +23,22 @@ if [ -n "${TMUX:-}" ]; then
     # --- INSIDE TMUX ---
     CURRENT_PANES=$(tmux display-message -p '#{window_panes}')
     if [ "$CURRENT_PANES" -eq 1 ]; then
-        # Split right (40%) for OpenCode AI agent
-        tmux split-window -h -p 40 "$AGENT_CMD"
-        # Split bottom (50%) of the right pane for shell
-        tmux split-window -v -p 50
-        # Return focus to main left pane
+        # 1. Split bottom (20% height) across full width for shell
+        tmux split-window -v -p 20
+        # 2. Focus top pane
+        tmux select-pane -U
+        # 3. Split top pane horizontally: right (35% width) for OpenCode
+        tmux split-window -h -p 35 "$AGENT_CMD"
+        # 4. Focus top-left pane for Neovim
         tmux select-pane -L
-        # Replace current shell in main pane with Neovim
+        # 5. Run Neovim in top-left pane
         exec "${EDITOR:-nvim}"
     else
         # Window already has multiple panes: open a new window in current dir
         tmux new-window -c "$PROJECT_DIR" -n "$PROJECT_NAME"
-        tmux split-window -h -p 40 "$AGENT_CMD"
-        tmux split-window -v -p 50
+        tmux split-window -v -p 20
+        tmux select-pane -U
+        tmux split-window -h -p 35 "$AGENT_CMD"
         tmux select-pane -L
         exec "${EDITOR:-nvim}"
     fi
@@ -39,13 +50,15 @@ else
     else
         # Create new detached session
         tmux new-session -d -s "$SESSION_NAME" -c "$PROJECT_DIR" -n "$PROJECT_NAME"
-        # Split right (40%) for OpenCode AI agent
-        tmux split-window -t "$SESSION_NAME" -h -p 40 "$AGENT_CMD"
-        # Split bottom (50%) of right pane for shell
-        tmux split-window -t "$SESSION_NAME" -v -p 50
-        # Move focus back to the left pane
+        # 1. Split bottom (20% height) across full width for shell
+        tmux split-window -t "$SESSION_NAME" -v -p 20
+        # 2. Focus top pane
+        tmux select-pane -t "$SESSION_NAME" -U
+        # 3. Split top pane horizontally: right (35% width) for OpenCode
+        tmux split-window -t "$SESSION_NAME" -h -p 35 "$AGENT_CMD"
+        # 4. Move focus to top-left pane
         tmux select-pane -t "$SESSION_NAME" -L
-        # Send nvim to the left pane
+        # 5. Send nvim to top-left pane
         tmux send-keys -t "$SESSION_NAME" "${EDITOR:-nvim}" C-m
         # Attach to the session
         exec tmux attach-session -t "=$SESSION_NAME"
