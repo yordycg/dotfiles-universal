@@ -28,6 +28,9 @@ fedora:
     - openssl-devel
     - readline-devel
     - sqlite-devel
+    - clang
+    - valgrind
+    - bear
   terminal_ux:
     - gnupg2
     - pinentry
@@ -93,6 +96,9 @@ arch:
     - openssl
     - readline
     - sqlite
+    - clang
+    - valgrind
+    - bear
   terminal_ux:
     - gnupg
     - pinentry
@@ -135,7 +141,9 @@ arch:
     - swaync
     - thunar
     - udiskie
+    - plasma-keyboard
   aur:
+    - wvkbd
     - quickshell-git
     - tide-island
     - hyprshot
@@ -177,6 +185,11 @@ debian:
     - xz-utils
     - libffi-dev
     - liblzma-dev
+    - clangd
+    - clang-format
+    - clang-tools-extra
+    - valgrind
+    - bear
   terminal_ux:
     - gnupg
     - pinentry-curses
