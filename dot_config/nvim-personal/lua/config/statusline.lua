@@ -117,26 +117,59 @@ local function lsp()
   return '%#StlMeta#' .. LSP .. ' ' .. table.concat(names, ', ') .. '%*'
 end
 
--- VCS cluster: jj bookmark + diff counts. Diff counts come from vcsigns
--- (vim.b.vcsigns_stats), so they are jj-aware. No filetype, no parens.
+-- VCS cluster: git diff counts, computed from the extmarks gitsigns places in
+-- the 'gitsigns_signs_' namespace (gitsigns removed its stats API). No dependency
+-- on plugin internals beyond that stable namespace name.
+local VCS_SIGN_NS = 'gitsigns_signs_'
+
+local function git_signs_stats(bufnr)
+  -- create_namespace reutiliza el id existente si gitsigns ya creó el namespace
+  -- (los namespaces se indexan por nombre), así que es seguro llamarlo siempre.
+  local ns = vim.api.nvim_create_namespace(VCS_SIGN_NS)
+  local stats = { added = 0, modified = 0, removed = 0 }
+  local marks = vim.api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, { details = true })
+  for _, mark in ipairs(marks) do
+    local details = mark[4] or {}
+    local hl = details.sign_hl_group or ''
+    if hl:find('^GitSignsAdd') or hl:find('^GitSignsUntracked') then
+      stats.added = stats.added + 1
+    elseif hl:find('^GitSignsChange') then
+      stats.modified = stats.modified + 1
+    elseif hl:find('^GitSignsDelete') then
+      stats.removed = stats.removed + 1
+    end
+  end
+  return stats
+end
+
+local vcs_stats = {}
+
+local function update_vcs_stats()
+  vcs_stats = git_signs_stats(0) or {}
+  vim.cmd('redrawstatus')
+end
+
+local vcs_augroup = vim.api.nvim_create_augroup('UserStatusVCS', { clear = true })
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWritePost' }, {
+  group = vcs_augroup,
+  callback = update_vcs_stats,
+})
+vim.api.nvim_create_autocmd('User', {
+  group = vcs_augroup,
+  pattern = 'GitSignsUpdate',
+  callback = update_vcs_stats,
+})
+
 local function vcs()
-  local out = ''
-  local bm = vim.b.jj_bookmark
-  if bm and bm ~= '' then
-    out = out .. '%#StlMeta# #' .. bm
+  local s = vcs_stats
+  if not s or (s.added + s.modified + s.removed) == 0 then
+    return ''
   end
-  local s = vim.b.vcsigns_stats
-  if s and (s.added + s.modified + s.removed) > 0 then
-    out = out
-      .. '%#StlMeta# '
-      .. '%#Added#+' .. s.added
-      .. '%#Changed#~' .. s.modified
-      .. '%#Removed#-' .. s.removed
-  end
-  if out ~= '' then
-    out = out .. '%*'
-  end
-  return out
+  return '%#StlMeta# '
+    .. '%#Added#+' .. s.added
+    .. '%#Changed#~' .. s.modified
+    .. '%#Removed#-' .. s.removed
+    .. '%*'
 end
 
 local function diagnostics()
