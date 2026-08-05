@@ -1,7 +1,7 @@
 -- ************************************************************************************************
 -- AUTOCMDS
 -- ************************************************************************************************
-local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = true })
+local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = false })
 
 -- Highlight yanked text
 vim.api.nvim_create_autocmd("TextYankPost", {
@@ -41,6 +41,19 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.opt_local.wrap = true
     vim.opt_local.linebreak = true
     vim.opt_local.spell = true
+  end,
+})
+
+-- C/C++: indent de 4 espacios para alinear con learning-c/.clang-format
+-- (IndentWidth: 4). El resto de lenguajes conserva los 2 globales.
+vim.api.nvim_create_autocmd("FileType", {
+  group = augroup,
+  pattern = { "c", "cpp" },
+  callback = function()
+    vim.opt_local.tabstop = 4
+    vim.opt_local.shiftwidth = 4
+    vim.opt_local.softtabstop = 4
+    vim.opt_local.expandtab = true
   end,
 })
 
