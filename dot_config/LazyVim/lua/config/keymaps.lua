@@ -1,10 +1,8 @@
 local map = vim.keymap.set
 
 -- Navegacion ventanas ------------------------------------
-map("n", "<C-h>", "<C-w>h", { desc = "Ventana izquierda" })
-map("n", "<C-l>", "<C-w>l", { desc = "Ventana derecha" })
-map("n", "<C-j>", "<C-w>j", { desc = "Ventana abajo" })
-map("n", "<C-k>", "<C-w>k", { desc = "Ventana arriba" })
+-- (los <C-h/j/k/l> ahora los gestiona vim-tmux-navigator,
+-- ver lua/plugins/tmux-navigator.lua)
 
 -- Buffers ----------------------------------------------------------
 map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Buffer anterior" })

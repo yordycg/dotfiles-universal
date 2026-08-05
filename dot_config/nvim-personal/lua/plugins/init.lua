@@ -26,6 +26,8 @@ vim.pack.add {
   -- Formatting & Linting (reemplaza efm-langserver)
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/mfussenegger/nvim-lint',
+  -- Navegación seamless entre ventanas nvim y panes tmux
+  'https://github.com/christoomey/vim-tmux-navigator',
 }
 
 local function packadd(name)
@@ -45,3 +47,4 @@ packadd 'blink.cmp'
 -- Format & Lint
 packadd 'conform.nvim'
 packadd 'nvim-lint'
+packadd 'vim-tmux-navigator'
