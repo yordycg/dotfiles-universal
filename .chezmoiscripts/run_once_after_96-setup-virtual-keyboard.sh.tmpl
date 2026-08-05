@@ -1,0 +1,24 @@
+{{- if eq .node.distro "arch" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_96-setup-virtual-keyboard.sh.tmpl
+# Activa el teclado virtual de Plasma (plasma-keyboard) en la sesión KDE.
+# Escribe [Wayland] InputMethod en kwinrc apuntando al .desktop de plasma-keyboard.
+# =============================================================================
+set -euo pipefail
+
+KEYBOARD_DESKTOP="/usr/share/applications/org.kde.plasma.keyboard.desktop"
+
+if [ ! -f "$KEYBOARD_DESKTOP" ]; then
+    echo "! plasma-keyboard no está instalado ($KEYBOARD_DESKTOP)."
+    echo "  Instala la sección desktop_gui del provisioner (sudo pacman -S --needed plasma-keyboard)."
+    exit 0
+fi
+
+if command -v kwriteconfig6 >/dev/null 2>&1; then
+    kwriteconfig6 --notify --file kwinrc --group Wayland --key InputMethod "$KEYBOARD_DESKTOP"
+    echo "✓ Teclado virtual de Plasma configurado en kwinrc ([Wayland] InputMethod = $KEYBOARD_DESKTOP)."
+else
+    echo "! kwriteconfig6 no encontrado. Configúralo en System Settings > Input Devices > Virtual Keyboard."
+fi
+{{- end }}
