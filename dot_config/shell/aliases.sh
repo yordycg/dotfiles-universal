@@ -68,6 +68,12 @@ alias oc='opencode'
 alias ocp='opencode --agent plan'
 alias tdl='tdl'
 
+# -- Herdr (Workspace Manager) -------------------
+alias hd='herdr'
+alias hdl='herdr workspace list'
+alias hdw='herdr workspace focus'
+alias hdstop='herdr server stop'
+
 # -- Lenguajes & Dev (Senior Lean) ------------
 alias pn='pnpm'
 alias pnrd='pnpm run dev'
