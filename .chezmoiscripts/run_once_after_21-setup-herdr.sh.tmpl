@@ -1,0 +1,48 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_21-setup-herdr.sh.tmpl
+# Instalación de Herdr (workspace manager) + integración con OpenCode
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Gestión de Workspaces (Herdr)"
+
+# ── 1. Instalación: Mise-primero, instalador oficial como fallback ──────────
+if command -v herdr &>/dev/null; then
+    log_ok "Herdr ya está disponible en PATH."
+else
+    log_info "Instalando Herdr (mise registro / instalador oficial)..."
+    if command -v mise &>/dev/null; then
+        # Primero intenta vía mise (fuente primaria, filosofía Clean Host)
+        run mise install -y herdr 2>/dev/null || log_warn "Mise no resolvio herdr, usando instalador oficial."
+    fi
+    if ! command -v herdr &>/dev/null; then
+        run curl -fsSL https://herdr.dev/install.sh | sh
+    fi
+fi
+
+if ! command -v herdr &>/dev/null; then
+    log_warn "Herdr no disponible. Se omitira la integracion."
+    exit 0
+fi
+
+# ── 2. Verificación binario ───────────────────────────────────────────────────
+if ! herdr --help >/dev/null 2>&1; then
+    log_error "El binario herdr no responde. Abortando setup de integraciones."
+    exit 1
+fi
+log_ok "Herdr $(herdr --version 2>/dev/null | head -1 || echo "instalado") listo."
+
+# ── 3. Integración nativa con OpenCode (lifecycle state + session resume) ──
+if [ -d "$HOME/.config/opencode" ]; then
+    log_info "Instalando integracion herdr -> opencode..."
+    run herdr integration install opencode || log_warn "No se pudo instalar la integracion opencode."
+else
+    log_warn "No existe ~/.config/opencode; saltando integracion de agentes."
+fi
+
+log_ok "Herdr configurado correctamente."
+{{- end }}
