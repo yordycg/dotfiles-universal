@@ -20,13 +20,7 @@ hl.monitor({
 	scale = "1.00",
 })
 
--- DP-2 gets 1-5, HDMI-A-1 gets 6-10
-for i = 1, 5 do
-    hl.workspace_rule({workspace = tostring(i), monitor = "DP-2", persistent = true, default = (i == 1) })
-end
-for i = 6, 10 do
-    hl.workspace_rule({workspace = tostring(i), monitor = "HDMI-A-1", persistent = true, default = (i == 6) })
-end
+-- Nota: el mapa de workspaces (y su binding a monitor) vive en modules/workspaces.lua.tmpl
 {{- else }}
 -- Fallback automático para cualquier monitor
 hl.monitor({

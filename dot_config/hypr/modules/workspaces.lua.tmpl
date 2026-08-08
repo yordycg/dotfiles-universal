@@ -1,0 +1,32 @@
+-------------------------------
+---- WORKSPACES & PINNING ----
+-------------------------------
+
+-- See https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
+-- Single source of truth for the workspace map (1-4 static core, rest dynamic).
+-- Desktop: 1-5 -> DP-2, 6-10 -> HDMI-A-1.  Laptop: unconstrained on active monitor.
+
+{{- if eq .node.profile "desktop" }}
+hl.workspace_rule({ workspace = "1", monitor = "DP-2",     default = true,  persistent = true, default_name = "term" })
+hl.workspace_rule({ workspace = "2", monitor = "DP-2",                      persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "DP-2",                      persistent = true })
+hl.workspace_rule({ workspace = "4", monitor = "DP-2",                      persistent = true })
+hl.workspace_rule({ workspace = "5", monitor = "DP-2" })
+hl.workspace_rule({ workspace = "6", monitor = "HDMI-A-1", default = true })
+hl.workspace_rule({ workspace = "7", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "8", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "9", monitor = "HDMI-A-1" })
+hl.workspace_rule({ workspace = "10", monitor = "HDMI-A-1" })
+{{- else }}
+-- Laptop (ECO): mismos workspaces/números, sin amarrar a ningún monitor.
+hl.workspace_rule({ workspace = "1", default = true, persistent = true, default_name = "term" })
+hl.workspace_rule({ workspace = "2", persistent = true })
+hl.workspace_rule({ workspace = "3", persistent = true })
+hl.workspace_rule({ workspace = "4", persistent = true })
+{{- end }}
+
+-- Pinning de aplicaciones al workspace estable (silent: sin robar foco ni saltar de vista).
+hl.window_rule({ name = "pin-terminal", match = { class = "^(kitty)$" },                      workspace = "1 silent" })
+hl.window_rule({ name = "pin-web",      match = { class = "^(firefox|google-chrome|brave-browser)$" }, workspace = "2 silent" })
+hl.window_rule({ name = "pin-notes",    match = { class = "^(obsidian)$" },                    workspace = "3 silent" })
+hl.window_rule({ name = "pin-comms",    match = { class = "^(Ferdium|spotify)$" },             workspace = "4 silent" })

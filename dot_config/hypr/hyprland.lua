@@ -10,6 +10,7 @@
 -- require("myColors")
 
 require("modules.monitors")
+require("modules.workspaces")
 require("modules.binds")
 require("modules.autostarts")
 require("modules.env")
