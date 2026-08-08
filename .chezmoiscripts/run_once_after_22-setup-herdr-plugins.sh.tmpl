@@ -1,0 +1,42 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_22-setup-herdr-plugins.sh.tmpl
+# Plugins Tier-1 de Herdr (marketplace):
+#   - vim-herdr-navigation  -> Ctrl+h/j/k/l cruzando vim <-> herdr panes
+#   - herdr-sessionizer     -> pickers fzf de proyectos/worktrees
+#   - persiyanov.reviewr    -> revisión de diffs de agentes
+# Instalación idempotente: salta lo ya instalado (herdr plugin list --json).
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+if ! command -v herdr &>/dev/null; then
+    log_warn "Herdr no disponible; se omiten los plugins."
+    exit 0
+fi
+
+log_step "Plugins de Herdr (Tier 1)"
+
+# plugins = "nombre-del-repo:id-a-chequear"
+plugins=(
+  "paulbkim-dev/vim-herdr-navigation:vim-herdr-navigation"
+  "andrewchng/herdr-sessionizer:sessionizer"
+  "persiyanov/herdr-reviewr:persiyanov.reviewr"
+)
+
+for entry in "${plugins[@]}"; do
+    repo="${entry%%:*}"
+    id="${entry##*:}"
+    log_info "Chequeando plugin: ${repo}"
+    if herdr plugin list --json 2>/dev/null | grep -q "\"id\":\"${id}\""; then
+        log_ok "  Ya instalado (${id})."
+    else
+        log_info "  Instalando ${repo}..."
+        run herdr plugin install "${repo}" --yes || log_warn "Fallo al instalar ${repo}."
+    fi
+done
+
+log_ok "Plugins de herdr asegurados."
+{{- end }}
