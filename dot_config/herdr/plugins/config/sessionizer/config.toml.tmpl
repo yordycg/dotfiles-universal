@@ -1,0 +1,39 @@
+[projects]
+roots = ["~/workspace"]
+git_only = true
+depth = 1
+
+[ui]
+placement = "overlay"
+
+[layout]
+focus = "editor"
+
+[tabs.dev]
+label = "dev"
+
+# Mismo layout que `tdl`:
+#   +------------------------------+------------------+
+#   |   nvim (editor, 65%)         |   opencode       |
+#   |                              |   (agent 35%)    |
+#   +------------------------------+------------------+
+[[tabs.dev.panes]]
+id = "editor"
+title = "nvim"
+command = "nvim"
+
+[[tabs.dev.panes]]
+id = "agent"
+from = "editor"
+title = "opencode"
+split = "right"
+ratio = 0.35
+command = "opencode"
+
+[[tabs.dev.panes]]
+id = "git"
+from = "editor"
+title = "lazygit"
+split = "down"
+ratio = 0.25
+command = "lazygit"
