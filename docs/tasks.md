@@ -31,8 +31,11 @@
   - Configurar integración con iOS usando **Working Copy** + **Atajos de Apple (Shortcuts)** para enviar notas rápidas desde el iPhone al repositorio de Obsidian vía Git.
 - [x] Evaluar migración total de Tmux a `lazy-tmux`
   - Reemplazar la pila anterior (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por `lazy-tmux` en `tmux.conf.tmpl` y la matriz `packages.yaml`.
-- [ ] Implementar herramienta `herdr`
-  - Evaluar e integrar `herdr` en la matriz de herramientas para gestión de proyectos y flujos de trabajo en terminal.
+- [x] Implementar herramienta `herdr`
+  - Integrar `herdr` en la matriz de Mise (`config.toml.tmpl`) con instalador oficial como fallback.
+  - Config completa en `dot_config/herdr/config.toml.tmpl` (tema ANSI, keybinds, popups, notificaciones, ECO mode).
+  - Integración nativa con `opencode` (`herdr integration install`) vía `run_once_after_21`.
+  - Bind `SUPER+O` en Hyprland y aliases `hd`/`hdl`/`hdw`/`hdstop` en zsh.
 - [x] Implementar agente IA de código `opencode`
   - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh, además del layout Tmux (`tdl`).
 - [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
