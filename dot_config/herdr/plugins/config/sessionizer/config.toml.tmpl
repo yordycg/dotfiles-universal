@@ -10,20 +10,26 @@ depth = 2
 placement = "overlay"
 
 [layout]
+# focus siempre el editor (`nv` -> nvim-personal)
 focus = "editor"
 
+# Layout por defecto (2 tabs):
+#   dev     = nvim (nv) + opencode (derecha 35%) + terminal (abajo 25%)
+#             para lanzar comandos sueltos
+#   lazygit = en pestaña propia, a pantalla completa
 [tabs.dev]
 label = "dev"
 
-# Mismo layout que `tdl`:
 #   +------------------------------+------------------+
 #   |   nvim (editor, 65%)         |   opencode       |
 #   |                              |   (agent 35%)    |
 #   +------------------------------+------------------+
+#   |              terminal (25%)                    |
+#   +------------------------------------------------+
 [[tabs.dev.panes]]
 id = "editor"
 title = "nvim"
-command = "nvim"
+command = "nv"
 
 [[tabs.dev.panes]]
 id = "agent"
@@ -34,9 +40,17 @@ ratio = 0.35
 command = "opencode"
 
 [[tabs.dev.panes]]
-id = "git"
+id = "terminal"
 from = "editor"
-title = "lazygit"
+title = "terminal"
 split = "down"
 ratio = 0.25
+command = "exec \"${SHELL:-sh}\""
+
+[tabs.lazygit]
+label = "lazygit"
+
+[[tabs.lazygit.panes]]
+id = "git"
+title = "lazygit"
 command = "lazygit"
