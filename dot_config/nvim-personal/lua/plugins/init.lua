@@ -27,6 +27,7 @@ vim.pack.add {
   'https://github.com/stevearc/conform.nvim',
   'https://github.com/mfussenegger/nvim-lint',
   -- Navegación seamless entre ventanas nvim y panes tmux
+  -- (fallback homelab; en herdr lo gestiona vim-herdr-navigation)
   'https://github.com/christoomey/vim-tmux-navigator',
 }
 
