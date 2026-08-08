@@ -1,16 +1,13 @@
 #!/usr/bin/env bash
 # =============================================================================
 # wallpaper-switch.sh — Rofi Wallpaper Selector
-# Selects wallpapers from ~/Pictures/Wallpapers (linked to ~/workspace/assets/wallpapers)
+# Selects wallpapers from ~/Pictures/Wallpapers (repo real fuera del workspace)
 # and applies them using swww, awww, or swaybg.
 # =============================================================================
 set -euo pipefail
 
 # Directory locations
 WALL_DIR="$HOME/Pictures/Wallpapers"
-if [ ! -d "$WALL_DIR" ]; then
-    WALL_DIR="$HOME/workspace/assets/wallpapers"
-fi
 
 CACHE_DIR="$HOME/.cache/wall-thumbs"
 TARGET_WALLPAPER="$HOME/.config/hypr/wallpaper"

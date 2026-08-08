@@ -68,7 +68,7 @@ Estos scripts garantizan que las herramientas de usuario se configuren correctam
 8.  **`run_once_after_84-sync-core-repos.sh.tmpl`**:
     *   Sincroniza proyectos centrales y repositorios clave en tu espacio local.
 9.  **`run_after_85-sync-assets.sh.tmpl`**:
-    *   Clona wallpapers y tus notas del segundo brain desde Forgejo (o GitHub como fallback).
+    *   Clona wallpapers (a `~/Pictures`, fuera del workspace) y tus notas del segundo brain desde Forgejo (o GitHub como fallback).
 10. **`run_once_after_99-change-shell.sh.tmpl`**:
     *   Establece de manera no interactiva a ZSH como tu shell por defecto (`chsh`).
 

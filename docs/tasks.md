@@ -42,10 +42,10 @@
   - Editor side vendored en `~/.config/herdr/editor/herdr_nav.lua`, dofile desde LazyVim y nvim-personal.
   - Layout sessionizer replicando `tdl` (nvim 65% + opencode 35% + lazygit abajo).
   - `HERDR_NAV_PASSTHROUGH_RE` en `exports.sh` para lazygit/lazydocker/yazi.
-- [x] Índice de proyectos para Sessionizer (`~/workspace/sessions`)
-  - `run_once_after_23-sync-sessionizer-index.sh.tmpl`: symlinks idempotentes por repo
-    git (oculta `wallpapers`, incluye `dotfiles`→chezmoi) + poda de huérfanos.
-  - `roots = ["~/workspace/sessions"]` en la config del plugin.
+- [x] Proyectos para Sessionizer (escaneo en vivo, sin índice)
+  - `roots = ["~/workspace"]` + `git_only` + `depth=2`: nuevos repos aparecen solos.
+  - `wallpapers` migrado fuera del workspace a `~/Pictures` (no es un proyecto);
+    `sync-assets` clona ahí y crea el symlink `assets/dotfiles`→chezmoi.
   - Overrides `.sessionizer/config.toml` por-repo (notes/learning/dotfiles) +
     doc del workflow "Nuevo proyecto".
 - [x] Implementar agente IA de código `opencode`

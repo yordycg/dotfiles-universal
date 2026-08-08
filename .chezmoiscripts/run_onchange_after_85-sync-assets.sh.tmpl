@@ -15,7 +15,9 @@ exit 0  # Sin entorno gráfico no necesitamos wallpapers ni Obsidian
 log_step "Recursos Gráficos (Assets)"
 
 # ── 1. Clonar Repositorios Core de Assets si no existen ─────────────────────
-WALLPAPERS_DIR="$HOME/workspace/assets/wallpapers"
+# Wallpapers vive FUERA del workspace (en ~/Pictures) para no ser un
+# "proyecto" del picker. Obsidian y Learning sí son proyectos.
+WALLPAPERS_DIR="$HOME/Pictures/Wallpapers"
 OBSIDIAN_DIR="$HOME/workspace/assets/obsidian-notes"
 
 # Clonar Wallpapers
@@ -40,13 +42,13 @@ if [ ! -d "$LEARNING_DIR/.git" ]; then
     run git clone "git@github.com:yordycg/learning-path.git" "$LEARNING_DIR" || log_warn "No se pudo clonar Learning Path. Verifica conexión y llaves SSH."
 fi
 
-# ── 2. Crear Enlaces para Pictures ──────────────────────────────────────────
-mkdir -p "$HOME/Pictures"
-
-if [ ! -d "$HOME/Pictures/Wallpapers" ] && [ -d "$WALLPAPERS_DIR" ]; then
-    log_info "Configurando enlaces de fondos de pantalla (Pictures)..."
-    ln -sf "$WALLPAPERS_DIR" "$HOME/Pictures/Wallpapers"
-    log_ok "Enlace de Wallpapers creado en ~/Pictures/Wallpapers."
+# ── 2. Symlink de Dotfiles en el workspace (alias, no índice) ───────────────
+# El source real sigue en ~/.local/share/chezmoi; este symlink lo expone al
+# picker de sessionizer (que escanea ~/workspace en vivo). Idempotente.
+mkdir -p "$HOME/workspace/assets"
+if [ ! -e "$HOME/workspace/assets/dotfiles" ]; then
+    ln -sfn "$HOME/.local/share/chezmoi" "$HOME/workspace/assets/dotfiles"
+    log_ok "Alias de dotfiles creado en workspace/assets/dotfiles"
 fi
 
 log_ok "Sincronización de assets finalizada."

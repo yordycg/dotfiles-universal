@@ -1,5 +1,5 @@
 ## Override de layout de Sessionizer para este repo (dotfiles/chezmoi)
-## Se resuelve vía symlink ~/workspace/sessions/dotfiles -> ~/.local/share/chezmoi.
+## Se resuelve vía symlink ~/workspace/assets/dotfiles -> ~/.local/share/chezmoi.
 ## Intencionadamente en .chezmoiignore para no instalarlo como target.
 
 [layout]

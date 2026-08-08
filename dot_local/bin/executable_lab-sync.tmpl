@@ -87,14 +87,15 @@ log_step "Sincronizando repositorios desde Forgejo"
 get_category() {
     local name=$1
     case "$name" in
-        wallpapers|obsidian-notes) echo "assets" ;;
-        *portfolio*)               echo "personal" ;;
-        *)                         echo "ipvg" ;;
+        obsidian-notes)               echo "assets" ;;
+        *portfolio*)                  echo "personal" ;;
+        *)                            echo "ipvg" ;;
     esac
 }
 
 # ── Repos excluidos (gestionados por chezmoi directamente) ───────────────────
-EXCLUDED=("dotfiles-universal" "homelab-infra")
+# wallpapers se clona fuera del workspace (~/Pictures) por sync-assets.
+EXCLUDED=("dotfiles-universal" "homelab-infra" "wallpapers")
 
 is_excluded() {
     local name=$1

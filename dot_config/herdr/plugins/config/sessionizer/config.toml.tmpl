@@ -1,10 +1,10 @@
 [projects]
-# Índice de symlinks en ~/workspace/sessions (generado por
-# run_once_after_23-sync-sessionizer-index). Oculta wallpapers e incluye
-# ~/.local/share/chezmoi (dotfiles). Futuros repos entran solos al correr el script.
-roots = ["~/workspace/sessions"]
+# Escaneo en vivo de ~/workspace (git_only): nuevos repos aparecen solos,
+# sin índices ni scripts. wallpapers vive fuera del workspace (no es proyecto);
+# dotfiles entra vía el symlink assets/dotfiles -> ~/.local/share/chezmoi.
+roots = ["~/workspace"]
 git_only = true
-depth = 1
+depth = 2
 
 [ui]
 placement = "overlay"
