@@ -36,6 +36,12 @@
   - Config completa en `dot_config/herdr/config.toml.tmpl` (tema ANSI, keybinds, popups, notificaciones, ECO mode).
   - Integración nativa con `opencode` (`herdr integration install`) vía `run_once_after_21`.
   - Bind `SUPER+O` en Hyprland y aliases `hd`/`hdl`/`hdw`/`hdstop` en zsh.
+- [x] Plugins herdr Tier 1 (vim-herdr-navigation, sessionizer, reviewr)
+  - Setup declarativo e idempotente en `run_once_after_22-setup-herdr-plugins.sh.tmpl`.
+  - Keybinds: `Ctrl+h/j/k/l` navegan vim<->herdr; `prefix+s`/`prefix+f` sessionizer; `prefix+alt+r` reviewr.
+  - Editor side vendored en `~/.config/herdr/editor/herdr_nav.lua`, dofile desde LazyVim y nvim-personal.
+  - Layout sessionizer replicando `tdl` (nvim 65% + opencode 35% + lazygit abajo).
+  - `HERDR_NAV_PASSTHROUGH_RE` en `exports.sh` para lazygit/lazydocker/yazi.
 - [x] Implementar agente IA de código `opencode`
   - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh, además del layout Tmux (`tdl`).
 - [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
