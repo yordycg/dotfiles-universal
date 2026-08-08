@@ -126,6 +126,9 @@ hl.bind(mainMod .. " + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"))
 -- Wallpaper Switcher (SUPER+W handled by Tide-Island toggleWallpaperPicker)
 -- hl.bind(mainMod .. " + W", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/wallpaper-switch.sh"))
 
+-- Theme Switcher
+hl.bind(mainMod .. " + Z", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/theme-switcher"))
+
 -- Logout Menu (wlogout)
 hl.bind(mainMod .. " + BackSpace", hl.dsp.exec_cmd("pkill wlogout || " .. (os.getenv("HOME") or "") .. "/.local/bin/wlogout.sh"))
 

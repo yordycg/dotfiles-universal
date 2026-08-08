@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# =============================================================================
+# theme-switcher.sh — Rofi Theme Switcher
+# Lists available themes from ~/.config/themes and applies the selected one
+# via apply-theme (hot reload across Hyprland/Kitty/Tmux/Wlogout).
+# =============================================================================
+set -euo pipefail
+
+THEMES_DIR="$HOME/.config/themes"
+APPLY_SCRIPT="$HOME/.local/bin/apply-theme"
+ROFI_THEME="$HOME/.config/rofi/menu_compact.rasi"
+
+if [ ! -d "$THEMES_DIR" ]; then
+    notify-send "Themes" "No se encontró el directorio de temas en $THEMES_DIR" -u critical || true
+    exit 1
+fi
+
+CURRENT_THEME=""
+if [ -f "$THEMES_DIR/.current-theme" ]; then
+    CURRENT_THEME=$(cat "$THEMES_DIR/.current-theme")
+fi
+
+# Build rofi list, marking the active theme
+# NOTE: two spaces after the icon (rofi splits on the first space)
+theme_list="" 
+shopt -s nullglob
+for dir in "$THEMES_DIR"/*/; do
+    name=$(basename "$dir")
+    [ -z "$name" ] && continue
+    if [ "$name" = "$CURRENT_THEME" ]; then
+        theme_list+="󰌍  $name\n"
+    else
+        theme_list+="󰌐  $name\n"
+    fi
+done
+shopt -u nullglob
+
+if [ -z "$theme_list" ]; then
+    notify-send "Themes" "No se encontraron temas disponibles" -u critical || true
+    exit 1
+fi
+
+if [ -f "$ROFI_THEME" ]; then
+    selected=$(printf "%b" "$theme_list" | rofi -dmenu -i -theme "$ROFI_THEME" -p "Theme" || true)
+else
+    selected=$(printf "%b" "$theme_list" | rofi -dmenu -i -p "Theme" || true)
+fi
+
+[ -z "$selected" ] && exit 0
+
+# Strip icon prefix (glyph + 2 spaces)
+read -r chosen <<< "${selected:3}"
+
+if [ "$chosen" = "$CURRENT_THEME" ]; then
+    notify-send "Themes" "'$chosen' ya está activo" -t 2000 || true
+    exit 0
+fi
+
+if [ -x "$APPLY_SCRIPT" ]; then
+    "$APPLY_SCRIPT" "$chosen"
+else
+    notify-send "Theme Error" "apply-theme no encontrado en $APPLY_SCRIPT" -u critical || true
+    exit 1
+fi

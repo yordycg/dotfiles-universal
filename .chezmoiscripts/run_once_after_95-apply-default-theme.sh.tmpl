@@ -9,9 +9,9 @@ set -euo pipefail
 {{ include "provision/lib/logging.sh" }}
 
 CURRENT_THEME_FILE="$HOME/.config/themes/.current-theme"
-THEME_SCRIPT="$HOME/.config/themes/link-theme.sh"
+THEME_SCRIPT="$HOME/.local/bin/link-theme"
 
-if [ -f "$THEME_SCRIPT" ]; then
+if [ -x "$THEME_SCRIPT" ]; then
     if [ ! -f "$CURRENT_THEME_FILE" ]; then
         log_step "Primer arranque: enlazando tema estático por defecto (gruvbox-material)..."
         bash "$THEME_SCRIPT" "gruvbox-material"
