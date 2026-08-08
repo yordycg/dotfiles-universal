@@ -34,7 +34,9 @@ id = "terminal"
 from = "editor"
 title = "terminal"
 split = "down"
-ratio = 0.20
+# NOTA: herdr `--ratio` es la parte que conserva el panel ORIGINAL.
+# 0.80 => editor conserva 80% arriba, la terminal nueva queda al 20% abajo.
+ratio = 0.80
 command = "exec \"${SHELL:-sh}\""
 
 [[tabs.dev.panes]]
