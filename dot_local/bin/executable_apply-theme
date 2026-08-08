@@ -56,30 +56,30 @@ if command -v hyprctl &>/dev/null && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; 
     hyprctl reload || echo -e "${YELLOW}Warning: Failed to reload Hyprland config${NC}"
 fi
 
-# 3. Reload/Launch Waybar (only if Hyprland active)
-LAUNCH_SCRIPT="$HOME/.config/waybar/scripts/launch.sh"
-if [ -f "$LAUNCH_SCRIPT" ] && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
-    echo -e "${CYAN}→ Refrescando Waybar...${NC}"
-    if command -v hyprctl &>/dev/null; then
-        hyprctl dispatch "hl.dsp.exec_cmd('$LAUNCH_SCRIPT')" || echo -e "${RED}Error: Failed to launch Waybar${NC}"
-    else
-        bash "$LAUNCH_SCRIPT" &>/dev/null &
-    fi
-fi
+# 3. Waybar / SwayNC: reemplazados por Quickshell Tide-Island (barra y notificaciones).
+#    La barra y el centro de notificaciones los maneja tide-island, no aplica recarga.
+# LAUNCH_SCRIPT="$HOME/.config/waybar/scripts/launch.sh"
+# if [ -f "$LAUNCH_SCRIPT" ] && [ -n "${HYPRLAND_INSTANCE_SIGNATURE:-}" ]; then
+#     echo -e "${CYAN}→ Refrescando Waybar...${NC}"
+#     if command -v hyprctl &>/dev/null; then
+#         hyprctl dispatch "hl.dsp.exec_cmd('$LAUNCH_SCRIPT')" || echo -e "${RED}Error: Failed to launch Waybar${NC}"
+#     else
+#         bash "$LAUNCH_SCRIPT" &>/dev/null &
+#     fi
+# fi
 
-# 4. Reload SwayNC
-if [ -f "$THEME_DIR/swaync/colors.css" ] && pgrep -x "swaync" >/dev/null; then
-    echo -e "${CYAN}→ Recargando SwayNC...${NC}"
-    swaync-client -rs || echo -e "${YELLOW}Warning: Failed to reload SwayNC config${NC}"
-fi
+# if [ -f "$THEME_DIR/swaync/colors.css" ] && pgrep -x "swaync" >/dev/null; then
+#     echo -e "${CYAN}→ Recargando SwayNC...${NC}"
+#     swaync-client -rs || echo -e "${YELLOW}Warning: Failed to reload SwayNC config${NC}"
+# fi
 
-# 5. Reload Kitty
+# 4. Reload Kitty
 if [ -f "$THEME_DIR/kitty/colors.conf" ] && pgrep -x "kitty" >/dev/null; then
     echo -e "${CYAN}→ Recargando instancias de Kitty...${NC}"
     kill -USR1 $(pgrep kitty) || echo -e "${YELLOW}Warning: Failed to reload Kitty instances${NC}"
 fi
 
-# 6. Reload Tmux
+# 5. Reload Tmux
 if [ -f "$THEME_DIR/tmux/colors.conf" ] && (pgrep -x "tmux" >/dev/null || [ -n "${TMUX:-}" ]); then
     echo -e "${CYAN}→ Recargando Tmux...${NC}"
     tmux source-file "$HOME/.config/tmux/colors.conf" || echo -e "${YELLOW}Warning: Failed to source Tmux colors${NC}"

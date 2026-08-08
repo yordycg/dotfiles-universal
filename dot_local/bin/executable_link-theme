@@ -38,32 +38,31 @@ if [ -f "$THEME_DIR/hypr/colors.lua" ]; then
     safe_link "$THEME_DIR/hypr/colors.lua" "$HOME/.config/hypr/colors.lua"
 fi
 
-# 2. Waybar
-if [ -f "$THEME_DIR/waybar/colors.css" ]; then
-    safe_link "$THEME_DIR/waybar/colors.css" "$HOME/.config/waybar/colors/colors.css"
-fi
+# 2. Waybar / SwayNC: ya no se usan (reemplazados por Quickshell Tide-Island).
+# if [ -f "$THEME_DIR/waybar/colors.css" ]; then
+#     safe_link "$THEME_DIR/waybar/colors.css" "$HOME/.config/waybar/colors/colors.css"
+# fi
 
-# 3. SwayNC
-if [ -f "$THEME_DIR/swaync/colors.css" ]; then
-    safe_link "$THEME_DIR/swaync/colors.css" "$HOME/.config/swaync/colors/colors.css"
-fi
+# if [ -f "$THEME_DIR/swaync/colors.css" ]; then
+#     safe_link "$THEME_DIR/swaync/colors.css" "$HOME/.config/swaync/colors/colors.css"
+# fi
 
-# 4. Kitty
+# 3. Kitty
 if [ -f "$THEME_DIR/kitty/colors.conf" ]; then
     safe_link "$THEME_DIR/kitty/colors.conf" "$HOME/.config/kitty/colors/colors.conf"
 fi
 
-# 5. Rofi
+# 4. Rofi
 if [ -f "$THEME_DIR/rofi/colors.rasi" ]; then
     safe_link "$THEME_DIR/rofi/colors.rasi" "$HOME/.config/rofi/type-2/colors/colors.rasi"
 fi
 
-# 6. Wlogout
+# 5. Wlogout
 if [ -f "$THEME_DIR/wlogout/colors.css" ]; then
     safe_link "$THEME_DIR/wlogout/colors.css" "$HOME/.config/wlogout/colors/colors.css"
 fi
 
-# 7. Tmux
+# 6. Tmux
 if [ -f "$THEME_DIR/tmux/colors.conf" ]; then
     safe_link "$THEME_DIR/tmux/colors.conf" "$HOME/.config/tmux/colors.conf"
 fi
