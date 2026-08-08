@@ -85,6 +85,43 @@ Instalación declarativa en `.chezmoiscripts/run_once_after_22-setup-herdr-plugi
 - TUIs que internamente usan `Ctrl+h/j/k/l` (lazygit, lazydocker, yazi) pasan por
   `HERDR_NAV_PASSTHROUGH_RE` (definido en `exports.sh`) — salir de ellos con `prefix+h/j/k/l`.
 
+## Workspaces & Sessionizer (índice de proyectos)
+
+El picker `prefix+s` no escanea `~/workspace/` directo: usa un **índice de symlinks**
+en `~/workspace/sessions/` (oculta `wallpapers` e incluye `dotfiles` → `~/.local/share/chezmoi`).
+Generado idempotentemente por `run_once_after_23-sync-sessionizer-index`.
+
+```text
+~/workspace/sessions/
+├── dotfiles            -> ~/.local/share/chezmoi
+├── learning-path       -> ~/workspace/personal/learning-path
+├── obsidian-notes      -> ~/workspace/assets/obsidian-notes
+├── sistemaVeterinario  -> ~/workspace/personal/sistemaVeterinario
+├── web-scrapping-basic -> ~/workspace/work/web-scrapping-basic
+└── yordycg-portfolio   -> ~/workspace/personal/yordycg-portfolio
+```
+
+- **Layout por-repo**: cada repo declara `.sessionizer/config.toml` (solo
+  `[layout].focus` + `[tabs.*]`); el resto hereda el layout genérico `tabs.dev`
+  (editor 65% + opencode 35% + lazygit abajo). Commiteado, viaja con el repo.
+- Overrides activos: `obsidian-notes` (1 pane LazyVim), `learning-path` (nv + terminal),
+  `dotfiles` (LazyVim + shell 50/50; ignorado por chezmoi vía `.chezmoiignore`).
+
+### Nuevo proyecto (workflow)
+
+```bash
+# 1. Clonar/crear el repo en un grupo existente
+git clone git@github.com:yordycg/mi-proyecto.git ~/workspace/personal/mi-proyecto
+
+# 2. Regenerar el índice → aparece en prefix+s (sin tocar config)
+chezmoi apply   # corre run_once_after_23 → actualiza ~/workspace/sessions
+
+# 3. (opcional) Layout propio del repo
+mkdir ~/workspace/personal/mi-proyecto/.sessionizer
+# editar .sessionizer/config.toml (ver formato arriba)
+```
+El índice apunta a `roots`, así que al correr el script los futuros repos entran solos.
+
 ## Comandos útiles (automatización)
 
 ```bash

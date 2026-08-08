@@ -1,0 +1,22 @@
+## Override de layout de Sessionizer para este repo (dotfiles/chezmoi)
+## Se resuelve vía symlink ~/workspace/sessions/dotfiles -> ~/.local/share/chezmoi.
+## Intencionadamente en .chezmoiignore para no instalarlo como target.
+
+[layout]
+focus = "editor"
+
+[tabs.dotfiles]
+label = "dotfiles"
+
+[[tabs.dotfiles.panes]]
+id = "editor"
+title = "lv"
+command = "env NVIM_APPNAME=LazyVim nvim"
+
+[[tabs.dotfiles.panes]]
+id = "shell"
+from = "editor"
+title = "shell"
+split = "right"
+ratio = 0.5
+command = "exec \"${SHELL:-sh}\""

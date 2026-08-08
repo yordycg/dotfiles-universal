@@ -4,7 +4,7 @@ set -euo pipefail
 
 WORKSPACE="$HOME/workspace"
 DEPTH=2
-IGNORE_NAMES=("wallpapers" ".git" "node_modules" "target" "dist" ".venv" "venv")
+IGNORE_NAMES=("wallpapers" "sessions" ".git" "node_modules" "target" "dist" ".venv" "venv")
 
 should_ignore() {
     local base

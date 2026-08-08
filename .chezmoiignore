@@ -1,1 +1,4 @@
 .config/nvim-personal/nvim-pack-lock.json
+# Override de layout de Sessionizer, se queda dentro del repo como convención
+# (hola /workspace/sessions/dotfiles -> ~/.local/share/chezmoi/.sessionizer)
+.sessionizer/
