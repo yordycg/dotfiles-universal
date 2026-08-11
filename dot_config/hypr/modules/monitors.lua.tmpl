@@ -22,11 +22,11 @@ hl.monitor({
 
 -- Nota: el mapa de workspaces (y su binding a monitor) vive en modules/workspaces.lua.tmpl
 {{- else }}
--- Monitor en perfil laptop / fallback nativo 100%
+-- Monitor en perfil laptop / escala 1.25 (125%)
 hl.monitor({
 	output = "",
 	mode = "preferred",
 	position = "auto",
-	scale = "1.00",
+	scale = "1.25",
 })
 {{- end }}
