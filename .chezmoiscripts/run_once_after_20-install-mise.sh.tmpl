@@ -18,7 +18,7 @@ CURRENT_HASH="{{ include "dot_config/mise/config.toml.tmpl" | sha256sum }}"
 
 log_step "Gestión de Entornos (Mise)"
 
-if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && command -v mise &>/dev/null && command -v agy &>/dev/null; then
+if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ] && command -v mise &>/dev/null && command -v agy &>/dev/null && (command -v opencode &>/dev/null || [ -f "$HOME/.opencode/bin/opencode" ]); then
     log_ok "Node, Python y CLIs están sincronizados."
     exit 0
 fi
@@ -82,7 +82,13 @@ fi
 
 if ! command -v agy &>/dev/null; then
     log_info "Instalando Antigravity CLI..."
-    run curl -fsSL https://antigravity.google/cli/install.sh | bash
+    curl -fsSL https://antigravity.google/cli/install.sh | bash
+fi
+
+# ── 4. OpenCode CLI ───────────────────────────────────────────────────────────
+if ! command -v opencode &>/dev/null && [ ! -f "$HOME/.opencode/bin/opencode" ]; then
+    log_info "Instalando OpenCode CLI..."
+    curl -fsSL https://opencode.ai/install | bash
 fi
 
 # Guardar estado exitoso
