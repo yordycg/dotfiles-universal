@@ -22,11 +22,11 @@ hl.monitor({
 
 -- Nota: el mapa de workspaces (y su binding a monitor) vive en modules/workspaces.lua.tmpl
 {{- else }}
--- Fallback automático para cualquier monitor
+-- Monitor en perfil laptop / fallback nativo 100%
 hl.monitor({
 	output = "",
 	mode = "preferred",
 	position = "auto",
-	scale = "auto",
+	scale = "1.00",
 })
 {{- end }}

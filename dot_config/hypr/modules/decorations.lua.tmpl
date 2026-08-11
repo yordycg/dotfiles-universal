@@ -28,9 +28,9 @@ hl.config({
 		rounding = 12,
 		rounding_power = 4.0,
 
-		-- Change transparency of focused and unfocused windows
-		active_opacity = 0.95,
-		inactive_opacity = 0.85, -- entre .8 y .9
+		-- Opacidad 100% (sin transparencia en ventanas enfocadas y no enfocadas)
+		active_opacity = 1.0,
+		inactive_opacity = 1.0,
 
 		shadow = {
 			{{- if eq .node.profile "laptop" }}
