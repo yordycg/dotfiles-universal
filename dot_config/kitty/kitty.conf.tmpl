@@ -20,7 +20,11 @@ window_padding_width    20
 hide_window_decorations yes
 confirm_os_window_close 0
 
-background_opacity            0.90
+{{- if eq .node.profile "laptop" }}
+background_opacity 1.0
+{{- else }}
+background_opacity 0.90
+{{- end }}
 scrollbar_handle_opacity      0
 scrollbar_track_opacity       0
 scrollbar_track_hover_opacity 0
