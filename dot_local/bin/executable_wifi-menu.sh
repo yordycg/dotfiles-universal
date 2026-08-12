@@ -49,6 +49,7 @@ else
     saved_connections=$(nmcli -g NAME connection show 2>/dev/null || echo "")
 
     if echo "$saved_connections" | grep -wq "$chosen_id"; then
+        nmcli connection modify "$chosen_id" connection.autoconnect yes >/dev/null 2>&1 || true
         if nmcli connection up id "$chosen_id"; then
             notify-send "Wi-Fi" "$success_message"
         fi
