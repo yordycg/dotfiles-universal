@@ -1,10 +1,13 @@
+{{- $items := list "volume" "workspace" "time" "date" -}}
+{{- if eq .node.profile "laptop" -}}
+{{- $items = append $items "battery" -}}
+{{- end -}}
 {
     "clockFormat": "24",
     "dynamicIslandLeftSwipeItems": [
-        "volume",
-        "workspace",
-        "time",
-        "date"
+{{- range $i, $item := $items }}
+        "{{ $item }}"{{ if lt $i (sub (len $items) 1) }},{{ end }}
+{{- end }}
     ],
     "hoverExpandAction": 2,
     "islandAutoHideEnabled": false,
