@@ -15,10 +15,10 @@ vim.diagnostic.config({
   virtual_text = { prefix = "●", spacing = 4 },
   signs = {
     text = {
-      [vim.diagnostic.severity.ERROR] = " ",
-      [vim.diagnostic.severity.WARN] = " ",
-      [vim.diagnostic.severity.INFO] = "",
-      [vim.diagnostic.severity.HINT] = "",
+      [vim.diagnostic.severity.ERROR] = '󰅚 ',
+      [vim.diagnostic.severity.WARN] = '󰀪 ',
+      [vim.diagnostic.severity.INFO] = '󰋽 ',
+      [vim.diagnostic.severity.HINT] = '󰌶 ',
     },
   },
   underline = true,
@@ -108,7 +108,7 @@ local function lsp_on_attach(ev)
   end
 end
 
-local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = false })
+local augroup = vim.api.nvim_create_augroup("UserLsp", { clear = true })
 vim.api.nvim_create_autocmd("LspAttach", { group = augroup, callback = lsp_on_attach })
 
 vim.keymap.set("n", "<leader>q", function()

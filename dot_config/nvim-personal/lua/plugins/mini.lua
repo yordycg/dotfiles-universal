@@ -12,6 +12,7 @@ require("mini.trailspace").setup({})
 require("mini.bufremove").setup({})
 require("mini.notify").setup({})
 require("mini.icons").setup({})
+require("mini.icons").mock_nvim_web_devicons()
 
 -- Resalta TODO/FIXME/HACK y colores hex (reemplaza todo-comments + colorizer)
 require("mini.hipatterns").setup({
@@ -49,14 +50,15 @@ miniclue.setup({
     { mode = "n", keys = "<leader>s", desc = "+split" },
     { mode = "n", keys = "<leader>f", desc = "+find" },
     { mode = "n", keys = "<leader>h", desc = "+git hunk" },
-    { mode = "n", keys = "<leader>g", desc = "+goto" },
-    { mode = "n", keys = "<leader>e", desc = "toggle NvimTree" },
-    { mode = "n", keys = "<leader>t", desc = "+terminal/format" },
+    { mode = "n", keys = "<leader>g", desc = "+goto/lsp" },
+    { mode = "n", keys = "<leader>e", desc = "Toggle NvimTree" },
+    { mode = "n", keys = "<leader>t", desc = "Floating Terminal" },
+    { mode = "n", keys = "<leader>th", desc = "Theme Hub" },
+    { mode = "n", keys = "<leader>u", desc = "+ui/toggle" },
     { mode = "n", keys = "<leader>m", desc = "+format/lint" },
-    { mode = "n", keys = "<leader>d", desc = "+diagnostics" },
-    { mode = "n", keys = "<leader>c", desc = "+code/clear" },
-    { mode = "n", keys = "<leader>x", desc = "delete without yank" },
+    { mode = "n", keys = "<leader>c", desc = "+code" },
     { mode = "n", keys = "<leader>p", desc = "+paste/path" },
+    { mode = "n", keys = "<leader>x", desc = "Delete without yank" },
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),
     miniclue.gen_clues.marks(),

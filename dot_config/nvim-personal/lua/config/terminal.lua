@@ -1,7 +1,7 @@
 -- ************************************************************************************************
 -- FLOATING TERMINAL
 -- ************************************************************************************************
-local augroup = vim.api.nvim_create_augroup("UserConfig", { clear = false })
+local augroup = vim.api.nvim_create_augroup("UserTerminal", { clear = true })
 
 vim.api.nvim_create_autocmd("TermClose", {
   group = augroup,
@@ -52,8 +52,8 @@ local function FloatingTerminal()
 
   vim.wo[terminal_state.win].winblend = 0
   vim.wo[terminal_state.win].winhighlight = "Normal:FloatingTermNormal,FloatBorder:FloatingTermBorder"
-  vim.api.nvim_set_hl(0, "FloatingTermNormal", { bg = "none" })
-  vim.api.nvim_set_hl(0, "FloatingTermBorder", { bg = "none" })
+  vim.api.nvim_set_hl(0, "FloatingTermNormal", { link = "NormalFloat" })
+  vim.api.nvim_set_hl(0, "FloatingTermBorder", { link = "FloatBorder" })
 
   local has_terminal = false
   local lines = vim.api.nvim_buf_get_lines(terminal_state.buf, 0, -1, false)

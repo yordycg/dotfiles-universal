@@ -55,11 +55,11 @@ function M.setup_lsp()
       if type(server) == "string" then
         table.insert(enabled, server)
       elseif type(server) == "table" and server.name then
-        vim.lsp.config(server.name, {
+        vim.lsp.config[server.name] = {
           cmd = server.cmd,
           settings = server.settings,
           filetypes = server.filetypes,
-        })
+        }
         table.insert(enabled, server.name)
       else
         vim.notify("languages: spec de servidor inválida en '" .. lang .. "'", vim.log.levels.WARN)

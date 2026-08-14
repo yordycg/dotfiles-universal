@@ -32,8 +32,9 @@ local function setup_treesitter()
   vim.api.nvim_create_autocmd('FileType', {
     group = group,
     callback = function(args)
-      if vim.list_contains(treesitter.get_installed(), vim.treesitter.language.get_lang(args.match)) then
-        vim.treesitter.start(args.buf)
+      local lang = vim.treesitter.language.get_lang(args.match) or args.match
+      if lang and vim.list_contains(config.get_installed(), lang) then
+        pcall(vim.treesitter.start, args.buf)
       end
     end,
   })

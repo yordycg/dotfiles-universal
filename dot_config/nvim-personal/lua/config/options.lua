@@ -2,8 +2,8 @@
 -- OPTIONS
 -- ************************************************************************************************
 
-require('catppuccin').setup({
-  transparent_background = true,
+require('catppuccin').setup {
+  transparent_background = false,
   integrations = {
     cmp = true,
     gitsigns = true,
@@ -11,37 +11,10 @@ require('catppuccin').setup({
     treesitter = true,
     fzf = true,
   },
-})
-
-local function set_transparent() -- set UI component to transparent
-  local group = {
-    'Normal',
-    'NormalNC',
-    'EndOfBuffer',
-    'NormalFloat',
-    'FloatBorder',
-    'SignColumn',
-    'StatusLine',
-    'StatusLineNC',
-    'TabLine',
-    'TabLineFill',
-    'TabLineSel',
-    'ColorColumn',
-  }
-  for _, g in ipairs(group) do
-    vim.api.nvim_set_hl(0, g, { bg = 'none' })
-  end
-  vim.api.nvim_set_hl(0, 'TabLineFill', { bg = 'none', fg = '#767676' })
-end
-
-vim.api.nvim_create_autocmd('ColorScheme', {
-  pattern = '*',
-  callback = set_transparent,
-})
+}
 
 vim.opt.termguicolors = true
 vim.cmd.colorscheme 'catppuccin'
-set_transparent()
 
 vim.opt.number = true -- line number
 vim.opt.relativenumber = true -- relative line numbers
@@ -69,7 +42,7 @@ vim.opt.cmdheight = 1 -- single line command line
 vim.opt.completeopt = 'menuone,noinsert,noselect' -- completion options
 vim.opt.showmode = false -- do not show the mode, instead have it in statusline
 vim.opt.pumheight = 10 -- popup menu height
-vim.opt.pumblend = 10 -- popup menu transparency
+vim.opt.pumblend = 0 -- popup menu transparency
 vim.opt.winblend = 0 -- floating window transparency
 vim.opt.conceallevel = 0 -- do not hide markup
 vim.opt.concealcursor = '' -- do not hide cursorline in markup

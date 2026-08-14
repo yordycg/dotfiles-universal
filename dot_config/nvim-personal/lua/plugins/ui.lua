@@ -12,6 +12,42 @@ require('nvim-tree').setup {
   },
   renderer = {
     group_empty = true,
+    highlight_git = true,
+    highlight_opened_files = 'name',
+    indent_markers = {
+      enable = true,
+    },
+    icons = {
+      show = {
+        file = true,
+        folder = true,
+        folder_arrow = true,
+        git = true,
+      },
+      glyphs = {
+        default = '󰈔',
+        symlink = '󰌷',
+        folder = {
+          arrow_closed = '󰅂',
+          arrow_open = '󰅀',
+          default = '󰉋',
+          open = '󰝰',
+          empty = '󰷏',
+          empty_open = '󰷏',
+          symlink = '󰉒',
+          symlink_open = '󰉒',
+        },
+        git = {
+          unstaged = '󰏫',
+          staged = '󰐕',
+          unmerged = '󰹹',
+          renamed = '󰁕',
+          untracked = '󰘓',
+          deleted = '󰍴',
+          ignored = '󰈉',
+        },
+      },
+    },
   },
   update_focused_file = {
     enable = true,
@@ -24,6 +60,7 @@ end, { desc = 'Toggle NvimTree' })
 
 -- fzf-lua
 require('fzf-lua').setup {}
+require('fzf-lua').register_ui_select()
 
 vim.keymap.set('n', '<leader>ff', function()
   require('fzf-lua').files()
@@ -82,3 +119,13 @@ end, { desc = 'Toggle inline blame' })
 vim.keymap.set('n', '<leader>hd', function()
   require('gitsigns').diffthis()
 end, { desc = 'Diff this' })
+
+-- theme-hub.nvim
+require('theme-hub').setup {
+  install_dir = vim.fn.stdpath 'data' .. '/theme-hub',
+  auto_install_on_select = true,
+  apply_after_install = true,
+  persistent = true,
+}
+
+vim.keymap.set('n', '<leader>th', '<cmd>ThemeHub<cr>', { desc = 'Theme Hub (Select theme)' })

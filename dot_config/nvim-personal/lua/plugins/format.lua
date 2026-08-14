@@ -36,7 +36,7 @@ end, { desc = "Format buffer/selection" })
 
 -- Toggle format-on-save por si necesitas desactivarlo puntualmente
 vim.g.disable_autoformat = false
-vim.keymap.set("n", "<leader>tf", function()
+vim.keymap.set("n", "<leader>uf", function()
   vim.g.disable_autoformat = not vim.g.disable_autoformat
   print("Autoformat: " .. (vim.g.disable_autoformat and "OFF" or "ON"))
 end, { desc = "Toggle autoformat on save" })

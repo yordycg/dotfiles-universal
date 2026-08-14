@@ -18,7 +18,7 @@ for tool, opts in pairs(languages.linter_opts()) do
   end
 end
 
-local augroup = vim.api.nvim_create_augroup('UserConfig', { clear = false })
+local augroup = vim.api.nvim_create_augroup('UserLint', { clear = true })
 
 vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufEnter', 'InsertLeave' }, {
   group = augroup,

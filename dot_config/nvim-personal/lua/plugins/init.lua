@@ -29,6 +29,9 @@ vim.pack.add {
   -- Navegación seamless entre ventanas nvim y panes tmux
   -- (fallback homelab; en herdr lo gestiona vim-herdr-navigation)
   'https://github.com/christoomey/vim-tmux-navigator',
+  -- Gestor interactivo de temas y dependencia
+  'https://github.com/nvim-lua/plenary.nvim',
+  'https://github.com/Erl-koenig/theme-hub.nvim',
 }
 
 local function packadd(name)
@@ -49,3 +52,5 @@ packadd 'blink.cmp'
 packadd 'conform.nvim'
 packadd 'nvim-lint'
 packadd 'vim-tmux-navigator'
+packadd 'plenary.nvim'
+packadd 'theme-hub.nvim'
