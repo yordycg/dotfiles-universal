@@ -1,0 +1,20 @@
+{
+  "providers": {
+    "google": {
+      "modelOverrides": {
+        "google/gemini-2.5-flash": {
+          "samplingParams": {
+            "temperature": 0.2
+          },
+          "maxTokens": 8192
+        },
+        "google/gemini-1.5-pro": {
+          "samplingParams": {
+            "temperature": 0.1
+          },
+          "maxTokens": 8192
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "theme": "dark",
+  "terminalMode": "regular",
+  "autoReload": true,
+  "default_model": "google/gemini-2.5-flash"
+}
