@@ -2,5 +2,6 @@
   "theme": "dark",
   "terminalMode": "regular",
   "autoReload": true,
-  "default_model": "google/gemini-2.5-flash"
+  "default_model": "google/gemini-3.5-flash",
+  "defaultThinkingLevel": "low"
 }
