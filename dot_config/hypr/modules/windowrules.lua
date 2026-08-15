@@ -94,7 +94,7 @@ hl.window_rule({
   move = "100%-615 100%-353",
 })
 
--- Dialogos y Selectores - archivos flotantes
+-- Dialogos y Selectores del Sistema
 hl.window_rule({
   name = "system-dialogs-float",
   match = {
@@ -104,14 +104,125 @@ hl.window_rule({
   center = true,
 })
 
+-- Diálogos de Selección de Archivos (EN & ES)
 hl.window_rule({
   name = "file-pickers-float",
   match = {
-    title = "^(Open File|Save File|Select a File|Open Folder).*$",
+    title = "^(Open File|Save File|Save As|Select a File|Open Folder|Choose Files|Abrir archivo|Guardar como|Seleccionar archivos|Seleccionar carpeta).*$",
+  },
+  float = true,
+  center = true,
+  size = "900 600",
+})
+
+-- Gestor de Archivos Thunar (Ventana principal y subdiálogos)
+hl.window_rule({
+  name = "thunar-float",
+  match = {
+    class = "^(thunar)$",
+  },
+  float = true,
+  center = true,
+  size = "1000 650",
+})
+
+-- Gestores de Archivos Comprimidos
+hl.window_rule({
+  name = "archive-managers-float",
+  match = {
+    class = "^(file-roller|ark|xarchiver)$",
+  },
+  float = true,
+  center = true,
+  size = "800 500",
+})
+
+-- Descargas y Bibliotecas del Navegador (EN & ES)
+hl.window_rule({
+  name = "browser-downloads-float",
+  match = {
+    class = "^(firefox|google-chrome|brave-browser)$",
+    title = "^(Downloads|Descargas|Library|Catálogo)$",
+  },
+  float = true,
+  center = true,
+  size = "800 500",
+})
+
+-- Ventanas de Autenticación, OAuth y Extensiones (Bitwarden, Google, etc.)
+hl.window_rule({
+  name = "auth-popups-float",
+  match = {
+    title = "^(Extension:.*Bitwarden.*|Bitwarden.*|Sign in - Google Accounts.*|Iniciar sesión.*|Autorizar.*)$",
+  },
+  float = true,
+  center = true,
+  size = "600 650",
+})
+
+-- Utilidades y Diálogos de Scripting
+hl.window_rule({
+  name = "script-dialogs-float",
+  match = {
+    class = "^(yad|zenity)$",
   },
   float = true,
   center = true,
 })
+
+-- Calculadoras de Escritorio (EN & ES)
+hl.window_rule({
+  name = "calculators-float",
+  match = {
+    class = "^(galculator|mate-calc|gnome-calculator|kcalc|qalculate-gtk)$",
+  },
+  float = true,
+  center = true,
+})
+
+-- Duplicado de Pantalla (Android scrcpy)
+hl.window_rule({
+  name = "scrcpy-float",
+  match = {
+    class = "^(scrcpy)$",
+  },
+  float = true,
+  center = true,
+})
+
+-- Reproductores y Visores Multimedia (imv, mpv, vlc)
+hl.window_rule({
+  name = "media-viewers-float",
+  match = {
+    class = "^(imv|mpv|vlc)$",
+  },
+  float = true,
+  center = true,
+  size = "960 540",
+})
+
+-- Gestores de Descargas / Torrent
+hl.window_rule({
+  name = "downloaders-float",
+  match = {
+    class = "^(org.qbittorrent.qBittorrent|transmission-gtk)$",
+  },
+  float = true,
+  center = true,
+  size = "900 600",
+})
+
+-- Portales de Selección de Archivos del Sistema
+hl.window_rule({
+  name = "portals-float",
+  match = {
+    class = "^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde)$",
+  },
+  float = true,
+  center = true,
+})
+
+
 
 -- Blur - capas UI
 hl.layer_rule({
