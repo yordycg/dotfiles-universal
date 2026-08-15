@@ -88,7 +88,22 @@ type = "plugin_action"
 command = "persiyanov.reviewr.open"
 description = "open reviewr pane"
 
+# --- Plugin actions: herdr-file-viewer (Previsualizador de archivos) ---
+[[keys.command]]
+key = "prefix+alt+f"
+type = "plugin_action"
+command = "herdr-file-viewer.open-file-viewer"
+description = "open file viewer panel"
+
+# --- Plugin actions: herdr-bar (Barra de estado de Herdr) ---
+[[keys.command]]
+key = "prefix+alt+b"
+type = "plugin_action"
+command = "herdr-bar.open"
+description = "toggle herdr bar status"
+
 # --- Popups (Custom Commands) ---
+
 [[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
@@ -138,6 +153,8 @@ rows = [
   ["state_icon", "workspace"],
   ["branch", "git_status"],
 ]
+
+
 
 [ui.toast]
 delivery = "system"

@@ -19,11 +19,14 @@ fi
 
 log_step "Plugins de Herdr (Tier 1)"
 
-# plugins = "nombre-del-repo:id-a-chequear"
 plugins=(
   "paulbkim-dev/vim-herdr-navigation:vim-herdr-navigation"
   "andrewchng/herdr-sessionizer:sessionizer"
   "persiyanov/herdr-reviewr:persiyanov.reviewr"
+  "natori-hrj/herdr-lazy:herdr-lazy"
+  "jeffarese/herdr-bar:herdr-bar"
+  "smarzban/herdr-file-viewer:herdr-file-viewer"
+  "iurysza/herdr-tab-smart-rename:tab-smart-rename"
 )
 
 for entry in "${plugins[@]}"; do

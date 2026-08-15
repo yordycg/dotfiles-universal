@@ -1,0 +1,5 @@
+{
+  "defaultProvider": "google",
+  "defaultModel": "gemini-1.5-pro",
+  "theme": "dark"
+}

@@ -1,0 +1,34 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_24-setup-pi.sh.tmpl
+# Instalación del agente de terminal Pi (earendil-works/pi)
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Aprovisionamiento de Pi Coding Agent"
+
+if command -v pi &>/dev/null; then
+    log_ok "Pi Coding Agent ya está instalado."
+else
+    log_info "Instalando Pi Coding Agent..."
+    # Si npm está en el PATH, úsalo para instalarlo de forma global
+    if command -v npm &>/dev/null; then
+        run npm install -g --ignore-scripts --min-release-age=0 @earendil-works/pi-coding-agent
+    else
+        # Si no hay npm directo en el PATH de aprovisionamiento, usa el instalador con bypass automático
+        yes y | run curl -fsSL https://pi.dev/install.sh | sh
+    fi
+fi
+
+# Importa el PATH e interactúa con systemd para Zeron si es necesario
+if command -v zeron &>/dev/null && systemctl --user is-active zeron.service &>/dev/null; then
+    log_info "Actualizando PATH del entorno systemd para la integración..."
+    run systemctl --user import-environment PATH || log_warn "No se pudo actualizar PATH en systemd."
+    run systemctl --user restart zeron.service || log_warn "No se pudo reiniciar Zeron."
+fi
+
+log_ok "Pi Coding Agent aprovisionado correctamente."
+{{- end }}

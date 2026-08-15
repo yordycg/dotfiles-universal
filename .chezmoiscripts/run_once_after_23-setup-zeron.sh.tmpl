@@ -1,0 +1,29 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_23-setup-zeron.sh.tmpl
+# Instalación e inicio del servicio de Zeron (engine/daemon)
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Aprovisionamiento de Zeron (Engine & Daemon)"
+
+if command -v zeron &>/dev/null; then
+    log_ok "Zeron ya está instalado."
+else
+    log_info "Instalando Zeron..."
+    run curl -fsSL https://zeron.sh/install.sh | sh
+fi
+
+# Verifica si el servicio de systemd de usuario está activo, si no, lo inicia
+if systemctl --user is-active zeron.service &>/dev/null; then
+    log_ok "El servicio de Zeron está activo."
+else
+    log_info "Iniciando servicio de Zeron..."
+    run systemctl --user enable --now zeron.service
+fi
+
+log_ok "Zeron aprovisionado correctamente."
+{{- end }}
