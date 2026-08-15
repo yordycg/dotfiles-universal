@@ -19,7 +19,7 @@ else
         run npm install -g --ignore-scripts --min-release-age=0 @earendil-works/pi-coding-agent
     else
         # Si no hay npm directo en el PATH de aprovisionamiento, usa el instalador con bypass automático
-        yes y | run curl -fsSL https://pi.dev/install.sh | sh
+        yes y | curl -fsSL https://pi.dev/install.sh | run sh
     fi
 fi
 

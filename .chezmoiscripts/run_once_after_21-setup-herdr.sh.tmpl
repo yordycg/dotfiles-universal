@@ -20,7 +20,7 @@ else
         run mise install -y herdr 2>/dev/null || log_warn "Mise no resolvio herdr, usando instalador oficial."
     fi
     if ! command -v herdr &>/dev/null; then
-        run curl -fsSL https://herdr.dev/install.sh | sh
+        curl -fsSL https://herdr.dev/install.sh | run sh
     fi
 fi
 

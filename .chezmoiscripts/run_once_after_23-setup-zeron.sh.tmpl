@@ -14,7 +14,7 @@ if command -v zeron &>/dev/null; then
     log_ok "Zeron ya está instalado."
 else
     log_info "Instalando Zeron..."
-    run curl -fsSL https://zeron.sh/install.sh | sh
+    curl -fsSL https://zeron.sh/install.sh | run sh
 fi
 
 # Asegura que ~/.local/bin/zeron sea un symlink a ~/.zeron/app/current/zeron

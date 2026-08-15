@@ -48,7 +48,7 @@ MISE_BIN="$HOME/.local/bin/mise"
 
 if [ ! -f "$MISE_BIN" ]; then
     log_info "Instalando Mise..."
-    run curl -fsSL https://mise.run | sh -s -- --quiet
+    curl -fsSL https://mise.run | run sh -s -- --quiet
 else
     log_info "Actualizando Mise..."
     run "$MISE_BIN" self-update || true
