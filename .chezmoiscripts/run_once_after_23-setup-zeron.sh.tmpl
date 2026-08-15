@@ -17,13 +17,44 @@ else
     run curl -fsSL https://zeron.sh/install.sh | sh
 fi
 
-# Verifica si el servicio de systemd de usuario está activo, si no, lo inicia
+# Asegura que ~/.local/bin/zeron sea un symlink a ~/.zeron/app/current/zeron
+# (instalación "managed") para que `zeron update` pueda auto-actualizar.
+# El install.sh del app copia el binario y rompe esta relación; se restaura aquí.
+if [ -f "$HOME/.zeron/app/current/zeron" ] && [ ! -L "$HOME/.local/bin/zeron" ]; then
+    log_warn "~/.local/bin/zeron no es un symlink managed; restaurándolo..."
+    run ln -sfn "$HOME/.zeron/app/current/zeron" "$HOME/.local/bin/zeron"
+fi
+
+# Integración de escritorio (.desktop + icono) para que Zeron aparezca en los lanzadores (rofi, etc.)
+if [ -f "$HOME/.zeron/app/current/zeron.desktop" ]; then
+    log_info "Instalando integración de escritorio de Zeron..."
+    run install -Dm644 "$HOME/.zeron/app/current/zeron.desktop" "$HOME/.local/share/applications/zeron.desktop"
+    run install -Dm644 "$HOME/.zeron/app/current/zeron.png" "$HOME/.local/share/icons/hicolor/1024x1024/apps/zeron.png"
+    if command -v update-desktop-database &>/dev/null; then
+        run update-desktop-database "$HOME/.local/share/applications" || log_warn "No se pudo actualizar la base de datos de aplicaciones."
+    fi
+else
+    log_warn "No se encontró zeron.desktop en ~/.zeron/app/current; se omite la integración de escritorio."
+fi
+
+# Servicio headless del engine según perfil de nodo:
+# - desktop: engine siempre-on (daemon gestiona sesiones/sync, la GUI se conecta vía IPC)
+# - laptop:  engine on-demand (la GUI embebe el engine); el servicio queda deshabilitado
+{{- if eq .node.profile "desktop" }}
 if systemctl --user is-active zeron.service &>/dev/null; then
     log_ok "El servicio de Zeron está activo."
 else
-    log_info "Iniciando servicio de Zeron..."
+    log_info "Iniciando servicio de Zeron (engine siempre-on)..."
     run systemctl --user enable --now zeron.service
 fi
+{{- else }}
+if systemctl --user is-enabled zeron.service &>/dev/null; then
+    log_warn "Deshabilitando servicio de Zeron (perfil laptop: engine on-demand)..."
+    run systemctl --user disable --now zeron.service || log_warn "No se pudo deshabilitar el servicio de Zeron."
+else
+    log_ok "Servicio de Zeron deshabilitado (perfil laptop)."
+fi
+{{- end }}
 
 log_ok "Zeron aprovisionado correctamente."
 {{- end }}
