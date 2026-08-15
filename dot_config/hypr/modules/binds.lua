@@ -160,3 +160,9 @@ hl.bind(mainMod .. " + grave", hl.dsp.exec_cmd("hyprctl dispatch hyprexpo:expo t
 -- Selector TAB (SUPER+Tab handled by Tide-Island overview toggle)
 -- hl.bind(mainMod .. " + Tab", hl.dsp.exec_cmd("snappy-switcher next --mod super"))
 hl.bind(mainMod .. " + SHIFT + Tab", hl.dsp.exec_cmd("snappy-switcher prev --mod super"))
+
+-- Pull Window (Traer ventana de otro workspace al activo)
+hl.bind(mainMod .. " + G", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/hyprland-pull-window.sh"))
+hl.bind(mainMod .. " + SHIFT + G", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/hyprland-return-window.sh"))
+
+

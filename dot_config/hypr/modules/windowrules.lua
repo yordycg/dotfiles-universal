@@ -147,3 +147,18 @@ hl.on("window.open", function(w)
   end
 end)
 
+-- Smart Borders: Quitar bordes y redondeado si solo hay 1 ventana tiled en el workspace (o está en fullscreen)
+hl.window_rule({
+  name = "smart-borders-single",
+  match = { float = false, workspace = "w[t1]" },
+  border_size = 0,
+  rounding = 0,
+})
+hl.window_rule({
+  name = "smart-borders-fullscreen",
+  match = { workspace = "f[1]" },
+  border_size = 0,
+  rounding = 0,
+})
+
+
