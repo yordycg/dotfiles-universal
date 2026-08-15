@@ -17,6 +17,8 @@ local mainMod = "SUPER" -- Sets "Windows" key as main modifier
 hl.bind(mainMod .. " + Return", hl.dsp.exec_cmd(terminal))
 -- Herdr: workspace manager de agentes (kitty -e herdr abre/adjunta session)
 hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(terminal .. " -e herdr"))
+-- Zeron: controller de agentes de código (app desktop)
+hl.bind(mainMod .. " + A", hl.dsp.exec_cmd((os.getenv("HOME") or "") .. "/.local/bin/zeron"))
 hl.bind(mainMod .. " + Q", hl.dsp.window.close())
 -- hl.bind(
 -- 	mainMod .. " + M",
