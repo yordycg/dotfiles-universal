@@ -26,7 +26,8 @@ hl.workspace_rule({ workspace = "4", persistent = true })
 {{- end }}
 
 -- Pinning de aplicaciones al workspace estable (silent: sin robar foco ni saltar de vista).
-hl.window_rule({ name = "pin-terminal", match = { class = "^(kitty)$" },                      workspace = "1 silent" })
-hl.window_rule({ name = "pin-web",      match = { class = "^(firefox|google-chrome|brave-browser)$" }, workspace = "2 silent" })
+-- Nota: La primera terminal se maneja de forma dinámica en windowrules.lua
+hl.window_rule({ name = "pin-web",      match = { class = "^(firefox)$" },                     workspace = "2 silent" })
 hl.window_rule({ name = "pin-notes",    match = { class = "^(obsidian)$" },                    workspace = "3 silent" })
 hl.window_rule({ name = "pin-comms",    match = { class = "^(Ferdium|spotify)$" },             workspace = "4 silent" })
+

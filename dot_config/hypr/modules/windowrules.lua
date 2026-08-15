@@ -126,3 +126,24 @@ hl.window_rule({
   match = { class = "^(mpv|vlc|Steam|heroic)$" },
   opacity = "1.0 override 1.0 override",
 })
+
+-- Ruteo dinámico de terminales (primera en WS1, siguientes en WS activo)
+hl.on("window.open", function(w)
+  if not w then return end
+
+  -- Si es la terminal por defecto (kitty)
+  if w.class == "kitty" then
+    local kitty_count = 0
+    for _, win in ipairs(hl.get_windows()) do
+      if win.class == "kitty" then
+        kitty_count = kitty_count + 1
+      end
+    end
+
+    -- Si es la primera terminal abierta en total, la movemos a WS1 silenciosamente
+    if kitty_count == 1 then
+      hl.dispatch(hl.dsp.window.move({ workspace = 1, follow = false, window = "address:" .. w.address }))
+    end
+  end
+end)
+
