@@ -52,6 +52,11 @@ local function lsp_on_attach(ev)
   local bufnr = ev.buf
   local opts = { noremap = true, silent = true, buffer = bufnr }
 
+  -- Inlay hints (tipos inline) cuando el server los soporta (go, rust, ts, etc.)
+  if client.supports_method("textDocument/inlayHint", bufnr) then
+    vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
+  end
+
   vim.keymap.set("n", "<leader>gd", function()
     require("fzf-lua").lsp_definitions({ jump_to_single_result = true })
   end, opts)

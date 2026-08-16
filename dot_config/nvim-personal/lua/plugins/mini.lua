@@ -6,7 +6,27 @@ require("mini.comment").setup({})
 require("mini.move").setup({})
 require("mini.surround").setup({})
 require("mini.cursorword").setup({})
-require("mini.indentscope").setup({})
+require("mini.indentscope").setup({
+  symbol = "▏",
+  draw = {
+    delay = 0,
+    animation = require("mini.indentscope").gen_animation.none(),
+  },
+  options = {
+    try_as_border = true,
+  },
+})
+
+-- Tinte del scope de indentación: lo deriva del grupo Function del tema actual
+-- para que se vea claro y siga a theme-hub al cambiar de colorscheme.
+local indentscope_group = vim.api.nvim_create_augroup('MiniIndentscopeHighlight', { clear = true })
+local function setup_indentscope_hl()
+  local src = vim.api.nvim_get_hl(0, { name = 'Function', link = false })
+  local fg = src.fg or vim.api.nvim_get_hl(0, { name = 'Normal', link = false }).fg
+  vim.api.nvim_set_hl(0, 'MiniIndentscopeSymbol', { fg = fg })
+end
+setup_indentscope_hl()
+vim.api.nvim_create_autocmd('ColorScheme', { group = indentscope_group, callback = setup_indentscope_hl })
 require("mini.pairs").setup({})
 require("mini.trailspace").setup({})
 require("mini.bufremove").setup({})
