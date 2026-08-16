@@ -1,14 +1,25 @@
+-- La instalación completa de herramientas la garantiza el script de aprovisionamiento
+-- .chezmoiscripts/run_once_after_27-setup-nvim-tools.sh.tmpl (espera a terminar y no
+-- depende de dejar nvim abierto). Durante ese run se desactiva este loop para no
+-- lanzar instalaciones duplicadas.
+local languages = require("config.languages")
 require("mason").setup({})
 
-local languages = require("config.languages")
-local ensure_installed = languages.mason_tools()
-
-local registry = require("mason-registry")
-for _, name in ipairs(ensure_installed) do
-  local ok, pkg = pcall(registry.get_package, name)
-  if ok and not pkg:is_installed() then
-    pkg:install()
+if not vim.g.nvim_mason_provision then
+  local registry = require("mason-registry")
+  for _, name in ipairs(languages.mason_tools()) do
+    local ok, pkg = pcall(registry.get_package, name)
+    if ok and not pkg:is_installed() then
+      pkg:install()
+    end
   end
+end
+
+-- El log LSP crece sin límite (el stderr de clangd se captura como ERROR).
+-- Se trunca al arrancar si supera ~10 MB.
+local lsp_log = vim.fn.stdpath("state") .. "/lsp.log"
+if vim.fn.getfsize(lsp_log) > 10 * 1024 * 1024 then
+  vim.fn.writefile({}, lsp_log)
 end
 
 vim.diagnostic.config({

@@ -1,0 +1,82 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_27-setup-nvim-tools.sh.tmpl
+# Provisioning de herramientas de Neovim (nvim-personal):
+#   - Paquetes de mason (LSP servers, formatters, linters) declarados en
+#     lua/languages/*.lua + tree-sitter-cli.
+# Instalación idempotente y AWAITED: se espera a que terminen todas las
+# descargas (a diferencia del auto-install al boot, que se aborta al salir).
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Herramientas de Neovim (mason + tree-sitter-cli)"
+
+if ! command -v nvim &>/dev/null; then
+    log_warn "nvim no disponible; se omiten las herramientas de Neovim."
+    exit 0
+fi
+
+export NVIM_APPNAME="${NVIM_APPNAME:-nvim-personal}"
+
+LUA_SCRIPT="$(mktemp)"
+trap 'rm -f "$LUA_SCRIPT"' EXIT
+
+cat > "$LUA_SCRIPT" <<'LUA'
+local languages = require("config.languages")
+local registry = require("mason-registry")
+
+local target = vim.list_extend(vim.deepcopy(languages.mason_tools()), { "tree-sitter-cli" })
+
+local pending = {}
+for _, name in ipairs(target) do
+  local ok, pkg = pcall(registry.get_package, name)
+  if not ok then
+    print("[nvim-tools] paquete desconocido: " .. name)
+  elseif not pkg:is_installed() then
+    pending[#pending + 1] = pkg
+    pcall(function()
+      pkg:install()
+    end)
+  end
+end
+
+if #pending == 0 then
+  print("[nvim-tools] todo instalado")
+else
+  print("[nvim-tools] instalando " .. #pending .. " paquetes...")
+end
+
+local deadline = vim.uv.hrtime() + 600 * 1e9
+while #pending > 0 and vim.uv.hrtime() < deadline do
+  for i = #pending, 1, -1 do
+    if pending[i]:is_installed() then
+      print("[nvim-tools] listo: " .. pending[i].name)
+      table.remove(pending, i)
+    end
+  end
+  if #pending > 0 then
+    vim.wait(5000, function()
+      return #pending == 0
+    end)
+  end
+end
+
+if #pending > 0 then
+  local names = vim.tbl_map(function(p)
+    return p.name
+  end, pending)
+  print("[nvim-tools] TIMEOUT sin completar: " .. table.concat(names, ", "))
+end
+LUA
+
+log_info "Instalando paquetes mason (esperando descargas)..."
+run nvim --headless \
+  --cmd "lua vim.g.nvim_mason_provision=true" \
+  -c "luafile $LUA_SCRIPT" \
+  -c "qa!"
+
+log_ok "Herramientas de Neovim listas."
+{{- end }}
