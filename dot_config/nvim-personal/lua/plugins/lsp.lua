@@ -131,6 +131,17 @@ vim.keymap.set("n", "<leader>q", function()
   vim.diagnostic.setloclist({ open = true })
 end, { desc = "Open diagnostic list" })
 
+-- Navegación por brackets entre diagnósticos (complementa <leader>nd/pd). Global,
+-- funciona también con los de nvim-lint. ]e/[e saltan solo a errores.
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+vim.keymap.set("n", "]e", function()
+  vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "Next error" })
+vim.keymap.set("n", "[e", function()
+  vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR })
+end, { desc = "Previous error" })
+
 vim.lsp.config["*"] = {
   capabilities = require("blink.cmp").get_lsp_capabilities(),
 }
