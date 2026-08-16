@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# =============================================================================
+# ~/.local/bin/zed - Wrapper de Zed gestionado por chezmoi
+# Soluciona la pantalla negra en equipos PRIME híbridos (NVIDIA dGPU + iGPU AMD):
+# fuerza a Zed a usar la GPU NVIDIA que maneja la pantalla vía ZED_DEVICE_ID.
+# En equipos sin NVIDIA (laptops) actúa como un alias limpio de `zeditor`.
+# =============================================================================
+set -euo pipefail
+
+if command -v lspci &>/dev/null && lspci 2>/dev/null | grep -qi nvidia; then
+    export WGPU_POWER_PREF=high_performance
+
+    DEVICE_ID="$(lspci -nn 2>/dev/null | grep -i -E 'vga.*nvidia|nvidia.*vga' | sed -n 's/.*\[10de:\([0-9a-fA-F]\{4\}\)\].*/\1/p' | head -n 1 || true)"
+    if [ -n "${DEVICE_ID:-}" ]; then
+        export ZED_DEVICE_ID="0x${DEVICE_ID}"
+    fi
+fi
+
+exec zeditor "$@"

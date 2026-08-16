@@ -116,6 +116,7 @@ arch:
     - qt6ct
     - kvantum
     - firefox
+    - zed
     - gnome-keyring
   hyprland:
     - hyprland

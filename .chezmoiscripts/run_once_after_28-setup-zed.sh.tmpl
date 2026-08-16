@@ -1,0 +1,42 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_28-setup-zed.sh.tmpl
+# Post-instalación de Zed: refuerzo idempotente de instalación y limpieza de
+# residuos de instalaciones manuales que rompían el arranque (pantalla negra).
+# El paquete principal se instala declarativamente vía .chezmoidata/packages.yaml.
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Aprovisionamiento de Zed (editor)"
+
+# 1. Asegurar el binario principal (refuerzo idempotente del provisioner).
+if has_cmd zeditor; then
+    ZED_VERSION="$(zeditor --version 2>/dev/null | head -n 1 || true)"
+    log_ok "Zed instalado: ${ZED_VERSION:-versión desconocida}"
+else
+    if [ -f /etc/arch-release ]; then
+        log_info "zeditor no encontrado. Instalando paquete zed (repo extra)..."
+        run sudo pacman -S --noconfirm --needed zed || log_warn "No se pudo instalar zed automáticamente; revísalo manualmente."
+    else
+        log_warn "zeditor no encontrado. Instala Zed según tu distribución (https://zed.dev)."
+    fi
+fi
+
+# 2. Limpiar binarios manuales rotos en ~/.local/bin que puedan ensombrecer al
+#    zeditor del paquete (el paquete oficial instala /usr/bin/zeditor).
+if [ -f "$HOME/.local/bin/zeditor" ] && ! "$HOME/.local/bin/zeditor" --version &>/dev/null; then
+    log_warn "Removiendo binario zeditor roto/obsoleto en ~/.local/bin..."
+    rm -f "$HOME/.local/bin/zeditor" || log_warn "No se pudo eliminar $HOME/.local/bin/zeditor"
+fi
+
+# 3. Diagnóstico: avisar si el deadlock de inicio de NVIDIA recurrió (hang_traces recientes).
+HANG_DIR="$HOME/.local/share/zed/hang_traces"
+if [ -d "$HANG_DIR" ] && [ -n "$(find "$HANG_DIR" -name 'hang-*.json' -mtime -1 2>/dev/null | head -n 1 || true)" ]; then
+    log_warn "Se detectaron hang_traces recientes de Zed en $HANG_DIR. Si la pantalla negra reaparece, comparte el log: ZED_LOG=wgpu=info zed."
+fi
+
+log_ok "Zed configurado correctamente."
+{{- end }}
