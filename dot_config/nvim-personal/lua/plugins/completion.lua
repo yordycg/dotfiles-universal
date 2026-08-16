@@ -13,6 +13,19 @@ require("blink.cmp").setup({
   },
   appearance = { nerd_font_variant = "mono" },
   completion = { menu = { auto_show = true } },
+  -- Expansión de snippets de los LSP (clangd, lua_ls, etc.) con el vim.snippet nativo
+  -- (se eliminó LuaSnip; Tab/S-Tab ya están mapeados a snippet_forward/backward).
+  snippet = {
+    expand = function(args)
+      vim.snippet.expand(args.body)
+    end,
+    active = function()
+      return vim.snippet.active()
+    end,
+    jump = function(direction)
+      vim.snippet.jump(direction)
+    end,
+  },
   sources = { default = { "lsp", "path", "buffer", "snippets" } },
   fuzzy = {
     implementation = "prefer_rust",
