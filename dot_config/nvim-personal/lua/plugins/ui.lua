@@ -128,4 +128,6 @@ require('theme-hub').setup {
   persistent = true,
 }
 
-vim.keymap.set('n', '<leader>th', '<cmd>ThemeHub<cr>', { desc = 'Theme Hub (Select theme)' })
+-- En <leader>uc (grupo "ui"): si quedara en <leader>th, <leader>t (terminal) sería
+-- prefijo suyo y mini.clue esperaría a desambiguar en vez de abrir la terminal al toque.
+vim.keymap.set('n', '<leader>uc', '<cmd>ThemeHub<cr>', { desc = 'Select theme (Theme Hub)' })
