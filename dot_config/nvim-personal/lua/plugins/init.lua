@@ -34,6 +34,8 @@ vim.pack.add {
   'https://github.com/Erl-koenig/theme-hub.nvim',
   -- Dependencia de theme-hub para que los temas con lush se rendericen bien
   'https://github.com/rktjmp/lush.nvim',
+  -- Snippets comunitarios (blink.cmp los carga solo si están en el runtimepath)
+  'https://github.com/rafamadriz/friendly-snippets',
 }
 
 -- LuaSnip quedó como resto en el lockfile pero ya no se usa (blink.cmp usa vim.snippet).
@@ -61,3 +63,4 @@ packadd 'vim-tmux-navigator'
 packadd 'plenary.nvim'
 packadd 'theme-hub.nvim'
 packadd 'lush.nvim'
+packadd 'friendly-snippets'
