@@ -32,7 +32,13 @@ vim.pack.add {
   -- Gestor interactivo de temas y dependencia
   'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/Erl-koenig/theme-hub.nvim',
+  -- Dependencia de theme-hub para que los temas con lush se rendericen bien
+  'https://github.com/rktjmp/lush.nvim',
 }
+
+-- LuaSnip quedó como resto en el lockfile pero ya no se usa (blink.cmp usa vim.snippet).
+-- Se marca como eliminado (acepta lista) para que se borre del lock y del disco.
+pcall(vim.pack.del, { 'LuaSnip' })
 
 local function packadd(name)
   vim.cmd('packadd ' .. name)
@@ -54,3 +60,4 @@ packadd 'nvim-lint'
 packadd 'vim-tmux-navigator'
 packadd 'plenary.nvim'
 packadd 'theme-hub.nvim'
+packadd 'lush.nvim'
