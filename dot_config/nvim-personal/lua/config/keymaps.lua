@@ -15,6 +15,10 @@ end, { expr = true, silent = true, desc = "Up (wrap-aware)" })
 vim.keymap.set({ "n", "i" }, "<Esc>", "<cmd>nohlsearch<CR><Esc>", { desc = "Clear search highlights" })
 vim.keymap.set("n", "<leader>ch", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
 
+-- Salir de un comentario sin el líder: Enter + borra lo insertado conservando la
+-- indentación (i_CTRL-U). Enter normal sigue continuando el comentario (multi-línea).
+vim.keymap.set("i", "<C-CR>", "<CR><C-u>", { desc = "Break comment (no leader)" })
+
 vim.keymap.set("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 vim.keymap.set("n", "N", "Nzzzv", { desc = "Previous search result (centered)" })
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "Half page down (centered)" })
