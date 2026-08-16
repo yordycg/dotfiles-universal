@@ -64,7 +64,7 @@ local function lsp_on_attach(ev)
   local opts = { noremap = true, silent = true, buffer = bufnr }
 
   -- Inlay hints (tipos inline) cuando el server los soporta (go, rust, ts, etc.)
-  if client.supports_method("textDocument/inlayHint", bufnr) then
+  if client:supports_method("textDocument/inlayHint", bufnr) then
     vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
   end
 
