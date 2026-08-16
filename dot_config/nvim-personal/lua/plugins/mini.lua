@@ -34,6 +34,34 @@ require("mini.notify").setup({})
 require("mini.icons").setup({})
 require("mini.icons").mock_nvim_web_devicons()
 
+-- Animaciones suaves (scroll, resize, open/close). El cursor se deja nativo
+-- para no pelear con el movimiento del cursor de blink.cmp.
+require("mini.animate").setup({
+  scroll = { enable = true },
+  resize = { enable = true },
+  open = { enable = true },
+  close = { enable = true },
+  cursor = { enable = false },
+})
+
+-- Alinear asignaciones/argumentos: ga inicia, gA alinea sobre el espacio
+require("mini.align").setup({})
+
+-- Sesiones de nvim persistentes (complementa :restart de Nvim 0.12)
+require("mini.sessions").setup({
+  directory = vim.fn.stdpath("state") .. "/sessions",
+})
+
+vim.keymap.set("n", "<leader>ss", function()
+  require("mini.sessions").write(nil, { force = true })
+end, { desc = "Save session" })
+vim.keymap.set("n", "<leader>sl", function()
+  require("mini.sessions").read(nil, { force = true })
+end, { desc = "Load session" })
+vim.keymap.set("n", "<leader>sd", function()
+  require("mini.sessions").delete(nil, { force = true })
+end, { desc = "Delete session" })
+
 -- Resalta TODO/FIXME/HACK y colores hex (reemplaza todo-comments + colorizer)
 require("mini.hipatterns").setup({
   highlighters = {
@@ -75,6 +103,10 @@ miniclue.setup({
     { mode = "n", keys = "<leader>t", desc = "Floating Terminal" },
     { mode = "n", keys = "<leader>th", desc = "Theme Hub" },
     { mode = "n", keys = "<leader>u", desc = "+ui/toggle" },
+    { mode = "n", keys = "<leader>ss", desc = "Save session" },
+    { mode = "n", keys = "<leader>sl", desc = "Load session" },
+    { mode = "n", keys = "<leader>sd", desc = "Delete session" },
+    { mode = "n", keys = "<leader>uu", desc = "Undotree" },
     { mode = "n", keys = "<leader>m", desc = "+format/lint" },
     { mode = "n", keys = "<leader>c", desc = "+code" },
     { mode = "n", keys = "<leader>p", desc = "+paste/path" },

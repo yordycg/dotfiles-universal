@@ -8,6 +8,7 @@ require 'config.terminal'
 
 require 'plugins.mini' -- mini.nvim modules
 require 'plugins.ui' -- nvim-tree, gitsigns, fzf-lua
+require 'plugins.builtin' -- Nvim 0.12 built-ins (undotree, ui2)
 require 'plugins.treesitter'
 
 require 'plugins.lsp'
