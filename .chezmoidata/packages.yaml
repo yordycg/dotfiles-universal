@@ -80,6 +80,9 @@ fedora:
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - dms
+    - matugen
+    - cava
+    - qt6-multimedia-ffmpeg
 
 arch:
   base:
@@ -155,6 +158,10 @@ arch:
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - dms-shell-niri
+    - matugen
+    - cava
+    - qt6-multimedia
+    - dsearch
   aur:
     - wvkbd
     - quickshell-git
@@ -162,6 +169,7 @@ arch:
     - hyprshot
     - wlogout
     - snappy-switcher
+    - dsearch-bin
     - visual-studio-code-bin
     - yaak-bin
     - lazy-tmux

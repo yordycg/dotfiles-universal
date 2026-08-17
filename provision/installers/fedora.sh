@@ -132,6 +132,10 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         log_info "Habilitando COPR avengemedia/dms (DMS + Niri)..."
         run sudo dnf copr enable -y avengemedia/dms
     fi
+    if ! dnf copr list | grep -q "avengemedia/danklinux"; then
+        log_info "Habilitando COPR avengemedia/danklinux (dsearch, matugen, cava)..."
+        run sudo dnf copr enable -y avengemedia/danklinux
+    fi
     install_section "niri"
 
     # Activar servicios instalados condicionalmente
