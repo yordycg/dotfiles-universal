@@ -1,0 +1,134 @@
+// =============================================================================
+// niri Binds - Managed by Chezmoi
+// Traducción de dot_config/hypr/modules/binds.lua a niri (KDL)
+// =============================================================================
+
+{{- if and (eq .chezmoi.os "linux") (or .isServer .isWSL) }}
+// Omitir configuración en servidores o WSL
+{{- else }}
+
+binds {
+    // ── Launch programs ─────────────────────────────────────────────────────
+    // Terminal
+    Super+Return { spawn "kitty"; }
+    // Herdr: workspace manager de agentes
+    Super+O { spawn "kitty" "-e" "herdr"; }
+    // Zeron: controller de agentes de código
+    Super+A { spawn "~/.local/bin/zeron"; }
+    // File manager
+    Super+E { spawn "thunar"; }
+    // Browser
+    Super+B { spawn "firefox"; }
+    Super+Shift+B { spawn "brave"; }
+
+    // ── Window management ───────────────────────────────────────────────────
+    // Close window
+    Super+Q { close-window; }
+    // Fullscreen (maximize column)
+    Super+Shift+F { maximize-column; }
+    // Toggle floating
+    Super+V { toggle-window-floating; }
+    // Virtual keyboard (wvkbd)
+    Super+T { spawn-sh "pgrep -x wvkbd-mobintl >/dev/null 2>&1 && pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl -l simple"; }
+
+    // ── Launcher / Clipboard / Shell (DMS IPC) ───────────────────────────────
+    // DMS gestiona launcher, clipboard, lock y notificaciones vía IPC.
+    // App launcher (spotlight del shell DMS, reemplaza rofi)
+    Super+Space { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
+    // Clipboard manager (DMS)
+    Super+Shift+V { spawn "dms" "ipc" "call" "clipboard" "toggle"; }
+    // Task manager (procesos) del shell
+    Super+M { spawn "dms" "ipc" "call" "processlist" "focusOrToggle"; }
+    // Centro de notificaciones
+    Super+N { spawn "dms" "ipc" "call" "notifications" "toggle"; }
+    // Wallpaper browser (DankDash)
+    Super+Y { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
+    // Lock screen (seguridad, funciona incluso bloqueado)
+    Super+Alt+L allow-when-locked=true { spawn "dms" "ipc" "call" "lock" "lock"; }
+
+    // ── Focus movement (Vim keys, como Hyprland) ─────────────────────────────
+    Super+H { focus-column-left; }
+    Super+L { focus-column-right; }
+    Super+K { focus-window-up; }
+    Super+J { focus-window-down; }
+
+    // ── Move windows (Vim keys + arrows) ─────────────────────────────────────
+    Super+Shift+H { move-column-left; }
+    Super+Shift+L { move-column-right; }
+    Super+Shift+K { move-window-up; }
+    Super+Shift+J { move-window-down; }
+    Super+Shift+Left { move-column-left; }
+    Super+Shift+Right { move-column-right; }
+    Super+Shift+Up { move-window-up; }
+    Super+Shift+Down { move-window-down; }
+
+    // ── Workspaces ───────────────────────────────────────────────────────────
+    // Workspaces 1-4 named (term, web, notes, comms), 5-10 dinámicos
+    Super+1 { focus-workspace "term"; }
+    Super+2 { focus-workspace "web"; }
+    Super+3 { focus-workspace "notes"; }
+    Super+4 { focus-workspace "comms"; }
+    Super+5 { focus-workspace 5; }
+    Super+6 { focus-workspace 6; }
+    Super+7 { focus-workspace 7; }
+    Super+8 { focus-workspace 8; }
+    Super+9 { focus-workspace 9; }
+    Super+0 { focus-workspace 10; }
+
+    // Move window to workspace
+    Super+Shift+1 { move-window-to-workspace "term"; }
+    Super+Shift+2 { move-window-to-workspace "web"; }
+    Super+Shift+3 { move-window-to-workspace "notes"; }
+    Super+Shift+4 { move-window-to-workspace "comms"; }
+    Super+Shift+5 { move-window-to-workspace 5; }
+    Super+Shift+6 { move-window-to-workspace 6; }
+    Super+Shift+7 { move-window-to-workspace 7; }
+    Super+Shift+8 { move-window-to-workspace 8; }
+    Super+Shift+9 { move-window-to-workspace 9; }
+    Super+Shift+0 { move-window-to-workspace 10; }
+
+    // ── Scroll through workspaces ────────────────────────────────────────────
+    Super+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+    Super+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }
+
+    // ── Overview / Window switcher ───────────────────────────────────────────
+    // Super+Tab = overview (equivalente a Tide Island toggle); Super+grave =
+    // equivalente a hyprexpo toggle en Hyprland
+    Super+Tab { toggle-overview; }
+    Super+grave { toggle-overview; }
+    // Snappy-switcher (window switcher daemon)
+    Super+Shift+Tab { spawn "snappy-switcher" "prev" "--mod" "super"; }
+
+    // ── Multimedia keys ──────────────────────────────────────────────────────
+    XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
+    XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
+    XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86MonBrightnessUp { spawn "brightnessctl" "-e4" "-n2" "set" "5%+"; }
+    XF86MonBrightnessDown { spawn "brightnessctl" "-e4" "-n2" "set" "5%-"; }
+    XF86AudioNext { spawn "playerctl" "next"; }
+    XF86AudioPause { spawn "playerctl" "play-pause"; }
+    XF86AudioPlay { spawn "playerctl" "play-pause"; }
+    XF86AudioPrev { spawn "playerctl" "previous"; }
+
+    // ── Screenshot (built-in de niri) ────────────────────────────────────────
+    Super+F12 { screenshot-screen; }
+    Super+Shift+F12 { screenshot; }
+
+    // ── Misc ──────────────────────────────────────────────────────────────────
+    // Interactive kill
+    Super+Shift+X { close-window; }
+    // Color Picker
+    Super+Shift+C { spawn "hyprpicker" "-a"; }
+    // Theme Switcher
+    Super+Z { spawn "~/.local/bin/theme-switcher"; }
+    // Logout Menu (wlogout)
+    Super+BackSpace { spawn-sh "pkill wlogout || ~/.local/bin/wlogout.sh"; }
+
+    // ── Mouse gestures (drag/resize con Mod) ────────────────────────────────
+    // Nota: niri ya maneja mover/resizear ventanas arrastrando con Mod+LMB /
+    // Mod+RMB como gestos integrados. NO se deben enlazar Super+MouseLeft/Right
+    // porque eso desactivaría los gestos nativos.
+}
+
+{{- end }}

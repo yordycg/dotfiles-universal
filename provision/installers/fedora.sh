@@ -126,6 +126,14 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         install_section "hyprland"
     fi
 
+    # Sesión alternativa: Niri (scrollable-tiling) + DMS (Quickshell)
+    log_info "Instalando Niri (sesión alternativa)..."
+    if ! dnf copr list | grep -q "avengemedia/dms"; then
+        log_info "Habilitando COPR avengemedia/dms (DMS + Niri)..."
+        run sudo dnf copr enable -y avengemedia/dms
+    fi
+    install_section "niri"
+
     # Activar servicios instalados condicionalmente
     if systemctl list-unit-files cups.service &>/dev/null; then
         log_info "Habilitando servicio de impresión (CUPS)..."

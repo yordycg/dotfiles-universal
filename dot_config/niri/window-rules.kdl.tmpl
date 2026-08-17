@@ -1,0 +1,170 @@
+// =============================================================================
+// niri Window Rules & Named Workspaces - Managed by Chezmoi
+// Traducción de dot_config/hypr/modules/windowrules.lua + workspaces.lua.tmpl
+// =============================================================================
+
+{{- if and (eq .chezmoi.os "linux") (or .isServer .isWSL) }}
+// Omitir configuración en servidores o WSL
+{{- else }}
+
+// ── Capas de DMS (DankMaterialShell) ─────────────────────────────────────────
+// El wallpaper de DMS (namespace quickshell) se dibuja sobre el backdrop para
+// que se vea en el overview. Si "Blur Layer" está activo, también el fondo
+// difuminado se coloca tras el backdrop.
+layer-rule {
+    match namespace="^quickshell$"
+    place-within-backdrop true
+}
+layer-rule {
+    match namespace="dms:blurwallpaper"
+    place-within-backdrop true
+}
+
+// ── Named Workspaces (core estable 1-4) ──────────────────────────────────────
+// Desktop: 1-4 -> DP-2 (igual que en Hyprland). Laptop: sin amarrar a monitor.
+{{- if eq .node.profile "desktop" }}
+workspace "term"  { open-on-output "DP-2"; }
+workspace "web"   { open-on-output "DP-2"; }
+workspace "notes" { open-on-output "DP-2"; }
+workspace "comms" { open-on-output "DP-2"; }
+{{- else }}
+workspace "term"
+workspace "web"
+workspace "notes"
+workspace "comms"
+{{- end }}
+
+// ── Pinning de aplicaciones a workspaces nombrados (silent) ──────────────────
+window-rule {
+    match app-id="^kitty$"
+    open-on-workspace "term"
+}
+window-rule {
+    match app-id="^firefox$"
+    open-on-workspace "web"
+}
+window-rule {
+    match app-id="^obsidian$"
+    open-on-workspace "notes"
+}
+window-rule {
+    match app-id="^(Ferdium|spotify)$"
+    open-on-workspace "comms"
+}
+
+// ── Opacidad de ventanas inactivas (perfil FULL) ─────────────────────────────
+{{- if ne .node.profile "laptop" }}
+window-rule {
+    match is-active=false
+    opacity 0.85
+}
+
+// ── Blur global en todas las ventanas (perfil FULL) ──────────────────────────
+// niri aplica blur vía background-effect por ventana (xray es eficiente y
+// automático cuando hay blur activo).
+window-rule {
+    background-effect {
+        blur true
+    }
+}
+{{- end }}
+
+// ── Diálogos y Selectores del Sistema (flotantes) ────────────────────────────
+window-rule {
+    match app-id="^(pavucontrol|blueman-manager|nm-connection-editor)$"
+    open-floating true
+}
+
+// ── Diálogos de Selección de Archivos (EN & ES) ──────────────────────────────
+window-rule {
+    match title="^(Open File|Save File|Save As|Select a File|Open Folder|Choose Files|Abrir archivo|Guardar como|Seleccionar archivos|Seleccionar carpeta)"
+    open-floating true
+}
+
+// ── Gestor de Archivos Thunar ─────────────────────────────────────────────────
+window-rule {
+    match app-id="^(thunar)$"
+    open-floating true
+}
+
+// ── Gestores de Archivos Comprimidos ─────────────────────────────────────────
+window-rule {
+    match app-id="^(file-roller|ark|xarchiver)$"
+    open-floating true
+}
+
+// ── Descargas y Bibliotecas del Navegador (EN & ES) ─────────────────────────
+window-rule {
+    match app-id="^(firefox|google-chrome|brave-browser)$" title="^(Downloads|Descargas|Library|Catálogo)$"
+    open-floating true
+}
+
+// ── Ventanas de Autenticación, OAuth y Extensiones ───────────────────────────
+window-rule {
+    match title="^(Extension:.*Bitwarden.*|Bitwarden.*|Sign in - Google Accounts.*|Iniciar sesión.*|Autorizar.*)"
+    open-floating true
+}
+
+// ── Utilidades y Diálogos de Scripting ───────────────────────────────────────
+window-rule {
+    match app-id="^(yad|zenity)$"
+    open-floating true
+}
+
+// ── Calculadoras de Escritorio ────────────────────────────────────────────────
+window-rule {
+    match app-id="^(galculator|mate-calc|gnome-calculator|kcalc|qalculate-gtk)$"
+    open-floating true
+}
+
+// ── Duplicado de Pantalla (Android scrcpy) ───────────────────────────────────
+window-rule {
+    match app-id="^(scrcpy)$"
+    open-floating true
+}
+
+// ── Reproductores y Visores Multimedia ───────────────────────────────────────
+window-rule {
+    match app-id="^(imv|mpv|vlc)$"
+    open-floating true
+}
+
+// ── Gestores de Descargas / Torrent ──────────────────────────────────────────
+window-rule {
+    match app-id="^(org.qbittorrent.qBittorrent|transmission-gtk)$"
+    open-floating true
+}
+
+// ── Portales de Selección de Archivos del Sistema ────────────────────────────
+window-rule {
+    match app-id="^(xdg-desktop-portal-gtk|xdg-desktop-portal-kde)$"
+    open-floating true
+}
+
+// ── Picture-in-Picture (PIP) ──────────────────────────────────────────────────
+window-rule {
+    match title="^(Picture-in-Picture)$"
+    open-floating true
+    default-column-width { fixed 600; }
+    default-window-height { fixed 338; }
+}
+
+// ── Opacidad total: juegos y reproductores de video ──────────────────────────
+window-rule {
+    match app-id="^(mpv|vlc|Steam|heroic)$"
+    opacity 1.0
+}
+
+// ── Bordes redondeados (equivalente a rounding 12) ───────────────────────────
+window-rule {
+    geometry-corner-radius 12
+    clip-to-geometry true
+}
+
+// ── Ventanas de DMS (Quickshell): modales flotantes ──────────────────────────
+window-rule {
+    match app-id=r#"^org\.quickshell$"#
+    open-floating true
+}
+
+{{- end }}

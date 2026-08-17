@@ -1,0 +1,241 @@
+// =============================================================================
+// niri Configuration - Managed by Chezmoi
+// Scrollable-tiling Wayland compositor. Modular: binds and window rules are
+// included from separate files (niri >= 25.11).
+// Docs: https://niri-wm.github.io/niri/
+// =============================================================================
+
+{{- if and (eq .chezmoi.os "linux") (or .isServer .isWSL) }}
+// Omitir configuración en servidores o WSL
+{{- else }}
+
+// ── Comportamiento de Ventanas ───────────────────────────────────────────────
+// Pedir a las aplicaciones que omitan sus decoraciones de cliente (CSD).
+// El borde/focus-ring de niri se dibuja alrededor de la ventana.
+prefer-no-csd
+
+// ── Autostart (daemons, sin shell) ───────────────────────────────────────────
+spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
+spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
+
+// DMS (DankMaterialShell): shell Quickshell que reemplaza barra, lock, idle,
+// notificaciones, launcher, polkit y wallpapers (transiciones + matugen).
+// Nota: `dms setup` genera ~/.config/niri/dms/*.kdl si el paquete lo requiere.
+spawn-at-startup "dms" "run"
+
+// Polkit Agent según distro
+{{- if eq .node.distro "fedora" }}
+spawn-at-startup "/usr/libexec/polkit-mate-authentication-agent-1"
+{{- else }}
+spawn-at-startup "/usr/lib/polkit-kde-authentication-agent-1"
+{{- end }}
+
+spawn-at-startup "udiskie"
+spawn-at-startup "snappy-switcher" "--daemon"
+spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+spawn-at-startup "mpris-proxy"
+
+// ── Entorno ───────────────────────────────────────────────────────────────────
+environment {
+    XCURSOR_SIZE "24"
+    ELECTRON_OZONE_PLATFORM_HINT "auto"
+    GDK_BACKEND "wayland,x11,*"
+    QT_QPA_PLATFORM "wayland;xcb"
+    QT_QPA_PLATFORMTHEME "qt5ct"
+    SDL_VIDEODRIVER "wayland"
+    XDG_CURRENT_DESKTOP "niri"
+    XDG_SESSION_DESKTOP "niri"
+    XDG_SESSION_TYPE "wayland"
+}
+
+// ── Cursor ────────────────────────────────────────────────────────────────────
+cursor {
+    xcursor-theme "Adwaita"
+    xcursor-size 24
+    hide-when-typing
+    hide-after-inactive-ms 1000
+}
+
+// ── Entrada ───────────────────────────────────────────────────────────────────
+input {
+    keyboard {
+        xkb {
+            layout "us"
+        }
+        numlock
+        repeat-delay 300
+        repeat-rate 40
+    }
+
+    touchpad {
+        tap
+        natural-scroll
+        dwt
+        scroll-factor 1.0
+    }
+
+    mouse {
+        accel-profile "flat"
+        scroll-factor 1.0
+    }
+
+    workspace-auto-back-and-forth
+    focus-follows-mouse max-scroll-amount="10%"
+    warp-mouse-to-focus
+}
+
+// ── Salidas (monitores) ───────────────────────────────────────────────────────
+{{- if eq .node.profile "desktop" }}
+output "DP-2" {
+    mode "1920x1080@143.98"
+    position x=0 y=0
+    scale 1.0
+    focus-at-startup
+}
+output "HDMI-A-1" {
+    mode "1920x1080@74.97"
+    position x=1920 y=0
+    scale 1.0
+}
+{{- else }}
+output "eDP-1" {
+    mode "preferred"
+    scale 1.25
+    focus-at-startup
+}
+{{- end }}
+
+// ── Layout (tiling scrollable) ────────────────────────────────────────────────
+layout {
+    gaps 8
+
+    center-focused-column "always"
+    always-center-single-column
+    default-column-width { proportion 0.5; }
+
+    preset-column-widths {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    preset-window-heights {
+        proportion 0.33333
+        proportion 0.5
+        proportion 0.66667
+    }
+
+    // Borde estilo Hyprland (border_size 1 + rounding 12)
+    focus-ring {
+        off
+    }
+    border {
+        on
+        width 1
+        active-color "#89b4fa"
+        inactive-color "#45475a"
+    }
+
+    // Sombras solo en perfil FULL (desktop)
+    {{- if eq .node.profile "laptop" }}
+    shadow {
+        off
+    }
+    {{- else }}
+    shadow {
+        on
+        softness 30
+        spread 5
+        offset x=0 y=5
+        draw-behind-window true
+        color "#00000070"
+    }
+    {{- end }}
+
+    insert-hint {
+        color "#89b4fa80"
+    }
+}
+
+// ── Blur (niri >= 26.04, ext-background-effect) ───────────────────────────────
+{{- if eq .node.profile "laptop" }}
+blur {
+    off
+}
+{{- else }}
+blur {
+    passes 3
+    offset 3.0
+    noise 0.02
+    saturation 1.5
+}
+{{- end }}
+
+// ── Animaciones (ECO: desactivadas; FULL: springs y easings) ─────────────────
+{{- if eq .node.profile "laptop" }}
+animations {
+    off
+}
+{{- else }}
+animations {
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    window-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    window-resize {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    window-open {
+        duration-ms 150
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 150
+        curve "ease-out-quad"
+    }
+    overview-open-close {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+    recent-windows-close {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.001
+    }
+}
+{{- end }}
+
+// ── Overview (equivalente a la vista de workspaces de Tide Island) ───────────
+// El backdrop es transparente para que el wallpaper de DMS (colocado en el
+// backdrop vía layer-rule) se vea a través del overview.
+overview {
+    zoom 0.5
+    backdrop-color "transparent"
+    workspace-shadow {
+        softness 40
+        spread 10
+        offset x=0 y=10
+        color "#00000050"
+    }
+}
+
+// ── Screenshots (built-in de niri) ────────────────────────────────────────────
+screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
+
+// ── Varios ────────────────────────────────────────────────────────────────────
+hotkey-overlay {
+    skip-at-startup
+    hide-not-bound
+}
+
+xwayland-satellite {
+    path "xwayland-satellite"
+}
+
+// ── Módulos (binds y window rules) ────────────────────────────────────────────
+include "binds.kdl"
+include "window-rules.kdl"
+
+{{- end }}

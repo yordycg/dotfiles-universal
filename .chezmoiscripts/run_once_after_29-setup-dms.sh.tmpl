@@ -1,0 +1,34 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_29-setup-dms.sh.tmpl
+# Post-instalación de DMS (DankMaterialShell): genera la configuración por
+# defecto del shell (binds/colors/layout/... bajo ~/.config/niri/dms/).
+# Idempotente: `dms setup` solo escribe archivos que no existen o están vacíos.
+# El arranque del shell lo hace la config de niri (spawn-at-startup "dms" "run").
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Aprovisionamiento de DMS (DankMaterialShell)"
+
+if ! has_cmd dms; then
+    log_warn "dms no encontrado. Instala el paquete dms/dms-shell-niri vía la matriz de paquetes."
+    exit 0
+fi
+
+DMS_VERSION="$(dms version 2>/dev/null | head -n 1 || true)"
+log_ok "DMS instalado: ${DMS_VERSION:-versión desconocida}"
+
+# 1. Generar la configuración por defecto del compositor (solo si falta).
+#    No se incluyen los ficheros dms/*.kdl en config.kdl (se usan binds
+#    declarativos propios), pero se dejan generados como red de seguridad.
+if dms setup; then
+    log_ok "Configuración DMS generada en ~/.config/niri/dms/"
+else
+    log_warn "dms setup reportó problemas; el shell puede requerir ajustes manuales."
+fi
+
+log_ok "DMS configurado correctamente."
+{{- end }}

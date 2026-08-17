@@ -74,6 +74,12 @@ fedora:
     - thunar
     - udiskie
     - code
+  niri:
+    - niri
+    - xwayland-satellite
+    - xdg-desktop-portal-gnome
+    - xdg-desktop-portal-gtk
+    - dms
 
 arch:
   base:
@@ -143,6 +149,12 @@ arch:
     - thunar
     - udiskie
     - plasma-keyboard
+  niri:
+    - niri
+    - xwayland-satellite
+    - xdg-desktop-portal-gnome
+    - xdg-desktop-portal-gtk
+    - dms-shell-niri
   aur:
     - wvkbd
     - quickshell-git

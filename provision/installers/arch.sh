@@ -57,6 +57,10 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
         install_section "hyprland"
     fi
 
+    # Sesión alternativa: Niri (scrollable-tiling)
+    log_info "Instalando Niri (sesión alternativa)..."
+    install_section "niri"
+
     # Activar servicios instalados condicionalmente
     if systemctl list-unit-files bluetooth.service &>/dev/null; then
         log_info "Habilitando servicio de Bluetooth..."
