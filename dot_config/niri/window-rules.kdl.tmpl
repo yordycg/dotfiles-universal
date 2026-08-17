@@ -26,23 +26,23 @@ workspace "web"
 workspace "notes"
 workspace "comms"
 
-// ── Pinning de aplicaciones a workspaces nombrados (silent) ──────────────────
-window-rule {
-    match app-id="^kitty$"
-    open-on-workspace "term"
-}
-window-rule {
-    match app-id="^firefox$"
-    open-on-workspace "web"
-}
-window-rule {
-    match app-id="^obsidian$"
-    open-on-workspace "notes"
-}
-window-rule {
-    match app-id="^(Ferdium|spotify)$"
-    open-on-workspace "comms"
-}
+// ── Pinning de aplicaciones a workspaces nombrados (Desactivado para flujo dinámico) ──
+// window-rule {
+//     match app-id="^kitty$"
+//     open-on-workspace "term"
+// }
+// window-rule {
+//     match app-id="^firefox$"
+//     open-on-workspace "web"
+// }
+// window-rule {
+//     match app-id="^obsidian$"
+//     open-on-workspace "notes"
+// }
+// window-rule {
+//     match app-id="^(Ferdium|spotify)$"
+//     open-on-workspace "comms"
+// }
 
 // ── Opacidad de ventanas inactivas (solo terminales en perfil FULL) ──────────
 // (Eliminada para que la terminal gestione su propia opacidad nativa de fondo)
