@@ -22,14 +22,14 @@ DMS_VERSION="$(dms version 2>/dev/null | head -n 1 || true)"
 log_ok "DMS instalado: ${DMS_VERSION:-versión desconocida}"
 
 # 1. Generar la configuración por defecto del compositor (solo si falta).
-#    Se usan los subcomandos de `dms setup` para escribir únicamente los
-#    ficheros dms/*.kdl (red de seguridad). NO se ejecuta `dms setup` a
-#    secas: además de ser interactivo, despliega su propio config.kdl y
-#    kitty.conf sobrescribiendo los archivos gestionados por chezmoi.
-#    DMS_PRIVESC evita el prompt de herramienta de elevación y se responde
-#    por stdin al selector de compositor (1 = niri).
+#    Únicamente se despliega colors.kdl (red de seguridad con fondo transparente);
+#    el tema real lo genera run_once_after_86 (dms matugen generate).
+#    NO se ejecuta `dms setup` a secas: además de ser interactivo, despliega su
+#    propio config.kdl y kitty.conf sobrescribiendo los archivos gestionados por
+#    chezmoi. DMS_PRIVESC evita el prompt de herramienta de elevación y se
+#    responde por stdin al selector de compositor (1 = niri).
 export DMS_PRIVESC=sudo
-for sub in binds colors layout outputs cursor windowrules alttab; do
+for sub in colors; do
     if output=$(printf '1\n1\n' | dms setup "$sub" 2>&1); then
         log_ok "dms setup $sub: configurado."
     elif [[ "$output" == *"already exists"* ]]; then

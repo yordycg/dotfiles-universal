@@ -1,0 +1,31 @@
+# Datos declarativos de DMS (DankMaterialShell) + integración con niri.
+# Fuente de verdad para la tematización automática (matugen headless) y las
+# preferencias base del shell. Consumidos por:
+#   - dot_config/DankMaterialShell/settings.base.json.tmpl
+#   - .chezmoiscripts/run_once_after_86-setup-dms-theme.sh.tmpl
+# Nota: el merge con settings.json solo aplica claves AUSENTES; los ajustes
+# hechos en la GUI de DMS (Settings) se preservan en cada máquina.
+dms:
+  # Wallpaper por defecto dentro de ~/Pictures/Wallpapers (clonado por sync-assets).
+  wallpaper: "pokemon_01.jpg"
+
+  # Esquema de color de matugen (dms matugen generate --matugen-type).
+  matugen_scheme: "scheme-vibrant"
+
+  # Tema de la interfaz de DMS (Settings -> Themes).
+  theme: "blue"
+  theme_category: "generic"
+
+  # Ajustes de compositor que gestiona chezmoi (layout de niri).
+  gaps: 5
+  corner_radius: 12
+
+  # Wallpaper: modo de relleno y color de fondo.
+  fill_mode: "Fill"
+  background_color_mode: "black"
+  background_custom_color: "#000000"
+
+  # Blur del wallpaper (capa dms:blurwallpaper) y blur general.
+  blurred_wallpaper_layer: false
+  blur_wallpaper_on_overview: true
+  blur_enabled: false

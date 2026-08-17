@@ -1,0 +1,93 @@
+{{- if and (eq .chezmoi.os "linux") .hasGUI -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_86-setup-dms-theme.sh.tmpl
+# Tema DMS declarativo: aplica preferencias base y genera el tema con matugen.
+# Corre DESPUÉS de sync-assets (85) para que exista ~/Pictures/Wallpapers.
+# Idempotente y tolerante: ningún fallo aborta el apply.
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+if ! has_cmd dms; then
+    log_warn "dms no encontrado; omitiendo tema DMS declarativo."
+    exit 0
+fi
+
+DMS_CFG_DIR="$HOME/.config/DankMaterialShell"
+DMS_STATE_DIR="$HOME/.local/state/DankMaterialShell"
+DMS_SHELL_DIR="/usr/share/quickshell/dms"
+BASE_FILE="$DMS_CFG_DIR/settings.base.json"
+SETTINGS_FILE="$DMS_CFG_DIR/settings.json"
+SESSION_FILE="$DMS_STATE_DIR/session.json"
+WALLPAPERS_DIR="$HOME/Pictures/Wallpapers"
+DEFAULT_WALLPAPER="{{ .dms.wallpaper }}"
+MATUGEN_TYPE="{{ .dms.matugen_scheme }}"
+
+log_step "Tema declarativo DMS"
+
+# ── 1. Preferencias base: merge solo de claves AUSENTES ──────────────────────
+# settings.base.json es la base de chezmoi. Se preserva todo lo que la máquina
+# ya tiene (displayProfiles, ajustes hechos en la GUI de DMS, ...).
+if [ -f "$BASE_FILE" ]; then
+    mkdir -p "$DMS_CFG_DIR"
+    if [ ! -f "$SETTINGS_FILE" ]; then
+        if cp "$BASE_FILE" "$SETTINGS_FILE"; then
+            log_ok "settings.json creado desde la base declarativa."
+        else
+            log_warn "No se pudo crear settings.json desde la base."
+        fi
+    elif has_cmd jq; then
+        if jq -s '.[0] * .[1]' "$BASE_FILE" "$SETTINGS_FILE" > "$SETTINGS_FILE.tmp" 2>/dev/null; then
+            mv "$SETTINGS_FILE.tmp" "$SETTINGS_FILE"
+            log_ok "settings.json mergeado con preferencias base (claves ausentes)."
+        else
+            rm -f "$SETTINGS_FILE.tmp"
+            log_warn "jq falló al mergear settings.json; se conserva el archivo actual."
+        fi
+    else
+        log_warn "jq no disponible; omitiendo merge de settings.json."
+    fi
+fi
+
+# ── 2. Generación de tema matugen (colors.kdl, firefox.css, kitty, ...) ──────
+WALLPAPER_PATH=""
+if [ -n "$DEFAULT_WALLPAPER" ] && [ -f "$WALLPAPERS_DIR/$DEFAULT_WALLPAPER" ]; then
+    WALLPAPER_PATH="$WALLPAPERS_DIR/$DEFAULT_WALLPAPER"
+elif [ -d "$WALLPAPERS_DIR" ]; then
+    WALLPAPER_PATH="$(find "$WALLPAPERS_DIR" -maxdepth 1 -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' \) 2>/dev/null | sort | head -n1 || true)"
+fi
+
+if [ -n "$WALLPAPER_PATH" ] && [ -f "$WALLPAPER_PATH" ]; then
+    if dms matugen generate --value "$WALLPAPER_PATH" --kind image --matugen-type "$MATUGEN_TYPE" \
+        --config-dir "$DMS_CFG_DIR" \
+        --shell-dir "$DMS_SHELL_DIR" \
+        --state-dir "$DMS_STATE_DIR" > /tmp/dms-matugen.log 2>&1; then
+        log_ok "Tema matugen generado desde $WALLPAPER_PATH."
+    elif grep -q "No color changes detected" /tmp/dms-matugen.log; then
+        # dms matugen sale con código 2 cuando el tema ya está al día (no-op).
+        log_ok "Tema matugen ya actualizado (sin cambios de color)."
+    else
+        log_warn "matugen generate falló; revisa /tmp/dms-matugen.log. El tema se mantiene en su estado anterior."
+    fi
+else
+    log_warn "No se encontraron wallpapers en $WALLPAPERS_DIR; omitiendo generación de tema."
+fi
+
+# ── 3. Wallpaper por defecto en session.json (solo si falta) ─────────────────
+if [ -n "$WALLPAPER_PATH" ] && [ -f "$SESSION_FILE" ] && has_cmd jq; then
+    CURRENT_WALLPAPER="$(jq -r '.wallpaperPath // ""' "$SESSION_FILE" 2>/dev/null || true)"
+    if [ -z "$CURRENT_WALLPAPER" ]; then
+        if jq --arg w "$WALLPAPER_PATH" '.wallpaperPath = $w' "$SESSION_FILE" > "$SESSION_FILE.tmp" 2>/dev/null; then
+            mv "$SESSION_FILE.tmp" "$SESSION_FILE"
+            log_ok "session.json: wallpaper por defecto fijado a $WALLPAPER_PATH."
+        else
+            rm -f "$SESSION_FILE.tmp"
+            log_warn "No se pudo fijar el wallpaper en session.json."
+        fi
+    fi
+fi
+
+log_ok "Tema DMS declarativo configurado."
+{{- end }}

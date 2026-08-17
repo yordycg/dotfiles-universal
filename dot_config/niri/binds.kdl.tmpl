@@ -118,8 +118,8 @@ binds {
     Super+Shift+X { close-window; }
     // Color Picker (eyedropper del shell DMS)
     Super+Shift+C { spawn "dms" "color" "pick"; }
-    // Theme Switcher
-    Super+Z { spawn "~/.local/bin/theme-switcher"; }
+    // Theme picker de DMS (matugen). El theme-switcher de rofi no toca DMS/niri.
+    Super+Z { spawn "dms" "ipc" "call" "settings" "focusOrToggleWith" "theme"; }
     // Power Menu / Logout (DMS)
     Super+BackSpace { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
 

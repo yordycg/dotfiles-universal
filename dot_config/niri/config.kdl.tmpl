@@ -98,7 +98,11 @@ output "eDP-1" {
 
 // ── Layout (tiling scrollable) ────────────────────────────────────────────────
 layout {
-    gaps 8
+    gaps 5
+
+    // Fondo transparente: deja ver el wallpaper de DMS (colocado en el backdrop
+    // vía layer-rule place-within-backdrop) en los workspaces.
+    background-color "transparent"
 
     center-focused-column "always"
     always-center-single-column
@@ -228,5 +232,11 @@ xwayland-satellite {
 // ── Módulos (binds y window rules) ────────────────────────────────────────────
 include "binds.kdl"
 include "window-rules.kdl"
+
+// ── Tema DMS (matugen) ───────────────────────────────────────────────────────
+// colors.kdl lo genera `dms matugen generate` (run_once_after_86): aporta el
+// background-color transparent y los colores del tema a niri. `optional=true`
+// permite arrancar en máquinas nuevas antes de que exista el archivo.
+include "dms/colors.kdl" optional=true
 
 {{- end }}
