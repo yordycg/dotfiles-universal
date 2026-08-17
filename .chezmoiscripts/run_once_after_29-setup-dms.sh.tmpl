@@ -30,5 +30,16 @@ else
     log_warn "dms setup reportó problemas; el shell puede requerir ajustes manuales."
 fi
 
+# 2. Servicio de indexación de DankSearch (dsearch): opcional, tolerante.
+if has_cmd dsearch; then
+    if systemctl --user enable --now dsearch &>/dev/null; then
+        log_ok "Servicio dsearch (indexación de archivos) habilitado."
+    else
+        log_warn "No se pudo habilitar el servicio dsearch; el spotlight usará apps sin búsqueda de archivos."
+    fi
+else
+    log_info "dsearch no instalado; omitiendo indexación de archivos."
+fi
+
 log_ok "DMS configurado correctamente."
 {{- end }}

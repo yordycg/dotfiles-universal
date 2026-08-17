@@ -19,20 +19,11 @@ spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPL
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 
 // DMS (DankMaterialShell): shell Quickshell que reemplaza barra, lock, idle,
-// notificaciones, launcher, polkit y wallpapers (transiciones + matugen).
+// notificaciones, launcher, wallpaper (matugen), clipboard, polkit y OSD.
 // Nota: `dms setup` genera ~/.config/niri/dms/*.kdl si el paquete lo requiere.
 spawn-at-startup "dms" "run"
 
-// Polkit Agent según distro
-{{- if eq .node.distro "fedora" }}
-spawn-at-startup "/usr/libexec/polkit-mate-authentication-agent-1"
-{{- else }}
-spawn-at-startup "/usr/lib/polkit-kde-authentication-agent-1"
-{{- end }}
-
 spawn-at-startup "udiskie"
-spawn-at-startup "snappy-switcher" "--daemon"
-spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "mpris-proxy"
 
 // ── Entorno ───────────────────────────────────────────────────────────────────

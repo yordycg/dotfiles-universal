@@ -96,20 +96,18 @@ binds {
     // equivalente a hyprexpo toggle en Hyprland
     Super+Tab { toggle-overview; }
     Super+grave { toggle-overview; }
-    // Snappy-switcher (window switcher daemon)
-    Super+Shift+Tab { spawn "snappy-switcher" "prev" "--mod" "super"; }
 
-    // ── Multimedia keys ──────────────────────────────────────────────────────
-    XF86AudioRaiseVolume { spawn "wpctl" "set-volume" "-l" "1" "@DEFAULT_AUDIO_SINK@" "5%+"; }
-    XF86AudioLowerVolume { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
-    XF86AudioMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
-    XF86MonBrightnessUp { spawn "brightnessctl" "-e4" "-n2" "set" "5%+"; }
-    XF86MonBrightnessDown { spawn "brightnessctl" "-e4" "-n2" "set" "5%-"; }
-    XF86AudioNext { spawn "playerctl" "next"; }
-    XF86AudioPause { spawn "playerctl" "play-pause"; }
-    XF86AudioPlay { spawn "playerctl" "play-pause"; }
-    XF86AudioPrev { spawn "playerctl" "previous"; }
+    // ── Multimedia keys (DMS IPC con OSD integrado) ──────────────────────────
+    XF86AudioRaiseVolume { spawn "dms" "ipc" "call" "audio" "increment"; }
+    XF86AudioLowerVolume { spawn "dms" "ipc" "call" "audio" "decrement"; }
+    XF86AudioMute { spawn "dms" "ipc" "call" "audio" "mute"; }
+    XF86AudioMicMute { spawn "dms" "ipc" "call" "mic" "mute"; }
+    XF86MonBrightnessUp { spawn "dms" "ipc" "call" "brightness" "increment"; }
+    XF86MonBrightnessDown { spawn "dms" "ipc" "call" "brightness" "decrement"; }
+    XF86AudioNext { spawn "dms" "ipc" "call" "mpris" "next"; }
+    XF86AudioPause { spawn "dms" "ipc" "call" "mpris" "playPause"; }
+    XF86AudioPlay { spawn "dms" "ipc" "call" "mpris" "playPause"; }
+    XF86AudioPrev { spawn "dms" "ipc" "call" "mpris" "previous"; }
 
     // ── Screenshot (built-in de niri) ────────────────────────────────────────
     Super+F12 { screenshot-screen; }
@@ -118,12 +116,12 @@ binds {
     // ── Misc ──────────────────────────────────────────────────────────────────
     // Interactive kill
     Super+Shift+X { close-window; }
-    // Color Picker
-    Super+Shift+C { spawn "hyprpicker" "-a"; }
+    // Color Picker (eyedropper del shell DMS)
+    Super+Shift+C { spawn "dms" "color" "pick"; }
     // Theme Switcher
     Super+Z { spawn "~/.local/bin/theme-switcher"; }
-    // Logout Menu (wlogout)
-    Super+BackSpace { spawn-sh "pkill wlogout || ~/.local/bin/wlogout.sh"; }
+    // Power Menu / Logout (DMS)
+    Super+BackSpace { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
 
     // ── Mouse gestures (drag/resize con Mod) ────────────────────────────────
     // Nota: niri ya maneja mover/resizear ventanas arrastrando con Mod+LMB /
