@@ -84,6 +84,8 @@ fedora:
     - cava
     - qt6-multimedia
     - dsearch
+    - rsms-inter-vf-fonts
+    - fira-code-fonts
 
 arch:
   base:
@@ -162,6 +164,8 @@ arch:
     - matugen
     - cava
     - qt6-multimedia-ffmpeg
+    - inter-font
+    - ttf-fira-code
   aur:
     - wvkbd
     - quickshell-git

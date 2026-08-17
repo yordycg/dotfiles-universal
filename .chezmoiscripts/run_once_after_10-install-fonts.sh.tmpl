@@ -98,6 +98,19 @@ if [ ! -d "$FONTS_DIR/Rubik" ]; then
     fi
 fi
 
+# ── 6. Fuente Inter (Variable) ─────────────────────────────────────────────
+# Inter Variable: fuente UI por defecto del tema DMS (DankMaterialShell).
+if [ ! -d "$FONTS_DIR/Inter" ]; then
+    log_info "Descargando Inter Variable..."
+    mkdir -p "$FONTS_DIR/Inter"
+    if wget -q --show-progress -O "$FONTS_DIR/Inter/InterVariable.ttf" "https://github.com/google/fonts/raw/main/ofl/inter/Inter%5Bopsz%2Cwght%5D.ttf"; then
+        log_ok "Fuente Inter Variable descargada."
+    else
+        log_info "No se pudo descargar la fuente Inter."
+        rm -rf "$FONTS_DIR/Inter"
+    fi
+fi
+
 log_info "Actualizando caché del sistema..."
 find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true
 fc-cache -f > /dev/null
