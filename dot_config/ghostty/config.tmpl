@@ -1,0 +1,43 @@
+# ── Ghostty Advanced Configuration ───────────────────────────────────────────
+# Managed by Chezmoi
+
+# --- Font & Layout ---
+font-family = "JetBrainsMono Nerd Font Mono"
+font-size = 13.0
+font-thicken = true
+
+# Custom rendering features (e.g. enabling ligatures)
+font-feature = +calt
+font-feature = +liga
+
+# --- Window Layout & Behavior ---
+window-padding-x = 20
+window-padding-y = 20
+window-decoration = false
+window-inherit-working-directory = true
+confirm-close-surface = false
+
+# --- Scrollback ---
+scrollback-limit = 10000
+
+# --- Mouse & Clipboard ---
+copy-on-select = clipboard
+focus-follows-mouse = false
+
+# --- Cursor Customization ---
+cursor-style = block
+cursor-style-blink = false
+cursor-click-to-move = true
+
+# --- Theme & Opacity ---
+# Puedes cambiar el tema por defecto. Ghostty viene con cientos de temas incluidos.
+# 'Rose Pine' es el tema por defecto configurado en tu suite DMS.
+theme = "Rose Pine"
+
+{{- if eq .node.profile "laptop" }}
+background-opacity = 1.0
+background-blur = false
+{{- else }}
+background-opacity = 0.90
+background-blur = true
+{{- end }}

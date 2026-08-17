@@ -10,9 +10,9 @@
 binds {
     // ── Launch programs ─────────────────────────────────────────────────────
     // Terminal
-    Super+Return { spawn "kitty"; }
+    Super+Return { spawn "ghostty"; }
     // Herdr: workspace manager de agentes
-    Super+O { spawn "kitty" "-e" "herdr"; }
+    Super+O { spawn "ghostty" "-e" "herdr"; }
     // Zeron: controller de agentes de código
     Super+A { spawn "~/.local/bin/zeron"; }
     // File manager
@@ -24,10 +24,24 @@ binds {
     // ── Window management ───────────────────────────────────────────────────
     // Close window
     Super+Q { close-window; }
-    // Fullscreen (maximize column)
+    // Fullscreen / Maximize
+    Super+F { maximize-column; }
     Super+Shift+F { maximize-column; }
     // Toggle floating
     Super+V { toggle-window-floating; }
+    // Toggle tabbed column display mode
+    Super+W { toggle-column-tabbed-display; }
+    // Switch preset column widths
+    Super+R { switch-preset-column-width; }
+    // Resize columns and windows (Vim keys & arrows)
+    Super+Ctrl+H { set-column-width "-10%"; }
+    Super+Ctrl+L { set-column-width "+10%"; }
+    Super+Ctrl+K { set-window-height "-10%"; }
+    Super+Ctrl+J { set-window-height "+10%"; }
+    Super+Ctrl+Left { set-column-width "-10%"; }
+    Super+Ctrl+Right { set-column-width "+10%"; }
+    Super+Ctrl+Up { set-window-height "-10%"; }
+    Super+Ctrl+Down { set-window-height "+10%"; }
     // Virtual keyboard (wvkbd)
     Super+T { spawn-sh "pgrep -x wvkbd-mobintl >/dev/null 2>&1 && pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl -l simple"; }
 
@@ -122,6 +136,8 @@ binds {
     Super+Z { spawn "dms" "ipc" "call" "settings" "focusOrToggleWith" "theme"; }
     // Power Menu / Logout (DMS)
     Super+BackSpace { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+    // Escape hatch to toggle keyboard shortcuts inhibitor (useful for games/VMs)
+    Super+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
     // ── Mouse gestures (drag/resize con Mod) ────────────────────────────────
     // Nota: niri ya maneja mover/resizear ventanas arrastrando con Mod+LMB /
