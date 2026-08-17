@@ -44,6 +44,7 @@ fedora:
     - podman-compose
     - flatpak
     - kitty
+    - ghostty
     - qt5ct
     - qt6ct
     - kvantum
@@ -126,6 +127,7 @@ arch:
     - podman-compose
     - flatpak
     - kitty
+    - ghostty
     - qt5ct
     - qt6ct
     - kvantum
