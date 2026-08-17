@@ -36,6 +36,44 @@ install_section() {
     log_ok "Paquetes de $section instalados."
 }
 
+# ── 2.1. Instalación de Paquetes AUR (sección `aur`) ───────────────────────────
+# Idempotente y tolerante: cada paquete se instala de forma independiente y un
+# fallo de build no aborta el aprovisionamiento (se reporta como advertencia).
+install_section_aur() {
+    local section="$1"
+
+    local helper=""
+    for h in paru yay pikaur; do
+        if command -v "$h" &>/dev/null; then
+            helper="$h"
+            break
+        fi
+    done
+
+    if [ -z "$helper" ]; then
+        log_info "Sin helper AUR detectado. Instalando paru (repo oficial)..."
+        run sudo pacman -S --noconfirm --needed paru
+        helper="paru"
+    fi
+    log_info "Helper AUR detectado: $helper"
+
+    local packages
+    packages=$(awk "/^arch:/ {in_arch=1; next} /^[a-zA-Z]/ {if(in_arch) in_arch=0} in_arch && /^[ ]+${section}:/ {in_sec=1; next} in_arch && in_sec && /^[ ]+-[ ]+/ {print \$2; next} in_arch && in_sec && /^[ ]+[a-zA-Z]/ {in_sec=0}" "$PACKAGES_FILE" || echo "")
+
+    if [ -z "$packages" ]; then
+        log_info "Sección $section vacía, omitiendo."
+        return
+    fi
+
+    log_info "Instalando sección AUR: $section (tolerante a fallos de build)"
+    for pkg in $packages; do
+        if ! run "$helper" -S --noconfirm --needed "$pkg"; then
+            log_warn "Paquete AUR $pkg falló; continúa la ejecución. Revísalo manualmente."
+        fi
+    done
+    log_ok "Paquetes de $section procesados."
+}
+
 # ── 3. Ejecución de Perfiles ─────────────────────────────────────────────────
 # Perfil Base
 install_section "base"
@@ -60,6 +98,9 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     # Sesión alternativa: Niri (scrollable-tiling)
     log_info "Instalando Niri (sesión alternativa)..."
     install_section "niri"
+
+    # Paquetes AUR del escritorio (idempotente y tolerante)
+    install_section_aur "aur"
 
     # Activar servicios instalados condicionalmente
     if systemctl list-unit-files bluetooth.service &>/dev/null; then
