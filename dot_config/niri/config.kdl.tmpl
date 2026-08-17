@@ -37,6 +37,10 @@ environment {
     XDG_CURRENT_DESKTOP "niri"
     XDG_SESSION_DESKTOP "niri"
     XDG_SESSION_TYPE "wayland"
+    {{- if eq .node.profile "desktop" }}
+    __GLX_VENDOR_LIBRARY_NAME "nvidia"
+    GBM_BACKEND "nvidia-drm"
+    {{- end }}
 }
 
 // ── Cursor ────────────────────────────────────────────────────────────────────
@@ -104,7 +108,7 @@ layout {
     // vía layer-rule place-within-backdrop) en los workspaces.
     background-color "transparent"
 
-    center-focused-column "always"
+    center-focused-column "on-overflow"
     always-center-single-column
     default-column-width { proportion 0.5; }
 

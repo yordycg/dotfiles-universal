@@ -52,12 +52,14 @@ window-rule {
     open-on-workspace "comms"
 }
 
-// ── Opacidad de ventanas inactivas (perfil FULL) ─────────────────────────────
+// ── Opacidad de ventanas inactivas (solo terminales en perfil FULL) ──────────
+// (Eliminada para que la terminal gestione su propia opacidad nativa de fondo)
 {{- if ne .node.profile "laptop" }}
-window-rule {
-    match is-active=false
-    opacity 0.85
-}
+// window-rule {
+//     match app-id=r#"^(kitty|ghosty|foot|Alacritty|wezterm)$"#
+//     match is-active=false
+//     opacity 0.85
+// }
 
 // ── Blur global en todas las ventanas (perfil FULL) ──────────────────────────
 // niri aplica blur vía background-effect por ventana (xray es eficiente y
@@ -105,6 +107,16 @@ window-rule {
     open-floating true
 }
 
+// ── Bloqueo de Captura de Pantalla para Contraseñas (Screencast Block) ────────
+window-rule {
+    match app-id=r#"^(bitwarden|org\.keepassxc\.KeePassXC)$"#
+    block-out-from "screencast"
+}
+window-rule {
+    match title=r#"^(Extension:.*Bitwarden.*|Bitwarden.*)$"#
+    block-out-from "screencast"
+}
+
 // ── Utilidades y Diálogos de Scripting ───────────────────────────────────────
 window-rule {
     match app-id="^(yad|zenity)$"
@@ -149,11 +161,6 @@ window-rule {
     default-window-height { fixed 338; }
 }
 
-// ── Opacidad total: juegos y reproductores de video ──────────────────────────
-window-rule {
-    match app-id="^(mpv|vlc|Steam|heroic)$"
-    opacity 1.0
-}
 
 // ── Bordes redondeados (equivalente a rounding 12) ───────────────────────────
 window-rule {
