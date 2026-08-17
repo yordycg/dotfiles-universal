@@ -48,6 +48,8 @@ fedora:
     - qt6ct
     - kvantum
     - gnome-keyring
+    - kdeconnect
+    - fuse-sshfs
   hyprland:
     - hyprland
     - swaybg
@@ -130,6 +132,8 @@ arch:
     - firefox
     - zed
     - gnome-keyring
+    - kdeconnect
+    - sshfs
   hyprland:
     - hyprland
     - awww

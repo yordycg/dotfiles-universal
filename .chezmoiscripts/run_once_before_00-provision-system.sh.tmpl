@@ -15,6 +15,7 @@
 # {{ include "provision/system/setup-nvidia.sh" | sha256sum }}
 # {{ include "provision/system/setup-dualboot-fixes.sh" | sha256sum }}
 # {{ include "provision/system/cleanup-kde.sh" | sha256sum }}
+# {{ include "provision/system/setup-kdeconnect.sh" | sha256sum }}
 # {{ include ".chezmoidata/packages.yaml" | sha256sum }}
 # {{ include "provision/system/setup-wsl-systemd.sh" | sha256sum }}
 
@@ -106,10 +107,11 @@ else
     log_step "7/8. Saltando correcciones de Dual-Boot (No es native desktop/laptop)."
 fi
 
-# 8. Configurar temas de sistema y limpieza KDE
+# 8. Configurar temas de sistema, KDE Connect y limpieza KDE
 if [ "$NODE_HAS_GUI" = "true" ]; then
-    log_step "8/8. Configurando temas gráficos del sistema y limpiando paquetes..."
+    log_step "8/8. Configurando temas gráficos, KDE Connect / Firewall y limpiando paquetes..."
     bash "$PROVISION_DIR/system/setup-sddm-theme.sh"
+    bash "$PROVISION_DIR/system/setup-kdeconnect.sh"
     bash "$PROVISION_DIR/system/cleanup-kde.sh"
 
     # Configurar overrides de Flatpak para temas si aplica
