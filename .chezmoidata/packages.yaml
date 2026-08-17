@@ -45,6 +45,7 @@ fedora:
     - flatpak
     - kitty
     - ghostty
+    - foot
     - qt5ct
     - qt6ct
     - kvantum
@@ -128,6 +129,7 @@ arch:
     - flatpak
     - kitty
     - ghostty
+    - foot
     - qt5ct
     - qt6ct
     - kvantum
