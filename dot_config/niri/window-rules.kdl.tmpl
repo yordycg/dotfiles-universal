@@ -46,22 +46,16 @@ workspace "comms"
 
 // ── Opacidad de ventanas inactivas (solo terminales en perfil FULL) ──────────
 // (Eliminada para que la terminal gestione su propia opacidad nativa de fondo)
-{{- if ne .node.profile "laptop" }}
-// window-rule {
-//     match app-id=r#"^(kitty|ghosty|foot|Alacritty|wezterm)$"#
-//     match is-active=false
-//     opacity 0.85
-// }
-
-// ── Blur global en todas las ventanas (perfil FULL) ──────────────────────────
+// ── Blur global y transparencia en todas las ventanas ─────────────────────────
 // niri aplica blur vía background-effect por ventana (xray es eficiente y
-// automático cuando hay blur activo).
+// automático cuando hay blur activo). draw-border-with-background false evita
+// que niri dibuje un rectángulo sólido detrás de las ventanas transparentes.
 window-rule {
+    draw-border-with-background false
     background-effect {
         blur true
     }
 }
-{{- end }}
 
 // ── Diálogos y Selectores del Sistema (flotantes) ────────────────────────────
 window-rule {

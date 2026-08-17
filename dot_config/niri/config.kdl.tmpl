@@ -156,18 +156,12 @@ layout {
 }
 
 // ── Blur (niri >= 26.04, ext-background-effect) ───────────────────────────────
-{{- if eq .node.profile "laptop" }}
-blur {
-    off
-}
-{{- else }}
 blur {
     passes 3
     offset 3.0
     noise 0.02
     saturation 1.5
 }
-{{- end }}
 
 // ── Animaciones (ECO: desactivadas; FULL: springs y easings) ─────────────────
 {{- if eq .node.profile "laptop" }}
