@@ -26,9 +26,9 @@ binds {
     Super+Q { close-window; }
     // Fullscreen / Maximize
     Super+F { maximize-column; }
-    Super+Shift+F { maximize-column; }
-    // Toggle floating
-    Super+V { toggle-window-floating; }
+    Super+Shift+F { maximize-window-to-edges; }
+    // Toggle floating (T = Tile/Toggle-floating)
+    Super+T { toggle-window-floating; }
     // Toggle tabbed column display mode
     Super+W { toggle-column-tabbed-display; }
     // Switch preset column widths
@@ -43,7 +43,7 @@ binds {
     Super+Ctrl+Up { set-window-height "-10%"; }
     Super+Ctrl+Down { set-window-height "+10%"; }
     // Virtual keyboard (wvkbd)
-    Super+T { spawn-sh "pgrep -x wvkbd-mobintl >/dev/null 2>&1 && pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl -l simple"; }
+    Super+Shift+T { spawn-sh "pgrep -x wvkbd-mobintl >/dev/null 2>&1 && pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl -l simple"; }
 
     // ── Launcher / Clipboard / Shell (DMS IPC) ───────────────────────────────
     // DMS gestiona launcher, clipboard, lock y notificaciones vía IPC.
