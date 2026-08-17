@@ -29,13 +29,8 @@ hl.config({
 		rounding_power = 4.0,
 
 		-- Change transparency of focused and unfocused windows
-		{{- if eq .node.profile "laptop" }}
-		active_opacity = 1.0,
-		inactive_opacity = 1.0,
-		{{- else }}
 		active_opacity = 0.95,
 		inactive_opacity = 0.85,
-		{{- end }}
 
 		shadow = {
 			{{- if eq .node.profile "laptop" }}
@@ -49,14 +44,10 @@ hl.config({
 		},
 
 		blur = {
-			{{- if eq .node.profile "laptop" }}
-			enabled = false,
-			{{- else }}
 			enabled = true,
 			size = 12,
 			passes = 4,
 			vibrancy = 0.1696,
-			{{- end }}
 		},
 	},
 
