@@ -21,18 +21,10 @@ layer-rule {
 }
 
 // ── Named Workspaces (core estable 1-4) ──────────────────────────────────────
-// Desktop: 1-4 -> DP-2 (igual que en Hyprland). Laptop: sin amarrar a monitor.
-{{- if eq .node.profile "desktop" }}
-workspace "term"  { open-on-output "DP-2"; }
-workspace "web"   { open-on-output "DP-2"; }
-workspace "notes" { open-on-output "DP-2"; }
-workspace "comms" { open-on-output "DP-2"; }
-{{- else }}
 workspace "term"
 workspace "web"
 workspace "notes"
 workspace "comms"
-{{- end }}
 
 // ── Pinning de aplicaciones a workspaces nombrados (silent) ──────────────────
 window-rule {
