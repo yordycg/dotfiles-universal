@@ -9,16 +9,9 @@
 
 binds {
     // ── Launch programs ─────────────────────────────────────────────────────
-    // Terminal
-    {{- if eq .node.profile "desktop" }}
-    Super+Return { spawn "foot"; }
-    // Herdr: workspace manager de agentes
-    Super+O { spawn "foot" "-e" "herdr"; }
-    {{- else }}
     Super+Return { spawn "ghostty"; }
     // Herdr: workspace manager de agentes
     Super+O { spawn "ghostty" "-e" "herdr"; }
-    {{- end }}
     // Zeron: controller de agentes de código (Reasignado a Shift+A para liberar Super+A)
     Super+Shift+A { spawn "~/.local/bin/zeron"; }
     // File manager
