@@ -13,8 +13,8 @@ binds {
     Super+Return { spawn "ghostty"; }
     // Herdr: workspace manager de agentes
     Super+O { spawn "ghostty" "-e" "herdr"; }
-    // Zeron: controller de agentes de código
-    Super+A { spawn "~/.local/bin/zeron"; }
+    // Zeron: controller de agentes de código (Reasignado a Shift+A para liberar Super+A)
+    Super+Shift+A { spawn "~/.local/bin/zeron"; }
     // File manager
     Super+E { spawn "thunar"; }
     // Browser
@@ -60,11 +60,19 @@ binds {
     // Lock screen (seguridad, funciona incluso bloqueado)
     Super+Alt+L allow-when-locked=true { spawn "dms" "ipc" "call" "lock" "lock"; }
 
-    // ── Focus movement (Vim keys, como Hyprland) ─────────────────────────────
+    // ── Focus movement (Vim keys 2D - Niri Pro) ─────────────────────────────
     Super+H { focus-column-left; }
     Super+L { focus-column-right; }
-    Super+K { focus-window-up; }
-    Super+J { focus-window-down; }
+    Super+K { focus-workspace-up; }
+    Super+J { focus-workspace-down; }
+
+    // Foco de ventanas apiladas dentro de una misma columna (Alt + J/K)
+    Super+Alt+K { focus-window-up; }
+    Super+Alt+J { focus-window-down; }
+
+    // Saltos a los extremos horizontales (I = Primera / Inicio, A = Última / Fin)
+    Super+I { focus-column-first; }
+    Super+A { focus-column-last; }
 
     // ── Move windows (Vim keys + arrows) ─────────────────────────────────────
     Super+Shift+H { move-column-left; }
