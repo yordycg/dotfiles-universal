@@ -160,4 +160,10 @@ window-rule {
     open-floating true
 }
 
+// ── KDE Connect (diálogos, app y selector) ──────────────────────────────────
+window-rule {
+    match app-id=r#"^(org\.kde\.kdeconnect(\.app|\.daemon|\.handler)?|kdeconnect-app|kdeconnect-indicator|kdeconnect\.sms)$"#
+    open-floating true
+}
+
 {{- end }}

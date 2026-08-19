@@ -222,6 +222,16 @@ hl.window_rule({
   center = true,
 })
 
+-- KDE Connect (diálogos, app y selector)
+hl.window_rule({
+  name = "kdeconnect-float",
+  match = {
+    class = "^(org.kde.kdeconnect.*|kdeconnect-app|kdeconnect-indicator|kdeconnect.sms)$",
+  },
+  float = true,
+  center = true,
+})
+
 
 
 -- Blur - capas UI
