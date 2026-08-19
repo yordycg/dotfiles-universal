@@ -1,6 +1,6 @@
 local M = {}
 
-local VAULT = vim.fn.expand("~/workspace/assets/obsidian-notes")
+local VAULT = vim.fn.expand("~/workspace/personal/obsidian-notes")
 
 local FOLDERS = {
   "000 Zettelkasten",

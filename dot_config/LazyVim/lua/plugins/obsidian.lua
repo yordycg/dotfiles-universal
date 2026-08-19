@@ -11,7 +11,7 @@ return {
       workspaces = {
         {
           name = "personal",
-          path = "~/workspace/assets/obsidian-notes", -- Tu ruta actual de notas sync
+          path = "~/workspace/personal/obsidian-notes", -- Tu ruta actual de notas sync
         },
       },
 
