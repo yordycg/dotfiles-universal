@@ -8,6 +8,16 @@ set -euo pipefail
 
 {{ include "provision/lib/logging.sh" }}
 
+INFRA_DIR="$HOME/.local/share/homelab-infra"
+if [ ! -d "$INFRA_DIR" ]; then
+    INFRA_DIR="$HOME/homelab-infra"
+fi
+
+if [ ! -f "$INFRA_DIR/manage.sh" ]; then
+    log_info "No se detectó el script de gestión en $INFRA_DIR/manage.sh. Saltando configuración de backup."
+    exit 0
+fi
+
 if systemctl --user is-enabled homelab-backup.timer &>/dev/null; then
     exit 0  # Timer ya activo — silencio absoluto
 fi

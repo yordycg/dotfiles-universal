@@ -41,7 +41,13 @@ log_ok "Índices actualizados."
 # ── 3. Dependencias del Instalador ───────────────────────────────────────────
 if ! command -v yq &>/dev/null; then
     log_info "Instalando yq (Procesador YAML) vía binario..."
-    run sudo wget -q https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/bin/yq
+    ARCH=$(dpkg --print-architecture 2>/dev/null || uname -m)
+    case "$ARCH" in
+        amd64|x86_64) YQ_ARCH="amd64" ;;
+        arm64|aarch64) YQ_ARCH="arm64" ;;
+        *) YQ_ARCH="amd64" ;;
+    esac
+    run sudo wget -q "https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${YQ_ARCH}" -O /usr/bin/yq
     run sudo chmod +x /usr/bin/yq
     log_ok "yq instalado."
 fi
