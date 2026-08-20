@@ -9,7 +9,7 @@ Para que el comando `chezmoi init --apply` se ejecute sin requerir intervención
 1.  **Sistema Base:** Linux (Fedora, Debian o Arch).
 2.  **Paquetes:** `git` y `curl`.
 3.  **Variables de Entorno (¡Crítico para Zero-Touch!):**
-    *   `CHEZMOI_AGE_KEY`: Debe contener la llave privada de Age para descifrar secretos (como tokens de API de Bitwarden, Forgejo y GitHub).
+    *   `CHEZMOI_AGE_KEY`: Debe contener la llave privada de Age para descifrar secretos (como tokens de API de Bitwarden y GitHub).
     *   `GITHUB_TOKEN`: Un PAT de GitHub con permisos de `admin:public_key` para la autenticación automática de la CLI (`gh`).
 
 **Comando de lanzamiento ideal:**
@@ -62,13 +62,13 @@ Estos scripts garantizan que las herramientas de usuario se configuren correctam
 5.  **`run_onchange_after_40-apply-theme.sh.tmpl`**:
     *   Aplica temas y personalizaciones visuales del sistema del usuario (Kvantum, GTK, Qt).
 6.  **`run_after_50-setup-ssh.sh.tmpl`**:
-    *   Genera llaves SSH si faltan y las registra automáticamente en GitHub y Forgejo usando tokens desencriptados de manera robusta a través de `passage`.
+    *   Genera llaves SSH si faltan y las registra automáticamente en GitHub usando tokens desencriptados de manera robusta a través de `passage`.
 7.  **`run_once_after_80-setup-backup.sh.tmpl`** (Solo servidores):
     *   Configura servicios systemd y timers para las copias de seguridad de Restic.
 8.  **`run_once_after_84-sync-core-repos.sh.tmpl`**:
     *   Sincroniza proyectos centrales y repositorios clave en tu espacio local.
 9.  **`run_after_85-sync-assets.sh.tmpl`**:
-    *   Clona wallpapers (a `~/Pictures`, fuera del workspace) y tus notas del segundo brain desde Forgejo (o GitHub como fallback).
+    *   Clona wallpapers (a `~/Pictures`, fuera del workspace) y tus notas del segundo brain desde GitHub.
 10. **`run_once_after_99-change-shell.sh.tmpl`**:
     *   Establece de manera no interactiva a ZSH como tu shell por defecto (`chsh`).
 

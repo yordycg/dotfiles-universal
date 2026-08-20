@@ -10,7 +10,7 @@ Host *
 {{- if .needsSSHcfg }}
 # -- Detección Dinámica de Red (Local vs Tailscale) --
 # Si el ping a la IP local tiene éxito, usamos la ruta más rápida.
-Match host homelab,forgejo.home exec "ping -c 1 -W 1 {{ .homelab_ip_local }} >/dev/null 2>&1"
+Match host homelab exec "ping -c 1 -W 1 {{ .homelab_ip_local }} >/dev/null 2>&1"
     HostName {{ .homelab_ip_local }}
 {{- end }}
 
@@ -35,19 +35,6 @@ Host homelab
     LocalForward 8080 localhost:8080
     LocalForward 4321 localhost:4321
     LocalForward 5432 localhost:5432
-
-# -- Repositorio Local (Forgejo) --
-Host forgejo.home
-    {{- if .isServer }}
-    HostName 127.0.0.1
-    Port 2222
-    {{- else }}
-    HostName {{ .homelab_ip_ts }}
-    Port 2222
-    {{- end }}
-    User git
-    IdentityFile ~/.ssh/id_ed25519
-    IdentitiesOnly yes
 
 # -- GitHub --
 Host github.com

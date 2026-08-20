@@ -36,7 +36,7 @@
   - [ ] Configurar `Justfile` (`just up`, `just dev`, `just test`).
 - [ ] **Git & Repositorio Remoto**
   - [ ] Confirmar `.gitignore` adecuado.
-  - [ ] Commit inicial de estructura y push a Forgejo/GitHub.
+  - [ ] Commit inicial de estructura y push a GitHub.
 
 ---
 

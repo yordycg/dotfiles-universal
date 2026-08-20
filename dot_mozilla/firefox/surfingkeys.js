@@ -93,7 +93,7 @@ map('F', 'gf');  // Abrir en nueva pestaña
 map('x', 'x');
 
 // --- 3. EXCLUSIONES Y COMPORTAMIENTO ---
-settings.blacklistPattern = /.*mail.google.com.*|.*docs.google.com.*|.*github.com.*|.*forgejo.*/i;
+settings.blacklistPattern = /.*mail.google.com.*|.*docs.google.com.*|.*github.com.*/i;
 settings.smoothScroll = true;
 settings.stealFocusOnLoad = true;
 `;
