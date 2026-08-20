@@ -1,0 +1,191 @@
+#!/usr/bin/env bash
+# =============================================================================
+# wip — Park / resume work in progress between machines via git.
+#
+#   wip park ["message"]   Commit all changes as WIP on a dedicated branch,
+#                          push it to origin and return to the original branch.
+#   wip resume [branch]    Fetch, switch to the latest WIP branch (or the one
+#                          given), and unwrap the WIP commit(s) with --soft so
+#                          the changes are back in the working tree.
+#   wip list               List local and remote WIP branches.
+#   wip                    Show this help.
+#
+# WHY: `git stash` is local-only and cannot be pushed, so it never reaches
+# another machine. A WIP commit is a real git object: it can be pushed to a
+# remote and recovered later with `git reset --soft`, keeping main clean.
+# =============================================================================
+set -euo pipefail
+
+# ---- helpers ----------------------------------------------------------------
+if [ -t 1 ]; then
+    C_RESET="\033[0m"
+    C_OK="\033[1;32m"
+    C_WARN="\033[1;33m"
+    C_ERR="\033[1;31m"
+    C_INFO="\033[1;34m"
+else
+    C_RESET=""
+    C_OK=""
+    C_WARN=""
+    C_ERR=""
+    C_INFO=""
+fi
+
+log_info() { printf "${C_INFO}[wip]${C_RESET} %s\n" "$*"; }
+log_ok()   { printf "${C_OK}[wip]${C_RESET} %s\n" "$*"; }
+log_warn() { printf "${C_WARN}[wip]${C_RESET} %s\n" "$*" >&2; }
+log_err()  { printf "${C_ERR}[wip]${C_RESET} %s\n" "$*" >&2; }
+
+repo_root() {
+    git rev-parse --show-toplevel
+}
+
+require_repo() {
+    if ! git rev-parse --show-toplevel >/dev/null 2>&1; then
+        log_err "No estás dentro de un repositorio git."
+        exit 1
+    fi
+}
+
+# ---- usage ------------------------------------------------------------------
+usage() {
+    cat <<'EOF'
+Uso:
+  wip park ["mensaje"]   Parquea el trabajo actual en una rama wip/YYYYMMDD[-N]
+                         y la pushea a origin. Vuelve a la rama original.
+  wip resume [rama]      Retoma el trabajo: fetch, switch a la rama wip más
+                         reciente (o la indicada) y unwrap con reset --soft.
+  wip list               Lista ramas wip locales y remotas.
+  wip                    Muestra esta ayuda.
+
+Ejemplos:
+  wip park "s2 d2 read/write"
+  wip resume
+  wip resume wip/20260819
+EOF
+}
+
+# ---- list -------------------------------------------------------------------
+cmd_list() {
+    require_repo
+    local found=0
+    local ref
+    while read -r ref; do
+        log_info "$ref"
+        found=1
+    done < <(git for-each-ref --format='%(refname:short)' \
+        refs/heads/wip/ refs/remotes/origin/wip/ 2>/dev/null)
+    if [ "$found" -eq 0 ]; then
+        log_info "No hay ramas wip/*."
+    fi
+}
+
+# ---- park -------------------------------------------------------------------
+cmd_park() {
+    require_repo
+    local root msg branch base orig_branch n candidate
+
+    root="$(repo_root)"
+    orig_branch="$(git branch --show-current)"
+    if [[ "$orig_branch" == wip/* ]]; then
+        log_err "Ya estás en la rama WIP '$orig_branch'. Usa 'wip resume' para retomar."
+        exit 1
+    fi
+
+    if [ -z "$(git status --porcelain)" ]; then
+        log_info "Working tree limpio en $root — nada que parquear."
+        exit 0
+    fi
+
+    msg="${1:-$(date +%Y-%m-%d)}"
+    base="wip/$(date +%Y%m%d)"
+    n=1
+    candidate="$base"
+    while git show-ref --quiet --verify "refs/heads/$candidate" \
+          || git show-ref --quiet --verify "refs/remotes/origin/$candidate"; do
+        n=$((n + 1))
+        candidate="${base}-${n}"
+    done
+    branch="$candidate"
+
+    log_info "Creando rama $branch y commit 'WIP: $msg'..."
+    git switch --quiet -c "$branch"
+    git add -A
+    git commit -m "WIP: $msg"
+    git switch --quiet "$orig_branch"
+
+    if git remote >/dev/null 2>&1; then
+        if git push --quiet -u origin "$branch"; then
+            log_ok "Pusheada a origin/$branch."
+        else
+            log_warn "No se pudo pushear origin/$branch. El commit queda local."
+        fi
+    else
+        log_warn "El repo no tiene remote configurado. El commit queda local."
+    fi
+
+    log_ok "Parqueado en $root (rama $branch)."
+    log_ok "En la otra máquina, tras 'chezmoi update':"
+    printf "${C_OK}  cd %s && wip resume${C_RESET}\n" "$root"
+}
+
+# ---- resume -----------------------------------------------------------------
+cmd_resume() {
+    require_repo
+    local branch target hash subject dirty
+
+    dirty="$(git status --porcelain)"
+    if [ -n "$dirty" ]; then
+        log_err "Working tree sucio. Commit o stash tus cambios antes de 'wip resume'."
+        exit 1
+    fi
+
+    if git remote >/dev/null 2>&1; then
+        git fetch --quiet origin || log_warn "fetch falló; usaré ramas locales."
+    fi
+
+    if [ -n "${1:-}" ]; then
+        branch="$1"
+        if ! git show-ref --quiet --verify "refs/remotes/origin/$branch" \
+           && ! git show-ref --quiet --verify "refs/heads/$branch"; then
+            log_err "La rama '$branch' no existe."
+            exit 1
+        fi
+    else
+        branch="$(git for-each-ref --sort=-refname --format='%(refname:short)' \
+            refs/remotes/origin/wip/ 2>/dev/null | head -n 1)"
+        if [ -z "$branch" ]; then
+            branch="$(git for-each-ref --sort=-refname --format='%(refname:short)' \
+                refs/heads/wip/ 2>/dev/null | head -n 1)"
+        fi
+        if [ -z "$branch" ]; then
+            log_info "No hay ramas wip/* para retomar."
+            exit 0
+        fi
+        log_info "Rama WIP más reciente: $branch"
+    fi
+
+    log_info "Switcheando a $branch..."
+    git switch "$branch"
+
+    subject="$(git log -1 --format=%s)"
+    if [[ "$subject" != WIP* ]]; then
+        log_info "El último commit de $branch no es WIP ('$subject'); nada que deshacer."
+        exit 0
+    fi
+
+    target="$(git log -1 --format=%H --invert-grep --grep '^WIP')"
+    log_info "Deshaciendo WIP con reset --soft hasta $target..."
+    git reset --quiet --soft "$target"
+
+    log_ok "Cambios restaurados en el working tree (main intacto)."
+    git status --short
+}
+
+# ---- dispatch ---------------------------------------------------------------
+case "${1:-}" in
+    park)   cmd_park "${2:-}" ;;
+    resume) cmd_resume "${2:-}" ;;
+    list)   cmd_list ;;
+    *)      usage ;;
+esac
