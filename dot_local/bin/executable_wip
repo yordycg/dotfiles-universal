@@ -4,9 +4,11 @@
 #
 #   wip park ["message"]   Commit all changes as WIP on a dedicated branch,
 #                          push it to origin and return to the original branch.
-#   wip resume [branch]    Fetch, switch to the latest WIP branch (or the one
-#                          given), and unwrap the WIP commit(s) with --soft so
-#                          the changes are back in the working tree.
+#   wip resume [branch]    Fetch and apply the WIP commit(s) as staged changes
+#                          on the current branch (no commit), so you keep the
+#                          normal workflow and commit yourself.
+#   wip done [branch] [--force]  Close the loop: verify the resumed work was
+#                          committed, then delete the WIP branch (local+remote).
 #   wip list               List local and remote WIP branches.
 #   wip                    Show this help.
 #
@@ -53,15 +55,17 @@ usage() {
 Uso:
   wip park ["mensaje"]   Parquea el trabajo actual en una rama wip/YYYYMMDD[-N]
                          y la pushea a origin. Vuelve a la rama original.
-  wip resume [rama]      Retoma el trabajo: fetch, switch a la rama wip más
-                         reciente (o la indicada) y unwrap con reset --soft.
+  wip resume [rama]      Retoma el trabajo: fetch y aplica los cambios staged en
+                         la rama actual (sin commitear). Sigue el flujo normal.
+  wip done [rama] [--force]  Cierra el ciclo: verifica que commiteaste el trabajo
+                         y borra la rama wip local y remota (+ prune).
   wip list               Lista ramas wip locales y remotas.
   wip                    Muestra esta ayuda.
 
 Ejemplos:
   wip park "s2 d2 read/write"
   wip resume
-  wip resume wip/20260819
+  wip done
 EOF
 }
 
@@ -132,7 +136,7 @@ cmd_park() {
 # ---- resume -----------------------------------------------------------------
 cmd_resume() {
     require_repo
-    local branch target hash subject dirty
+    local branch subject local_name
 
     dirty="$(git status --porcelain)"
     if [ -n "$dirty" ]; then
@@ -146,8 +150,9 @@ cmd_resume() {
 
     if [ -n "${1:-}" ]; then
         branch="$1"
-        if ! git show-ref --quiet --verify "refs/remotes/origin/$branch" \
-           && ! git show-ref --quiet --verify "refs/heads/$branch"; then
+        local_name="${branch#origin/}"
+        if ! git show-ref --quiet --verify "refs/remotes/origin/$local_name" \
+           && ! git show-ref --quiet --verify "refs/heads/$local_name"; then
             log_err "La rama '$branch' no existe."
             exit 1
         fi
@@ -165,27 +170,102 @@ cmd_resume() {
         log_info "Rama WIP más reciente: $branch"
     fi
 
-    log_info "Switcheando a $branch..."
-    git switch "$branch"
+    current="$(git branch --show-current)"
+    subject="$(git log -1 --format=%s "$branch")"
+    if [[ "$subject" == WIP* ]]; then
+        log_info "Aplicando cambios de $branch en '$current' (sin commitear)..."
+        git merge --quiet --squash "$branch"
+        log_ok "Cambios de $branch aplicados en '$current' (staged, sin commit)."
+        log_ok "Trabaja y commitea normal; al terminar ejecuta: wip done"
+    else
+        log_info "El último commit de $branch no es WIP ('$subject'); merge normal..."
+        git merge --quiet "$branch"
+        log_ok "Rama $branch mergeada en '$current'."
+        log_ok "Al terminar ejecuta: wip done"
+    fi
+    git status --short
+}
 
-    subject="$(git log -1 --format=%s)"
-    if [[ "$subject" != WIP* ]]; then
-        log_info "El último commit de $branch no es WIP ('$subject'); nada que deshacer."
+# ---- done -------------------------------------------------------------------
+cmd_done() {
+    require_repo
+    local branch local_name current dirty force=0
+
+    while [[ "${1:-}" == --* ]]; do
+        if [ "$1" = "--force" ]; then
+            force=1
+        else
+            log_err "Opción desconocida: $1"
+            exit 1
+        fi
+        shift
+    done
+
+    current="$(git branch --show-current)"
+    if [[ "$current" == wip/* ]]; then
+        log_err "Estás en la rama WIP '$current'. Vuelve a tu rama principal antes de 'wip done'."
+        exit 1
+    fi
+
+    dirty="$(git status --porcelain)"
+    if [ -n "$dirty" ]; then
+        log_err "Working tree sucio. Commit o stash tus cambios antes de 'wip done'."
+        exit 1
+    fi
+
+    if [ -n "${1:-}" ]; then
+        branch="$1"
+    else
+        branch="$(git for-each-ref --sort=-refname --format='%(refname:short)' \
+            refs/remotes/origin/wip/ 2>/dev/null | head -n 1)"
+        if [ -z "$branch" ]; then
+            branch="$(git for-each-ref --sort=-refname --format='%(refname:short)' \
+                refs/heads/wip/ 2>/dev/null | head -n 1)"
+        fi
+    fi
+    if [ -z "$branch" ]; then
+        log_info "No hay ramas wip/* que limpiar."
         exit 0
     fi
 
-    target="$(git log -1 --format=%H --invert-grep --grep '^WIP')"
-    log_info "Deshaciendo WIP con reset --soft hasta $target..."
-    git reset --quiet --soft "$target"
+    local_name="${branch#origin/}"
+    if ! git show-ref --quiet --verify "refs/remotes/origin/$local_name" \
+       && ! git show-ref --quiet --verify "refs/heads/$local_name"; then
+        log_err "La rama '$branch' no existe."
+        exit 1
+    fi
 
-    log_ok "Cambios restaurados en el working tree (main intacto)."
-    git status --short
+    if [ "$force" -eq 0 ]; then
+        if git merge-base --is-ancestor "$branch" HEAD; then
+            log_ok "Rama $branch ya integrada en HEAD."
+        elif [ "$(git rev-parse HEAD)" = "$(git merge-base HEAD "$branch")" ]; then
+            log_err "HEAD no ha avanzado desde el resume de $branch."
+            log_err "Commitea el trabajo resumido antes de 'wip done' (o usa --force)."
+            exit 1
+        else
+            log_warn "HEAD avanzó pero $branch no es ancestro (commit con contenido distinto)."
+        fi
+    fi
+
+    local_name="${branch#origin/}"
+    if git show-ref --quiet --verify "refs/heads/$local_name"; then
+        log_info "Borrando rama local $local_name..."
+        git branch -d "$local_name"
+    fi
+    if git show-ref --quiet --verify "refs/remotes/origin/$local_name"; then
+        log_info "Borrando rama remota origin/$local_name..."
+        git push origin --delete "$local_name"
+        git fetch --quiet --prune origin
+    fi
+
+    log_ok "Ciclo WIP cerrado en $current. Flujo normal."
 }
 
 # ---- dispatch ---------------------------------------------------------------
 case "${1:-}" in
     park)   cmd_park "${2:-}" ;;
     resume) cmd_resume "${2:-}" ;;
+    done)   cmd_done "${@:2}" ;;
     list)   cmd_list ;;
     *)      usage ;;
 esac
