@@ -1,9 +1,10 @@
 {{ if .hasGUI -}}
 [General]
-keyAlgorithm=EC
 {{- if .homelab_ip_ts }}
-customDevices=172.20.10.1,{{ .homelab_ip_ts }}
+customDevices=172.20.10.1, {{ .homelab_ip_ts }}
 {{- else }}
 customDevices=172.20.10.1
 {{- end }}
+keyAlgorithm=EC
+name={{ .hostname }}
 {{- end }}
