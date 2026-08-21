@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# =============================================================================
+# sync-notes.sh
+# Sincronización automática de notas de Obsidian/ZenNotes con GitHub
+# =============================================================================
+set -euo pipefail
+
+VAULT_DIR="{{ .chezmoi.homeDir }}/workspace/personal/obsidian-notes"
+
+if [ ! -d "$VAULT_DIR/.git" ]; then
+    echo "Error: $VAULT_DIR no es un repositorio Git válido." >&2
+    exit 1
+fi
+
+cd "$VAULT_DIR"
+
+# Asegurar que estamos actualizados antes de cualquier cambio local
+git pull --rebase origin main || echo "Advertencia: No se pudo hacer pull desde GitHub. Trabajando en modo offline."
+
+# Agregar todos los cambios
+git add -A
+
+# Comprobar si hay algo para hacer commit
+if ! git diff-index --quiet HEAD --; then
+    echo "Detectados cambios locales. Haciendo commit y push..."
+    git commit -m "vault: auto-sync (ZenNotes)"
+    git push origin main || echo "Advertencia: No se pudo hacer push a GitHub."
+else
+    echo "No hay cambios locales para sincronizar."
+fi

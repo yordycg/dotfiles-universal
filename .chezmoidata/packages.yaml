@@ -185,6 +185,7 @@ arch:
     - visual-studio-code-bin
     - yaak-bin
     - lazy-tmux
+    - zennotes-bin
 
 
 debian:

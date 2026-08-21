@@ -95,3 +95,7 @@ alias lsql='lazysql'
 alias logout='loginctl terminate-user $USER'
 alias shutdown='sudo shutdown now'
 alias restart='sudo reboot'
+
+# -- ZenNotes ---------------------------------
+alias zn='/opt/zennotes-bin/resources/zen'
+

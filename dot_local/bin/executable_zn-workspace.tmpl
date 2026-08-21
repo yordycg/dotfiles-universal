@@ -1,0 +1,176 @@
+#!/usr/bin/env bash
+# =============================================================================
+# zn-workspace - Manage virtual workspaces in ZenNotes
+# =============================================================================
+set -euo pipefail
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+CYAN='\033[0;36m'
+BOLD='\033[1m'
+RESET='\033[0m'
+
+log_ok()   { echo -e "${GREEN}✓${RESET} $1"; }
+log_info() { echo -e "${CYAN}→${RESET} $1"; }
+log_warn() { echo -e "${YELLOW}⚠${RESET} $1"; }
+log_err()  { echo -e "${RED}✗${RESET} $1"; exit 1; }
+
+# Find vault root
+CONFIG_FILE="$HOME/.config/ZenNotes/zennotes.config.json"
+if [ ! -f "$CONFIG_FILE" ]; then
+    log_err "ZenNotes configuration file not found at $CONFIG_FILE. Have you opened ZenNotes at least once?"
+fi
+
+VAULT_DIR=$(jq -r '.vaultRoot' "$CONFIG_FILE")
+if [ -z "$VAULT_DIR" ] || [ "$VAULT_DIR" = "null" ]; then
+    log_err "No active vault root found in $CONFIG_FILE."
+fi
+
+ZEN_DIR="$VAULT_DIR/.zennotes"
+if [ ! -d "$ZEN_DIR" ]; then
+    mkdir -p "$ZEN_DIR"
+fi
+
+show_help() {
+    echo -e "${BOLD}Usage:${RESET} zn-workspace [command] [args]"
+    echo ""
+    echo "Commands:"
+    echo "  save <name>           Save current workspace layout as <name>"
+    echo "  load <name> [--force] Load workspace layout <name> (closes ZenNotes)"
+    echo "  list, ls              List all saved workspace layouts"
+    echo "  delete <name>         Delete a saved workspace layout"
+    echo "  help, -h              Show this help message"
+}
+
+check_running() {
+    if pgrep -x "ZenNotes" > /dev/null || pgrep -f "zennotes" > /dev/null; then
+        return 0 # Is running
+    fi
+    return 1 # Not running
+}
+
+cmd_save() {
+    if [ $# -lt 1 ] || [ -z "$1" ]; then
+        log_err "Please provide a name for the workspace: zn-workspace save <name>"
+    fi
+    local name="$1"
+    local source_file="$ZEN_DIR/workspace.json"
+    local dest_file="$ZEN_DIR/workspace.${name}.json"
+    
+    if [ ! -f "$source_file" ]; then
+        log_err "No active workspace file found to save. Try opening ZenNotes first."
+    fi
+    
+    cp "$source_file" "$dest_file"
+    log_ok "Workspace saved as '${name}'"
+}
+
+cmd_load() {
+    if [ $# -lt 1 ] || [ -z "$1" ]; then
+        log_err "Please provide the name of the workspace to load: zn-workspace load <name>"
+    fi
+    local name="$1"
+    local force=false
+    if [ $# -gt 1 ] && [ "$2" = "--force" ]; then
+        force=true
+    fi
+
+    local target_file="$ZEN_DIR/workspace.${name}.json"
+    local dest_file="$ZEN_DIR/workspace.json"
+    
+    if [ ! -f "$target_file" ]; then
+        log_err "Workspace '${name}' not found."
+    fi
+    
+    if check_running; then
+        if [ "$force" = true ]; then
+            pkill -f "zennotes" || pkill -x "ZenNotes" || true
+            sleep 1
+        else
+            log_warn "ZenNotes is running. Please close it first to avoid overwriting the workspace, or run with --force."
+            read -p "Close ZenNotes now? (y/N) " -n 1 -r
+            echo ""
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                pkill -f "zennotes" || pkill -x "ZenNotes" || true
+                sleep 1
+            else
+                log_err "Cancelled. Please close ZenNotes and try again."
+            fi
+        fi
+    fi
+    
+    # Backup current first
+    if [ -f "$dest_file" ]; then
+        cp "$dest_file" "$ZEN_DIR/workspace.last_backup.json"
+    fi
+    
+    cp "$target_file" "$dest_file"
+    log_ok "Workspace '${name}' loaded. You can now start/restart ZenNotes."
+}
+
+cmd_list() {
+    local found=0
+    for f in "$ZEN_DIR"/workspace.*.json; do
+        if [ ! -e "$f" ]; then
+            continue
+        fi
+        
+        local filename=$(basename "$f")
+        if [ "$filename" != "workspace.json" ] && [ "$filename" != "workspace.last_backup.json" ]; then
+            local ws_name=$(echo "$filename" | sed -E 's/workspace\.(.*)\.json/\1/')
+            echo " - $ws_name"
+            found=1
+        fi
+    done
+    
+    if [ $found -eq 0 ]; then
+        echo "No saved workspaces found."
+    fi
+}
+
+cmd_delete() {
+    if [ $# -lt 1 ] || [ -z "$1" ]; then
+        log_err "Please provide the name of the workspace to delete: zn-workspace delete <name>"
+    fi
+    local name="$1"
+    local target_file="$ZEN_DIR/workspace.${name}.json"
+    
+    if [ -f "$target_file" ]; then
+        rm "$target_file"
+        log_ok "Workspace '${name}' deleted."
+    else
+        log_err "Workspace '${name}' not found."
+    fi
+}
+
+# Main routing
+if [ $# -lt 1 ]; then
+    show_help
+    exit 0
+fi
+
+case "$1" in
+    save)
+        shift
+        cmd_save "$@"
+        ;;
+    load)
+        shift
+        cmd_load "$@"
+        ;;
+    list|ls)
+        cmd_list
+        ;;
+    delete)
+        shift
+        cmd_delete "$@"
+        ;;
+    help|-h|--help)
+        show_help
+        ;;
+    *)
+        log_err "Unknown command: $1. Use 'zn-workspace help' for usage."
+        ;;
+esac

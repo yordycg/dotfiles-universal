@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.os "linux" -}}
+[Unit]
+Description=Sincronización automática de notas (ZenNotes/Obsidian) con GitHub
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=%h/.local/bin/sync-notes.sh
+Environment=PATH=/usr/local/bin:/usr/bin:/bin:%h/.local/bin
+
+[Install]
+WantedBy=default.target
+{{- end -}}
