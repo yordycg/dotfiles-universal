@@ -75,7 +75,7 @@ fedora:
     - wlogout
     - quickshell
     - SwayNotificationCenter
-    - thunar
+    - nautilus
     - udiskie
     - code
   niri:
@@ -160,7 +160,7 @@ arch:
     - papirus-icon-theme
     - imv
     - swaync
-    - thunar
+    - nautilus
     - udiskie
     - plasma-keyboard
   niri:
