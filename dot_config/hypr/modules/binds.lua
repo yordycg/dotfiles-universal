@@ -4,7 +4,7 @@
 
 -- Set programs that you use
 local terminal = "kitty"
-local fileManager = "thunar" -- dolphin | nautilus
+local fileManager = "nautilus" -- dolphin | nautilus
 local menu = "/home/yordycg/.config/rofi/type-2/launcher.sh"
 
 ---------------------

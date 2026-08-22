@@ -115,15 +115,13 @@ hl.window_rule({
   size = "900 600",
 })
 
--- Gestor de Archivos Thunar (Ventana principal y subdiálogos)
+-- Gestor de Archivos Nautilus (Ventana principal y subdiálogos)
 hl.window_rule({
-  name = "thunar-float",
+  name = "nautilus-float",
   match = {
-    class = "^(thunar)$",
+    class = "^(org\\.gnome\\.Nautilus|nautilus)$",
   },
-  float = true,
-  center = true,
-  size = "1000 650",
+  float = false, -- Nautilus tile well in tiling WMs like Hyprland, but can be configured if needed
 })
 
 -- Gestores de Archivos Comprimidos

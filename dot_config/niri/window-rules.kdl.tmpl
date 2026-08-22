@@ -69,10 +69,10 @@ window-rule {
     open-floating true
 }
 
-// ── Gestor de Archivos Thunar ─────────────────────────────────────────────────
+// ── Gestor de Archivos Nautilus ───────────────────────────────────────────────
 window-rule {
-    match app-id="^(thunar)$"
-    open-floating true
+    match app-id=r#"^(org\.gnome\.Nautilus|nautilus)$"#
+    // Nautilus funciona muy bien tileado en niri
 }
 
 // ── Gestores de Archivos Comprimidos ─────────────────────────────────────────
