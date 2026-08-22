@@ -1,5 +1,5 @@
 .chezmoi*.yaml
 key.txt
 *.secret
-*.age
+!encrypted_*.age
 dot_config/nvim-personal/nvim-pack-lock.json

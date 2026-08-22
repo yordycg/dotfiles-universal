@@ -1,0 +1,22 @@
+{{- if eq .chezmoi.os "linux" -}}
+[Unit]
+Description=Google Drive (Rclone Mount)
+Documentation=man:rclone(1)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rclone mount gdrive: %h/GoogleDrive \
+    --vfs-cache-mode writes \
+    --vfs-cache-max-age 24h \
+    --buffer-size 32M \
+    --timeout 10m \
+    --low-level-retries 10
+ExecStop=/usr/bin/fusermount -u %h/GoogleDrive
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=default.target
+{{- end -}}
