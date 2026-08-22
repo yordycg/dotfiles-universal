@@ -29,14 +29,15 @@ Para garantizar que todo el hardware (Wi-Fi, Bluetooth, audio, tarjetas gráfica
 
 ## 🔑 Fase 2: Siembra de Identidad (Manual y Segura)
 
-Antes de iniciar la sincronización de dotfiles, debes copiar tus llaves maestras desde un medio seguro (ej. pendrive encriptado):
+Antes de iniciar la sincronización de dotfiles, debes copiar tus llaves maestras desde tu USB seguro:
 
 1. **Llave de cifrado Age:**
    Copia tu llave privada a:
    `~/.config/age/key.txt`
-2. **Llaves SSH:**
-   Copia tus llaves de conexión a:
-   `~/.ssh/id_ed25519` y `~/.ssh/id_ed25519.pub`
+2. **Llaves SSH (Separadas por propósito):**
+   Copia tus llaves a `~/.ssh/`:
+   - `id_ed25519_github` y `id_ed25519_github.pub` (Autenticación con GitHub)
+   - `id_ed25519_oracle` y `id_ed25519_oracle.pub` (Conexión al VPS `nodo1` y servidores)
 3. **Permisos de SSH:**
    Asegura los permisos correctos en tu terminal:
    ```bash

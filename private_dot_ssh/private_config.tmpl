@@ -1,0 +1,19 @@
+# ── SSH Client Configuration ─────────────────────────────────
+
+Host *
+    AddKeysToAgent yes
+    UseKeychain yes
+    ServerAliveInterval 60
+
+# GitHub (Code Repository)
+Host github.com
+    User git
+    IdentityFile ~/.ssh/id_ed25519_github
+    IdentitiesOnly yes
+
+# Nodo 1 (Oracle Cloud VPS / Homelab)
+Host nodo1
+    HostName {{ .node.hostname | default "nodo1" }}
+    User yordycg
+    IdentityFile ~/.ssh/id_ed25519_oracle
+    IdentitiesOnly yes
