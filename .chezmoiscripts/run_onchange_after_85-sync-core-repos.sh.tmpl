@@ -15,6 +15,8 @@ WALLPAPERS_DIR="$HOME/Pictures/Wallpapers"
 PERSONAL_DIR="$HOME/workspace/personal"
 OBSIDIAN_DIR="$PERSONAL_DIR/obsidian-notes"
 LEARNING_DIR="$PERSONAL_DIR/learning-path"
+BUSINESS_DIR="$PERSONAL_DIR/business-acumen"
+AI_LEARNING_DIR="$PERSONAL_DIR/ai-learning-path"
 
 # ── 1. Clonar Proyectos Personales / Notas ───────────────────────────────────
 mkdir -p "$PERSONAL_DIR"
@@ -29,6 +31,18 @@ fi
 if [ ! -d "$LEARNING_DIR/.git" ]; then
     log_info "Clonando repositorio de Aprendizaje en $LEARNING_DIR..."
     run git clone "git@github.com:yordycg/learning-path.git" "$LEARNING_DIR" || log_warn "No se pudo clonar Learning Path. Verifica conexión y llaves SSH."
+fi
+
+# Business Acumen (Roadmap de Negocios)
+if [ ! -d "$BUSINESS_DIR/.git" ]; then
+    log_info "Clonando repositorio de Business Acumen en $BUSINESS_DIR..."
+    run git clone "git@github.com:yordycg/business-acumen.git" "$BUSINESS_DIR" || log_warn "No se pudo clonar Business Acumen. Verifica conexión y llaves SSH."
+fi
+
+# AI Learning Path (Roadmap de IA & SDD)
+if [ ! -d "$AI_LEARNING_DIR/.git" ]; then
+    log_info "Clonando repositorio de AI Learning Path en $AI_LEARNING_DIR..."
+    run git clone "git@github.com:yordycg/ai-learning-path.git" "$AI_LEARNING_DIR" || log_warn "No se pudo clonar AI Learning Path. Verifica conexión y llaves SSH."
 fi
 
 # ── 2. Crear Symlink de Dotfiles en workspace/personal/ ─────────────────────
