@@ -19,7 +19,7 @@ passage() {
     # 3. Si el comando fue exitoso y modificó la bóveda, sincronizar al instante
     if [ $exit_code -eq 0 ] && [ -d "$store_path/.git" ]; then
         case "$cmd" in
-            insert|generate|rm|edit|add|mv|cp|import)
+            insert|generate|rm|edit|add|mv|cp|import|otp)
                 log_info "Sincronizando cambios de passage con el servidor..."
                 (
                     cd "$store_path"

@@ -38,6 +38,8 @@ fedora:
     - fzf
     - sqlite
     - fastfetch
+    - oathtool
+    - zbar
   desktop_gui:
     - distrobox
     - podman
@@ -122,6 +124,8 @@ arch:
     - fzf
     - sqlite
     - fastfetch
+    - oathtool
+    - zbar
   desktop_gui:
     - distrobox
     - podman
@@ -232,3 +236,5 @@ debian:
     - mosh
     - sqlite3
     - fastfetch
+    - oathtool
+    - zbar-tools

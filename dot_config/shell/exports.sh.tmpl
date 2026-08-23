@@ -45,6 +45,9 @@ export HERDR_NAV_PASSTHROUGH_RE='^(lazygit|lazydocker|yazi)$'
 # -- Secretos y Seguridad --
 export SOPS_AGE_KEY_FILE="$HOME/.config/chezmoi/key.txt"
 
+# -- OTP (passage otp / pass-otp adaptado a age) --
+export PASSWORD_STORE_ENABLE_EXTENSIONS=true
+
 # -- FZF Configuration (Senior Modern UI) --
 [ -f "$HOME/.config/shell/fzf_colors.sh" ] && source "$HOME/.config/shell/fzf_colors.sh"
 
