@@ -1,0 +1,54 @@
+{{- if and (eq .chezmoi.os "linux") .hasGUI -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_87-setup-passage-plugin.sh.tmpl
+# Registra y habilita el plugin DMS "Passage" (CRUD de passage en el launcher).
+# Idempotente: solo inserta las claves ausentes en plugin_settings.json.
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+PLUGIN_CFG="$HOME/.config/DankMaterialShell/plugin_settings.json"
+PLUGIN_DIR="$HOME/.config/DankMaterialShell/plugins/passage"
+
+if ! has_cmd dms; then
+    log_warn "dms no encontrado; omitiendo registro del plugin Passage."
+    exit 0
+fi
+
+# ── 1. Asegurar que existe el directorio del plugin y el manifest ────────────
+if [ ! -f "$PLUGIN_DIR/plugin.json" ]; then
+    log_warn "El plugin Passage no está presente en $PLUGIN_DIR; omite registro."
+    exit 0
+fi
+
+# ── 2. Habilitar el plugin de forma idempotente en plugin_settings.json ──────
+log_step "Habilitando plugin DMS 'Passage'"
+if [ ! -f "$PLUGIN_CFG" ]; then
+    echo '{}' > "$PLUGIN_CFG"
+fi
+
+if command -v jq >/dev/null 2>&1; then
+    tmp="$(mktemp)"
+    if ! jq '.passage.enabled = true | .passage.trigger = "#pw"' "$PLUGIN_CFG" > "$tmp" 2>/dev/null; then
+        log_warn "No se pudo actualizar $PLUGIN_CFG con jq; registro manual requerido."
+        rm -f "$tmp"
+    else
+        mv "$tmp" "$PLUGIN_CFG"
+        log_ok "Plugin Passage habilitado en $PLUGIN_CFG."
+    fi
+else
+    log_warn "jq no disponible; habilita el plugin en Ajustes DMS -> Plugins."
+fi
+
+# ── 3. Nota: si DMS está corriendo, es necesario recargar para aplicar ───────
+if pgrep -x quickshell >/dev/null 2>&1; then
+    log_info "Recargando DMS para aplicar el plugin (dms restart)..."
+    if ! dms restart >/dev/null 2>&1; then
+        log_warn "No se pudo reiniciar DMS automáticamente; reinícialo manualmente."
+    fi
+fi
+
+log_ok "Plugin Passage listo."
+{{- end }}

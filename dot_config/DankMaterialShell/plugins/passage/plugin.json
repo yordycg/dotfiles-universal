@@ -1,0 +1,18 @@
+{
+  "id": "passage",
+  "name": "Passage",
+  "description": "Gestiona tu bóveda de contraseñas (passage): ver, copiar, editar, crear y borrar contraseñas y códigos 2FA.",
+  "version": "1.0.0",
+  "author": "yordycg",
+  "icon": "key",
+  "type": "launcher",
+  "capabilities": ["launcher", "command-execution"],
+  "component": "./PassageLauncher.qml",
+  "trigger": "#pw",
+  "requires_dms": ">=1.4.0",
+  "permissions": [
+    "settings_read",
+    "settings_write",
+    "process"
+  ]
+}

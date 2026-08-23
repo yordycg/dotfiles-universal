@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# =============================================================================
+# passage-launcher
+# Helper para el plugin DMS "Passage": lista la bóveda y ejecuta acciones CRUD.
+#   list            -> imprime JSON: [{"name": "...", "otp": true/false}, ...]
+#   copy-password   -> copia la contraseña (1ª línea) de <name>
+#   copy-otp        -> copia el código 2FA de <name>
+#   edit            -> abre <name> en el editor (terminal kitty)
+#   delete          -> confirma con rofi y elimina <name>
+#   add-password    -> pide nombre y crea una entrada (kitty + passage insert)
+#   add-otp         -> pide nombre y otpauth:// y registra un 2FA
+# =============================================================================
+set -euo pipefail
+
+STORE="${PASSAGE_DIR:-$HOME/.passage/store}"
+export PASSWORD_STORE_ENABLE_EXTENSIONS=true
+TERM_BIN="${PASSAGE_TERM:-kitty}"
+
+# --- list: imprime el inventario en JSON (detecta entradas OTP) ---------------
+list() {
+    python3 -c '
+import base64, json, os, subprocess, sys
+store = os.path.expanduser("~/.passage/store")
+out = []
+for root, dirs, files in os.walk(store):
+    dirs[:] = [d for d in dirs if d != ".git"]
+    for f in files:
+        if not f.endswith(".age"):
+            continue
+        rel = os.path.relpath(os.path.join(root, f), store)
+        name = rel[:-4]
+        otp = False
+        try:
+            txt = subprocess.run(
+                ["passage", "show", name], capture_output=True, text=True).stdout
+            otp = "otpauth://" in txt
+        except Exception:
+            otp = False
+        out.append({"name": name, "otp": otp})
+out.sort(key=lambda e: e["name"].lower())
+print(json.dumps(out))
+'
+}
+
+# --- dialogo y notificaciones ------------------------------------------------
+prompt() { rofi -dmenu -p "$1" -mesg "${2:-}" 2>/dev/null; }
+
+confirm() {
+    local msg="$1"
+    local ans
+    ans=$(printf 'No\nSí, continuar' | rofi -dmenu -p "$msg" -lines 2 2>/dev/null)
+    [[ "$ans" == "Sí, continuar" ]]
+}
+
+notify() {
+    if command -v dms >/dev/null 2>&1; then
+        dms notify --app "passage" --title "$1" --body "$2" 2>/dev/null || true
+    fi
+}
+
+# --- acciones -----------------------------------------------------------------
+cmd_copy_password() { passage -c "$1"; notify "Passage" "Contraseña copiada: $1"; }
+cmd_copy_otp()      { passage otp -c "$1"; notify "Passage" "2FA copiado: $1"; }
+
+cmd_edit() {
+    local name="$1"
+    "$TERM_BIN" --title "passage edit: $name" \
+        -e sh -c "passage edit --multiline \"\$1\"; echo; read -rp 'Pulsa Enter para cerrar...' _ " _ "$name"
+}
+
+cmd_delete() {
+    local name="$1"
+    if confirm "¿Borrar '$name'?"; then
+        passage rm -f "$name"
+        notify "Passage" "Eliminada: $name"
+    fi
+}
+
+cmd_add_password() {
+    local name
+    name=$(prompt "Nombre de la nueva entrada (clave)")
+    [[ -n "$name" ]] || return 0
+    "$TERM_BIN" --title "passage insert: $name" \
+        -e sh -c "passage insert --multiline \"\$1\"; echo; read -rp 'Pulsa Enter para cerrar...' _ " _ "$name"
+}
+
+cmd_add_otp() {
+    local name uri
+    name=$(prompt "Nombre del 2FA (clave)")
+    [[ -n "$name" ]] || return 0
+    uri=$(prompt "otpauth:// URI del código 2FA")
+    [[ -n "$uri" ]] || return 0
+    printf '%s' "$uri" | passage otp insert -e "$name"
+    notify "Passage" "2FA registrado: $name"
+}
+
+case "${1:-}" in
+    list)            list ;;
+    copy-password)   cmd_copy_password "$2" ;;
+    copy-otp)        cmd_copy_otp "$2" ;;
+    edit)            cmd_edit "$2" ;;
+    delete)          cmd_delete "$2" ;;
+    add-password)    cmd_add_password ;;
+    add-otp)         cmd_add_otp ;;
+    *)
+        echo "uso: passage-launcher list|copy-password|copy-otp|edit|delete|add-password|add-otp" >&2
+        exit 1 ;;
+esac
