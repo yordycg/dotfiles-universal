@@ -100,7 +100,7 @@ def main():
         return
     raw = ' '.join(argv) if argv else sys.stdin.read().strip()
     m = re.search(r'otpauth-migration://offline\?(?:.*&)?data=([^&\s]+)', raw)
-    data = m.group(1) if m else raw
+    data = urllib.parse.unquote(m.group(1)) if m else raw
     payload = fields(decode_b64(data))
     uris = []
     for f, w, v in payload:
