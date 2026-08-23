@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+"""ga2pass - Migra códigos 2FA desde Google Authenticator hacia passage.
+
+Google Authenticator "exporta/transfiere" cuentas mediante QR con el formato
+    otpauth-migration://offline?data=<base64>
+donde <data> es un protobuf que contiene los SECRETOS REALES de tus cuentas.
+Este script los decodifica localmente (sin subir nada a internet) y emite las
+URIs otpauth:// listas para insertar en passage.
+
+Uso:
+    ga2pass <otpauth-migration-uri-o-data>     # imprime una URI otpauth:// por cuenta
+    echo "<uri>" | ga2pass                       # o por stdin
+    zbarimg -q --raw qr.png | ga2pass            # desde un QR capturado como imagen
+
+Migración completa a passage (una URI por cuenta):
+    zbarimg -q --raw ga_export.png | ga2pass | while read -r uri; do
+        name=$(ga2pass --name "$uri")
+        echo "$uri" | passage otp insert -e "$name"
+    done
+"""
+import base64, re, sys, urllib.parse
+
+def read_varint(b, i):
+    shift = result = 0
+    while True:
+        byte = b[i]; i += 1
+        result |= (byte & 0x7F) << shift
+        if not (byte & 0x80):
+            break
+        shift += 7
+    return result, i
+
+def decode_b64(data):
+    for trans in (lambda s: s, lambda s: s.replace('-', '+').replace('_', '/')):
+        try:
+            return base64.b64decode(trans(data) + '=' * (-len(data) % 4))
+        except Exception:
+            continue
+    raise ValueError('base64 inválido')
+
+def fields(b):
+    i, out = 0, []
+    while i < len(b):
+        tag, i = read_varint(b, i)
+        wire, f = tag & 7, tag >> 3
+        if wire == 0:
+            v, i = read_varint(b, i)
+        elif wire == 2:
+            ln, i = read_varint(b, i); v = b[i:i + ln]; i += ln
+        elif wire == 5:
+            v = b[i:i + 4]; i += 4
+        elif wire == 1:
+            v = b[i:i + 8]; i += 8
+        else:
+            raise ValueError(f'wire type {wire}')
+        out.append((f, wire, v))
+    return out
+
+ALGO = {0: 'SHA1', 1: 'SHA1', 2: 'SHA256', 3: 'SHA512', 4: 'MD5'}
+DIG = {0: 6, 1: 6, 2: 8}
+TYPE = {0: 'totp', 1: 'hotp', 2: 'totp'}
+
+def b32(raw):
+    return base64.b32encode(raw).decode().rstrip('=')
+
+def parse_otp(fs):
+    secret = b''; name = issuer = ''; algo = 'SHA1'; dig = 6; typ = 'totp'
+    counter = 0; period = 30
+    for f, w, v in fs:
+        if f == 1:
+            secret = v
+        elif f == 2:
+            name = v.decode()
+        elif f == 3:
+            issuer = v.decode()
+        elif f == 4 and w == 0:
+            algo = ALGO.get(v, 'SHA1')
+        elif f == 5 and w == 0:
+            dig = DIG.get(v, 6)
+        elif f == 6 and w == 0:
+            typ = TYPE.get(v, 'totp')
+        elif f == 7 and w == 0:
+            counter = v
+        elif f == 8 and w == 0:
+            period = v or 30
+    label = f"{issuer}:{name}" if issuer else name
+    uri = f"otpauth://{typ}/{label}?secret={b32(secret)}"
+    if issuer:
+        uri += f"&issuer={issuer}"
+    uri += f"&algorithm={algo}&digits={dig}&period={period}"
+    if typ == 'hotp':
+        uri += f"&counter={counter}"
+    return uri
+
+def main():
+    argv = sys.argv[1:]
+    if argv and argv[0] == '--name':
+        m = re.match(r'otpauth://\w+/([^?]+)', argv[1])
+        print(urllib.parse.unquote(m.group(1)) if m else argv[1])
+        return
+    raw = ' '.join(argv) if argv else sys.stdin.read().strip()
+    m = re.search(r'otpauth-migration://offline\?(?:.*&)?data=([^&\s]+)', raw)
+    data = m.group(1) if m else raw
+    payload = fields(decode_b64(data))
+    uris = []
+    for f, w, v in payload:
+        if f == 1 and w == 2:
+            uris.append(parse_otp(fields(v)))
+    print('\n'.join(uris) if uris else '')
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())
