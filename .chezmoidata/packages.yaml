@@ -124,7 +124,7 @@ arch:
     - fzf
     - sqlite
     - fastfetch
-    - oathtool
+    - oath-toolkit
     - zbar
   desktop_gui:
     - distrobox
