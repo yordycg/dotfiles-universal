@@ -2,6 +2,9 @@
   "theme": "dark",
   "terminalMode": "regular",
   "autoReload": true,
-  "default_model": "google/gemini-3.5-flash",
-  "defaultThinkingLevel": "low"
+  "default_model": "deepseek/deepseek-v4-flash",
+  "defaultThinkingLevel": "low",
+  "lastChangelogVersion": "0.84.2",
+  "defaultProvider": "deepseek",
+  "defaultModel": "deepseek-v4-flash"
 }
