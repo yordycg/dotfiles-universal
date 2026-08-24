@@ -43,11 +43,12 @@ else
 fi
 
 # ── 3. Nota: si DMS está corriendo, es necesario recargar para aplicar ───────
-if pgrep -x quickshell >/dev/null 2>&1; then
-    log_info "Recargando DMS para aplicar el plugin (dms restart)..."
-    if ! dms restart >/dev/null 2>&1; then
-        log_warn "No se pudo reiniciar DMS automáticamente; reinícialo manualmente."
-    fi
+# El proceso de DMS es 'qs' (quickshell) lanzado por 'dms run'. Un 'dms restart'
+# (SIGUSR1) recarga la UI pero NO re-escanea plugins añadidos en caliente: hace
+# falta un reinicio completo del daemon (dms kill + dms run) o relogin.
+if pgrep -f 'dms run' >/dev/null 2>&1 || pgrep -x qs >/dev/null 2>&1; then
+    log_warn "DMS está corriendo. Reinicio completo necesario para cargar el plugin."
+    log_info "  dms kill && dms run   (o cierra sesión y vuelve a entrar)"
 fi
 
 log_ok "Plugin Passage listo."

@@ -22,18 +22,12 @@ QtObject {
     signal itemsChanged
 
     // ── Carga de la lista de entradas (async, vía passage-launcher list) ────
-    function loadEntries() {
-        listProcess.command = ["sh", "-c", "$HOME/.local/bin/passage-launcher list"];
-        listProcess.running = true;
-    }
-
-    Process {
-        id: listProcess
+    property Process listProcess: Process {
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    root.entries = JSON.parse(text().trim() || "[]");
+                    root.entries = JSON.parse((text || "").trim() || "[]");
                 } catch (e) {
                     console.log("[Passage] fallo al parsear lista:", e.message);
                     root.entries = [];
@@ -44,6 +38,11 @@ QtObject {
             if (root.pluginService && typeof root.pluginService.requestLauncherUpdate === "function")
                 root.pluginService.requestLauncherUpdate(root.pluginId);
         }
+    }
+
+    function loadEntries() {
+        listProcess.command = ["sh", "-c", "$HOME/.local/bin/passage-launcher list"];
+        listProcess.running = true;
     }
 
     Component.onCompleted: {
