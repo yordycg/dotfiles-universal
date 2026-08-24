@@ -15,6 +15,9 @@ fedora:
     - pwgen
     - tree
     - less
+    - man-db
+    - man-pages
+    - tealdeer
   dev_headers:
     - gcc
     - gcc-c++
@@ -107,6 +110,9 @@ arch:
     - pwgen
     - tree
     - less
+    - man-db
+    - man-pages
+    - tealdeer
   dev_headers:
     - base-devel
     - cmake
@@ -206,6 +212,8 @@ debian:
     - pwgen
     - tree
     - less
+    - man-db
+    - manpages
   dev_toolchain:
     - python3-venv
     - gcc

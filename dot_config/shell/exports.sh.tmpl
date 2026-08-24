@@ -38,6 +38,9 @@ export EDITOR="nvim"
 export VISUAL="nvim"
 export PAGER="bat"
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANOPT="--nh --nj"
+export GROFF_NO_SGR=1
+export MANROFFOPT="-c"
 
 # -- Herdr: vim-herdr-navigation (passthrough de Ctrl+h/j/k/l a TUIs que los usan) --
 export HERDR_NAV_PASSTHROUGH_RE='^(lazygit|lazydocker|yazi)$'
