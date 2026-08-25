@@ -92,6 +92,7 @@ alias lps='lab-status'
 alias lsql='lazysql'
 
 # -- Sistema (Continuación) -------------------
+alias update='yay -Syu --noconfirm && checkrebuild | xargs -r yay -S --rebuild --noconfirm'
 alias logout='loginctl terminate-user $USER'
 alias shutdown='sudo shutdown now'
 alias restart='sudo reboot'
