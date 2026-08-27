@@ -83,6 +83,7 @@ fedora:
     - nautilus
     - udiskie
     - code
+    - xournalpp
   niri:
     - niri
     - xwayland-satellite
@@ -174,6 +175,7 @@ arch:
     - nautilus
     - udiskie
     - plasma-keyboard
+    - xournalpp
   niri:
     - niri
     - xwayland-satellite
