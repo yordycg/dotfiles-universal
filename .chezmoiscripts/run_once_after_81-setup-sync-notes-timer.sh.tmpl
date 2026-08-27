@@ -1,0 +1,32 @@
+{{- if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_81-setup-sync-notes-timer.sh.tmpl
+# Activa el temporizador systemd de sincronización de notas (ZenNotes/Obsidian).
+# Idempotente: no hace nada si el timer ya está activo.
+# =============================================================================
+set -euo pipefail
+
+if ! command -v systemctl &>/dev/null; then
+    echo "! systemd no disponible. Saltando configuración del timer de sync-notes."
+    exit 0
+fi
+
+if systemctl --user is-enabled sync-notes.timer &>/dev/null; then
+    exit 0  # Timer ya activo — silencio absoluto
+fi
+
+echo "→ Activando temporizador de sync-notes..."
+systemctl --user daemon-reload
+systemctl --user enable --now sync-notes.timer
+echo "✓ Temporizador sync-notes.timer activado."
+
+# Lingering para que el timer siga corriendo sin sesión de usuario abierta.
+if [ ! -f "/var/lib/systemd/linger/$USER" ]; then
+    if sudo -n loginctl enable-linger "$USER" &>/dev/null; then
+        echo "✓ Lingering habilitado para $USER."
+    else
+        echo "! No se pudo habilitar lingering (requiere sudo). El timer correrá solo con sesión iniciada."
+    fi
+fi
+{{- end -}}
