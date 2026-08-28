@@ -1,27 +1,71 @@
-# Fase 1 — Descubrimiento y Definición del Problema
+# Fase 1 — Descubrimiento y Definición del Problema (Discovery)
 
-## Dolor principal
+**Proyecto**: [Nombre del proyecto]
+**Fecha**: [Fecha]
+**Participantes de la reunión**: [Nombres/roles]
+
+> Objetivo: entender el problema real de negocio, NO la tecnología.
+
+---
+
+## 1. Dolor principal
 
 ¿Qué proceso manual o ineficiente está afectando al cliente o usuario?
 
-## Restricciones
+> [Descripción libre, en lenguaje del cliente, sin mencionar tecnología]
 
-- Tiempo:
-- Presupuesto / Recursos:
-- Limitaciones técnicas:
+---
 
-## Criterios de éxito
+## 2. Cómo se resuelve hoy (sin el software)
 
-¿Cómo sabremos que el proyecto fue un éxito? (medible, ej: "reducir tiempo de X de 2 horas a 5 minutos")
+[Describir el proceso actual — Excel, papel, otro sistema, nada]
 
-1.
-2.
-3.
+---
 
-## Preguntas clave — respuestas
+## 3. Usuarios del sistema
 
-1. ¿Cuál es el problema real que estamos tratando de resolver? (sin mencionar software)
-2. ¿Cómo se resuelve o gestiona este problema hoy en día sin mi software?
-3. ¿Quiénes van a usar el sistema y qué nivel técnico tienen?
-4. ¿Qué pasa si NO hacemos este proyecto?
-5. ¿Quién toma la decisión final y quién más tiene que aprobar esto?
+| Rol/Usuario | Nivel técnico | Qué necesita hacer en el sistema |
+|---|---|---|
+| [Rol 1] | [Bajo/Medio/Alto] | [Tarea] |
+| [Rol 2] | [Bajo/Medio/Alto] | [Tarea] |
+
+---
+
+## 4. Restricciones
+
+- **Tiempo**: [plazo real del stakeholder, no el tuyo]
+- **Presupuesto / Recursos**: [monto o rango]
+- **Limitaciones técnicas**: [hosting existente, stack obligatorio, integraciones legadas, etc.]
+
+---
+
+## 5. Criterios de éxito
+
+¿Cómo sabremos que el proyecto fue un éxito? (medible, no vago)
+
+- [Ejemplo: "Reducir el tiempo de cotización de 2 horas a 5 minutos"]
+- [Criterio 2]
+
+---
+
+## 6. Qué pasa si NO hacemos este proyecto
+
+[Costo de no hacer nada — ayuda a confirmar que el dolor es real]
+
+---
+
+## 7. Toma de decisión
+
+- **Quién decide finalmente**: [Nombre/rol]
+- **Quién más debe aprobar**: [Nombres/roles, si aplica]
+
+> Si el interlocutor no es quien decide, marcarlo aquí para evitar vueltas infinitas más adelante.
+
+---
+
+## Checklist de cierre de Fase 1
+
+- [ ] Dolor principal identificado y validado con el stakeholder
+- [ ] Restricciones documentadas
+- [ ] Criterios de éxito definidos y medibles
+- [ ] Decisor(es) identificados

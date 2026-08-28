@@ -14,7 +14,8 @@
 **Decisión:** ¿qué se decidió?
 
 **Alternativas consideradas:**
--
+- [Alternativa 1]
+- [Alternativa 2]
 
 **Por qué se eligió esta opción:**
 

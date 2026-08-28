@@ -13,10 +13,13 @@ Consulta el archivo [TASKS.md](TASKS.md) para comenzar con la Fase 0 y avanzar p
 ## Estructura del Proyecto
 
 ```
-├── TASKS.md     → Hoja de ruta y checklist de tareas por fase
-├── README.md    → Descripción e instrucciones del proyecto
-├── .gitignore   → Exclusiones de Git
-├── docs/        → Documentación detallada por fase (Fases 0 a 7)
-├── src/         → Código fuente del proyecto
-└── tests/       → Pruebas del proyecto
+├── TASKS.md        → Hoja de ruta y checklist de tareas por etapa (empezar aquí)
+├── README.md       → Descripción e instrucciones del proyecto
+├── .editorconfig   → Reglas de estilo agnósticas del lenguaje
+├── .env.example    → Plantilla de variables de entorno (copiar a .env)
+├── .gitignore      → Exclusiones de Git
+├── meta/           → Fases 0 y 7 (comercial/contexto; NO versionadas en repo público)
+├── docs/           → Documentación técnica por fase (Fases 1 a 6 + ADR)
+├── src/            → Código fuente del proyecto
+└── tests/          → Pruebas del proyecto
 ```

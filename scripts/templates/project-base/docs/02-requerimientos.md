@@ -1,37 +1,85 @@
-# Fase 2 — Especificación de Requerimientos
+# Fase 2 — Especificación de Requerimientos (Sin Código)
 
-## Requerimientos Funcionales (RF)
+**Proyecto**: [Nombre del proyecto]
+**Fecha**: [Fecha]
+**Versión del documento**: [v1.0]
 
-| # | El sistema debe... |
+> Objetivo: aterrizar el problema en funcionalidades concretas y definir los límites del proyecto (Scope).
+
+---
+
+## 1. MVP — Funciones indispensables
+
+¿Cuáles son las 3 funciones sin las cuales el sistema no sirve?
+
+1. [Función 1]
+2. [Función 2]
+3. [Función 3]
+
+---
+
+## 2. Inputs / Outputs
+
+| Dato que entra (Input) | Dato que sale (Output) |
 |---|---|
-| RF-01 | |
-| RF-02 | |
-| RF-03 | |
+| [Ej: Excel con lista de precios] | [Ej: Cotización en PDF] |
 
-## Requerimientos No Funcionales (RNF)
+---
 
-| # | El sistema debe comportarse así... |
-|---|---|
-| RNF-01 | |
-| RNF-02 | |
+## 3. Requerimientos Funcionales (RF)
 
-## Historias de Usuario
+**Formato**: `RF-XX`: [descripción] — Prioridad: [Alta/Media/Baja]
 
-- Como [rol], quiero [acción], para [beneficio].
-- Como [rol], quiero [acción], para [beneficio].
+- **RF-01**: [El sistema debe permitir...]
+  - Criterios de aceptación:
+    - [ ] [Condición 1]
+    - [ ] [Condición 2]
+- **RF-02**: [...]
+  - Criterios de aceptación:
+    - [ ] [Condición 1]
 
-## Alcance (Out of Scope)
+---
 
-Explícitamente NO incluido en esta versión:
+## 4. Requerimientos No Funcionales (RNF)
 
--
--
+**Formato**: `RNF-XX`: [descripción] — Categoría: [Rendimiento/Seguridad/Disponibilidad/Usabilidad]
 
-**Manejo de cambios de alcance:** si se pide algo fuera de esta lista a mitad de proyecto, se gestiona como un cambio formal / fase 2.
+- **RNF-01**: [Ej: El sistema debe responder en menos de 2 segundos con 500 registros]
+- **RNF-02**: [...]
 
-## Preguntas clave — respuestas
+---
 
-1. ¿Cuáles son las 3 funciones indispensables sin las cuales el sistema no sirve (MVP)?
-2. ¿Qué datos entran al sistema (Inputs) y qué datos salen (Outputs)?
-3. ¿Qué cosas quedan EXCLUIDAS explícitamente de esta versión?
-4. ¿Qué pasa si se pide algo fuera de este alcance a mitad de proyecto?
+## 5. Historias de Usuario
+
+> Como [usuario/rol], quiero [acción], para [beneficio].
+
+- [ ] Como [rol], quiero [acción], para [beneficio].
+- [ ] Como [rol], quiero [acción], para [beneficio].
+
+---
+
+## 6. Alcance Excluido (Out of Scope)
+
+> Tu principal defensa contra peticiones infinitas gratis. Sé explícito.
+
+- [Funcionalidad NO incluida 1]
+- [Funcionalidad NO incluida 2]
+
+---
+
+## 7. Procedimiento ante pedidos fuera de alcance
+
+¿Qué pasa si el stakeholder pide algo fuera de este alcance a mitad de proyecto?
+
+- [ ] Se cotiza como Fase 2 / adicional aparte
+- [ ] Se cobra por hora extra: [tarifa]
+- [ ] Otro: [describir]
+
+---
+
+## Checklist de cierre de Fase 2
+
+- [ ] MVP definido (máx. 3 funciones)
+- [ ] RF y RNF documentados con criterios de aceptación
+- [ ] Out of Scope explícito y comunicado
+- [ ] Procedimiento para pedidos adicionales acordado

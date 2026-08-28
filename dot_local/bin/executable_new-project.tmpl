@@ -32,7 +32,9 @@ TEMPLATE_DIR="{{ $sourceDir }}/scripts/templates/project-base"
 
 mkdir -p "$TARGET_DIR"
 cp -r "$TEMPLATE_DIR/"* "$TARGET_DIR/"
-cp "$TEMPLATE_DIR/.gitignore" "$TARGET_DIR/" 2>/dev/null || true
+for dotfile in .gitignore .editorconfig .env.example; do
+    cp "$TEMPLATE_DIR/$dotfile" "$TARGET_DIR/" 2>/dev/null || true
+done
 
 cd "$TARGET_DIR"
 
