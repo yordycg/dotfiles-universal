@@ -53,19 +53,25 @@
 - [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
   - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal.
 
-## Fase 5: Videocoding Workflow (Architect + Workers)
+## Fase 5: Videcoding Workflow (Architect + Workers)
 - [x] Investigar recursos de la comunidad (sammwy SPECS/ROADMAP, Kanvas, claude-code-ultimate-guide, gentle-ai/pi)
-- [x] Crear plantilla `scripts/templates/videocoding-base/`:
+- [x] Crear plantilla `scripts/templates/videcoding-base/`:
   - Documentos sammwy: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`
   - Orquestación dual agnóstica: `AGENTS.md` (roles architect/worker, TDD estricto, gates, no self-verify, curse of instructions)
   - Dual-write obligatorio `TASKS.md` ↔ `Project.canvas` + `bin/sync-tracking.py` + target `just sync-tracking`
   - Kanvas vendered (MIT): `canvas-tool.py`, `Project.canvas`, `RULES.md` adaptado
   - `Justfile` (setup/status/ready/lint/test/gate/install-hooks) + `bin/gate.sh` + hook `bin/pre-commit`
-  - Subagentes opencode: `.opencode/agent/architect.md` (Claude Sonnet/Opus) y `worker.md` (deepseek-v4-flash)
+  - Subagentes opencode: `.opencode/agent/architect.md` (Claude vía OpenRouter), `worker.md` (deepseek-v4-flash) y `scout.md` (Gemini)
   - Reutiliza `.editorconfig`, `.env.example` de `project-base`
-- [x] Crear comando `new-videocoding-project` (`dot_local/bin/executable_new-videocoding-project.tmpl`)
-- [x] Crear skill opencode `dot_agents/skills/videocoding-framework/SKILL.md`
-- [x] Documentar flujo en `docs/videocoding-workflow.md`
-- [ ] Probar en seco `new-videocoding-project` y validar el ciclo TDD + dual-write con un proyecto real
+- [x] Crear comando `new-videcoding-project` (`dot_local/bin/executable_new-videcoding-project.tmpl`)
+- [x] Crear skill opencode `dot_agents/skills/videcoding-framework/SKILL.md`
+- [x] Renombrar stack completo de "videocoding" a **videcoding** (nombre correcto del concepto)
+- [x] Documentación en `docs/videcoding/`:
+  - [x] `README.md` (índice) + `workflow.md` (migrado de `docs/videocoding-workflow.md`)
+  - [x] `setup.md` (checklist de inicio: install-hooks, /models, /gentle:models, Fase 0 crítica)
+  - [x] `daily-flow.md` (sesión humana, verificación, protocolo overnight)
+  - [x] `troubleshooting.md` (errores comunes: gate, sync-tracking, modelos, proveedores)
+- [ ] Configurar proveedores en opencode/pi: OpenRouter (Claude, whitelist + $5-10), DeepSeek directo (worker), Gemini (scout)
+- [ ] Probar en seco `new-videcoding-project` y validar el ciclo TDD + dual-write con un proyecto real
 
 

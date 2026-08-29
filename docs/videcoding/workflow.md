@@ -1,9 +1,13 @@
-# Videocoding Workflow (Architect + Workers)
+# Videcoding Workflow (Architect + Workers)
 
-Este documento define el flujo de **videocoding** de la infraestructura: una alternativa al
-[`project-workflow.md`](./project-workflow.md) para proyectos donde el objetivo es dejar que
+Este documento define el flujo de **videcoding** de la infraestructura: una alternativa al
+[`project-workflow.md`](../project-workflow.md) para proyectos donde el objetivo es dejar que
 los agentes construyan gran parte del código de forma autónoma y de larga duración, sin perder
 el control del rumbo.
+
+> **Guías operativas:** para poner esto en marcha ver [`setup.md`](./setup.md) (inicio),
+> [`daily-flow.md`](./daily-flow.md) (día a día) y [`troubleshooting.md`](./troubleshooting.md)
+> (errores).
 
 ## Filosofía
 
@@ -76,9 +80,12 @@ Nunca editar `Project.canvas` a mano: siempre vía `canvas-tool.py`.
 ## Crear un proyecto
 
 ```bash
-new-videocoding-project <nombre>
+new-videcoding-project <nombre>
 ```
 
+> **Sigue el checklist de [`setup.md`](./setup.md)**: instalar el hook pre-commit, verificar
+> modelos, registrar el proyecto en pi y completar la Fase 0 (Justfile con lint/test reales).
+>
 > Nota: el tablero visual usa Obsidian. Si no lo abres, el flujo funciona igual vía `TASKS.md`
 > y la CLI (`just status`, `just ready`).
 

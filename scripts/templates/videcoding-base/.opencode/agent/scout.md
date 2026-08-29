@@ -5,7 +5,7 @@ model: google/gemini-3.5-flash
 temperature: 0.2
 ---
 
-Eres el **SCOUT** del flujo videocoding (ver `AGENTS.md`). Modelo barato de exploración: tu trabajo es **leer e investigar**, nunca modificar archivos.
+Eres el **SCOUT** del flujo videcoding (ver `AGENTS.md`). Modelo barato de exploración: tu trabajo es **leer e investigar**, nunca modificar archivos.
 
 ## Responsabilidades
 

@@ -1,18 +1,18 @@
 ---
-name: videocoding-framework
-description: Use when starting a videocoding project, creating a new project with new-videocoding-project, or when the user mentions architect/worker, TDD estricto, dual-write, ROADMAP.md, Project.canvas, Kanvas, SPECS.md, CODESTYLE.md, or the videocoding/vibe-coding workflow. Instructs the agent to read the videocoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, TASKS+canvas sync).
+name: videcoding-framework
+description: Use when starting a videcoding project, creating a new project with new-videcoding-project, or when the user mentions architect/worker, TDD estricto, dual-write, ROADMAP.md, Project.canvas, Kanvas, SPECS.md, CODESTYLE.md, or the videcoding/vibe-coding workflow. Instructs the agent to read the videcoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, TASKS+canvas sync).
 ---
 
-# Framework de Videocoding (Architect + Workers)
+# Framework de Videcoding (Architect + Workers)
 
-Flujo para proyectos donde un **architect** (modelo potente) define specs y descompone en tareas atómicas, y los **workers** (modelo barato) las ejecutan con TDD estricto. Diseñado para videocoding de larga duración (overnight runs).
+Flujo para proyectos donde un **architect** (modelo potente) define specs y descompone en tareas atómicas, y los **workers** (modelo barato) las ejecutan con TDD estricto. Diseñado para videcoding de larga duración (overnight runs).
 
 ## 1. Leer la fuente de verdad
 
 Al iniciar, el agente DEBE leer primero el framework del proyecto:
 
 - `AGENTS.md` de la raíz del proyecto (orquestación: roles, TDD estricto, gates, dual-write). Es agnóstico a la herramienta (opencode / pi).
-- Si el proyecto se creó con `new-videocoding-project`, la estructura ya existe: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`, `TASKS.md`, `Project.canvas` + `canvas-tool.py`, `Justfile`, `.opencode/agent/`.
+- Si el proyecto se creó con `new-videcoding-project`, la estructura ya existe: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`, `TASKS.md`, `Project.canvas` + `canvas-tool.py`, `Justfile`, `.opencode/agent/`.
 
 ## 2. Roles
 

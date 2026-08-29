@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# gate.sh — Gate pre-commit del flujo videocoding.
+# gate.sh — Gate pre-commit del flujo videcoding.
 # Verifica: lint + tests + dual-write (TASKS.md <-> Project.canvas).
 set -euo pipefail
 

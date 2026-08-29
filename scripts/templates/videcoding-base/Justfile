@@ -1,4 +1,4 @@
-# Videocoding project — task runner
+# Videcoding project — task runner
 # Los workers corren `just lint` y `just test` ANTES de cada commit (gate).
 
 default:

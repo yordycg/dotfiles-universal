@@ -1,6 +1,6 @@
-# AGENTS.md — Videocoding Workflow (Architect + Workers)
+# AGENTS.md — Videcoding Workflow (Architect + Workers)
 
-Este proyecto se ejecuta con el flujo de **videocoding**: un **architect** (modelo potente) define las especificaciones y descompone el trabajo en tareas atómicas; los **workers** (modelo barato) las ejecutan una a una con **TDD estricto**. Este archivo es la fuente de verdad para **cualquier agente** (opencode, pi, claude, codex…): las reglas son agnósticas a la herramienta.
+Este proyecto se ejecuta con el flujo de **videcoding**: un **architect** (modelo potente) define las especificaciones y descompone el trabajo en tareas atómicas; los **workers** (modelo barato) las ejecutan una a una con **TDD estricto**. Este archivo es la fuente de verdad para **cualquier agente** (opencode, pi, claude, codex…): las reglas son agnósticas a la herramienta.
 
 ---
 

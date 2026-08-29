@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# new-videocoding-project
-# Descripción: Crea un proyecto con el flujo de videocoding (architect + workers,
+# new-videcoding-project
+# Descripción: Crea un proyecto con el flujo de videcoding (architect + workers,
 # TDD estricto, dual-write TASKS.md <-> Project.canvas/Kanvas). Funciona con
 # opencode y pi por igual (ver AGENTS.md de la plantilla).
 
@@ -15,7 +15,7 @@ NC='\033[0m'
 PROJECT_NAME="$1"
 
 if [ -z "$PROJECT_NAME" ]; then
-    echo -e "${YELLOW}Uso: new-videocoding-project <nombre_del_proyecto>${NC}"
+    echo -e "${YELLOW}Uso: new-videcoding-project <nombre_del_proyecto>${NC}"
     exit 1
 fi
 
@@ -26,10 +26,10 @@ if [ -d "$TARGET_DIR" ]; then
     exit 1
 fi
 
-echo -e "${BLUE}Creando proyecto videocoding $PROJECT_NAME en $(pwd)...${NC}"
+echo -e "${BLUE}Creando proyecto videcoding $PROJECT_NAME en $(pwd)...${NC}"
 
 {{- $sourceDir := .chezmoi.sourceDir }}
-TEMPLATE_DIR="{{ $sourceDir }}/scripts/templates/videocoding-base"
+TEMPLATE_DIR="{{ $sourceDir }}/scripts/templates/videcoding-base"
 
 if [ ! -d "$TEMPLATE_DIR" ]; then
     echo -e "Error: plantilla no encontrada en $TEMPLATE_DIR"
@@ -46,9 +46,9 @@ cd "$TARGET_DIR"
 # Inicializar Git + commit inicial
 git init > /dev/null
 git add .
-git commit -m "chore: initial videocoding project setup" > /dev/null
+git commit -m "chore: initial videcoding project setup" > /dev/null
 
-echo -e "${GREEN}¡Proyecto videocoding $PROJECT_NAME creado en $TARGET_DIR!${NC}"
+echo -e "${GREEN}¡Proyecto videcoding $PROJECT_NAME creado en $TARGET_DIR!${NC}"
 echo ""
 if command -v eza &>/dev/null; then
     eza --tree --icons --level=2 "$TARGET_DIR" 2>/dev/null || ls -la "$TARGET_DIR"
