@@ -53,4 +53,19 @@
 - [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
   - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal.
 
+## Fase 5: Videocoding Workflow (Architect + Workers)
+- [x] Investigar recursos de la comunidad (sammwy SPECS/ROADMAP, Kanvas, claude-code-ultimate-guide, gentle-ai/pi)
+- [x] Crear plantilla `scripts/templates/videocoding-base/`:
+  - Documentos sammwy: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`
+  - Orquestación dual agnóstica: `AGENTS.md` (roles architect/worker, TDD estricto, gates, no self-verify, curse of instructions)
+  - Dual-write obligatorio `TASKS.md` ↔ `Project.canvas` + `bin/sync-tracking.py` + target `just sync-tracking`
+  - Kanvas vendered (MIT): `canvas-tool.py`, `Project.canvas`, `RULES.md` adaptado
+  - `Justfile` (setup/status/ready/lint/test/gate/install-hooks) + `bin/gate.sh` + hook `bin/pre-commit`
+  - Subagentes opencode: `.opencode/agent/architect.md` (Claude Sonnet/Opus) y `worker.md` (deepseek-v4-flash)
+  - Reutiliza `.editorconfig`, `.env.example` de `project-base`
+- [x] Crear comando `new-videocoding-project` (`dot_local/bin/executable_new-videocoding-project.tmpl`)
+- [x] Crear skill opencode `dot_agents/skills/videocoding-framework/SKILL.md`
+- [x] Documentar flujo en `docs/videocoding-workflow.md`
+- [ ] Probar en seco `new-videocoding-project` y validar el ciclo TDD + dual-write con un proyecto real
+
 
