@@ -1,10 +1,11 @@
 [Default Applications]
-application/pdf=dms-open.desktop
+application/pdf=com.github.xournalpp.xournalpp.desktop
 application/vnd.comicbook+zip=dms-open.desktop
 application/vnd.comicbook-rar=dms-open.desktop
 application/x-bzpdf=dms-open.desktop
 application/x-ext-pdf=dms-open.desktop
 application/x-gzpdf=dms-open.desktop
+application/x-zerosize=dev.zed.Zed.desktop
 application/xhtml+xml=firefox.desktop
 image/avif=dms-open.desktop
 image/bmp=dms-open.desktop
@@ -17,15 +18,15 @@ text/html=firefox.desktop
 x-scheme-handler/calendar=dms-open.desktop
 x-scheme-handler/http=firefox.desktop
 x-scheme-handler/https=firefox.desktop
-application/x-zerosize=dev.zed.Zed.desktop
 
 [Added Associations]
-application/pdf=dms-open.desktop;
+application/pdf=dms-open.desktop;com.github.xournalpp.xournalpp.desktop;
 application/vnd.comicbook+zip=dms-open.desktop;
 application/vnd.comicbook-rar=dms-open.desktop;
 application/x-bzpdf=dms-open.desktop;
 application/x-ext-pdf=dms-open.desktop;
 application/x-gzpdf=dms-open.desktop;
+application/x-zerosize=dev.zed.Zed.desktop;
 image/avif=dms-open.desktop;
 image/bmp=dms-open.desktop;
 image/gif=dms-open.desktop;
@@ -34,6 +35,6 @@ image/png=dms-open.desktop;
 image/svg+xml=dms-open.desktop;
 image/webp=dms-open.desktop;
 x-scheme-handler/calendar=dms-open.desktop;
-application/x-zerosize=dev.zed.Zed.desktop;
 
 [Removed Associations]
+

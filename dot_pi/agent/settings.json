@@ -4,7 +4,7 @@
   "autoReload": true,
   "default_model": "deepseek/deepseek-v4-flash",
   "defaultThinkingLevel": "low",
-  "lastChangelogVersion": "0.84.3",
+  "lastChangelogVersion": "0.84.4",
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash"
 }
