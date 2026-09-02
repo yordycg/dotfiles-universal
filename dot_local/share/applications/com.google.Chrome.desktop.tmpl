@@ -1,0 +1,17 @@
+{{- if and (eq .chezmoi.os "linux") .hasGUI -}}
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Google Chrome
+GenericName=Web Browser
+Comment=Chrome Flatpak en Wayland nativo + VA-API (wrapper perfprobe)
+TryExec={{ .chezmoi.homeDir }}/.local/bin/chrome
+StartupNotify=true
+StartupWMClass=google-chrome
+Exec={{ .chezmoi.homeDir }}/.local/bin/chrome %U
+Icon=com.google.Chrome
+Terminal=false
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/rss+xml;x-scheme-handler/http;x-scheme-handler/https;
+Keywords=web;browser;internet;
+{{- end }}

@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# =============================================================================
+# Chrome Flatpak -> Wayland nativo + VA-API (decodificacion de video HW).
+# Bajo niri, Chrome por defecto abre en XWayland (sin VA-API ni composicion
+# eficiente). Este wrapper fuerza el modo Wayland con las features de video.
+# Uso: chrome [args]  (launcher de DMS / bind Super+Shift+B).
+# =============================================================================
+set -euo pipefail
+
+exec /usr/bin/flatpak run com.google.Chrome \
+    --ozone-platform=wayland \
+    --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,AcceleratedVideoDecodeLinuxGL,UseMultiPlaneFormatForHardwareVideo \
+    "$@"
