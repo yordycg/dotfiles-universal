@@ -2,18 +2,13 @@
 -- OPTIONS
 -- ************************************************************************************************
 
-require('catppuccin').setup {
-  transparent_background = false,
-  integrations = {
-    cmp = true,
-    gitsigns = true,
-    treesitter = true,
-    fzf = true,
-  },
+require('koda').setup {
+  theme = { dark = 'dark', light = 'light' },
+  transparent = false,
 }
 
 vim.opt.termguicolors = true
-vim.cmd.colorscheme 'catppuccin'
+vim.cmd.colorscheme 'koda-dark'
 
 vim.opt.number = true -- line number
 vim.opt.relativenumber = true -- relative line numbers

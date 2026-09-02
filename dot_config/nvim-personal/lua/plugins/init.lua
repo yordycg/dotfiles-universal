@@ -7,10 +7,8 @@
 -- cargan al arrancar sin packadd manual.
 -- ************************************************************************************************
 vim.pack.add {
-  {
-    src = 'https://github.com/catppuccin/nvim',
-    name = 'catppuccin',
-  },
+  -- Colorscheme minimalista (estética Koda, ver config/options.lua)
+  'https://github.com/oskarnurm/koda.nvim',
   'https://www.github.com/lewis6991/gitsigns.nvim',
   'https://www.github.com/echasnovski/mini.nvim',
   'https://www.github.com/ibhagwan/fzf-lua',

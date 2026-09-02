@@ -84,7 +84,10 @@ require('theme-hub').setup {
   install_dir = vim.fn.stdpath 'data' .. '/theme-hub',
   auto_install_on_select = true,
   apply_after_install = true,
-  persistent = true,
+  -- No persistir: el default determinístico es koda-dark (config/options.lua).
+  -- Si se persistiera, theme-hub re-aplicaría un tema viejo al arrancar y
+  -- pisaría el colorscheme de la config.
+  persistent = false,
 }
 
 -- En <leader>uc (grupo "ui"): si quedara en <leader>th, <leader>t (terminal) sería
