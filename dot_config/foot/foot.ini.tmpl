@@ -1,8 +1,7 @@
 # ── Foot Terminal Configuration ───────────────────────────────────────────────
-# Managed by Chezmoi
 
 # --- Font & Layout ---
-font=JetBrainsMono Nerd Font Mono:size=13
+font=Iosevka Nerd Font Mono:size=14
 pad=20x20
 
 [mouse]
@@ -19,27 +18,28 @@ lines=10000
 {{- if eq .node.profile "laptop" }}
 alpha=1.0
 {{- else }}
-alpha=0.90
+# alpha=0.90
+alpha=1.00
 {{- end }}
 
-# --- Rose Pine Theme Palette ---
-foreground=e0def4
-background=191724
+# --- Catppuccin Mocha Theme Palette ---
+foreground=cdd6f4
+background=1e1e2e
 
-regular0=26233a  # black
-regular1=eb6f92  # red
-regular2=31748f  # green
-regular3=f6c177  # yellow
-regular4=9ccfd8  # blue
-regular5=c4a7e7  # magenta
-regular6=ebbcba  # cyan
-regular7=e0def4  # white
+regular0=45475a  # black
+regular1=f38ba8  # red
+regular2=a6e3a1  # green
+regular3=f9e2af  # yellow
+regular4=89b4fa  # blue
+regular5=f5c2e7  # magenta
+regular6=94e2d5  # cyan
+regular7=bac2de  # white
 
-bright0=908caa    # bright black
-bright1=eb6f92    # bright red
-bright2=31748f    # bright green
-bright3=f6c177    # bright yellow
-bright4=9ccfd8    # bright blue
-bright5=c4a7e7    # bright magenta
-bright6=ebbcba    # bright cyan
-bright7=e0def4    # bright white
+bright0=585b70    # bright black
+bright1=f38ba8    # bright red
+bright2=a6e3a1    # bright green
+bright3=f9e2af    # bright yellow
+bright4=89b4fa    # bright blue
+bright5=f5c2e7    # bright magenta
+bright6=94e2d5    # bright cyan
+bright7=a6adc8    # bright white
