@@ -15,3 +15,7 @@ Before implementing changes in any project:
 - **Error Handling:** Always handle exceptions and errors explicitly. Never write empty catch blocks or ignore potential failures.
 - **Self-Documenting Code:** Write clean code with meaningful names. Use comments only to explain *why* something complex was done, not *what* the code does.
 - **Atomic Commits:** Keep changes focused on a single logical task and write Conventional Commits in English.
+
+## 3. Token-Efficient Search (fff + rtk)
+- For any **file search or grep** in the current git-indexed directory, use the **fff** tools (`ffgrep`, `fffind`, `fff-multi-grep`) instead of the default search tools. Results are frecency-ranked, git-aware, and definition-inlined.
+- Prefer compact **rtk** commands (`rtk ls`, `rtk git status`, `rtk read`) over raw verbose shell output to keep context small.

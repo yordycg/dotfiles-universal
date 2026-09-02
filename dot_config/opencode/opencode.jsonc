@@ -4,6 +4,13 @@
   "small_model": "deepseek/deepseek-v4-flash",
   "default_agent": "plan",
   "lsp": true,
+  "mcp": {
+    "fff": {
+      "type": "local",
+      "command": ["fff-mcp"],
+      "enabled": true
+    }
+  },
   "provider": {
     "openrouter": {
       "whitelist": ["anthropic/claude-sonnet-4.6"]

@@ -1,0 +1,64 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_once_after_30-setup-fff-rtk.sh.tmpl
+# Herramientas token-efficient para agentes de IA (fff + rtk).
+#   - fff-mcp: MCP server de búsqueda de archivos (sub-10ms, frecency, git-aware)
+#   - rtk:     proxy que comprime el output de comandos antes del LLM
+# Ver: docs/ai-agent-tools.md
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+log_step "Aprovisionamiento de herramientas token-efficient (fff + rtk)"
+
+LOCAL_BIN="$HOME/.local/bin"
+mkdir -p "$LOCAL_BIN"
+
+# ── 1. fff-mcp ────────────────────────────────────────────────────────────────
+if has_cmd fff-mcp || [ -x "$LOCAL_BIN/fff-mcp" ]; then
+    log_ok "fff-mcp ya está instalado."
+else
+    log_info "Instalando fff-mcp (MCP server de búsqueda de archivos)..."
+    curl -fsSL https://dmtrkovalenko.dev/install-fff-mcp.sh | run bash
+    log_ok "fff-mcp instalado en $LOCAL_BIN/fff-mcp."
+fi
+
+# ── 2. rtk (Rust Token Killer) ────────────────────────────────────────────────
+if has_cmd rtk || [ -x "$LOCAL_BIN/rtk" ]; then
+    log_ok "rtk ya está instalado."
+else
+    log_info "Instalando rtk (proxy de compresión de output)..."
+    curl -fsSL https://raw.githubusercontent.com/rtk-ai/rtk/refs/heads/master/install.sh | run sh
+    log_ok "rtk instalado en $LOCAL_BIN/rtk."
+fi
+
+# ── 3. Extensión fff para Pi (@ff-labs/pi-fff) ────────────────────────────────
+if has_cmd pi; then
+    FFF_PI_DIR="$HOME/.pi/agent/npm/node_modules/@ff-labs/pi-fff"
+    if [ -d "$FFF_PI_DIR" ]; then
+        log_ok "Extensión fff de Pi ya instalada."
+    else
+        log_info "Instalando extensión fff para Pi..."
+        run pi install npm:@ff-labs/pi-fff || log_warn "No se pudo instalar la extensión fff de Pi."
+    fi
+else
+    log_warn "Pi no detectado; omitiendo extensión fff."
+fi
+
+# ── 4. Hooks de rtk (OpenCode + Pi) ───────────────────────────────────────────
+if has_cmd rtk; then
+    export RTK_TELEMETRY_DISABLED=1
+    if has_cmd opencode && [ ! -f "$HOME/.config/opencode/plugins/rtk.ts" ]; then
+        log_info "Configurando hook de rtk para OpenCode..."
+        run rtk init -g --opencode --auto-patch --no-trust-filters || log_warn "rtk init --opencode falló (reintentar con 'rtk init -g --opencode')."
+    fi
+    if has_cmd pi && [ ! -f "$HOME/.pi/agent/extensions/rtk.ts" ]; then
+        log_info "Configurando hook de rtk para Pi..."
+        run rtk init -g --agent pi --auto-patch --no-trust-filters || log_warn "rtk init --agent pi falló (reintentar con 'rtk init -g --agent pi')."
+    fi
+fi
+
+log_ok "Herramientas token-efficient aprovisionadas correctamente."
+{{- end }}
