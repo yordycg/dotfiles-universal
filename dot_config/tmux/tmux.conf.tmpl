@@ -2,9 +2,6 @@
 set-environment -g PATH "{{ .chezmoi.homeDir }}/.local/share/mise/shims:{{ .chezmoi.homeDir }}/.local/share/mise/bin:/usr/local/bin:/usr/bin:/bin"
 set -g default-terminal "tmux-256color"
 set -ga terminal-overrides ",*:RGB"
-set -ga terminal-overrides ",xterm-256color:RGB"
-set -ga terminal-overrides ",xterm-kitty:RGB"
-set -ga terminal-overrides ",tmux-256color:RGB"
 set -g mouse on
 set -g set-clipboard on
 set -g detach-on-destroy off
@@ -14,44 +11,36 @@ set -g status-interval 3
 set -g status-left-length 100
 set -g status-right-length 100
 
+# --- Native Defaults ---
+set -g display-time 4000
+set -g focus-events on
+set -g status-keys emacs
+setw -g aggressive-resize on
+
 # --- Indexing & Naming ---
 set -g base-index 1
-set -g pane-base-index 1
 setw -g pane-base-index 1
 set -g renumber-windows on
 set -g automatic-rename off
 
-# --- Keybindings TMUX ---
-# General and System
-# ctrl+b ? - Mostrar lista de todos los atajos activos
-# Session Managment
-# ctrl+b $ - Renombrar la session actual
-# ctrl+b ( - Cambia a la session/cliente anterior
-# ctrl+b ) - Cambia a la session/cliente siguiente
-# Windows Managment
-# ctrl+b , - Renombrar la ventana actual
-# ctrl+b & - Cerrar (matar) la ventana actual, pide confirmacion
-# ctrl+b n - Ir a la siguiente ventana
-# ctrl+b p - Ir a la ventana anterior
-# ctrl+b w - Abrir el selector de ventanas y sessiones (choose-tree ?)
-# Windows Layouts
-# ctrl+b Space - Cambia al siguiente layout (cicla entre horizontal y vertical)
-# ctrl+b Alt+1 - Layout equitativo horizontal
-# ctrl+b Alt+2 - Layout equitativo vertical
-# ctrl+b Alt+3 - Layout principal horizontal, secundarios abajo
-# ctrl+b Alt+4 - Layout principal vertical, secundarios abajo
-# ctrl+b Alt+5 - Layout en rejilla (?)
-# Panes Managment
-# ctrl+b o - Saltar al siguiente panel de la ventana
-# ctrl+b ! - Convierte el panel actual en una ventana independiente
-# ctrl+b Flechas - Moverse al panel continuo
-# ctrl+b ctrl+Flechas- Redimensionar el panel actual
-
-# --- Betters Keybindings ---
+# --- Better Keybindings ---
 bind r source-file "~/.config/tmux/tmux.conf" \; display-message "Config reloaded..."
 bind c new-window -c "#{pane_current_path}"
 bind '"' split-window -v -c '#{pane_current_path}'
 bind % split-window -h -c '#{pane_current_path}'
+
+# --- Floating Terminal ---
+bind p display-popup -E -w 80% -h 80% -b rounded -T "󱃵" -d "#{pane_current_path}"
+
+# --- Navigation ---
+bind -n C-h if-shell -F '#{==:#{pane_current_command},nvim}' 'send-keys C-h' 'select-pane -L'
+bind -n C-j if-shell -F '#{==:#{pane_current_command},nvim}' 'send-keys C-j' 'select-pane -D'
+bind -n C-k if-shell -F '#{==:#{pane_current_command},nvim}' 'send-keys C-k' 'select-pane -U'
+bind -n C-l if-shell -F '#{==:#{pane_current_command},nvim}' 'send-keys C-l' 'select-pane -R'
+bind-key -T copy-mode-vi C-h select-pane -L
+bind-key -T copy-mode-vi C-j select-pane -D
+bind-key -T copy-mode-vi C-k select-pane -U
+bind-key -T copy-mode-vi C-l select-pane -R
 
 # --- Image Preview Support ---
 set -g allow-passthrough on
@@ -61,71 +50,23 @@ set -ga update-environment TERM_PROGRAM
 
 # --- Copy Mode (Vim Style) ---
 setw -g mode-keys vi
-set -s set-clipboard on                          # Habilitar soporte OSC 52 (Copia SSH)
 bind-key -T copy-mode-vi v send-keys -X begin-selection
 bind-key -T copy-mode-vi C-v send-keys -X rectangle-toggle
 bind-key -T copy-mode-vi y send-keys -X copy-selection-and-cancel
 bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
 
-# Click derecho para pegar en Tmux (Solo si no hay menu activo)
+# Click derecho para pegar en Tmux
 unbind-key -n MouseDown3Pane
 bind-key -n MouseDown3Pane run "wl-paste | tmux load-buffer - && tmux paste-buffer"
 
-# --- Plugins (TPM) ---
-set -g @plugin 'tmux-plugins/tpm'
-set -g @plugin 'tmux-plugins/tmux-sensible'
-set -g @plugin 'christoomey/vim-tmux-navigator'
-#set -g @plugin 'omerxx/tmux-sessionx'
-#set -g @plugin 'tmux-plugins/tmux-resurrect'
-#set -g @plugin 'tmux-plugins/tmux-continuum'
-set -g @plugin 'sainnhe/tmux-fzf'
-set -g @plugin 'omerxx/tmux-floax'
-
-# --- Plugin Configuration ---
-set-environment -g TMUX_PLUGIN_MANAGER_PATH '~/.config/tmux/plugins/'
-
-# Resurrect & Continuum (Persistencia Indestructible)
-#set -g @resurrect-capture-pane-contents 'on'
-#set -g @resurrect-strategy-nvim 'session'
-#set -g @continuum-restore 'on'
-#set -g @continuum-save-interval '10'
-
-# SessionX (Fuzzy Session Selector & Command Palette)
-#set -g @sessionx-bind 's'
-#set -g @sessionx-zoxide-mode 'on'
-#set -g @sessionx-fzf-builtin-tmux 'on'
-#set -g @sessionx-window-height '55%'
-#set -g @sessionx-window-width '55%'
-#set -g @sessionx-preview-enabled 'false'
-#set -g @sessionx-auto-accept 'off'
-#set -g @sessionx-filter-current 'false'
-
-# Floax (Floating Terminal Overlay)
-set -g @floax-width '80%'
-set -g @floax-height '80%'
-set -g @floax-border-color "blue"
-set -g @floax-text-color "default"
-set -g @floax-bind 'p'
-set -g @floax-change-path 'true'
-
-# --- Theme & Layout (Dynamic Modular System) ---
-source-file "~/.config/tmux/colors.conf"
-source-file "~/.config/tmux/layouts/rectangular.conf"
-
-# Definir Iconos Compartidos (estáticos) para los Layouts
-set -g @icon_session ""
-set -g @icon_prefix "󰌌"
-set -g @icon_zoom "󰊓"
-set -g @icon_ssh "󰌘"
-
-#bind-key f run-shell "~/.local/bin/tmux-sessionizer"
-
-# Lazy tmux confi
-bind-key C-s run-shell 'lazy-tmux save --all --scrollback && tmux display-message "All sessions saved!"'
+# --- Session Management (lazy-tmux, CLI externo) ---
+# f  -> mover/cambiar entre sesiones (picker con restore)
 bind-key f display-popup -B -E 'lazy-tmux picker'
+# C-s -> guardar todas las sesiones (scrollback via config)
+bind-key C-s run-shell 'lazy-tmux save --all && tmux display-message "All sessions saved!"'
+# Autosave daemon al arrancar (idempotente; save_interval=3m desde config)
+# pgrep -x evita el self-match del propio guard (no usar -f con "lazy-tmux daemon").
+run-shell -b 'pgrep -x lazy-tmux >/dev/null || lazy-tmux daemon >/tmp/lazy-tmux.log 2>&1'
 
-# --- Auto-install TPM & Plugins ---
-if "test ! -d ~/.config/tmux/plugins/tpm" \
-   "run 'git clone https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm && ~/.config/tmux/plugins/tpm/bin/install_plugins'"
-
-run '~/.config/tmux/plugins/tpm/tpm'
+# --- Theme & Layout ---
+source-file "~/.config/tmux/layouts/minimal.conf"

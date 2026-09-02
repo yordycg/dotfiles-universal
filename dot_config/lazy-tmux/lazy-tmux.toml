@@ -1,0 +1,12 @@
+tmux_bin        = "tmux"
+data_dir        = "~/.local/share/lazy-tmux"
+theme           = "dark"
+save_interval   = "3m"
+restore_timeout = "5s"
+
+[scrollback]
+enabled = true
+lines   = 5000
+
+[integrations]
+enabled = false

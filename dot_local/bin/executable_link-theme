@@ -62,8 +62,3 @@ if [ -f "$THEME_DIR/wlogout/colors.css" ]; then
     safe_link "$THEME_DIR/wlogout/colors.css" "$HOME/.config/wlogout/colors/colors.css"
 fi
 
-# 6. Tmux
-if [ -f "$THEME_DIR/tmux/colors.conf" ]; then
-    safe_link "$THEME_DIR/tmux/colors.conf" "$HOME/.config/tmux/colors.conf"
-fi
-
