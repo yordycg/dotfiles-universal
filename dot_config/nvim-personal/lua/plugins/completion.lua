@@ -17,9 +17,10 @@ require("blink.cmp").setup({
   appearance = { nerd_font_variant = "mono" },
   completion = { menu = { auto_show = true } },
   -- Expansión de snippets de los LSP (clangd, lua_ls, etc.) con el vim.snippet
-  -- nativo. La activación/salto los gestiona blink.cmp internamente; aquí solo
-  -- se declara `expand` (campos como active/jump ya no son válidos).
-  snippet = {
+  -- nativo. La clave correcta en blink.cmp 1.x es `snippets` (plural); el resto
+  -- de campos (active/jump/score_offset) los cubre el preset='default', que ya
+  -- envuelve vim.snippet.
+  snippets = {
     expand = function(args)
       vim.snippet.expand(args.body)
     end,
