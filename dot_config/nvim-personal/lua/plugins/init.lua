@@ -5,6 +5,13 @@
 -- carga sus plugin/*.lua), así que NO hacen falta llamadas packadd adicionales.
 -- Verificado empíricamente: comandos como :TmuxNavigatePrevious y :ThemeHub se
 -- cargan al arrancar sin packadd manual.
+-- herdr_nav.lua (dofile en config/keymaps.lua) es quien mapea <C-h/j/k/l> para la
+-- navegación seamless; vim-tmux-navigator solo debe aportar los comandos
+-- :TmuxNavigate* para el fallback fuera de herdr. Sin este flag sus nnoremap
+-- <C-h/j/k/l> se aplican tras la config (vim.pack carga plugin/*.vim después del
+-- init.lua) y pisan a herdr_nav, dejando sin cruce los bordes de split.
+vim.g.tmux_navigator_no_mappings = 1
+
 -- ************************************************************************************************
 vim.pack.add {
   -- Colorscheme minimalista (estética Koda, ver config/options.lua)
