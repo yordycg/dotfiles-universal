@@ -2,6 +2,12 @@
 # Capa 5: Activación de Herramientas del Sistema (Mise, Zoxide, Starship, etc.)
 # =============================================================================
 
+# powerprofilesctl: el python3 del PATH es de mise (sin modulo 'gi') y rompe el
+# cliente. Forzar el interprete del sistema (/usr/bin/python, python 3.14).
+if command -v powerprofilesctl &>/dev/null; then
+    powerprofilesctl() { /usr/bin/python /usr/bin/powerprofilesctl "$@"; }
+fi
+
 if command -v mise &>/dev/null; then
     run_cached "mise" "mise activate zsh" "Mise"
 fi
