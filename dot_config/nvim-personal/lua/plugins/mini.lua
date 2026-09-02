@@ -145,7 +145,7 @@ miniclue.setup({
     -- +paste/path
     { mode = "n", keys = "<leader>pa", desc = "Copy file path" },
     -- sueltos
-    { mode = "n", keys = "<leader>e", desc = "Toggle NvimTree" },
+    { mode = "n", keys = "<leader>e", desc = "Toggle file explorer (Oil)" },
     { mode = "n", keys = "<leader>t", desc = "Floating Terminal" },
     { mode = "n", keys = "<leader>x", desc = "Delete without yank" },
     { mode = "n", keys = "<leader>ss", desc = "Save session" },

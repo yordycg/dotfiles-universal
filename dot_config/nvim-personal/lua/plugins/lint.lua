@@ -23,7 +23,7 @@ local augroup = vim.api.nvim_create_augroup('UserLint', { clear = true })
 vim.api.nvim_create_autocmd({ 'BufWritePost', 'BufEnter', 'InsertLeave' }, {
   group = augroup,
   callback = function()
-    -- evita lintear buffers sin nombre / no modificables (terminal, nvim-tree, etc)
+    -- evita lintear buffers sin nombre / no modificables (terminal, quickfix, etc)
     if vim.bo.buftype ~= '' or not vim.bo.modifiable then
       return
     end

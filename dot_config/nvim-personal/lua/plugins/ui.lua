@@ -1,62 +1,21 @@
 -- ************************************************************************************************
--- UI: NvimTree, fzf-lua, gitsigns
+-- UI: Oil (explorador de archivos), fzf-lua, gitsigns, theme-hub
 -- ************************************************************************************************
 
--- NvimTree
-require('nvim-tree').setup {
-  view = {
-    width = 35,
-  },
-  filters = {
-    dotfiles = false,
-  },
-  renderer = {
-    group_empty = true,
-    highlight_git = true,
-    highlight_opened_files = 'name',
-    indent_markers = {
-      enable = true,
-    },
-    icons = {
-      show = {
-        file = true,
-        folder = true,
-        folder_arrow = true,
-        git = true,
-      },
-      glyphs = {
-        default = '󰈔',
-        symlink = '󰌷',
-        folder = {
-          arrow_closed = '󰅂',
-          arrow_open = '󰅀',
-          default = '󰉋',
-          open = '󰝰',
-          empty = '󰷏',
-          empty_open = '󰷏',
-          symlink = '󰉒',
-          symlink_open = '󰉒',
-        },
-        git = {
-          unstaged = '󰏫',
-          staged = '󰐕',
-          unmerged = '󰹹',
-          renamed = '󰁕',
-          untracked = '󰘓',
-          deleted = '󰍴',
-          ignored = '󰈉',
-        },
-      },
-    },
-  },
-  update_focused_file = {
-    enable = true,
-    update_root = true,
-  },
+-- Oil: editar el filesystem como un buffer (filosofía y9san9). Sustituye a
+-- nvim-tree; para navegar árboles se usa fzf-lua (<leader>ff) y `:grep`.
+require('oil').setup {
+  columns = { 'icon', 'size', 'mtime' },
+  view_options = { show_hidden = false },
+  delete_to_trash = true,
+  skip_confirm_for_simple_edits = true,
+  lsp_file_methods = { enabled = true },
 }
+-- Toggle en ventana flotante (paridad UX con el nvim-tree); para tomar el
+-- buffer entero usa `:Oil` (navegación estilo vim-vinegar, `-` sube un nivel).
 vim.keymap.set('n', '<leader>e', function()
-  require('nvim-tree.api').tree.toggle()
-end, { desc = 'Toggle NvimTree' })
+  require('oil').toggle_float()
+end, { desc = 'Toggle file explorer (Oil)' })
 
 -- fzf-lua
 require('fzf-lua').setup {}

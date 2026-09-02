@@ -111,7 +111,7 @@ vim.api.nvim_create_autocmd("VimResized", {
 
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,
-  pattern = { "help", "fzf", "NvimTree", "lspinfo", "mason" },
+  pattern = { "help", "fzf", "lspinfo", "mason" },
   callback = function()
     vim.b.miniindentscope_disable = true
   end,

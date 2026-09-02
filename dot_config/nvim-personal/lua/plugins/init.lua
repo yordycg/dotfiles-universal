@@ -1,5 +1,10 @@
 -- ************************************************************************************************
--- PLUGINS (vim.pack)
+-- PLUGINS (vim.pack nativo de Nvim 0.12)
+--
+-- vim.pack.add() ya ejecuta :packadd por cada plugin (los añade al runtimepath y
+-- carga sus plugin/*.lua), así que NO hacen falta llamadas packadd adicionales.
+-- Verificado empíricamente: comandos como :TmuxNavigatePrevious y :ThemeHub se
+-- cargan al arrancar sin packadd manual.
 -- ************************************************************************************************
 vim.pack.add {
   {
@@ -9,13 +14,11 @@ vim.pack.add {
   'https://www.github.com/lewis6991/gitsigns.nvim',
   'https://www.github.com/echasnovski/mini.nvim',
   'https://www.github.com/ibhagwan/fzf-lua',
-  'https://www.github.com/nvim-tree/nvim-tree.lua',
-  {
-    src = 'https://github.com/nvim-treesitter/nvim-treesitter',
-    branch = 'main',
-    build = ':TSUpdate',
-    -- need tree-sitter-cli installed
-  },
+  -- Explorador de archivos tipo buffer (reemplaza nvim-tree, ver plugins/ui.lua)
+  'https://github.com/stevearc/oil.nvim',
+  -- Los parsers los instala plugins/treesitter.lua (API Lua del plugin);
+  -- vim.pack no tiene paso de build, así que no se declara ninguno.
+  'https://github.com/nvim-treesitter/nvim-treesitter',
   -- Language Server Protocols / LSP
   'https://www.github.com/neovim/nvim-lspconfig',
   'https://github.com/mason-org/mason.nvim',
@@ -37,30 +40,3 @@ vim.pack.add {
   -- Snippets comunitarios (blink.cmp los carga solo si están en el runtimepath)
   'https://github.com/rafamadriz/friendly-snippets',
 }
-
--- LuaSnip quedó como resto en el lockfile pero ya no se usa (blink.cmp usa vim.snippet).
--- Se marca como eliminado (acepta lista) para que se borre del lock y del disco.
-pcall(vim.pack.del, { 'LuaSnip' })
-
-local function packadd(name)
-  vim.cmd('packadd ' .. name)
-end
-
-packadd 'catppuccin'
-packadd 'nvim-treesitter'
-packadd 'gitsigns.nvim'
-packadd 'mini.nvim'
-packadd 'fzf-lua'
-packadd 'nvim-tree.lua'
--- LSP
-packadd 'nvim-lspconfig'
-packadd 'mason.nvim'
-packadd 'blink.cmp'
--- Format & Lint
-packadd 'conform.nvim'
-packadd 'nvim-lint'
-packadd 'vim-tmux-navigator'
-packadd 'plenary.nvim'
-packadd 'theme-hub.nvim'
-packadd 'lush.nvim'
-packadd 'friendly-snippets'

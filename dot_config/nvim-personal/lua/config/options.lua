@@ -7,7 +7,6 @@ require('catppuccin').setup {
   integrations = {
     cmp = true,
     gitsigns = true,
-    nvimtree = true,
     treesitter = true,
     fzf = true,
   },
@@ -36,6 +35,11 @@ vim.opt.smartcase = true -- case sensitive if uppercase in string
 vim.opt.hlsearch = true -- highlight search matches
 vim.opt.incsearch = true -- show matches as you type
 
+-- Búsqueda nativa estilo y9san9: :grep con ripgrep directo a la quickfix
+-- (soporta :Cfilter, ver plugins/builtin.lua). Formato vimgrep nativo.
+vim.opt.grepprg = 'rg --vimgrep --no-messages --smart-case'
+vim.opt.grepformat = '%f:%l:%c:%m'
+
 vim.opt.signcolumn = 'yes' -- always show a sign column
 vim.opt.colorcolumn = '100' -- show a column at 100 position chars
 vim.opt.showmatch = true -- highlights matching brackets
@@ -51,33 +55,24 @@ vim.opt.lazyredraw = true -- do not redraw during macros
 vim.opt.synmaxcol = 300 -- syntax highlighting limit
 vim.opt.fillchars = { eob = ' ' } -- hide "~" on empty lines
 
-local undodir = vim.fn.expand '~/.vim/undodir'
-if vim.fn.isdirectory(undodir) == 0 then -- create undodir if nonexistent
-  vim.fn.mkdir(undodir, 'p')
-end
-
+-- Persistencia de undo: sin directorio custom; Neovim 0.12 ya gestiona el
+-- undodir por defecto en $XDG_STATE_HOME/nvim/undo (auto-creado).
 vim.opt.backup = false -- do not create a backup file
 vim.opt.writebackup = false -- do not write to a backup file
 vim.opt.swapfile = false -- do not create a swapfile
 vim.opt.undofile = true -- do create an undo file
-vim.opt.undodir = undodir -- set the undo directory
 vim.opt.updatetime = 300 -- faster completion
 vim.opt.timeoutlen = 500 -- timeout duration
 vim.opt.ttimeoutlen = 0 -- key code timeout
 vim.opt.autoread = true -- auto-reload changes if outside of neovim
 vim.opt.autowrite = false -- do not auto-save
 
-vim.opt.hidden = true -- allow hidden buffers
-vim.opt.errorbells = false -- no error sounds
-vim.opt.backspace = 'indent,eol,start' -- better backspace behaviour
-vim.opt.autochdir = false -- do not autochange directories
-vim.opt.iskeyword:append '-' -- include - in words
-vim.opt.path:append '**' -- include subdirs in search
 vim.opt.selection = 'inclusive' -- include last char in selection
 vim.opt.mouse = 'a' -- enable mouse support
 vim.opt.clipboard:append 'unnamedplus' -- use system clipboard
 vim.opt.modifiable = true -- allow buffer modifications
-vim.opt.encoding = 'utf-8' -- set encoding
+vim.opt.iskeyword:append '-' -- include - in words
+vim.opt.path:append '**' -- include subdirs in :find
 
 vim.opt.guicursor =
   'n-v-c:block,i-ci-ve:block,r-cr:hor20,o:hor50,a:blinkwait700-blinkoff400-blinkon250-Cursor/lCursor,sm:block-blinkwait175-blinkoff150-blinkon175'

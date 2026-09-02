@@ -6,6 +6,10 @@
 vim.cmd 'packadd nvim.undotree'
 vim.keymap.set('n', '<leader>uu', '<cmd>Undotree<cr>', { desc = 'Undotree' })
 
+-- cfilter (runtime de Nvim): filtra la quickfix tras un :grep/:lgrep.
+-- Ejemplo estilo y9san9: `:grep pattern` -> `:Cfilter /excluido/` -> `:cdo`.
+vim.cmd.packadd('cfilter')
+
 -- UI2: rediseño experimental del mensaje/commandline; elimina los "Press ENTER".
 -- Se envuelve en pcall para que una API experimental no rompa el arranque.
 pcall(function()
