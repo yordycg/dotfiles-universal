@@ -157,12 +157,16 @@ layout {
 }
 
 // ── Blur (niri >= 26.04, ext-background-effect) ───────────────────────────────
+// Perfil laptop (ECO): blur desactivado para liberar la iGPU UHD 620.
+{{- if eq .node.profile "laptop" }}
+{{- else }}
 blur {
     passes 3
     offset 3.0
     noise 0.02
     saturation 1.5
 }
+{{- end }}
 
 // ── Animaciones (ECO: desactivadas; FULL: springs y easings) ─────────────────
 {{- if eq .node.profile "laptop" }}
