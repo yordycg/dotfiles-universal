@@ -3,3 +3,5 @@ key.txt
 *.secret
 !encrypted_*.age
 dot_config/nvim-personal/nvim-pack-lock.json
+__pycache__/
+*.pyc

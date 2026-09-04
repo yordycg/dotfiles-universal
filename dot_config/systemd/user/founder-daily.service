@@ -1,0 +1,8 @@
+[Unit]
+Description=Founder daily briefing (push Telegram)
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/founder-bot/.env
+ExecStart=%h/.local/bin/founder-briefing

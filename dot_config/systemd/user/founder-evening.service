@@ -1,0 +1,8 @@
+[Unit]
+Description=Founder evening TTS (audio del día a Telegram)
+After=network-online.target
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.config/founder-bot/.env
+ExecStart=%h/.local/bin/founder-evening

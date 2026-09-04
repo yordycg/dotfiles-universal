@@ -2,3 +2,5 @@
 # Override de layout de Sessionizer, se queda dentro del repo como convención
 # (picket: workspace/assets/dotfiles -> ~/.local/share/chezmoi/.sessionizer)
 .sessionizer/
+# Venv del founder-bot (se crea en runtime por el setup; nunca gestionado por chezmoi)
+.local/share/founder-bot/.venv

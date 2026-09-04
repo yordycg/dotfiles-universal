@@ -1,0 +1,14 @@
+[Unit]
+Description=Founder bot Telegram (cockpit del fundador en ruta)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=%h/.config/founder-bot/.env
+ExecStart=%h/.local/bin/founder-bot
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target

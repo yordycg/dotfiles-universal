@@ -1,0 +1,20 @@
+# Copia este archivo a ~/.config/founder-bot/.env (permiso 0600).
+# La forma recomendada es ejecutar: founder-env-setup
+# (guarda los secretos en el passage store con age y escribe este .env).
+
+# Telegram (crear bot en @BotFather)
+FOUNDER_TELEGRAM_TOKEN=
+FOUNDER_CHAT_ID=
+
+# Groq (https://console.groq.com) — transcripción de voz + chat
+FOUNDER_GROQ_API_KEY=
+FOUNDER_GROQ_MODEL=llama-3.3-70b-versatile
+FOUNDER_WHISPER_MODEL=whisper-large-v3
+
+# Rutas (si se omiten, se usan los defaults de ~/workspace/personal/...)
+FOUNDER_VAULT_DIR=/home/yordycg/workspace/personal/obsidian-notes
+FOUNDER_STATUS_DIR=/home/yordycg/workspace/personal/emprendimiento
+
+# TTS nocturno: nota(s) a leer (separadas por "|"), voces en orden de preferencia
+FOUNDER_TTS_NOTE=
+FOUNDER_TTS_VOICES=es-CL-CatalinaNeural,es-ES-ElviraNeural

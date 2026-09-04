@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# founder-evening — genera y envía el audio TTS del día (founder-evening.timer).
+set -euo pipefail
+
+APP_DIR="${FOUNDER_APP_DIR:-$HOME/.local/share/founder-bot}"
+ENV_FILE="${FOUNDER_ENV_FILE:-$HOME/.config/founder-bot/.env}"
+
+if [[ -f "$ENV_FILE" ]]; then
+    set -a
+    # shellcheck disable=SC1090
+    source "$ENV_FILE"
+    set +a
+fi
+
+export PYTHONPATH="$APP_DIR/src${PYTHONPATH:+:$PYTHONPATH}"
+exec "$APP_DIR/.venv/bin/python" -m founder_bot.tts "$@"
