@@ -52,6 +52,9 @@ if [ -f "$BASE_FILE" ]; then
 fi
 
 # ── 2. Generación de tema matugen (colors.kdl, firefox.css, kitty, ...) ──────
+mkdir -p "$HOME/.config/foot"
+[ -f "$HOME/.config/foot/dank-colors.ini" ] || touch "$HOME/.config/foot/dank-colors.ini"
+
 WALLPAPER_PATH=""
 if [ -n "$DEFAULT_WALLPAPER" ] && [ -f "$WALLPAPERS_DIR/$DEFAULT_WALLPAPER" ]; then
     WALLPAPER_PATH="$WALLPAPERS_DIR/$DEFAULT_WALLPAPER"
