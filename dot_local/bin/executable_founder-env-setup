@@ -33,11 +33,11 @@ persist_passage() {
     local pname="$1" val="$2"
     [[ -n "$val" ]] || return 0
     if [[ -n "$AGE_BIN" && -f "$STORE/.age-recipients" ]]; then
-        local dir
-        dir="$(dirname "$STORE/$pname")"
-        mkdir -p "$dir"
-        if printf '%s\n' "$val" | "$AGE_BIN" -R "$STORE/.age-recipients" -o "$STORE/$pname" 2>/dev/null; then
-            git -C "$STORE" add "$STORE/$pname" >/dev/null 2>&1 || true
+        local target="$STORE/$pname.age"
+        mkdir -p "$(dirname "$target")"
+        if printf '%s\n' "$val" | "$AGE_BIN" -R "$STORE/.age-recipients" -o "$target" 2>/dev/null; then
+            chmod 600 "$target"
+            git -C "$STORE" add "$target" >/dev/null 2>&1 || true
             git -C "$STORE" commit -q -m "founder-bot: add $pname" >/dev/null 2>&1 || true
             git -C "$STORE" push -q >/dev/null 2>&1 || true
         fi
@@ -49,6 +49,7 @@ resolve_secret() {
     local val=""
     if [[ -n "${!key:-}" ]]; then
         val="${!key}"
+        persist_passage "$pname" "$val"
     elif [[ -n "$PASSAGE_BIN" ]] && "$PASSAGE_BIN" show "$pname" >/dev/null 2>&1; then
         val="$("$PASSAGE_BIN" show "$pname")"
     else

@@ -38,6 +38,7 @@ def _build_app(cfg: Config) -> Application:
     def register(fn):
         async def guard(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id = update.effective_chat.id if update.effective_chat else 0
+            log.info("Mensaje recibido de chat_id=%s", chat_id)
             if cfg.chat_id and chat_id != cfg.chat_id:
                 log.warning("Mensaje ignorado de chat no autorizado: %s", chat_id)
                 return
@@ -152,6 +153,8 @@ def main() -> None:
         level=cfg.log_level,
         format="%(asctime)s %(name)s %(levelname)s %(message)s",
     )
+    logging.getLogger("httpx").setLevel(logging.WARNING)
+    logging.getLogger("telegram.vendor").setLevel(logging.WARNING)
     if not cfg.telegram_token:
         log.error("Falta FOUNDER_TELEGRAM_TOKEN. Ejecuta founder-env-setup.")
         raise SystemExit(1)

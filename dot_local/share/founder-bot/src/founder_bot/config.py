@@ -23,7 +23,7 @@ class Config:
     telegram_token: str = ""
     chat_id: int = 0
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "qwen/qwen3.8-27b"
     whisper_model: str = "whisper-large-v3"
     vault_dir: Path = field(default_factory=lambda: DEFAULT_VAULT)
     status_dir: Path = field(default_factory=lambda: DEFAULT_STATUS)
@@ -51,7 +51,7 @@ class Config:
             telegram_token=os.environ.get("FOUNDER_TELEGRAM_TOKEN", "").strip(),
             chat_id=chat_id,
             groq_api_key=os.environ.get("FOUNDER_GROQ_API_KEY", "").strip(),
-            groq_model=os.environ.get("FOUNDER_GROQ_MODEL", "llama-3.3-70b-versatile").strip(),
+            groq_model=os.environ.get("FOUNDER_GROQ_MODEL", "qwen/qwen3.8-27b").strip(),
             whisper_model=os.environ.get("FOUNDER_WHISPER_MODEL", "whisper-large-v3").strip(),
             vault_dir=Path(os.environ.get("FOUNDER_VAULT_DIR", str(DEFAULT_VAULT))).expanduser(),
             status_dir=Path(os.environ.get("FOUNDER_STATUS_DIR", str(DEFAULT_STATUS))).expanduser(),

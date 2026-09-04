@@ -35,3 +35,9 @@ siempre: 4 OCPUs ARM Ampere + 24 GB RAM + 10 TB egress/mes. Latencia local ~10 m
 
 Nota: el VPS con rol "server" ya está contemplado por `.chezmoi.yaml.tmpl` (`CHEZMOI_ROLE=server`);
 el bot no depende del rol.
+
+### Notas de red y modelo de IA
+- `/yt` (yt-dlp) descarga desde el host del bot. Si el CDN de media de YouTube está
+  bloqueado en la red del host (timeouts), el bot lo reporta; en el VPS suele funcionar.
+- El modelo de chat por defecto es `qwen/qwen3.8-27b` (Groq rota modelos). El bot, ante un
+  404, descubre automáticamente un modelo válido (fallback en `http.py`).

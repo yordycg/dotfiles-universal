@@ -69,4 +69,7 @@ Automatizaciones (app Shortcuts → Automatización):
 - En la calle → audio al bot = nota a `quick/` (el sync del desktop la sube a GitHub; el
   pull de las 07:00 la trae al iPhone al día siguiente).
 - Viaje vuelta → `/yt <url>` para dejar audio descargado de mañana.
+  **Ojo:** `/yt` descarga desde el host del bot (hoy el desktop). En algunas redes el CDN
+  de media de YouTube está bloqueado (error de timeout); funciona desde el VPS o una red
+  sin ese bloqueo.
 - En casa → las sesiones del ritual destilan esas notas al Zettelkasten.

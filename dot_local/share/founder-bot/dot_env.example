@@ -8,7 +8,7 @@ FOUNDER_CHAT_ID=
 
 # Groq (https://console.groq.com) — transcripción de voz + chat
 FOUNDER_GROQ_API_KEY=
-FOUNDER_GROQ_MODEL=llama-3.3-70b-versatile
+FOUNDER_GROQ_MODEL=qwen/qwen3.8-27b
 FOUNDER_WHISPER_MODEL=whisper-large-v3
 
 # Rutas (si se omiten, se usan los defaults de ~/workspace/personal/...)

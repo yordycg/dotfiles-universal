@@ -17,6 +17,9 @@ def download_audio(url: str, outdir: Path) -> Path | None:
         "no_warnings": True,
         "noplaylist": True,
         "restrictfilenames": True,
+        "force_ipv4": True,
+        "socket_timeout": 20,
+        "retries": 5,
     }
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
@@ -25,7 +28,10 @@ def download_audio(url: str, outdir: Path) -> Path | None:
         if file and Path(file).is_file():
             return Path(file)
     except Exception as exc:  # noqa: BLE001 — superficie de error al usuario
-        raise RuntimeError(f"No pude descargar el audio: {exc}") from exc
+        raise RuntimeError(
+            f"No pude descargar el audio (revisa red: el CDN de YouTube puede estar "
+            f"bloqueado en esta conexión): {exc}"
+        ) from exc
     # Fallback: buscar cualquier archivo descargado en outdir (formatos variables)
     files = sorted(outdir.glob("*"), key=lambda p: p.stat().st_mtime, reverse=True)
     return files[0] if files else None
