@@ -1,0 +1,40 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/usr/bin/env bash
+# =============================================================================
+# .chezmoiscripts/run_onchange_after_35-setup-rclone-mount.sh.tmpl
+# Configura y activa el servicio systemd de montaje de Google Drive con Rclone.
+# Hash del servicio: {{ include "dot_config/systemd/user/rclone-mount.service.tmpl" | sha256sum }}
+# =============================================================================
+set -euo pipefail
+
+{{ include "provision/lib/logging.sh" }}
+
+if ! has_cmd systemctl; then
+    exit 0
+fi
+
+if ! has_cmd rclone; then
+    log_warn "rclone no encontrado en PATH. Saltando configuración de rclone-mount."
+    exit 0
+fi
+
+log_step "Configuración de Google Drive (Rclone Mount)"
+
+log_info "Recargando unidades systemd del usuario..."
+systemctl --user daemon-reload
+
+RCLONE_CONF="$HOME/.config/rclone/rclone.conf"
+
+if [ -f "$RCLONE_CONF" ]; then
+    if systemctl --user is-active rclone-mount.service &>/dev/null; then
+        log_info "Reiniciando rclone-mount.service para aplicar nueva configuración..."
+        systemctl --user restart rclone-mount.service || log_warn "No se pudo reiniciar rclone-mount.service de inmediato."
+    else
+        log_info "Habilitando e iniciando rclone-mount.service..."
+        systemctl --user enable --now rclone-mount.service || log_warn "No se pudo habilitar rclone-mount.service."
+    fi
+    log_ok "rclone-mount.service configurado y activo."
+else
+    log_warn "$RCLONE_CONF aún no está disponible. rclone-mount se activará una vez descifrado/autenticado."
+fi
+{{- end }}

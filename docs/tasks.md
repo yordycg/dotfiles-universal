@@ -21,6 +21,11 @@
 - [x] Integrar atajos de Alt+Tab (`snappy`) en `binds.lua`
 
 ## Fase 4: Tareas Pendientes del Roadmap
+- [x] Automatización y optimización de Google Drive (Rclone VFS Full + ONLYOFFICE + GTK Bookmarks)
+  - Mejorar unidad systemd `rclone-mount.service.tmpl` con `--vfs-cache-mode full`, límites de caché (15G) y exportación de formatos Google Docs (`docx,xlsx,pptx,pdf`).
+  - Declarar `rclone` y `fuse3` en `.chezmoidata/packages.yaml` para provisión desatendida en Desktop y Laptop.
+  - Crear hook onchange `.chezmoiscripts/run_onchange_after_35-setup-rclone-mount.sh.tmpl` para recarga y reinicio automático.
+  - Crear symlink `~/Drive` y marcadores GTK (`~/.config/gtk-3.0/bookmarks.tmpl`) para acceso instantáneo desde ONLYOFFICE, Dolphin y terminal.
 - [ ] Integrar `passage` en iOS y extensión de Firefox (PassFF)
 - [ ] Implementar patrón de errores tolerantes (Soft Fails) en scripts de aprovisionamiento
   - Crear un wrapper `run_tolerant` en `provision/lib/logging.sh` para pasos de instalación no críticos.

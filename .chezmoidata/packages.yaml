@@ -54,6 +54,8 @@ fedora:
     - gnome-keyring
     - kdeconnect
     - fuse-sshfs
+    - rclone
+    - fuse3
     # Utilidades Wayland genéricas (niri/KDE; antes bajo hyprland):
     - wl-clipboard
     - grim
@@ -149,6 +151,8 @@ arch:
     - gnome-keyring
     - kdeconnect
     - sshfs
+    - rclone
+    - fuse3
     # Utilidades Wayland genéricas (niri/KDE; antes bajo hyprland):
     - wl-clipboard
     - grim
