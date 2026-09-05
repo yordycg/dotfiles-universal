@@ -100,6 +100,22 @@ additional_packages="nodejs npm"
 
 Se inicializan automáticamente en el apply mediante `distrobox assemble`.
 
+### C. Arquitectura y Paridad de la Tríada de IA (Pi, OpenCode, Antigravity)
+
+El entorno utiliza 3 clientes de IA complementarios que deben mantenerse en **paridad absoluta**:
+1. **Pi (`pi`)**: CLI TUI con extensiones en TypeScript (`~/.pi/agent`).
+2. **OpenCode (`opencode`)**: TUI interactivo multi-agente (`~/.config/opencode`).
+3. **Antigravity (`agy`)**: CLI y orquestador agentic con soporte de subagentes (`~/.gemini`).
+
+#### Reglas de Gobernanza para Agentes:
+- **Fuente Única de Reglas Globales:** El archivo maestro de directrices globales reside exclusivamente en `dot_pi/agent/AGENTS.md`. Cualquier actualización debe realizarse allí; `dot_config/opencode/AGENTS.md.tmpl` lo importa automáticamente vía `{{ include }}` y Antigravity lo enlaza simbólicamente a `~/.gemini/config/rules/global.md`. **Nunca duplicar texto de reglas a mano.**
+- **Repositorio Único de Skills (`~/.agents/skills/`):** Toda skill creada o modificada debe alojarse en `dot_agents/skills/<nombre>/SKILL.md`. Los 3 agentes consumen esta misma carpeta.
+- **Paridad de MCPs:** Cualquier servidor MCP incorporado (ej. `fff-mcp`) debe registrarse en las 3 herramientas:
+  - OpenCode: `dot_config/opencode/opencode.jsonc` (sección `mcp`).
+  - Pi: `dot_pi/agent/settings.json` (sección `packages`) o extensión local.
+  - Antigravity: `agy mcp add <nombre> <comando>`.
+- **Modo Plan / Build Obligatorio:** Todo agente debe respetar el ciclo *Plan First* (inspección de solo lectura, preguntas de alineación) antes de desbloquear herramientas de edición en la fase *Build*.
+
 ---
 
 ## 6. Roadmap y Tareas Activas

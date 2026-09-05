@@ -60,5 +60,26 @@ if has_cmd rtk; then
     fi
 fi
 
+# ── 5. Antigravity MCP & Symlinks (Paridad de la Tríada) ──────────────────────
+if has_cmd agy; then
+    if agy mcp list 2>/dev/null | grep -q "fff"; then
+        log_ok "MCP fff ya configurado en Antigravity."
+    else
+        log_info "Configurando MCP fff en Antigravity..."
+        run agy mcp add fff fff-mcp || log_warn "No se pudo agregar fff-mcp a Antigravity."
+    fi
+
+    mkdir -p "$HOME/.gemini/config/rules"
+    if [ ! -L "$HOME/.gemini/config/skills" ]; then
+        log_info "Enlazando skills compartidas en Antigravity..."
+        ln -sfn "$HOME/.agents/skills" "$HOME/.gemini/config/skills"
+    fi
+    if [ ! -L "$HOME/.gemini/config/rules/global.md" ]; then
+        log_info "Enlazando reglas globales en Antigravity..."
+        ln -sfn "$HOME/.pi/agent/AGENTS.md" "$HOME/.gemini/config/rules/global.md"
+    fi
+fi
+
 log_ok "Herramientas token-efficient aprovisionadas correctamente."
 {{- end }}
+
