@@ -9,6 +9,14 @@
   "defaultModel": "deepseek-v4-flash",
   "packages": [
     "npm:@ff-labs/pi-fff",
-    "npm:mitsupi"
+    "npm:mitsupi",
+    "npm:@victor-software-house/pi-curated-themes",
+    "npm:pi-terminal-theme",
+    "npm:@juanibiapina/pi-extension-settings",
+    "npm:@juanibiapina/pi-powerbar",
+    "npm:@tmustier/pi-usage-extension",
+    "npm:pi-btw",
+    "npm:pi-web-access",
+    "npm:pi-simplify"
   ]
 }
