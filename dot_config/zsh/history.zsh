@@ -1,7 +1,8 @@
 # =============================================================================
 # Configuración del Historial de Zsh
 # =============================================================================
-HISTFILE=~/.zsh_history
+HISTFILE="${XDG_STATE_HOME:-$HOME/.local/state}/zsh/history"
+[[ -d "${HISTFILE:h}" ]] || mkdir -p "${HISTFILE:h}"
 HISTSIZE=100000
 SAVEHIST=100000
 setopt SHARE_HISTORY

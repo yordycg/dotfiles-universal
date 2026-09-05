@@ -85,9 +85,32 @@ HOMELAB_CA="/usr/local/share/ca-certificates/homelab-ca-bundle.crt"
 [ -f "$HOMELAB_CA" ] && export NODE_EXTRA_CA_CERTS="$HOMELAB_CA"
 {{ end -}}
 
+# -- XDG Base Directory (Clean Host: cero dotfiles sueltos en $HOME) --
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_STATE_HOME="${XDG_STATE_HOME:-$HOME/.local/state}"
+
+# -- Runtimes & Build Tools: redirigir data/cache a XDG --
+# mise gestiona los binarios y versiones; estas variables evitan que el
+# runtime ensucie $HOME (CARGO/RUSTUP, GOPATH, NPM, .NET, etc.).
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export GOPATH="$XDG_DATA_HOME/go"
+export GOMODCACHE="$GOPATH/pkg/mod"
+export BUN_INSTALL="$XDG_DATA_HOME/bun"
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME/npm/npmrc"
+export NPM_CONFIG_CACHE="$XDG_CACHE_HOME/npm"
+export DOTNET_CLI_HOME="$XDG_DATA_HOME/dotnet"
+export NUGET_PACKAGES="$XDG_DATA_HOME/NuGet/packages"
+export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
+export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc"
+
 # -- Paths --
-# Precedencia: Mise Shims > Binarios de Usuario (bin, .local/bin, opencode) > Cargo > Sistema
-export PATH="$HOME/.local/share/mise/shims:$HOME/bin:$HOME/.local/bin:$HOME/.opencode/bin:$HOME/.cargo/bin:$PATH"
+# Precedencia: Mise Shims > Binarios de Usuario (bin, .local/bin, opencode) > Sistema
+# (Rust ya vive en $XDG_DATA_HOME/cargo gestionado por mise; no se añade ~/.cargo/bin.)
+export PATH="$HOME/.local/share/mise/shims:$HOME/bin:$HOME/.local/bin:$HOME/.opencode/bin:$PATH"
 
 # -- Theming: GTK & Qt Integration (Senior UI Consistency) --
 {{ if eq .chezmoi.os "linux" -}}

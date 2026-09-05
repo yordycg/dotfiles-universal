@@ -10,11 +10,13 @@ setopt EXTENDED_GLOB
 autoload -Uz compinit
 
 # Regenerar zcompdump solo si tiene más de 24h o no existe
-local _dump="${ZDOTDIR:-$HOME}/.zcompdump"
+# Ubicación XDG (Clean Host): ${ZSH_CACHE_DIR:-$XDG_CACHE_HOME/zsh}/zcompdump
+local _dump="${ZSH_CACHE_DIR:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh}/zcompdump"
+[[ -d "${_dump:h}" ]] || mkdir -p "${_dump:h}"
 if [[ ! -f "$_dump" ]] || [[ "$_dump"(#qNmh+24) ]]; then
-  compinit
+  compinit -d "$_dump"
 else
-  compinit -C
+  compinit -C -d "$_dump"
 fi
 unset _dump
 
