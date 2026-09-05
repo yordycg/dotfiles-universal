@@ -4,10 +4,11 @@
   "autoReload": true,
   "default_model": "deepseek/deepseek-v4-flash",
   "defaultThinkingLevel": "low",
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "0.85.1",
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
   "packages": [
-    "npm:@ff-labs/pi-fff"
+    "npm:@ff-labs/pi-fff",
+    "npm:mitsupi"
   ]
 }
