@@ -7,13 +7,14 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/rclone mount gdrive: %h/GoogleDrive \
+ExecStart=/usr/bin/rclone mount gdrive: %h/mnt/GoogleDrive \
     --vfs-cache-mode writes \
     --vfs-cache-max-age 24h \
+    --dir-cache-time 72h \
     --buffer-size 32M \
-    --timeout 10m \
-    --low-level-retries 10
-ExecStop=/usr/bin/fusermount -u %h/GoogleDrive
+    --timeout 30s \
+    --low-level-retries 3
+ExecStop=/usr/bin/fusermount -u %h/mnt/GoogleDrive
 Restart=on-failure
 RestartSec=5s
 
