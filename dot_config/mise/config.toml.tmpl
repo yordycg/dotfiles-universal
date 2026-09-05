@@ -1,3 +1,18 @@
+# =============================================================================
+# Mise — Fuente canónica de herramientas CLI (Clean Host)
+#
+# OBJETIVO PRINCIPAL: definir aquí las herramientas CLI para tener la MISMA
+# versión (latest/pinned) en cada distro (Arch/Fedora/Debian). Los binarios del
+# sistema (pacman/dnf/apt) no deben duplicar estas herramientas.
+#
+# NOTA HISTÓRICA: los runtimes (node, python, ...) se añadieron DESPUÉS, fuera
+# del objetivo original, porque nvim requiere npm y pi (python+node); una vez
+# dentro, se completó el resto de runtimes por coherencia.
+#
+# IMPORTANTE: la DATA/CACHE de los runtimes se redirige a XDG desde
+# ~/.config/shell/exports.sh (CARGO_HOME, GOPATH, NPM_CONFIG_CACHE, ...).
+# =============================================================================
+
 [tools]
 # --- Core CLI Tools (Universal) ---
 neovim = "latest"
