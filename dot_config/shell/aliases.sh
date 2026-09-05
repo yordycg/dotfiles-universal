@@ -17,6 +17,7 @@ alias as='cd ~/workspace/assets'
 alias pr='cd ~/workspace/personal'
 alias wk='cd ~/workspace/work'
 alias iv='cd ~/workspace/ipvg'
+alias gd='cd ~/mnt/GoogleDrive'
 
 # -- Reemplazos modernos -----------------------
 alias ls='eza --icons --group-directories-first'
