@@ -130,7 +130,6 @@ local function lsp_on_attach(ev)
       end, 50)
     end
     vim.keymap.set("n", "<leader>co", organize_imports, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
-    vim.keymap.set("n", "<leader>or", organize_imports, vim.tbl_extend("force", opts, { desc = "Organize imports (alias)" }))
   end
 end
 

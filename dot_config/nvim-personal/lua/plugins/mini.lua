@@ -149,9 +149,6 @@ miniclue.setup({
     { mode = "n", keys = "<leader>co", desc = "Organize imports" },
     { mode = "n", keys = "<leader>cp", desc = "Copy file path" },
     { mode = "n", keys = "<leader>rn", desc = "Rename symbol" },
-    { mode = "n", keys = "<leader>mf", desc = "Format (alias)" },
-    { mode = "n", keys = "<leader>ml", desc = "Lint (alias)" },
-    { mode = "n", keys = "<leader>pa", desc = "Copy path (alias)" },
 
     -- +find (<leader>f)
     { mode = "n", keys = "<leader>ff", desc = "Find files" },

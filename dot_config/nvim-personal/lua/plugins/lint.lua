@@ -35,4 +35,3 @@ local function trigger_lint()
   lint.try_lint()
 end
 vim.keymap.set('n', '<leader>cl', trigger_lint, { desc = 'Trigger linting for current file' })
-vim.keymap.set('n', '<leader>ml', trigger_lint, { desc = 'Trigger linting for current file (alias)' })

@@ -57,7 +57,6 @@ local function copy_file_path()
   print("file: " .. path)
 end
 vim.keymap.set("n", "<leader>cp", copy_file_path, { desc = "Copy full file path" })
-vim.keymap.set("n", "<leader>pa", copy_file_path, { desc = "Copy full file path (alias)" })
 
 vim.keymap.set("n", "<leader>ud", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
