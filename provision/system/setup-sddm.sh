@@ -35,8 +35,8 @@ log_step "Configurando SDDM (tema: $THEME_NAME, greeter en: $NODE_PRIMARY_MONITO
 # ── 1. Instalación del tema Pixie ─────────────────────────────────────────────
 if [ ! -f "$THEME_DIR/Main.qml" ]; then
     log_info "Instalando pixie-sddm en $THEME_DIR..."
-    if [ -f /etc/arch-release ] && { command -v paru &>/dev/null || command -v yay &>/dev/null || command -v pikaur &>/dev/null; }; then
-        helper="$(command -v paru || command -v yay || command -v pikaur)"
+    if [ -f /etc/arch-release ] && { command -v yay &>/dev/null || command -v paru &>/dev/null || command -v pikaur &>/dev/null; }; then
+        helper="$(command -v yay || command -v paru || command -v pikaur)"
         if run "$helper" -S --noconfirm --needed pixie-sddm-git; then
             log_ok "Pixie instalado desde AUR ($(basename "$helper"))."
         else

@@ -43,7 +43,9 @@ install_section_aur() {
     local section="$1"
 
     local helper=""
-    for h in paru yay pikaur; do
+    # Helper canónico del repo: yay (instalado también por
+    # run_once_after_25-install-aur-helper). Se acepta paru/pikaur si existen.
+    for h in yay paru pikaur; do
         if command -v "$h" &>/dev/null; then
             helper="$h"
             break
@@ -51,9 +53,21 @@ install_section_aur() {
     done
 
     if [ -z "$helper" ]; then
-        log_info "Sin helper AUR detectado. Instalando paru (repo oficial)..."
-        run sudo pacman -S --noconfirm --needed paru
-        helper="paru"
+        log_info "Sin helper AUR detectado. Compilando yay desde AUR..."
+        # yay/paru NO están en los repos oficiales de Arch; se instalan vía AUR.
+        run sudo pacman -S --noconfirm --needed git base-devel
+        AUR_TMP="$(mktemp -d)"
+        if run git clone --depth 1 https://aur.archlinux.org/yay-bin.git "$AUR_TMP/yay-bin" \
+            && (cd "$AUR_TMP/yay-bin" && run makepkg -si --noconfirm); then
+            helper="yay"
+        else
+            log_warn "No se pudo instalar el helper AUR; omitiendo paquetes de $section."
+        fi
+        rm -rf "$AUR_TMP"
+    fi
+
+    if [ -z "$helper" ]; then
+        return 0
     fi
     log_info "Helper AUR detectado: $helper"
 

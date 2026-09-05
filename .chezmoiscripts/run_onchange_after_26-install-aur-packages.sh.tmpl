@@ -8,12 +8,14 @@
 
 set -euo pipefail
 
-if command -v paru &>/dev/null && paru --version &>/dev/null; then
-    AUR_HELPER="paru"
-elif command -v yay &>/dev/null; then
+# Helper canónico del repo: yay (instalado por run_once_after_25); se acepta
+# paru si el usuario lo tiene instalado manualmente.
+if command -v yay &>/dev/null; then
     AUR_HELPER="yay"
+elif command -v paru &>/dev/null && paru --version &>/dev/null; then
+    AUR_HELPER="paru"
 else
-    echo "! Ningún helper de AUR funcional (paru/yay) encontrado. Omitiendo instalación de paquetes AUR."
+    echo "! Ningún helper de AUR funcional (yay/paru) encontrado. Revisa run_once_after_25-install-aur-helper. Omitiendo instalación de paquetes AUR."
     exit 0
 fi
 
