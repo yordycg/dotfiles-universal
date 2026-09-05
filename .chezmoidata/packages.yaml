@@ -9,7 +9,6 @@ fedora:
     - curl
     - wget
     - unzip
-    - tmux
     - zsh
     - jq
     - pwgen
@@ -38,9 +37,7 @@ fedora:
     - gnupg2
     - pinentry
     - gh
-    - fzf
     - sqlite
-    - fastfetch
     - oathtool
     - zbar
   desktop_gui:
@@ -57,33 +54,36 @@ fedora:
     - gnome-keyring
     - kdeconnect
     - fuse-sshfs
-  hyprland:
-    - hyprland
-    - swaybg
-    - hyprlock
-    - hypridle
-    - hyprpicker
-    - hyprsunset
-    - hyprpolkitagent
-    - xdg-desktop-portal-hyprland
-    - waybar
-    - rofi-wayland
+    # Utilidades Wayland genéricas (niri/KDE; antes bajo hyprland):
+    - wl-clipboard
     - grim
     - slurp
-    - wl-clipboard
-    - cliphist
     - brightnessctl
     - pavucontrol
-    - mate-polkit
     - papirus-icon-theme
-    - imv
-    - wlogout
-    - quickshell
-    - SwayNotificationCenter
-    - nautilus
     - udiskie
-    - code
-    - xournalpp
+  # ── Respaldo histórico: Hyprland (descontinuado como DE por defecto) ──
+  # Si un nodo vuelve a necesitar Hyprland, descomenta esta sección.
+  # hyprland:
+  #   - hyprland
+  #   - swaybg
+  #   - hyprlock
+  #   - hypridle
+  #   - hyprpicker
+  #   - hyprsunset
+  #   - hyprpolkitagent
+  #   - xdg-desktop-portal-hyprland
+  #   - waybar
+  #   - rofi-wayland
+  #   - cliphist
+  #   - mate-polkit
+  #   - imv
+  #   - wlogout
+  #   - quickshell
+  #   - SwayNotificationCenter
+  #   - nautilus
+  #   - code
+  #   - xournalpp
   niri:
     - niri
     - xwayland-satellite
@@ -105,7 +105,6 @@ arch:
     - curl
     - wget
     - unzip
-    - tmux
     - zsh
     - jq
     - pwgen
@@ -129,9 +128,7 @@ arch:
     - gnupg
     - pinentry
     - github-cli
-    - fzf
     - sqlite
-    - fastfetch
     - oath-toolkit
     - zbar
   desktop_gui:
@@ -150,32 +147,35 @@ arch:
     - gnome-keyring
     - kdeconnect
     - sshfs
-  hyprland:
-    - hyprland
-    - awww
-    - swaybg
-    - hyprlock
-    - hypridle
-    - hyprpicker
-    - xdg-desktop-portal-hyprland
-    - qt5-wayland
-    - qt6-wayland
-    - waybar
-    - rofi-wayland
+    # Utilidades Wayland genéricas (niri/KDE; antes bajo hyprland):
+    - wl-clipboard
     - grim
     - slurp
-    - wl-clipboard
-    - cliphist
     - brightnessctl
     - pavucontrol
-    - polkit-kde-agent
     - papirus-icon-theme
-    - imv
-    - swaync
-    - nautilus
     - udiskie
-    - plasma-keyboard
-    - xournalpp
+    - polkit-kde-agent
+  # ── Respaldo histórico: Hyprland (descontinuado como DE por defecto) ──
+  # Si un nodo vuelve a necesitar Hyprland, descomenta esta sección.
+  # hyprland:
+  #   - hyprland
+  #   - awww
+  #   - swaybg
+  #   - hyprlock
+  #   - hypridle
+  #   - hyprpicker
+  #   - xdg-desktop-portal-hyprland
+  #   - qt5-wayland
+  #   - qt6-wayland
+  #   - waybar
+  #   - rofi-wayland
+  #   - cliphist
+  #   - imv
+  #   - swaync
+  #   - nautilus
+  #   - plasma-keyboard
+  #   - xournalpp
   niri:
     - niri
     - xwayland-satellite
@@ -191,8 +191,8 @@ arch:
     - wvkbd
     - quickshell-git
     - tide-island
-    - hyprshot
-    - wlogout
+    # - hyprshot   # respaldo histórico (Hyprland)
+    # - wlogout    # respaldo histórico (Hyprland)
     - snappy-switcher
     - dsearch-bin
     - visual-studio-code-bin
@@ -209,7 +209,6 @@ debian:
     - curl
     - wget
     - unzip
-    - tmux
     - zsh
     - jq
     - pwgen
@@ -243,9 +242,7 @@ debian:
     - gnupg
     - pinentry-curses
     - gh
-    - fzf
     - mosh
     - sqlite3
-    - fastfetch
     - oathtool
     - zbar-tools
