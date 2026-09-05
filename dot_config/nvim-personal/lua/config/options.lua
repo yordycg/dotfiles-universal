@@ -46,7 +46,7 @@ vim.opt.pumblend = 0 -- popup menu transparency
 vim.opt.winblend = 0 -- floating window transparency
 vim.opt.conceallevel = 0 -- do not hide markup
 vim.opt.concealcursor = '' -- do not hide cursorline in markup
-vim.opt.lazyredraw = true -- do not redraw during macros
+vim.opt.lazyredraw = false -- disabled to prevent stutter/lag in modern Neovim UI loop
 vim.opt.synmaxcol = 300 -- syntax highlighting limit
 vim.opt.fillchars = { eob = ' ' } -- hide "~" on empty lines
 
@@ -64,6 +64,24 @@ vim.opt.autowrite = false -- do not auto-save
 
 vim.opt.selection = 'inclusive' -- include last char in selection
 vim.opt.mouse = 'a' -- enable mouse support
+
+-- Auto-recuperación de socket Wayland stale (común en herdr/tmux al reiniciar sesión gráfica)
+if vim.env.WAYLAND_DISPLAY then
+  local runtime_dir = vim.env.XDG_RUNTIME_DIR or ('/run/user/' .. vim.uv.getuid())
+  local socket = runtime_dir .. '/' .. vim.env.WAYLAND_DISPLAY
+  if vim.fn.getftype(socket) ~= 'socket' then
+    local candidates = {}
+    for _, path in ipairs(vim.fn.glob(runtime_dir .. '/wayland-[0-9]*', false, true)) do
+      if vim.fn.getftype(path) == 'socket' then
+        table.insert(candidates, path)
+      end
+    end
+    if #candidates > 0 then
+      table.sort(candidates)
+      vim.env.WAYLAND_DISPLAY = vim.fn.fnamemodify(candidates[#candidates], ':t')
+    end
+  end
+end
 vim.opt.clipboard:append 'unnamedplus' -- use system clipboard
 vim.opt.modifiable = true -- allow buffer modifications
 vim.opt.iskeyword:append '-' -- include - in words

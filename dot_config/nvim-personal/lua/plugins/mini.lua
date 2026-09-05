@@ -36,8 +36,32 @@ require("mini.icons").mock_nvim_web_devicons()
 
 -- Animaciones suaves (scroll, resize, open/close). El cursor se deja nativo
 -- para no pelear con el movimiento del cursor de blink.cmp.
-require("mini.animate").setup({
-  scroll = { enable = true },
+-- El scroll con la rueda del ratón se salta la animación vía predicate para
+-- evitar tirones, bloqueos o desplazamiento corto en ráfaga.
+local mouse_scrolled = false
+for _, scroll in ipairs({ "Up", "Down" }) do
+  local key = "<ScrollWheel" .. scroll .. ">"
+  vim.keymap.set({ "", "i" }, key, function()
+    mouse_scrolled = true
+    return key
+  end, { expr = true })
+end
+
+local animate = require("mini.animate")
+animate.setup({
+  scroll = {
+    enable = true,
+    timing = animate.gen_timing.linear({ duration = 150, unit = "total" }),
+    subscroll = animate.gen_subscroll.equal({
+      predicate = function(total_scroll)
+        if mouse_scrolled then
+          mouse_scrolled = false
+          return false
+        end
+        return total_scroll > 1
+      end,
+    }),
+  },
   resize = { enable = true },
   open = { enable = true },
   close = { enable = true },
