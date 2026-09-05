@@ -32,6 +32,20 @@ if [ -n "$TMUX" ]; then
     fi
 fi
 
+# -- Wayland Stale Socket Recovery (Multiplexers / Session Restart Fix) --
+if [ -n "${WAYLAND_DISPLAY:-}" ]; then
+    _xdg_run="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+    if [ ! -S "$_xdg_run/$WAYLAND_DISPLAY" ]; then
+        for _sock in "$_xdg_run"/wayland-[0-9]*; do
+            if [ -S "$_sock" ]; then
+                export WAYLAND_DISPLAY="${_sock##*/}"
+                break
+            fi
+        done
+    fi
+    unset _xdg_run _sock
+fi
+
 
 # -- Editores y Pager --
 export EDITOR="nvim"
