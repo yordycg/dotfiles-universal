@@ -8,7 +8,8 @@
 # {{ include "provision/installers/arch.sh" | sha256sum }}
 # {{ include "provision/installers/debian.sh" | sha256sum }}
 # {{ include "provision/system/trust-homelab-ca.sh" | sha256sum }}
-# {{ include "provision/system/setup-sddm-theme.sh" | sha256sum }}
+# {{ include "provision/system/setup-sddm.sh" | sha256sum }}
+# {{ include ".chezmoidata/sddm.yaml" | sha256sum }}
 # {{ include "provision/system/setup-tailscale.sh" | sha256sum }}
 # {{ include "provision/system/setup-snapper.sh" | sha256sum }}
 # {{ include "provision/system/setup-virtualization.sh" | sha256sum }}
@@ -35,6 +36,7 @@ export NODE_IS_SERVER="{{ .isServer }}"
 export NODE_IS_WSL="{{ .isWSL }}"
 export NODE_DESKTOP_ENV="{{ .desktopEnv }}"
 export NODE_IS_DESKTOP="{{ .isDesktop }}"
+export NODE_PRIMARY_MONITOR="{{ if hasKey .sddm.primary_monitor .chezmoi.hostname }}{{ index .sddm.primary_monitor .chezmoi.hostname }}{{ else }}{{ .sddm.primary_monitor.default }}{{ end }}"
 export HOMELAB_IP_LOCAL="{{ .homelab_ip_local }}"
 export HOMELAB_IP_TS="{{ .homelab_ip_ts }}"
 export CHEZMOI_SOURCE_DIR="{{ .chezmoi.sourceDir }}"
@@ -110,7 +112,7 @@ fi
 # 8. Configurar temas de sistema, KDE Connect y limpieza KDE
 if [ "$NODE_HAS_GUI" = "true" ]; then
     log_step "8/8. Configurando temas gráficos, KDE Connect / Firewall y limpiando paquetes..."
-    bash "$PROVISION_DIR/system/setup-sddm-theme.sh"
+    bash "$PROVISION_DIR/system/setup-sddm.sh"
     bash "$PROVISION_DIR/system/setup-kdeconnect.sh"
     bash "$PROVISION_DIR/system/cleanup-kde.sh"
 

@@ -1,0 +1,12 @@
+# Datos declarativos de SDDM: tema y comportamiento de monitores en el greeter.
+# Consumidos por:
+#   - .chezmoiscripts/run_once_before_00-provision-system.sh.tmpl (export NODE_PRIMARY_MONITOR)
+#   - provision/system/setup-sddm.sh (instalación Pixie + Xsetup)
+sddm:
+  theme: "pixie"
+
+  # Monitor principal del greeter por hostname (login solo en él; el resto se
+  # apagan hasta iniciar sesión). Clave por defecto para nodos no listados.
+  primary_monitor:
+    arch-dektop: "DP-2"
+    default: "eDP-1"
