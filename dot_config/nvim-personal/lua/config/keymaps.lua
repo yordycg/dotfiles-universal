@@ -13,7 +13,6 @@ vim.keymap.set("n", "k", function()
 end, { expr = true, silent = true, desc = "Up (wrap-aware)" })
 
 vim.keymap.set({ "n", "i" }, "<Esc>", "<cmd>nohlsearch<CR><Esc>", { desc = "Clear search highlights" })
-vim.keymap.set("n", "<leader>ch", "<cmd>nohlsearch<CR>", { desc = "Clear search highlights" })
 
 -- Salir de un comentario sin el líder: Enter + borra lo insertado conservando la
 -- indentación (i_CTRL-U). Enter normal sigue continuando el comentario (multi-línea).
@@ -52,11 +51,13 @@ vim.keymap.set("v", ">", ">gv", { desc = "Indent right and reselect" })
 
 vim.keymap.set("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
 
-vim.keymap.set("n", "<leader>pa", function() -- show file path
+local function copy_file_path()
   local path = vim.fn.expand("%:p")
   vim.fn.setreg("+", path)
-  print("file:", path)
-end, { desc = "Copy full file path" })
+  print("file: " .. path)
+end
+vim.keymap.set("n", "<leader>cp", copy_file_path, { desc = "Copy full file path" })
+vim.keymap.set("n", "<leader>pa", copy_file_path, { desc = "Copy full file path (alias)" })
 
 vim.keymap.set("n", "<leader>ud", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())

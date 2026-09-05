@@ -103,13 +103,6 @@ local function lsp_on_attach(ev)
   vim.keymap.set("n", "<leader>d", function()
     vim.diagnostic.open_float({ scope = "cursor" })
   end, opts)
-  vim.keymap.set("n", "<leader>nd", function()
-    vim.diagnostic.jump({ count = 1 })
-  end, opts)
-  vim.keymap.set("n", "<leader>pd", function()
-    vim.diagnostic.jump({ count = -1 })
-  end, opts)
-
   vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 
   vim.keymap.set("n", "<leader>fr", function()
@@ -126,7 +119,7 @@ local function lsp_on_attach(ev)
   end, opts)
 
   if client:supports_method("textDocument/codeAction", bufnr) then
-    vim.keymap.set("n", "<leader>or", function()
+    local function organize_imports()
       vim.lsp.buf.code_action({
         context = { only = { "source.organizeImports" }, diagnostics = {} },
         apply = true,
@@ -135,7 +128,9 @@ local function lsp_on_attach(ev)
       vim.defer_fn(function()
         vim.lsp.buf.format({ bufnr = bufnr })
       end, 50)
-    end, opts)
+    end
+    vim.keymap.set("n", "<leader>co", organize_imports, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
+    vim.keymap.set("n", "<leader>or", organize_imports, vim.tbl_extend("force", opts, { desc = "Organize imports (alias)" }))
   end
 end
 

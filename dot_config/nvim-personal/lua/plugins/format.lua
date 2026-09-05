@@ -29,10 +29,12 @@ require("conform").setup({
   formatters = languages.formatter_opts(),
 })
 
--- Format manual bajo demanda
-vim.keymap.set({ "n", "v" }, "<leader>mf", function()
+-- Format manual bajo demanda (<leader>cf = Code Format)
+local function format_buffer()
   require("conform").format({ async = true, lsp_fallback = true })
-end, { desc = "Format buffer/selection" })
+end
+vim.keymap.set({ "n", "v" }, "<leader>cf", format_buffer, { desc = "Format buffer/selection" })
+vim.keymap.set({ "n", "v" }, "<leader>mf", format_buffer, { desc = "Format buffer/selection (alias)" })
 
 -- Toggle format-on-save por si necesitas desactivarlo puntualmente
 vim.g.disable_autoformat = false
