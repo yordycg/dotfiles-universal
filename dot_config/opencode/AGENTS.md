@@ -1,21 +1,27 @@
-# Reglas Globales de Búsqueda (Token-Efficient)
+# AGENTS.md - Global Standard Operating Rules
 
-Estas reglas aplican a todos los proyectos en este equipo para reducir el
-consumo de tokens en la capa de retrieval.
+This is the global manual for all AI agents working in this environment. These rules apply to any codebase, language, or project.
 
-## Búsqueda de archivos y contenido
+## 1. Interaction & Planning Protocol (SDD & Alignment)
+Before implementing changes in any project:
+1. **Analyze:** Explore the workspace, locate relevant files, and understand existing patterns.
+2. **Align & Plan:** Propose a step-by-step roadmap detailing *what* will be changed, *why*, and how it will be verified.
+   - **The Alignment Brake:** If a task touches more than 2 files, involves non-obvious architecture choices, or has ambiguous requirements, ask 2–3 focused questions with trade-offs/options before writing code.
+   - Request confirmation before executing.
+3. **Execute:** Implement the changes cleanly.
+4. **Verify:** Check for lint errors, build failures, or formatting issues before declaring the task complete.
 
-- Para cualquier **file search o grep** en el directorio git-indexado actual,
-  usa las herramientas **fff** (`ffgrep`, `fffind`, `fff-multi-grep`) en lugar
-  de las herramientas de búsqueda por defecto.
-- Prefiere `ffgrep` sobre `grep`/`rg` cuando el repo ya esté indexado por fff:
-  los resultados llegan ordenados por frecency, etiquetados con estado git y con
-  las definiciones inline.
-- Cuando necesites inspeccionar la estructura de un directorio o el output de
-  un comando, usa los comandos compactos de **rtk** (p.ej. `rtk ls`, `rtk git
-  status`, `rtk read`) para no volcar salida verbosa al contexto.
+## 2. General Quality & Clean Code Standards
+- **No Placeholders:** Never leave `TODO`, `FIXME`, or omitted code blocks (e.g., `// rest of the code...`). All code must be delivered fully functional.
+- **Early Returns:** Prefer returning early to avoid deeply nested `if` blocks and keep logic flat.
+- **Error Handling:** Always handle exceptions and errors explicitly. Never write empty catch blocks or ignore potential failures.
+- **Self-Documenting Code:** Write clean code with meaningful names. Use comments only to explain *why* something complex was done, not *what* the code does.
+- **Atomic Commits:** Keep changes focused on a single logical task and write Conventional Commits in English.
 
-## Prompts
+## 3. Token-Efficient Search (fff + rtk)
+- For any **file search or grep** in the current git-indexed directory, use the **fff** tools (`ffgrep`, `fffind`, `fff-multi-grep`) instead of the default search tools. Results are frecency-ranked, git-aware, and definition-inlined.
+- Prefer compact **rtk** commands (`rtk ls`, `rtk git status`, `rtk read`) over raw verbose shell output to keep context small.
 
-- Los tools MCP (fff) añaden contexto; úsalos con criterio y no los invoques
-  para búsquedas triviales de un solo archivo conocido.
+## 4. Repository Memory & Continuous Learning (`.agents/learnings.md`)
+- **Session Start:** If `.agents/learnings.md` exists in the repository, read it before planning to respect past decisions, environment quirks, and hard-learned lessons.
+- **Session End:** When resolving non-obvious bugs, system-specific constraints (e.g., Arch Linux / Podman / Port quirks), or key architectural decisions, append a concise 1–2 bullet summary to `.agents/learnings.md` before committing.
