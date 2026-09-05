@@ -32,6 +32,9 @@ save MSG="feat: update dotfiles":
 new-project NAME:
     @new-project {{`{{NAME}}` }}
 
+clean:
+    @clean-dotfiles
+
 install:
     @if [ -f /etc/fedora-release ]; then \
         bash $(chezmoi source-path)/provision/installers/fedora.sh; \

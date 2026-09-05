@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# =============================================================================
+# clean-dotfiles — Limpieza segura de caches y datos regenerables (Clean Host)
+# Idempotente y tolerante: cada paso reporta advertencia en vez de abortar.
+# Uso: clean-dotfiles        (no pide sudo; lo root va en el bloque aparte)
+# =============================================================================
+set -euo pipefail
+
+# ── Logging minimal (sin dependencias) ─────────────────────────────────────
+GREEN='\033[0;32m'; YELLOW='\033[1;33m'; CYAN='\033[0;36m'; RESET='\033[0m'
+log_step() { echo -e "\n${CYAN}▶ $1${RESET}"; }
+log_ok()   { echo -e "${GREEN}  ✓ $1${RESET}"; }
+log_warn() { echo -e "${YELLOW}  ⚠ $1${RESET}"; }
+
+# Paso que nunca aborta el script (fallo reportado como warning)
+run_tolerant() {
+    local desc="$1"; shift
+    if "$@" 2>/dev/null; then
+        log_ok "$desc"
+    else
+        log_warn "$desc (no se pudo completar; no crítico)"
+    fi
+}
+
+freed_total=0
+count_dir() { # count_dir <ruta> → suma a freed_total si existe
+    local p="$1"
+    if [ -d "$p" ]; then
+        local s
+        s=$(du -sb "$p" 2>/dev/null | awk '{print $1}' || echo 0)
+        freed_total=$((freed_total + s))
+    fi
+}
+
+# ── 1. Caches de gestores (user-level) ─────────────────────────────────────
+log_step "1. Caches de gestores"
+for d in \
+    "$HOME/.cache/yay" \
+    "$HOME/.cache/go-build" \
+    "$HOME/.cache/uv" \
+    "$HOME/.cache/pip"; do
+    if [ -d "$d" ]; then
+        count_dir "$d"
+        run_tolerant "Vaciar $d" rm -rf "${d:?}/"*
+    fi
+done
+run_tolerant "npm cache clean" npm cache clean --force 2>/dev/null
+
+# ── 2. Papelera ────────────────────────────────────────────────────────────
+log_step "2. Papelera"
+run_tolerant "Vaciar Trash (gio)" gio trash --empty
+
+# ── 3. Flatpak: runtimes/refs sin uso ──────────────────────────────────────
+log_step "3. Flatpak (refs sin uso)"
+run_tolerant "flatpak uninstall --unused" flatpak uninstall --unused -y
+
+# ── 4. Playwright / navegadores de test (regenerables) ─────────────────────
+log_step "4. Caches regenerables"
+for d in "$HOME/.cache/ms-playwright"; do
+    if [ -d "$d" ]; then
+        count_dir "$d"
+        run_tolerant "Vaciar $d" rm -rf "${d:?}/"*
+    fi
+done
+
+echo
+if [ "$freed_total" -gt 0 ]; then
+    log_ok "Espacio liberado estimado: $((freed_total / 1024 / 1024)) MiB"
+else
+    log_ok "Nada que limpiar (o ya limpio)."
+fi
+echo
+log_step "Siguiente paso (requiere sudo):"
+echo "  paccache -rk1   # cache de paquetes pacman en /var/cache/pacman/pkg"
