@@ -16,6 +16,11 @@ require("blink.cmp").setup({
   },
   appearance = { nerd_font_variant = "mono" },
   completion = { menu = { auto_show = true } },
+  -- Asistencia automática de firmas/parámetros al escribir funciones
+  signature = {
+    enabled = true,
+    window = { border = "rounded" },
+  },
   -- Expansión de snippets de los LSP (clangd, lua_ls, etc.) con el vim.snippet
   -- nativo. preset='default' delega en vim.snippet.expand(snippet) pasando el string correcto.
   snippets = {

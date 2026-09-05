@@ -97,6 +97,12 @@ vim.opt.foldlevel = 99 -- start with all folds open
 
 vim.opt.splitbelow = true -- horizontal splits go below
 vim.opt.splitright = true -- vertical splits go right
+vim.opt.splitkeep = 'screen' -- keep screen text stable when splitting
+
+vim.opt.inccommand = 'split' -- live preview of substitutions in real time
+vim.opt.confirm = true -- confirm to save changes when closing unsaved buffers
+vim.opt.jumpoptions = 'view' -- preserve window view when jumping with Ctrl-o/Ctrl-i
+vim.opt.smoothscroll = true -- scroll wrapped lines smoothly
 
 vim.opt.wildmenu = true -- tab completion
 vim.opt.wildmode = 'longest:full,full' -- complete longest common match, full list, cycle with Tab

@@ -17,8 +17,21 @@ vim.keymap.set('n', '<leader>e', function()
   require('oil').toggle_float()
 end, { desc = 'Toggle file explorer (Oil)' })
 
--- fzf-lua
-require('fzf-lua').setup {}
+-- fzf-lua (con delta integrado para diffs de Git con resaltado de sintaxis superior)
+local has_delta = vim.fn.executable('delta') == 1
+require('fzf-lua').setup {
+  git = {
+    status = {
+      preview_pager = has_delta and 'delta --width=$FZF_PREVIEW_COLUMNS' or nil,
+    },
+    commits = {
+      preview_pager = has_delta and 'delta --width=$FZF_PREVIEW_COLUMNS' or nil,
+    },
+    bcommits = {
+      preview_pager = has_delta and 'delta --width=$FZF_PREVIEW_COLUMNS' or nil,
+    },
+  },
+}
 require('fzf-lua').register_ui_select()
 
 vim.keymap.set('n', '<leader>ff', function()

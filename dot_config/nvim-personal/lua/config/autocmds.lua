@@ -57,6 +57,50 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
+-- Heurística pasiva de indentación para archivos existentes (cero plugins)
+-- Respeta si un archivo ajeno usa tabuladores o 4 espacios sin alterar la config global de 2.
+vim.api.nvim_create_autocmd("BufReadPost", {
+  group = augroup,
+  desc = "Detect file indentation heuristic",
+  callback = function(ev)
+    if vim.bo[ev.buf].buftype ~= "" or vim.bo[ev.buf].filetype == "" then
+      return
+    end
+    if vim.bo[ev.buf].filetype == "c" or vim.bo[ev.buf].filetype == "cpp" then
+      return
+    end
+
+    local lines = vim.api.nvim_buf_get_lines(ev.buf, 0, 50, false)
+    local space_indent_counts = { [2] = 0, [4] = 0 }
+    local has_tabs = false
+
+    for _, line in ipairs(lines) do
+      if line:match("^\t") then
+        has_tabs = true
+        break
+      end
+      local spaces = line:match("^( +)%S")
+      if spaces then
+        local len = #spaces
+        if len == 4 or len == 8 then
+          space_indent_counts[4] = space_indent_counts[4] + 1
+        elseif len == 2 or len == 6 then
+          space_indent_counts[2] = space_indent_counts[2] + 1
+        end
+      end
+    end
+
+    if has_tabs then
+      vim.opt_local.expandtab = false
+    elseif space_indent_counts[4] > space_indent_counts[2] and space_indent_counts[4] >= 2 then
+      vim.opt_local.tabstop = 4
+      vim.opt_local.shiftwidth = 4
+      vim.opt_local.softtabstop = 4
+      vim.opt_local.expandtab = true
+    end
+  end,
+})
+
 -- Cerrar buffers "utilitarios" con q
 vim.api.nvim_create_autocmd("FileType", {
   group = augroup,

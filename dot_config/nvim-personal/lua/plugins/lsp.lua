@@ -68,6 +68,21 @@ local function lsp_on_attach(ev)
     vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
   end
 
+  -- Resaltado automático de la palabra/símbolo bajo el cursor (cero plugins, cero keymaps)
+  if client:supports_method("textDocument/documentHighlight", bufnr) then
+    local hl_group = vim.api.nvim_create_augroup("LspDocumentHighlight_" .. bufnr, { clear = true })
+    vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+      group = hl_group,
+      buffer = bufnr,
+      callback = vim.lsp.buf.document_highlight,
+    })
+    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+      group = hl_group,
+      buffer = bufnr,
+      callback = vim.lsp.buf.clear_references,
+    })
+  end
+
   vim.keymap.set("n", "<leader>gd", function()
     require("fzf-lua").lsp_definitions({ jump_to_single_result = true })
   end, opts)
