@@ -1,0 +1,106 @@
+# =============================================================================
+# Noctalia v5 config — Managed by Chezmoi
+# Fuente declarativa base: Noctalia lee y mergea todos los *.toml de
+# ~/.config/noctalia/. Los cambios hechos en su GUI viven en
+# ~/.local/state/noctalia/settings.toml y tienen prioridad sobre este archivo.
+# Docs: https://docs.noctalia.dev/noctalia/
+# Nota: durante la fase de prueba el tema de kitty/foot/firefox queda congelado
+# al último estado de matugen (solo se regenera con DMS).
+# =============================================================================
+{{- if and (eq .chezmoi.os "linux") (or .isServer .isWSL) }}
+# Sin configuración en servidores o WSL (noctalia no corre ahí).
+{{- else }}
+
+[shell]
+# polkit_agent: agente de autenticación embebido (inicia tras el arranque de la UI).
+polkit_agent = true
+clipboard_enabled = true
+
+[shell.animation]
+{{- if eq .node.profile "laptop" }}
+# ECO (laptop): animaciones desactivadas para ahorrar render/batería.
+enabled = false
+{{- else }}
+enabled = true
+{{- end }}
+speed   = 1.0
+
+[shell.panel]
+# Panel sólido (sin vidrio/blur extra) para consumo predecible.
+transparency_mode = "solid"
+
+# ── Barra principal ───────────────────────────────────────────────────────────
+[bar.main]
+position           = "top"
+thickness          = 34
+background_opacity = 1.0
+radius             = 12
+margin_ends        = 0
+margin_edge        = 6
+padding            = 14
+widget_spacing     = 6
+reserve_space      = true
+
+start  = ["launcher", "workspaces"]
+center = ["clock"]
+end    = ["media", "tray", "notifications", "clipboard", "network", "bluetooth", "volume", "brightness", "battery", "control-center", "session"]
+
+# ── Dock (desactivado en la prueba) ───────────────────────────────────────────
+[dock]
+enabled = false
+
+# ── Wallpaper (misma carpeta y archivo por defecto que DMS) ──────────────────
+[wallpaper]
+enabled     = true
+fill_mode   = "crop"
+directory   = "~/Pictures/Wallpapers"
+transition  = ["fade"]
+transition_on_startup = false
+
+[wallpaper.default]
+path = "~/Pictures/Wallpapers/{{ .dms.wallpaper }}"
+
+# ── Theme (paleta Tokyo Night ≈ look actual de matugen) ───────────────────────
+[theme]
+mode    = "dark"
+source  = "builtin"
+builtin = "Tokyo-Night"
+
+# ── Notificaciones (daemon embebido org.freedesktop.Notifications) ───────────
+[notification]
+enable_daemon = true
+
+# ── Lock screen (autentica vía PAM login; lock-before-suspend nativo) ────────
+[lockscreen]
+enabled = true
+
+# ── OSD (volumen/brillo/red/bluetooth/caps...) ───────────────────────────────
+[osd]
+position          = "top_right"
+position_vertical = "top_center"
+
+# ── Idle: lock a los 10 min, pantalla off a los 11 min ───────────────────────
+[idle.behavior.lock]
+timeout = 600
+action  = "lock"
+enabled = true
+
+[idle.behavior.screen-off]
+timeout = 660
+action  = "screen_off"
+enabled = true
+
+# ── Servicios opcionales desactivados (lean durante la prueba) ───────────────
+[calendar]
+enabled = false
+
+[weather]
+enabled = false
+
+[nightlight]
+enabled = false
+
+[desktop_widgets]
+enabled = false
+
+{{- end }}

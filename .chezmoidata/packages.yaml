@@ -90,6 +90,7 @@ fedora:
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - dms
+    - noctalia
     - matugen
     - cava
     - qt6-multimedia
@@ -182,6 +183,7 @@ arch:
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
     - dms-shell-niri
+    - noctalia
     - matugen
     - cava
     - qt6-multimedia-ffmpeg

@@ -9,6 +9,9 @@
 // Omitir configuración en servidores o WSL
 {{- else }}
 
+// ── Shell activo (A/B): CHEZMOI_SHELL=noctalia chezmoi apply (default: dms) ──
+{{ $shellName := env "CHEZMOI_SHELL" | default "dms" }}
+
 // ── Comportamiento de Ventanas ───────────────────────────────────────────────
 // Pedir a las aplicaciones que omitan sus decoraciones de cliente (CSD).
 // El borde/focus-ring de niri se dibuja alrededor de la ventana.
@@ -18,10 +21,18 @@ prefer-no-csd
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 
+// DMS (DankMaterialShell) o Noctalia v5 según CHEZMOI_SHELL (default: dms).
+// Prueba A/B: CHEZMOI_SHELL=noctalia chezmoi apply.
+{{- if eq $shellName "noctalia" }}
+// Noctalia v5: shell nativo C++/OpenGL ES (barra, lock, notifs, launcher,
+// clipboard, wallpaper, OSD, polkit). Coexiste instalado con DMS.
+spawn-at-startup "noctalia"
+{{- else }}
 // DMS (DankMaterialShell): shell Quickshell que reemplaza barra, lock, idle,
 // notificaciones, launcher, wallpaper (matugen), clipboard, polkit y OSD.
 // Nota: `dms setup` genera ~/.config/niri/dms/*.kdl si el paquete lo requiere.
 spawn-at-startup "dms" "run"
+{{- end }}
 
 spawn-at-startup "udiskie"
 spawn-at-startup "mpris-proxy"
@@ -230,6 +241,14 @@ hotkey-overlay {
 xwayland-satellite {
     path "xwayland-satellite"
 }
+
+{{- if eq $shellName "noctalia" }}
+// Noctalia: permite acciones de notificaciones y activación de ventanas
+// (requisito de la doc de integración Noctalia-Niri).
+debug {
+    honor-xdg-activation-with-invalid-serial
+}
+{{- end }}
 
 // ── Módulos (binds y window rules) ────────────────────────────────────────────
 include "binds.kdl"

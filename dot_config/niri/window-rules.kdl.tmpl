@@ -7,6 +7,19 @@
 // Omitir configuración en servidores o WSL
 {{- else }}
 
+// ── Shell activo (A/B): CHEZMOI_SHELL=noctalia chezmoi apply (default: dms) ──
+{{ $shellName := env "CHEZMOI_SHELL" | default "dms" }}
+
+{{- if eq $shellName "noctalia" }}
+// ── Capas de Noctalia v5 ─────────────────────────────────────────────────────
+// Wallpaper estacionario en el backdrop (Option 2 de la doc de integración):
+// niri mantiene background-color "transparent" y la capa se ve a través de los
+// workspaces. Sin [backdrop] difuminado para comparación de recursos limpia.
+layer-rule {
+    match namespace="^noctalia-wallpaper$"
+    place-within-backdrop true
+}
+{{- else }}
 // ── Capas de DMS (DankMaterialShell) ─────────────────────────────────────────
 // El wallpaper de DMS (namespace quickshell) se dibuja sobre el backdrop para
 // que se vea en el overview. Si "Blur Layer" está activo, también el fondo
@@ -19,6 +32,7 @@ layer-rule {
     match namespace="dms:blurwallpaper"
     place-within-backdrop true
 }
+{{- end }}
 
 // ── Named Workspaces (core estable 1-4) ──────────────────────────────────────
 workspace "term"
@@ -154,11 +168,21 @@ window-rule {
     clip-to-geometry true
 }
 
+{{- if eq $shellName "noctalia" }}
+// ── Ventana de ajustes de Noctalia: flotante ────────────────────────────────
+window-rule {
+    match app-id="^dev.noctalia.Noctalia$"
+    open-floating true
+    default-column-width { fixed 1080; }
+    default-window-height { fixed 920; }
+}
+{{- else }}
 // ── Ventanas de DMS (Quickshell): modales flotantes ──────────────────────────
 window-rule {
     match app-id=r#"^org\.quickshell$"#
     open-floating true
 }
+{{- end }}
 
 // ── KDE Connect (diálogos, app y selector) ──────────────────────────────────
 window-rule {

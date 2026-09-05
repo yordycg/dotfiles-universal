@@ -7,6 +7,9 @@
 // Omitir configuración en servidores o WSL
 {{- else }}
 
+// ── Shell activo (A/B): CHEZMOI_SHELL=noctalia chezmoi apply (default: dms) ──
+{{ $shellName := env "CHEZMOI_SHELL" | default "dms" }}
+
 binds {
     // ── Launch programs ─────────────────────────────────────────────────────
     Super+Return { spawn "ghostty"; }
@@ -44,7 +47,16 @@ binds {
     // Virtual keyboard (wvkbd)
     Super+Shift+T { spawn-sh "pgrep -x wvkbd-mobintl >/dev/null 2>&1 && pkill -RTMIN wvkbd-mobintl || wvkbd-mobintl -l simple"; }
 
-    // ── Launcher / Clipboard / Shell (DMS IPC) ───────────────────────────────
+    // ── Launcher / Clipboard / Shell (IPC del shell activo) ─────────────────
+{{- if eq $shellName "noctalia" }}
+    // Noctalia v5: launcher, clipboard, notificaciones, wallpaper, lock y sesión.
+    // Super+M (task manager) y Super+Shift+C (color picker) sin equivalente core.
+    Super+Space { spawn-sh "noctalia msg panel-toggle launcher"; }
+    Super+Shift+V { spawn-sh "noctalia msg panel-toggle clipboard"; }
+    Super+N { spawn-sh "noctalia msg panel-toggle control-center notifications"; }
+    Super+Y { spawn-sh "noctalia msg panel-toggle wallpaper"; }
+    Super+Alt+L allow-when-locked=true { spawn-sh "noctalia msg session lock"; }
+{{- else }}
     // DMS gestiona launcher, clipboard, lock y notificaciones vía IPC.
     // App launcher (spotlight del shell DMS, reemplaza rofi)
     Super+Space { spawn "dms" "ipc" "call" "spotlight" "toggle"; }
@@ -58,6 +70,7 @@ binds {
     Super+Y { spawn "dms" "ipc" "call" "dankdash" "wallpaper"; }
     // Lock screen (seguridad, funciona incluso bloqueado)
     Super+Alt+L allow-when-locked=true { spawn "dms" "ipc" "call" "lock" "lock"; }
+{{- end }}
 
     // ── Focus movement (Vim keys 2D - Niri Pro) ─────────────────────────────
     Super+H { focus-column-left; }
@@ -118,7 +131,19 @@ binds {
     Super+Tab { toggle-overview; }
     Super+grave { toggle-overview; }
 
-    // ── Multimedia keys (DMS IPC con OSD integrado) ──────────────────────────
+    // ── Multimedia keys (OSD del shell activo) ───────────────────────────────
+{{- if eq $shellName "noctalia" }}
+    XF86AudioRaiseVolume { spawn-sh "noctalia msg volume-up"; }
+    XF86AudioLowerVolume { spawn-sh "noctalia msg volume-down"; }
+    XF86AudioMute { spawn-sh "noctalia msg volume-mute"; }
+    XF86AudioMicMute { spawn-sh "noctalia msg mic-mute"; }
+    XF86MonBrightnessUp { spawn-sh "noctalia msg brightness-up"; }
+    XF86MonBrightnessDown { spawn-sh "noctalia msg brightness-down"; }
+    XF86AudioNext { spawn-sh "noctalia msg media next"; }
+    XF86AudioPause { spawn-sh "noctalia msg media toggle"; }
+    XF86AudioPlay { spawn-sh "noctalia msg media toggle"; }
+    XF86AudioPrev { spawn-sh "noctalia msg media previous"; }
+{{- else }}
     XF86AudioRaiseVolume { spawn "dms" "ipc" "call" "audio" "increment"; }
     XF86AudioLowerVolume { spawn "dms" "ipc" "call" "audio" "decrement"; }
     XF86AudioMute { spawn "dms" "ipc" "call" "audio" "mute"; }
@@ -129,6 +154,7 @@ binds {
     XF86AudioPause { spawn "dms" "ipc" "call" "mpris" "playPause"; }
     XF86AudioPlay { spawn "dms" "ipc" "call" "mpris" "playPause"; }
     XF86AudioPrev { spawn "dms" "ipc" "call" "mpris" "previous"; }
+{{- end }}
 
     // ── Screenshot (built-in de niri) ────────────────────────────────────────
     Super+F12 { screenshot-screen; }
@@ -137,12 +163,20 @@ binds {
     // ── Misc ──────────────────────────────────────────────────────────────────
     // Interactive kill
     Super+Shift+X { close-window; }
+{{- if eq $shellName "noctalia" }}
+    // Color Picker: sin equivalente core en Noctalia (omitido en la prueba).
+    // Ajustes de tema del shell (Noctalia)
+    Super+Z { spawn-sh "noctalia msg settings-toggle theme"; }
+    // Menú de sesión (logout / reboot / shutdown)
+    Super+BackSpace { spawn-sh "noctalia msg panel-toggle session"; }
+{{- else }}
     // Color Picker (eyedropper del shell DMS)
     Super+Shift+C { spawn "dms" "color" "pick"; }
     // Theme picker de DMS (matugen). El theme-switcher de rofi no toca DMS/niri.
     Super+Z { spawn "dms" "ipc" "call" "settings" "focusOrToggleWith" "theme"; }
     // Power Menu / Logout (DMS)
     Super+BackSpace { spawn "dms" "ipc" "call" "powermenu" "toggle"; }
+{{- end }}
     // Escape hatch to toggle keyboard shortcuts inhibitor (useful for games/VMs)
     Super+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
