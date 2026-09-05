@@ -35,11 +35,11 @@ Este repositorio administra la configuración de una infraestructura multi-nodo 
 
 ```mermaid
 graph TD
-    Node2[Nodo 2: Estación Desktop<br>Arch Linux + Hyprland FULL]
-    NodeN[Nodo N: Laptop Ligera<br>Arch/Fedora + Hyprland ECO]
+    Node2[Nodo 2: Estación Desktop<br>Arch Linux + Niri + DMS<br>KDE Plasma como respaldo]
+    NodeN[Nodo N: Laptop Ligera<br>Arch/Fedora + Niri + DMS ECO]
 
     subgraph Desarrollo Aislado
-        Mise[Mise: Runtimes de usuario en $HOME]
+        Mise[Mise: CLIs y runtimes en $HOME con data/cache en XDG]
         Podman[Podman: Contenedores rootless]
         Distrobox[Distrobox: Entornos declarativos]
     end
@@ -54,14 +54,14 @@ graph TD
 ### Definición de Nodos:
 
 1.  **Nodo 1 (Servidor Central - Debian):** _En pausa por presupuesto._
-2.  **Nodo 2 (Estación de Fuerza / Desktop):** Estación de alto rendimiento. Ejecuta **Arch Linux + Hyprland**. Interfaz fluida con animaciones completas, difuminado y soporte multi-monitor.
-3.  **Nodo N (Clientes Ligeros / Laptops):** Interfaces de movilidad ejecutando **Arch o Fedora + Hyprland (ECO Mode)**. Configuración visual plana (sin animaciones ni blur para ahorrar batería), compartiendo el 100% de la lógica gráfica y atajos.
+2.  **Nodo 2 (Estación de Fuerza / Desktop):** Estación de alto rendimiento. Ejecuta **Arch Linux + Niri + DMS (Dank Material Shell)** como flujo principal y **KDE Plasma (sddm)** como escritorio de respaldo. El stack de **Hyprland** quedó descontinuado (respaldo histórico comentado en `packages.yaml`).
+3.  **Nodo N (Clientes Ligeros / Laptops):** Interfaces de movilidad ejecutando **Arch o Fedora + Niri + DMS (ECO Mode)**. Configuración visual plana (sin animaciones ni blur para ahorrar batería), compartiendo el 100% de la lógica gráfica y atajos.
 
 ### Filosofía "Clean Host":
 
 El sistema base se mantiene libre de paquetes de desarrollo. Las herramientas se aíslan:
 
-- **Runtimes (Node/Python/Go):** Gestionados localmente por `Mise` en el `$HOME`.
+- **CLIs y runtimes:** Gestionados por `Mise` (mismas versiones cross-distro). La **data/cache** de los runtimes se redirige a XDG (`CARGO_HOME`, `GOPATH`, `NPM_CONFIG_CACHE`, …) desde `exports.sh` + `environment.d` para que `$HOME` no se ensucie.
 - **Entornos de Proyectos/Bases de Datos:** Encapsulados en contenedores gráficos y de terminal usando **Podman + Distrobox**.
 
 ---

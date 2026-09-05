@@ -74,4 +74,18 @@
 - [ ] Configurar proveedores en opencode/pi: OpenRouter (Claude, whitelist + $5-10), DeepSeek directo (worker), Gemini (scout)
 - [ ] Probar en seco `new-videcoding-project` y validar el ciclo TDD + dual-write con un proyecto real
 
+## Fase 6: Auditoría Clean Host y Redirección XDG (2026-09-04)
+- [x] Auditar `$HOME`: mise funcionaba (92 shims), pero los runtimes ensuciaban `$HOME` (`.npm` 2.1G, `.rustup` 1.5G, `.nuget` 1.1G) por falta de redirección XDG.
+- [x] XDG Base + redirección de runtimes en `dot_config/shell/exports.sh.tmpl` (CARGO/RUSTUP/GOPATH/NPM/DOTNET/NUGET/CUDA/WGET/GTK2) + `environment.d` para sesión/GUI.
+- [x] Historial zsh → `$XDG_STATE_HOME/zsh/history`; compdump → `$XDG_CACHE_HOME/zsh/zcompdump` (`history.zsh`, `completion.zsh.tmpl`).
+- [x] `mise` como fuente canónica de CLI (cross-distro); cabecera de filosofía en `dot_config/mise/config.toml.tmpl`.
+- [x] Dedupe pacman↔mise: `tmux`/`fzf`/`fastfetch` → solo mise; `age`/`jq`/`gh` quedan en base (usados en scripts de apply previos a mise).
+- [x] Hyprland descontinuado: secciones comentadas en `packages.yaml` como respaldo; utilidades Wayland genéricas reubicadas a `desktop_gui`.
+- [x] `clean-dotfiles` (caches yay/npm/pip/uv/go-build/playwright/Trash/flatpak-unused) + receta `just clean`.
+- [x] Migración one-shot `run_once_after_98-xdg-migration.sh` (`.cargo/.rustup/go/.npm/.nuget/.dotnet/.bun` → XDG) con re-enlace del backend rust de mise.
+- [x] SDDM: niri por defecto + KDE alternativo (`provision/system/setup-sddm-default-session.sh`).
+- [ ] **Pendiente root (manual):** desinstalar stack hyprland, `paccache -rk1`, sddm drop-in, y re-login para validar XDG.
+- [ ] Verificar que al desinstalar el stack muere el `swaync` huérfano (redundante bajo DMS).
+
+
 
