@@ -7,7 +7,7 @@ require 'config.statusline'
 require 'config.terminal'
 
 require 'plugins.mini' -- mini.nvim modules
-require 'plugins.ui' -- oil, fzf-lua, gitsigns, theme-hub
+require 'plugins.ui' -- oil, fzf-lua, gitsigns
 require 'plugins.builtin' -- Nvim 0.12 built-ins (undotree, ui2)
 require 'plugins.treesitter'
 

@@ -1,5 +1,5 @@
 -- ************************************************************************************************
--- UI: Oil (explorador de archivos), fzf-lua, gitsigns, theme-hub
+-- UI: Oil (explorador de archivos), fzf-lua, gitsigns
 -- ************************************************************************************************
 
 -- Oil: editar el filesystem como un buffer (filosofía y9san9). Sustituye a
@@ -78,18 +78,3 @@ end, { desc = 'Toggle inline blame' })
 vim.keymap.set('n', '<leader>hd', function()
   require('gitsigns').diffthis()
 end, { desc = 'Diff this' })
-
--- theme-hub.nvim
-require('theme-hub').setup {
-  install_dir = vim.fn.stdpath 'data' .. '/theme-hub',
-  auto_install_on_select = true,
-  apply_after_install = true,
-  -- No persistir: el default determinístico es koda-dark (config/options.lua).
-  -- Si se persistiera, theme-hub re-aplicaría un tema viejo al arrancar y
-  -- pisaría el colorscheme de la config.
-  persistent = false,
-}
-
--- En <leader>uc (grupo "ui"): si quedara en <leader>th, <leader>t (terminal) sería
--- prefijo suyo y mini.clue esperaría a desambiguar en vez de abrir la terminal al toque.
-vim.keymap.set('n', '<leader>uc', '<cmd>ThemeHub<cr>', { desc = 'Select theme (Theme Hub)' })

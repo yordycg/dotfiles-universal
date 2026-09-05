@@ -154,7 +154,6 @@ miniclue.setup({
     { mode = "n", keys = "<leader>uu", desc = "Undotree" },
     { mode = "n", keys = "<leader>ud", desc = "Toggle diagnostics" },
     { mode = "n", keys = "<leader>uf", desc = "Toggle autoformat" },
-    { mode = "n", keys = "<leader>uc", desc = "Select theme (Theme Hub)" },
     -- +diagnostics
     { mode = "n", keys = "<leader>nd", desc = "Next diagnostic" },
     { mode = "n", keys = "<leader>pd", desc = "Previous diagnostic" },

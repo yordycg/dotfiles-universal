@@ -37,11 +37,6 @@ vim.pack.add {
   -- Navegación seamless entre ventanas nvim y panes tmux
   -- (fallback homelab; en herdr lo gestiona vim-herdr-navigation)
   'https://github.com/christoomey/vim-tmux-navigator',
-  -- Gestor interactivo de temas y dependencia
-  'https://github.com/nvim-lua/plenary.nvim',
-  'https://github.com/Erl-koenig/theme-hub.nvim',
-  -- Dependencia de theme-hub para que los temas con lush se rendericen bien
-  'https://github.com/rktjmp/lush.nvim',
   -- Snippets comunitarios (blink.cmp los carga solo si están en el runtimepath)
   'https://github.com/rafamadriz/friendly-snippets',
 }
