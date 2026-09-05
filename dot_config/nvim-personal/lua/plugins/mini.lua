@@ -136,7 +136,8 @@ miniclue.setup({
     { mode = "n", keys = "<leader>ft", desc = "LSP type definitions" },
     { mode = "n", keys = "<leader>fw", desc = "LSP workspace symbols" },
     { mode = "n", keys = "<leader>fi", desc = "LSP implementations" },
-    -- +git (gitsigns)
+    -- +git (gitsigns & lazygit)
+    { mode = "n", keys = "<leader>gg", desc = "LazyGit" },
     { mode = "n", keys = "<leader>hs", desc = "Stage hunk" },
     { mode = "n", keys = "<leader>hr", desc = "Reset hunk" },
     { mode = "n", keys = "<leader>hp", desc = "Preview hunk" },
