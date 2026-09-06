@@ -38,6 +38,9 @@ Al investigar el repositorio fuente del creador ([nyoom-engineering/nyoom.nvim](
 4. **Mapeo Explícito de Variantes:** El paquete de la fuente provee 12 archivos (`Light`, `Regular`, `Medium`, `SemiBold`, `Bold`, `Heavy` y sus cursivas). Declarar explícitamente `Regular`, `Bold`, `Italic` y `Bold Italic` previene que Fontconfig o el motor de la terminal elija `Medium` como fuente base por error.
 5. **Tamaño óptimo:** `14.0` (`h14`). A este tamaño, la cuadrícula de píxeles encaja con las proporciones nativas de SF Mono y los símbolos de las ligaduras.
 6. **Padding perimetral:** Un padding de `24px` a `27px` en las terminales elimina la sensación claustrofóbica y replica la estética de Neovide/Foot.
+7. **FreeType y Stem Darkening (CFF):** En fuentes OpenType PostScript como SF Mono, FreeType debe mantener `cff:no-stem-darkening=0` (activado) para evitar que las letras se vean anémicas o delgadas en fondos oscuros. Esto se inyecta a nivel de sesión en `~/.config/environment.d/10-freetype.conf`.
+8. **Grayscale Antialiasing (`rgba=none`):** En fondos oscuros (`#161616`), el subpíxel RGB puede introducir *color fringing*. Forzar escala de grises pura (`rgba=none`) unifica la nitidez y elimina artefactos en Kitty, Ghostty y Foot.
+9. **Impacto de la Densidad de Píxeles (DPI):** En monitores de 27" 1080p (~81 DPI), la cuadrícula rígida de las terminales expone la pixelación. El motor Skia de Neovide suaviza esto mediante posicionamiento subpíxel vectorial continuo en coma flotante.
 
 ---
 
