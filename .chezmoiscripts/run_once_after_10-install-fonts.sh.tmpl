@@ -61,14 +61,15 @@ if [ ! -d "$FONTS_DIR/AppleSFPro" ]; then
     fi
 fi
 
-# Descargar Apple SF Mono
-if [ ! -d "$FONTS_DIR/AppleSFMono" ]; then
-    log_info "Descargando Apple SF Mono..."
-    mkdir -p "$FONTS_DIR/AppleSFMono"
-    if wget -q --show-progress -O "/tmp/AppleSFMono.zip" "https://github.com/supercomputra/SF-Mono-Font/archive/refs/heads/master.zip"; then
-        unzip -q -o "/tmp/AppleSFMono.zip" -d "/tmp/AppleSFMono"
-        find "/tmp/AppleSFMono" \( -name "*.otf" -o -name "*.ttf" \) -exec cp {} "$FONTS_DIR/AppleSFMono/" \;
-        rm -rf "/tmp/AppleSFMono.zip" "/tmp/AppleSFMono"
+# Descargar Apple SF Mono (Liga SFMono Nerd Font - Ligaturized & Patched by Shaun Singh)
+if [ ! -d "$FONTS_DIR/LigaSFMonoNerdFont" ]; then
+    log_info "Descargando Liga SFMono Nerd Font..."
+    mkdir -p "$FONTS_DIR/LigaSFMonoNerdFont"
+    if wget -q --show-progress -O "/tmp/LigaSFMono.zip" "https://github.com/shaunsingh/SFMono-Nerd-Font-Ligaturized/archive/refs/heads/main.zip"; then
+        unzip -q -o "/tmp/LigaSFMono.zip" -d "/tmp/LigaSFMono"
+        find "/tmp/LigaSFMono" -name "*.otf" -exec cp {} "$FONTS_DIR/LigaSFMonoNerdFont/" \;
+        rm -rf "/tmp/LigaSFMono.zip" "/tmp/LigaSFMono"
+        log_ok "Liga SFMono Nerd Font instalada."
     fi
 fi
 
