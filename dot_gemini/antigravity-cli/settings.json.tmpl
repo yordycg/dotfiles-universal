@@ -1,0 +1,27 @@
+{
+  "allowNonWorkspaceAccess": true,
+  "colorScheme": "colorblind-friendly dark",
+  "permissions": {
+    "allow": [
+      "read_url(*)"
+    ],
+    "deny": [
+      "command(sudo)",
+      "command(rm -rf /)",
+      "command(shutdown)",
+      "command(reboot)",
+      "command(pacman -R)",
+      "command(curl .*\\bpassword\\b.*)",
+      "write_file({{ .chezmoi.homeDir }}/.ssh)",
+      "write_file({{ .chezmoi.homeDir }}/.gnupg)",
+      "write_file({{ .chezmoi.homeDir }}/.password-store)"
+    ]
+  },
+  "trustedWorkspaces": [
+    "{{ .chezmoi.homeDir }}",
+    "{{ .chezmoi.homeDir }}/.local/share/chezmoi"
+  ],
+  "agentMode": "plan",
+  "toolPermission": "always-proceed",
+  "artifactReviewPolicy": "asks-for-review"
+}
