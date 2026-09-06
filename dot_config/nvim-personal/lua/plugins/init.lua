@@ -14,8 +14,9 @@ vim.g.tmux_navigator_no_mappings = 1
 
 -- ************************************************************************************************
 vim.pack.add {
-  -- Colorscheme minimalista (estética Koda, ver config/options.lua)
+  -- Colorschemes minimalistas de alto contraste (ver config/options.lua)
   'https://github.com/oskarnurm/koda.nvim',
+  'https://github.com/nyoom-engineering/oxocarbon.nvim',
   'https://www.github.com/lewis6991/gitsigns.nvim',
   'https://www.github.com/echasnovski/mini.nvim',
   'https://www.github.com/ibhagwan/fzf-lua',

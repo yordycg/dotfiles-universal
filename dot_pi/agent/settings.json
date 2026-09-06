@@ -1,5 +1,5 @@
 {
-  "theme": "koda-dark",
+  "theme": "oxocarbon",
   "terminalMode": "regular",
   "autoReload": true,
   "default_model": "deepseek/deepseek-v4-flash",
