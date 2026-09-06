@@ -51,7 +51,7 @@ font-style = "Regular"
 font-style-bold = "Bold"
 font-style-italic = "Italic"
 font-style-bold-italic = "Bold Italic"
-font-size = 14.0
+font-size = 13.0
 font-thicken = false
 adjust-cell-height = 12%
 
@@ -93,7 +93,8 @@ font-italic=Liga SFMono Nerd Font:style=Italic:size=14
 font-bold-italic=Liga SFMono Nerd Font:style=Bold Italic:size=14
 pad=24x24
 
-[colors]
+# Nota Foot 1.28+: La sección para el tema oscuro es [colors-dark]
+[colors-dark]
 background=161616
 foreground=ffffff
 

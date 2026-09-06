@@ -111,3 +111,15 @@ vim.opt.wildmode = 'longest:full,full' -- complete longest common match, full li
 vim.opt.diffopt:append 'linematch:60' -- improve diff display
 vim.opt.redrawtime = 10000 -- increase neovim redraw tolerance
 vim.opt.maxmempattern = 20000 -- increase max memory
+
+-- Neovide GUI Settings (Skia / Hardware rendering)
+if vim.g.neovide then
+  vim.opt.guifont = 'Liga SFMono Nerd Font:h13'
+  vim.g.neovide_padding_top = 28
+  vim.g.neovide_padding_left = 24
+  vim.g.neovide_padding_right = 24
+  vim.g.neovide_padding_bottom = 20
+  vim.g.neovide_cursor_animation_length = 0.08
+  vim.g.neovide_cursor_trail_size = 0.5
+  vim.g.neovide_scroll_animation_length = 0.2
+end
