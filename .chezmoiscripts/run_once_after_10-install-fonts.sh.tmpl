@@ -26,14 +26,14 @@ CURRENT_HASH="{{ include ".chezmoiscripts/run_once_after_10-install-fonts.sh.tmp
 log_step "Tipografías (Nerd Fonts)"
 
 if [ -f "$STATE_FILE" ] && [ "$(cat "$STATE_FILE")" == "$CURRENT_HASH" ]; then
-    log_ok "Fuentes JetBrains, FiraCode, Lilex y Apple SF están al día."
+    log_ok "Fuentes ya instaladas y al día."
     exit 0
 fi
 
 # ── 2. Instalación ───────────────────────────────────────────────────────────
 VERSION="3.3.0"
 FONTS_DIR="${HOME}/.local/share/fonts"
-declare -a fonts=(JetBrainsMono FiraCode Lilex CaskaydiaCove Iosevka GeistMono)
+declare -a fonts=(JetBrainsMono FiraCode Lilex Iosevka GeistMono)
 
 mkdir -p "$FONTS_DIR"
 
@@ -109,6 +109,22 @@ if [ ! -d "$FONTS_DIR/Inter" ]; then
     else
         log_info "No se pudo descargar la fuente Inter."
         rm -rf "$FONTS_DIR/Inter"
+    fi
+fi
+
+# ── 7. Cascadia Code (CaskaydiaCove Nerd Font) ──────────────────────────────
+# El asset de la release se llama "CascadiaCode.zip" (no "CaskaydiaCove.zip"),
+# aunque la familia instalada (renombrada por nerd-fonts) es CaskaydiaCove.
+if [ ! -d "$FONTS_DIR/CaskaydiaCove" ]; then
+    log_info "Descargando CaskaydiaCove (Cascadia Code)..."
+    if wget -q --show-progress -O "/tmp/CaskaydiaCove.zip" \
+        "https://github.com/ryanoasis/nerd-fonts/releases/download/v${VERSION}/CascadiaCode.zip"; then
+        mkdir -p "$FONTS_DIR/CaskaydiaCove"
+        unzip -o -q "/tmp/CaskaydiaCove.zip" -d "$FONTS_DIR/CaskaydiaCove"
+        rm -f "/tmp/CaskaydiaCove.zip"
+        log_ok "CaskaydiaCove (Cascadia Code) instalada."
+    else
+        log_info "No se pudo descargar CaskaydiaCove."
     fi
 fi
 
