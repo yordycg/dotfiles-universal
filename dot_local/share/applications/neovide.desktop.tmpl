@@ -1,0 +1,16 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Neovide
+GenericName=Neovim GUI
+Comment=A simple, no-nonsense GUI for Neovim (perfil nvim-personal).
+# Entrada de usuario: sombrea /usr/share/applications/neovide.desktop para
+# lanzar el wrapper que activa NVIM_APPNAME=nvim-personal y el nvim de mise.
+TryExec={{ .chezmoi.homeDir }}/.local/bin/neovide
+Exec={{ .chezmoi.homeDir }}/.local/bin/neovide %F
+Icon=neovide
+Terminal=false
+Categories=Development;TextEditor;IDE;
+Keywords=neovide;nvim;neovim;
+MimeType=text/plain;
+StartupNotify=true

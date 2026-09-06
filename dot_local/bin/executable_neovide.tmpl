@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# =============================================================================
+# ~/.local/bin/neovide - Wrapper de Neovide gestionado por chezmoi
+# Neovide (paquete del repo `extra`) lanza `nvim` por PATH. Este wrapper:
+#   1) Activa siempre el perfil personal de Neovim (NVIM_APPNAME=nvim-personal).
+#   2) Garantiza que Neovide use el `nvim` gestionado por mise (Clean Host),
+#      no el `neovim` del sistema que el paquete arrastra como dependencia.
+# Así GUI y terminal comparten exactamente el mismo binario y versión de nvim.
+# =============================================================================
+set -euo pipefail
+
+# Perfil de Neovim a usar (sobrescribible con NVIM_APPNAME si se desea otro).
+export NVIM_APPNAME="${NVIM_APPNAME:-nvim-personal}"
+
+# Anteponer los shims de mise (nvim -> ~/.local/bin/mise) al PATH si aplica.
+MISE_SHIMS="$HOME/.local/share/mise/shims"
+if [ -d "$MISE_SHIMS" ] && [[ ":$PATH:" != *":$MISE_SHIMS:"* ]]; then
+    export PATH="$MISE_SHIMS:$PATH"
+fi
+
+# El binario GUI real proviene del paquete de sistema (`extra`).
+exec /usr/bin/neovide "$@"

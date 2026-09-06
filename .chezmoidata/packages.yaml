@@ -148,6 +148,8 @@ arch:
     - kvantum
     - firefox
     - zed
+    - neovide
+    - rio
     - gnome-keyring
     - kdeconnect
     - sshfs
