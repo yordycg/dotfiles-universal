@@ -55,6 +55,9 @@ font-size = 13.0
 font-thicken = false
 adjust-cell-height = 12%
 
+# Desactiva hinting y autohint forzados para curvas Bézier puras
+freetype-load-flags = no-hinting,no-autohint
+
 # Ligaduras habilitadas
 font-feature = +calt
 font-feature = +liga
@@ -77,8 +80,11 @@ font_family      Liga SFMono Nerd Font Regular
 bold_font        Liga SFMono Nerd Font Bold
 italic_font      Liga SFMono Nerd Font Italic
 bold_italic_font Liga SFMono Nerd Font Bold Italic
-font_size        14.0
+font_size        13.0
 modify_font      cell_height 112%
+
+# Mayor solidez y contraste tipográfico en fondos oscuros
+text_composition_strategy legacy
 
 # Window layout
 window_padding_width 24
@@ -87,10 +93,10 @@ hide_window_decorations yes
 
 ### C. Foot (`dot_config/foot/foot.ini.tmpl`)
 ```ini
-font=Liga SFMono Nerd Font:size=14
-font-bold=Liga SFMono Nerd Font:style=Bold:size=14
-font-italic=Liga SFMono Nerd Font:style=Italic:size=14
-font-bold-italic=Liga SFMono Nerd Font:style=Bold Italic:size=14
+font=Liga SFMono Nerd Font:size=13
+font-bold=Liga SFMono Nerd Font:style=Bold:size=13
+font-italic=Liga SFMono Nerd Font:style=Italic:size=13
+font-bold-italic=Liga SFMono Nerd Font:style=Bold Italic:size=13
 pad=24x24
 
 # Nota Foot 1.28+: La sección para el tema oscuro es [colors-dark]
