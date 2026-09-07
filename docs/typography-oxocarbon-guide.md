@@ -1,6 +1,6 @@
 # Guía de Tipografía y Tema Oxocarbon
 
-Esta guía documenta la investigación, configuración y parámetros de renderizado de la tipografía **Liga SFMono Nerd Font** y el tema **Oxocarbon** a través de Neovim, Ghostty, Kitty y Foot. Sirve como fuente de verdad permanente para restaurar o replicar este entorno en cualquier momento.
+Esta guía documenta la investigación forense, configuración y parámetros de renderizado de la tipografía **Liga SFMono Nerd Font** y el tema **Oxocarbon** a través de Neovide (entorno gráfico principal con Skia GPU) y terminales de soporte (Ghostty, Kitty, Foot). Sirve como fuente de verdad permanente para restaurar o replicar este entorno en cualquier momento.
 
 ---
 
@@ -19,10 +19,10 @@ Esta guía documenta la investigación, configuración y parámetros de renderiz
 
 ## 2. Los Secretos del Renderizado (El "look & feel" de la captura oficial)
 
-Al investigar el repositorio fuente del creador ([nyoom-engineering/nyoom.nvim](https://github.com/nyoom-engineering/nyoom.nvim)), localizamos la configuración exacta detrás de la captura oficial de Oxocarbon (`oxocarbon_preview.png`):
+Al investigar el repositorio fuente del creador ([nyoom-engineering/nyoom.nvim](https://github.com/nyoom-engineering/nyoom.nvim)) y la captura original de alta resolución (`oxocarbon_preview.png` / `206819503-736cbede-fdf2-4be3-baaa-d640c8498abf.png`, con resolución compuesta de **3028 x 10547 píxeles**), localizamos la configuración exacta detrás de la captura oficial:
 
 ```fennel
-;; Desde nyoom.nvim/fnl/core/init.fnl
+;; Desde nyoom.nvim/fnl/core/init.fnl (Shaun Singh)
 (set! guifont "Liga SFMono Nerd Font:h14")
 (let! neovide_padding_top 45)
 (let! neovide_padding_left 38)
@@ -30,23 +30,74 @@ Al investigar el repositorio fuente del creador ([nyoom-engineering/nyoom.nvim](
 (let! neovide_padding_bottom 20)
 ```
 
-### Factores Críticos de Renderizado:
+### Factores Críticos de Renderizado en Neovide:
 
-1. **La captura fue tomada en Neovide:** No en una terminal clásica de Linux, sino en Neovide (cliente gráfico GUI con aceleración GPU Skia, antialiasing subpixel y padding perimetral muy amplio).
-2. **Desactivar `font-thicken`:** En Ghostty, la opción `font-thicken = true` engorda artificialmente todos los trazos. Dado que SF Mono es una fuente esbelta y geométrica, `font-thicken` la empasta y arruina el contraste con el texto en negrita (**bold**). Debe mantenerse en `false`.
-3. **Altura de línea (`cell-height`):** Shaun Singh aplica en sus terminales (`alacritty.yml`) un desplazamiento vertical (`offset: y: 10`) para que las líneas respiren. En Ghostty esto equivale a `adjust-cell-height = 12%`, y en Kitty a `modify_font cell_height 112%`.
-4. **Mapeo Explícito de Variantes:** El paquete de la fuente provee 12 archivos (`Light`, `Regular`, `Medium`, `SemiBold`, `Bold`, `Heavy` y sus cursivas). Declarar explícitamente `Regular`, `Bold`, `Italic` y `Bold Italic` previene que Fontconfig o el motor de la terminal elija `Medium` como fuente base por error.
-5. **Tamaño óptimo:** `14.0` (`h14`). A este tamaño, la cuadrícula de píxeles encaja con las proporciones nativas de SF Mono y los símbolos de las ligaduras.
-6. **Padding perimetral:** Un padding de `24px` a `27px` en las terminales elimina la sensación claustrofóbica y replica la estética de Neovide/Foot.
-7. **FreeType y Stem Darkening (CFF):** En fuentes OpenType PostScript como SF Mono, FreeType debe mantener `cff:no-stem-darkening=0` (activado) para evitar que las letras se vean anémicas o delgadas en fondos oscuros. Esto se inyecta a nivel de sesión en `~/.config/environment.d/10-freetype.conf`.
-8. **Grayscale Antialiasing (`rgba=none`):** En fondos oscuros (`#161616`), el subpíxel RGB puede introducir *color fringing*. Forzar escala de grises pura (`rgba=none`) unifica la nitidez y elimina artefactos en Kitty, Ghostty y Foot.
-9. **Impacto de la Densidad de Píxeles (DPI):** En monitores de 27" 1080p (~81 DPI), la cuadrícula rígida de las terminales expone la pixelación. El motor Skia de Neovide suaviza esto mediante posicionamiento subpíxel vectorial continuo en coma flotante.
+1. **La captura fue tomada en Neovide sobre Retina HiDPI:** No en una terminal clásica de Linux, sino en Neovide bajo macOS Monterey con pantalla Retina de alta densidad (>220 DPI, factor de escala 2.0). A esta densidad, la cuadrícula de píxeles ofrece el doble de resolución horizontal y vertical por glifo.
+2. **Supresión Absoluta de Hinting (`#h-none`):** Apple jamás fuerza el snapping de glifos a la cuadrícula de píxeles en macOS CoreText, preservando las curvas Bézier orgánicas. En Neovide sobre Linux (motor Skia + FreeType), pasar `:#h-none` en `guifont` evita que FreeType quiebre o deforme los trazos circulares de SF Mono.
+3. **Antialiasing y Color Fringing (`#e-antialias` vs `#e-subpixelantialias`):**
+   - `#e-antialias` (Grayscale puro): Elimina cualquier franja de color (*color fringing*) producida por subpíxeles RGB sobre el fondo oscuro (`#161616`) de Oxocarbon. Replica el rasterizado contemporáneo de macOS.
+   - `#e-subpixelantialias` (con `g:neovide_pixel_geometry = "RGBH"`): Maximiza el detalle subpíxel horizontal en paneles LCD estándar.
+4. **FreeType y Stem Darkening (CFF):** En fuentes OpenType PostScript como SF Mono, FreeType debe mantener `cff:no-stem-darkening=0` (activado) para evitar que las letras se vean anémicas o delgadas en fondos oscuros por irradiación lumínica. Esto se inyecta a nivel de sesión en `~/.config/environment.d/10-freetype.conf`.
+5. **Tamaño Base Óptimo:** `13.0` (`:h13`). Brinda paridad dimensional con Ghostty, Kitty y Foot, ofreciendo un equilibrio ideal entre nitidez de curvas y densidad de columnas visibles.
+6. **Padding Perimetral Equilibrado:** Un espaciado perimetral (`top=36`, `left=28`, `right=28`, `bottom=20`) que enmarca el código con elegancia editorial sin desaprovechar espacio de pantalla.
+7. **Profundidad de Ventanas Flotantes (Skia GPU):** Sombras difusas (`neovide_floating_shadow = true`, `neovide_floating_z_height = 10`) y desenfoque GPU (`neovide_floating_blur_amount_* = 2.0`) en popups, Telescope y diagnósticos.
+8. **Renderizado Nativo de Box-Drawing:** Modo `mode = "native"` en `~/.config/neovide/config.toml` para que los divisores de ventana y árboles de archivos se tracen con vectores directos de Skia, sin cortes verticales.
 
 ---
 
-## 3. Matriz de Configuración por Terminal
+## 3. Matriz de Configuración por Aplicación
 
-### A. Ghostty (`dot_config/ghostty/config.tmpl`)
+### A. Neovide (`dot_config/nvim-personal/lua/config/options.lua` y `config.toml`)
+```lua
+-- Neovide GUI Settings (Skia / Hardware rendering)
+if vim.g.neovide then
+  vim.opt.guifont = 'Liga SFMono Nerd Font:h13:#h-none:#e-antialias'
+  vim.g.neovide_pixel_geometry = 'RGBH'
+  vim.g.neovide_text_gamma = 0.0
+  vim.g.neovide_text_contrast = 0.5
+
+  -- Padding perimetral equilibrado
+  vim.g.neovide_padding_top = 36
+  vim.g.neovide_padding_left = 28
+  vim.g.neovide_padding_right = 28
+  vim.g.neovide_padding_bottom = 20
+
+  -- Profundidad GPU en ventanas flotantes
+  vim.g.neovide_floating_shadow = true
+  vim.g.neovide_floating_z_height = 10
+  vim.g.neovide_floating_corner_radius = 8.0
+  vim.g.neovide_floating_blur_amount_x = 2.0
+  vim.g.neovide_floating_blur_amount_y = 2.0
+
+  -- Animaciones fluidas
+  vim.g.neovide_cursor_animation_length = 0.08
+  vim.g.neovide_cursor_trail_size = 0.5
+  vim.g.neovide_cursor_antialiasing = true
+  vim.g.neovide_scroll_animation_length = 0.2
+
+  -- Zoom dinámico interactivo con teclado
+  vim.g.neovide_scale_factor = 1.0
+  local change_scale = function(delta)
+    vim.g.neovide_scale_factor = math.max(0.5, math.min(2.0, (vim.g.neovide_scale_factor or 1.0) + delta))
+  end
+  vim.keymap.set({ 'n', 'v' }, '<C-=>', function() change_scale(0.05) end, { desc = 'Neovide Zoom In' })
+  vim.keymap.set({ 'n', 'v' }, '<C-->', function() change_scale(-0.05) end, { desc = 'Neovide Zoom Out' })
+  vim.keymap.set({ 'n', 'v' }, '<C-0>', function() vim.g.neovide_scale_factor = 1.0 end, { desc = 'Neovide Reset Zoom' })
+end
+```
+
+Y en `dot_config/neovide/config.toml.tmpl`:
+```toml
+vsync = true
+
+[box-drawing]
+mode = "native"
+
+[box-drawing.sizes]
+default = [2, 4]
+```
+
+### B. Ghostty (`dot_config/ghostty/config.tmpl`)
 ```ini
 # --- Font & Layout ---
 font-family = "Liga SFMono Nerd Font"
@@ -74,7 +125,7 @@ window-decoration = false
 theme = Oxocarbon
 ```
 
-### B. Kitty (`dot_config/kitty/kitty.conf.tmpl`)
+### C. Kitty (`dot_config/kitty/kitty.conf.tmpl`)
 ```conf
 include colors/oxocarbon.conf
 
@@ -94,7 +145,7 @@ window_padding_width 24
 hide_window_decorations yes
 ```
 
-### C. Foot (`dot_config/foot/foot.ini.tmpl`)
+### D. Foot (`dot_config/foot/foot.ini.tmpl`)
 ```ini
 font=Liga SFMono Nerd Font:size=13
 font-bold=Liga SFMono Nerd Font:style=Bold:size=13
@@ -158,6 +209,7 @@ Si en el futuro cambias a otra tipografía (ej. JetBrains Mono, Geist Mono) y de
    ```
 3. **Aplicar los templates de Chezmoi:**
    ```bash
-   chezmoi apply ~/.config/ghostty/config ~/.config/kitty/kitty.conf ~/.config/foot/foot.ini
+   chezmoi apply ~/.config/nvim-personal/lua/config/options.lua ~/.config/neovide/config.toml ~/.config/ghostty/config ~/.config/kitty/kitty.conf ~/.config/foot/foot.ini
    ```
-4. **Recargar la terminal activa** o abrir una nueva ventana para disfrutar del renderizado exacto.
+4. **Reiniciar Neovide o la terminal activa** para disfrutar del renderizado exacto.
+

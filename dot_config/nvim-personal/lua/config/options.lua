@@ -114,12 +114,44 @@ vim.opt.maxmempattern = 20000 -- increase max memory
 
 -- Neovide GUI Settings (Skia / Hardware rendering)
 if vim.g.neovide then
-  vim.opt.guifont = 'Liga SFMono Nerd Font:h13'
-  vim.g.neovide_padding_top = 28
-  vim.g.neovide_padding_left = 24
-  vim.g.neovide_padding_right = 24
+  -- Tipografía: SF Mono ligaturizada con Skia sin hinting forzado y antialiasing puro
+  vim.opt.guifont = 'Liga SFMono Nerd Font:h13:#h-none:#e-antialias'
+  vim.g.neovide_pixel_geometry = 'RGBH'
+  vim.g.neovide_text_gamma = 0.0
+  vim.g.neovide_text_contrast = 0.5
+
+  -- Padding perimetral equilibrado (espacioso pero aprovechando mejor la pantalla)
+  vim.g.neovide_padding_top = 36
+  vim.g.neovide_padding_left = 28
+  vim.g.neovide_padding_right = 28
   vim.g.neovide_padding_bottom = 20
+
+  -- Profundidad visual: Sombras y desenfoque GPU en ventanas flotantes (Telescope, LSP, popups)
+  vim.g.neovide_floating_shadow = true
+  vim.g.neovide_floating_z_height = 10
+  vim.g.neovide_floating_corner_radius = 8.0
+  vim.g.neovide_floating_blur_amount_x = 2.0
+  vim.g.neovide_floating_blur_amount_y = 2.0
+
+  -- Animaciones fluidas de cursor y desplazamiento
   vim.g.neovide_cursor_animation_length = 0.08
   vim.g.neovide_cursor_trail_size = 0.5
+  vim.g.neovide_cursor_antialiasing = true
   vim.g.neovide_scroll_animation_length = 0.2
+
+  -- Zoom dinámico interactivo con teclado
+  vim.g.neovide_scale_factor = 1.0
+  local change_scale = function(delta)
+    vim.g.neovide_scale_factor = math.max(0.5, math.min(2.0, (vim.g.neovide_scale_factor or 1.0) + delta))
+  end
+  vim.keymap.set({ 'n', 'v' }, '<C-=>', function()
+    change_scale(0.05)
+  end, { desc = 'Neovide Zoom In' })
+  vim.keymap.set({ 'n', 'v' }, '<C-->', function()
+    change_scale(-0.05)
+  end, { desc = 'Neovide Zoom Out' })
+  vim.keymap.set({ 'n', 'v' }, '<C-0>', function()
+    vim.g.neovide_scale_factor = 1.0
+  end, { desc = 'Neovide Reset Zoom' })
 end
+
