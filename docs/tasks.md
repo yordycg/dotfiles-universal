@@ -88,9 +88,18 @@
 - [x] Hyprland descontinuado: secciones comentadas en `packages.yaml` como respaldo; utilidades Wayland genéricas reubicadas a `desktop_gui`.
 - [x] `clean-dotfiles` (caches yay/npm/pip/uv/go-build/playwright/Trash/flatpak-unused) + receta `just clean`.
 - [x] Migración one-shot `run_once_after_98-xdg-migration.sh` (`.cargo/.rustup/go/.npm/.nuget/.dotnet/.bun` → XDG) con re-enlace del backend rust de mise.
-- [x] SDDM: niri por defecto + KDE alternativo (`provision/system/setup-sddm-default-session.sh`).
-- [ ] **Pendiente root (manual):** desinstalar stack hyprland, `paccache -rk1`, sddm drop-in, y re-login para validar XDG.
-- [ ] Verificar que al desinstalar el stack muere el `swaync` huérfano (redundante bajo DMS).
+- [ ] **Pendiente root (manual):** desinstalar stack hyprland y DMS (`dms-shell-niri quickshell-git dsearch-bin`), `paccache -rk1`, sddm drop-in, y re-login para validar XDG.
+- [ ] Verificar que al desinstalar el stack muere el `swaync` huérfano (redundante bajo Noctalia).
+
+## Fase 7: Consolidación Niri + Noctalia (2026-09-07)
+- [x] Purgar DMS (DankMaterialShell), Quickshell, dsearch y matugen del repositorio.
+- [x] Configurar Noctalia v5 como único shell permanente para Niri (Desktop y Laptop).
+- [x] Definir Modo ECO Visual en Laptop (render plano: sin animaciones, sin blur, sin sombras; sin estrangular CPU/RAM para desarrollo).
+- [x] Migrar binds multimedia, launcher, portapapeles y session lock a Noctalia IPC (`noctalia msg`).
+- [x] Reemplazar lista de procesos de DMS por `btop` en Ghostty (`Super+M`).
+- [x] Migrar asociaciones de imágenes de `dms-open` a `imv.desktop` en `mimeapps.list`.
+- [x] Migrar notificaciones de `passage-launcher` a `notify-send`.
+
 
 
 

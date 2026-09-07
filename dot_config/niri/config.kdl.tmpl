@@ -9,30 +9,19 @@
 // Omitir configuración en servidores o WSL
 {{- else }}
 
-// ── Shell activo (A/B): CHEZMOI_SHELL=noctalia chezmoi apply (default: dms) ──
-{{ $shellName := env "CHEZMOI_SHELL" | default "dms" }}
-
 // ── Comportamiento de Ventanas ───────────────────────────────────────────────
 // Pedir a las aplicaciones que omitan sus decoraciones de cliente (CSD).
 // El borde/focus-ring de niri se dibuja alrededor de la ventana.
 prefer-no-csd
 
-// ── Autostart (daemons, sin shell) ───────────────────────────────────────────
+// ── Autostart (daemons base) ─────────────────────────────────────────────────
 spawn-at-startup "dbus-update-activation-environment" "--systemd" "WAYLAND_DISPLAY" "XDG_CURRENT_DESKTOP"
 spawn-at-startup "gnome-keyring-daemon" "--start" "--components=secrets"
 
-// DMS (DankMaterialShell) o Noctalia v5 según CHEZMOI_SHELL (default: dms).
-// Prueba A/B: CHEZMOI_SHELL=noctalia chezmoi apply.
-{{- if eq $shellName "noctalia" }}
+// ── Shell Wayland (Noctalia v5) ───────────────────────────────────────────────
 // Noctalia v5: shell nativo C++/OpenGL ES (barra, lock, notifs, launcher,
-// clipboard, wallpaper, OSD, polkit). Coexiste instalado con DMS.
+// clipboard, wallpaper, OSD, polkit).
 spawn-at-startup "noctalia"
-{{- else }}
-// DMS (DankMaterialShell): shell Quickshell que reemplaza barra, lock, idle,
-// notificaciones, launcher, wallpaper (matugen), clipboard, polkit y OSD.
-// Nota: `dms setup` genera ~/.config/niri/dms/*.kdl si el paquete lo requiere.
-spawn-at-startup "dms" "run"
-{{- end }}
 
 spawn-at-startup "udiskie"
 spawn-at-startup "mpris-proxy"
@@ -115,7 +104,7 @@ output "eDP-1" {
 layout {
     gaps 5
 
-    // Fondo transparente: deja ver el wallpaper de DMS (colocado en el backdrop
+    // Fondo transparente: deja ver el wallpaper de Noctalia (colocado en el backdrop
     // vía layer-rule place-within-backdrop) en los workspaces.
     background-color "transparent"
 
@@ -216,7 +205,7 @@ animations {
 {{- end }}
 
 // ── Overview (equivalente a la vista de workspaces de Tide Island) ───────────
-// El backdrop es transparente para que el wallpaper de DMS (colocado en el
+// El backdrop es transparente para que el wallpaper de Noctalia (colocado en el
 // backdrop vía layer-rule) se vea a través del overview.
 overview {
     zoom 0.5
@@ -242,22 +231,14 @@ xwayland-satellite {
     path "xwayland-satellite"
 }
 
-{{- if eq $shellName "noctalia" }}
 // Noctalia: permite acciones de notificaciones y activación de ventanas
 // (requisito de la doc de integración Noctalia-Niri).
 debug {
     honor-xdg-activation-with-invalid-serial
 }
-{{- end }}
 
 // ── Módulos (binds y window rules) ────────────────────────────────────────────
 include "binds.kdl"
 include "window-rules.kdl"
-
-// ── Tema DMS (matugen) ───────────────────────────────────────────────────────
-// colors.kdl lo genera `dms matugen generate` (run_once_after_86): aporta el
-// background-color transparent y los colores del tema a niri. `optional=true`
-// permite arrancar en máquinas nuevas antes de que exista el archivo.
-include "dms/colors.kdl" optional=true
 
 {{- end }}

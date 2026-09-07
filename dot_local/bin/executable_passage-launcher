@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # =============================================================================
 # passage-launcher
-# Helper para el plugin DMS "Passage": lista la bóveda y ejecuta acciones CRUD.
+# Helper para passage: lista la bóveda y ejecuta acciones CRUD.
 #   list            -> imprime JSON: [{"name": "...", "otp": true/false}, ...]
 #   copy-password   -> copia la contraseña (1ª línea) de <name>
 #   copy-otp        -> copia el código 2FA de <name>
@@ -53,8 +53,8 @@ confirm() {
 }
 
 notify() {
-    if command -v dms >/dev/null 2>&1; then
-        dms notify --app "passage" --title "$1" --body "$2" 2>/dev/null || true
+    if command -v notify-send >/dev/null 2>&1; then
+        notify-send -a "passage" "$1" "$2" 2>/dev/null || true
     fi
 }
 

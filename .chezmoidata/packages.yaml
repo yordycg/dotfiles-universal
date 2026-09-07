@@ -92,12 +92,10 @@ fedora:
     - xwayland-satellite
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
-    - dms
     - noctalia
-    - matugen
+    - imv
     - cava
     - qt6-multimedia
-    - dsearch
     - rsms-inter-vf-fonts
     - fira-code-fonts
 
@@ -190,21 +188,17 @@ arch:
     - xwayland-satellite
     - xdg-desktop-portal-gnome
     - xdg-desktop-portal-gtk
-    - dms-shell-niri
     - noctalia
-    - matugen
+    - imv
     - cava
     - qt6-multimedia-ffmpeg
     - inter-font
     - ttf-fira-code
   aur:
     - wvkbd
-    - quickshell-git
-    - tide-island
     # - hyprshot   # respaldo histórico (Hyprland)
     # - wlogout    # respaldo histórico (Hyprland)
     - snappy-switcher
-    - dsearch-bin
     - visual-studio-code-bin
     - yaak-bin
     - lazy-tmux

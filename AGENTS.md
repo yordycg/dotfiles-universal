@@ -35,8 +35,8 @@ Este repositorio administra la configuración de una infraestructura multi-nodo 
 
 ```mermaid
 graph TD
-    Node2[Nodo 2: Estación Desktop<br>Arch Linux + Niri + DMS<br>KDE Plasma como respaldo]
-    NodeN[Nodo N: Laptop Ligera<br>Arch/Fedora + Niri + DMS ECO]
+    Node2[Nodo 2: Estación Desktop<br>Arch Linux + Niri + Noctalia<br>KDE Plasma como respaldo]
+    NodeN[Nodo N: Laptop Ligera<br>Arch/Fedora + Niri + Noctalia ECO Visual]
 
     subgraph Desarrollo Aislado
         Mise[Mise: CLIs y runtimes en $HOME con data/cache en XDG]
@@ -54,8 +54,8 @@ graph TD
 ### Definición de Nodos:
 
 1.  **Nodo 1 (Servidor Central - Debian):** _En pausa por presupuesto._
-2.  **Nodo 2 (Estación de Fuerza / Desktop):** Estación de alto rendimiento. Ejecuta **Arch Linux + Niri + DMS (Dank Material Shell)** como flujo principal y **KDE Plasma (sddm)** como escritorio de respaldo. El stack de **Hyprland** quedó descontinuado (respaldo histórico comentado en `packages.yaml`).
-3.  **Nodo N (Clientes Ligeros / Laptops):** Interfaces de movilidad ejecutando **Arch o Fedora + Niri + DMS (ECO Mode)**. Configuración visual plana (sin animaciones ni blur para ahorrar batería), compartiendo el 100% de la lógica gráfica y atajos.
+2.  **Nodo 2 (Estación de Fuerza / Desktop):** Estación de alto rendimiento. Ejecuta **Arch Linux + Niri + Noctalia** como flujo principal y **KDE Plasma (sddm)** como escritorio de respaldo. Animaciones completas, sombras profundas y blur activados.
+3.  **Nodo N (Clientes Ligeros / Laptops):** Interfaces de movilidad ejecutando **Arch o Fedora + Niri + Noctalia (Modo ECO Visual)**. Configuración gráfica plana (sin animaciones, sombras ni blur para ahorrar ciclos de render en iGPU y batería). Conserva el 100% de la capacidad de cómputo (CPU/RAM libre para múltiples navegadores, IDEs de desarrollo, contenedores y terminales) compartiendo el 100% de la lógica gráfica y atajos.
 
 ### Filosofía "Clean Host":
 

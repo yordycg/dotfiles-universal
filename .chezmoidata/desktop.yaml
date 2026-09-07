@@ -1,0 +1,4 @@
+# Datos declarativos del entorno de escritorio (Niri + Noctalia)
+desktop:
+  # Wallpaper por defecto dentro de ~/Pictures/Wallpapers
+  wallpaper: "pokemon_01.jpg"

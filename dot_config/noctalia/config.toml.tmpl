@@ -4,8 +4,6 @@
 # ~/.config/noctalia/. Los cambios hechos en su GUI viven en
 # ~/.local/state/noctalia/settings.toml y tienen prioridad sobre este archivo.
 # Docs: https://docs.noctalia.dev/noctalia/
-# Nota: durante la fase de prueba el tema de kitty/foot/firefox queda congelado
-# al último estado de matugen (solo se regenera con DMS).
 # =============================================================================
 {{- if and (eq .chezmoi.os "linux") (or .isServer .isWSL) }}
 # Sin configuración en servidores o WSL (noctalia no corre ahí).
@@ -49,7 +47,7 @@ end    = ["media", "tray", "notifications", "clipboard", "network", "bluetooth",
 [dock]
 enabled = false
 
-# ── Wallpaper (misma carpeta y archivo por defecto que DMS) ──────────────────
+# ── Wallpaper (gestión nativa por Noctalia) ──────────────────────────────────
 [wallpaper]
 enabled     = true
 fill_mode   = "crop"
@@ -58,9 +56,9 @@ transition  = ["fade"]
 transition_on_startup = false
 
 [wallpaper.default]
-path = "~/Pictures/Wallpapers/{{ .dms.wallpaper }}"
+path = "~/Pictures/Wallpapers/{{ .desktop.wallpaper }}"
 
-# ── Theme (paleta Tokyo Night ≈ look actual de matugen) ───────────────────────
+# ── Theme (paleta Tokyo Night) ────────────────────────────────────────────────
 [theme]
 mode    = "dark"
 source  = "builtin"
