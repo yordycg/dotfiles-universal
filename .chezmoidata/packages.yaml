@@ -17,6 +17,7 @@ fedora:
     - man-db
     - man-pages
     - tealdeer
+    - strace
   dev_headers:
     - gcc
     - gcc-c++
@@ -116,6 +117,7 @@ arch:
     - man-pages
     - tealdeer
     - rebuild-detector
+    - strace
   dev_headers:
     - base-devel
     - cmake
@@ -232,6 +234,7 @@ debian:
     - less
     - man-db
     - manpages
+    - strace
   dev_toolchain:
     - python3-venv
     - gcc
