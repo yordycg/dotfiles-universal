@@ -116,6 +116,12 @@ if [ "${NODE_HAS_GUI:-}" = "true" ]; then
     # Paquetes AUR del escritorio (idempotente y tolerante)
     install_section_aur "aur"
 
+    # Stack de Gaming (Steam, multilib, gamemode, mangohud) solo en Desktop
+    if [ "${NODE_IS_DESKTOP:-}" = "true" ]; then
+        log_info "Instalando stack de Gaming (Steam, multilib, optimizaciones)..."
+        install_section "gaming"
+    fi
+
     # Activar servicios instalados condicionalmente
     if systemctl list-unit-files bluetooth.service &>/dev/null; then
         log_info "Habilitando servicio de Bluetooth..."

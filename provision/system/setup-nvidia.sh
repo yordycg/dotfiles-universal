@@ -42,6 +42,14 @@ elif [ -f /etc/arch-release ]; then
         run sudo pacman -S --noconfirm --needed nvidia-dkms
     fi
 
+    # Librerías de 32-bits de NVIDIA para multilib (Steam / Wine / Proton)
+    if grep -q "^\[multilib\]" /etc/pacman.conf 2>/dev/null; then
+        if ! pacman -Qi lib32-nvidia-utils &>/dev/null; then
+            log_info "→ Instalando librerías multilib NVIDIA (lib32-nvidia-utils)..."
+            run sudo pacman -S --noconfirm --needed lib32-nvidia-utils
+        fi
+    fi
+
     # Configurar KMS (Kernel Mode Setting) para NVIDIA
     if [ -f /etc/mkinitcpio.conf ]; then
         if ! grep -q "nvidia" /etc/mkinitcpio.conf; then
