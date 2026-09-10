@@ -100,6 +100,8 @@
 - [x] Migrar asociaciones de imágenes de `dms-open` a `imv.desktop` en `mimeapps.list`.
 - [x] Migrar notificaciones de `passage-launcher` a `notify-send`.
 
-
-
-
+## Backlog / Futuro: Orquestación Multi-Agente (Firstmate)
+- [ ] Evaluar Firstmate (`kunchenguid/firstmate`) como orquestador asíncrono sobre Herdr:
+  - Analizar integración de `treehouse` para worktrees efímeros en proyectos de desarrollo (`~/workspace/work/`, `~/workspace/personal/`).
+  - Probar tareas tipo `scout` (auditorías e investigación en read-only) sin alterar repositorios principales.
+  - Mantener `learning-path` aislado en modo estudio interactivo (Socratic Mentor).
