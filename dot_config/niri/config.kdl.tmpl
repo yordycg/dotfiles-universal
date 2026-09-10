@@ -83,13 +83,14 @@ input {
 // ── Salidas (monitores) ───────────────────────────────────────────────────────
 {{- if eq .node.profile "desktop" }}
 output "DP-2" {
-    mode "1920x1080@143.98"
+    mode "1920x1080@143.981"
+    variable-refresh-rate on-demand=true
     position x=0 y=0
     scale 1.0
     focus-at-startup
 }
 output "HDMI-A-1" {
-    mode "1920x1080@74.97"
+    mode "1920x1080@74.973"
     position x=1920 y=0
     scale 1.0
 }

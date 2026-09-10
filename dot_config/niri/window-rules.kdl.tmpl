@@ -163,4 +163,23 @@ window-rule {
     open-floating true
 }
 
+// ── Steam y Juegos (Albion Online, Steam Apps) ──────────────────────────────
+// Todas las ventanas secundarias, modales y diálogos de Steam deben ser flotantes
+window-rule {
+    match app-id=r#"^steam$"#
+    open-floating true
+}
+
+// Únicamente la ventana principal del cliente de Steam se mantiene en tiling
+window-rule {
+    match app-id=r#"^steam$"# title=r#"^Steam$"#
+    open-floating false
+}
+
+// Ventanas de juegos: habilitar Variable Refresh Rate (G-Sync/Freesync)
+window-rule {
+    match app-id=r#"^(Albion-Online|AlbionOnline|steam_app_.*)$"#
+    variable-refresh-rate true
+}
+
 {{- end }}
