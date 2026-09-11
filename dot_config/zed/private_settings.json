@@ -14,10 +14,14 @@
     // ---------------------------------------------------------------------
     "theme": {
         "mode": "dark",
-        "dark": "Matte Black",
+        "dark": "Oxocarbon Dark (IBM Carbon)",
         "light": "Gruvbox Material",
     },
-    "icon_theme": "Material Icon Theme",
+    "icon_theme": {
+        "mode": "light",
+        "light": "Material Icon Theme",
+        "dark": "Material Icon Theme",
+    },
 
     // ---------------------------------------------------------------------
     // FUENTES
@@ -118,9 +122,9 @@
     },
 
     "show_whitespaces": "none",
-    "preferred_line_length": 100,
+    "preferred_line_length": 80,
     "soft_wrap": "bounded",
-    "wrap_guides": [100],
+    "wrap_guides": [80],
     "show_wrap_guides": true,
 
     "indent_guides": {
