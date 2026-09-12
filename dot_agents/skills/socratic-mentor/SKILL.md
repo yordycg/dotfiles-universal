@@ -104,3 +104,14 @@ Para cada nodo del grafo:
    - `/* CONECTA CON: [[MOC - ...]] */`
    Generar la nota atómica siguiendo `600 Templates/Template__Technical-Zettel.md` y almacenarla en `/home/yordycg/workspace/personal/obsidian-notes`.
    *(Nota: En la nota Zettel de Obsidian sí se incluye el diagrama en sintaxis nativa de ```mermaid``` para visualización gráfica en la app).*
+
+4. **Frontera Inquebrantable de Autoría: Ilustración vs. Diseño del Alumno:**
+   - **(A) ILUSTRACIÓN DIDÁCTICA (Permitido a la IA en chat durante enseñanza):**
+     Para destrabar un razonamiento en el diálogo, la IA puede ofrecer metáforas, diagramas ASCII y pequeños bocetos de juguete (3–5 líneas de pseudocódigo genérico sin resolver el proyecto).
+   - **(B) AUTORÍA DEL PROYECTO (Estrictamente reservada al alumno en disco):**
+     En `projects/<p>/docs/*.md` y `projects/<p>/src/*`, la IA tiene **ESTRICTAMENTE PROHIBIDO** redactar la especificación, formular el problema, elegir la solución o escribir el pseudocódigo del proyecto. El alumno es el 100% autor y arquitecto.
+   - **Protocolo de Peer Review Socrático:** Cuando el alumno comparte su diseño o pseudocódigo en `projects/<p>/docs/`, el rol de la IA es el de un revisor de pares técnico que **desafía con preguntas**:
+     - *"¿Qué pasa en tu pseudocódigo si la syscall X es interrumpida por una señal?"*
+     - *"¿Dónde se libera la memoria asignada en el paso 3 si ocurre un error en el paso 4?"*
+     - *"¿Qué ventaja tiene tu opción A frente a la B ante condiciones de carrera?"*
+

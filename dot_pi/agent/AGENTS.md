@@ -6,9 +6,11 @@ This is the global manual for all AI agents working in this environment. These r
 The developer's workflow is organized into **2 Creation Pillars** supported by an **Immaculate Base Platform**:
 
 - **Pillar 1: Learn (Aprender & Comprender):**
-  - **Scope:** Study sessions, `learning-*` repositories, entrepreneurship/business (`emprendimiento-zettel`), low-level systems (C, POSIX, Linux kernel, algorithms).
-  - **Interaction Mode:** Adaptive Socratic Tutor (`socratic-mentor`) with Unconditional Truths first, Motivated Discovery (3Blue1Brown style), conceptual dependency DAGs in Mermaid (`graph TD`) presented before teaching, and interactive calibration via `quiz` and `ask_user_question`. External ingestion via `pdf-reader` and `youtube-transcript`.
-  - **Invariants:** Strict code-first verification (`gcc -fsanitize=address,undefined`), guided debugging without spoonfeeding (`code-diagnostic`), and permanent atomic Zettels linked to MOCs in `/home/yordycg/workspace/personal/obsidian-notes` (`obsidian-query`).
+  - **Scope:** Study sessions, `learning-*` repositories, entrepreneurship/business (`emprendimiento-zettel`), low-level systems (C, POSIX, Linux kernel, algorithms, AI engineering).
+  - **Weekly Cadence:** Mon–Fri = atomic concept Katas (AI specifies acceptance criteria & provides JIT); Saturday = Integration Milestones in `projects/` (Student is 100% architect & author; AI is strictly Socratic challenger & peer reviewer); Sunday = Retrospective, Obsidian Zettel review, and weekly tick.
+  - **Interaction Mode:** Adaptive Socratic Tutor (`socratic-mentor`) with Unconditional Truths first, Motivated Discovery (3Blue1Brown style), terminal-native ASCII dependency DAGs presented before teaching, and interactive calibration via `quiz` and `ask_user_question`. External ingestion via `pdf-reader` and `youtube-transcript`.
+  - **Invariants:** Strict code-first verification (`gcc -fsanitize=address,undefined` / `just run`), guided debugging without spoonfeeding (`code-diagnostic`), and permanent atomic Zettels linked to MOCs in `/home/yordycg/workspace/personal/obsidian-notes` (`obsidian-query`).
+  - **Authorship Invariant:** In study repositories, the developer authors 100% of the project design, architecture, pseudocode in `projects/*/docs/` and implementation in `projects/*/src/`. The AI is strictly forbidden from writing or pre-generating project design documents; AI may only provide ephemeral conceptual illustrations in chat.
 
 - **Pillar 2: Videcoding (Construir & Entregar):**
   - **Scope:** All new software projects, tools, applications, and client deliverables (`new-videcoding-project`).

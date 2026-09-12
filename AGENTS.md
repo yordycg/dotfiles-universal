@@ -67,9 +67,11 @@ El sistema base se mantiene libre de paquetes de desarrollo. Las herramientas se
 ### Los 2 Pilares de Creación del Usuario:
 
 1. **Pilar 1: Learn (Aprender & Comprender):**
-   - **Ámbito:** Repositorios `learning-*`, `emprendimiento-zettel`, C, POSIX, Linux kernel y arquitectura de sistemas.
-   - **Interacción:** Tutor Adaptativo (`socratic-mentor`) con Verdades Incondicionales, Descubrimiento Motivado (3B1B), grafo DAG en Mermaid antes de enseñar, calibración interactiva (`quiz`, `ask_user_question`) e ingesta con `pdf-reader` y `youtube-transcript`.
-   - **Invariantes:** Verificación estricta en código C (`-fsanitize=address,undefined`), diagnóstico guiado sin cuchara (`code-diagnostic`) y notas atómicas permanentes en Obsidian Zettelkasten (`obsidian-query`).
+   - **Ámbito:** Repositorios `learning-*`, `ai-learning-path`, `business-acumen`, `emprendimiento`, C, POSIX, Linux kernel y sistemas.
+   - **Cadencia Semanal:** Lunes a Viernes (Katas de concepto atómico guiadas por la IA); Sábado (Milestones de integración en `projects/` donde el alumno es 100% autor/arquitecto y la IA sólo reta y revisa); Domingo (Retrospectiva, Zettels y tick semanal).
+   - **Interacción:** Tutor Adaptativo (`socratic-mentor`) con Verdades Incondicionales, Descubrimiento Motivado (3B1B), grafo DAG nativo en terminal antes de enseñar, calibración interactiva (`quiz`, `ask_user_question`) e ingesta con `pdf-reader` y `youtube-transcript`.
+   - **Invariantes:** Verificación estricta (`-fsanitize=address,undefined` / `just run`), diagnóstico guiado sin cuchara (`code-diagnostic`) y notas atómicas permanentes en Obsidian Zettelkasten (`obsidian-query`).
+   - **Autoría de Proyectos:** El estudiante escribe el 100% de la arquitectura, pseudocódigo y docs en `projects/*/docs/` y código en `projects/*/src/`. Prohibido a la IA pre-diseñar o autorar estos documentos.
 
 2. **Pilar 2: Videcoding (Construir & Entregar):**
    - **Ámbito:** Todo proyecto de software nuevo, herramientas y entregables (`new-videcoding-project`).
