@@ -41,7 +41,7 @@ else
     git -C "$TARGET_DIR" commit -m "chore: initial videcoding project setup from template" > /dev/null
 fi
 
-chmod +x "$TARGET_DIR"/bin/*.sh "$TARGET_DIR"/bin/pre-commit "$TARGET_DIR"/canvas-tool.py 2>/dev/null || true
+chmod +x "$TARGET_DIR"/bin/* 2>/dev/null || true
 
 echo -e "${GREEN}¡Proyecto videcoding '$PROJECT_NAME' creado en $TARGET_DIR!${NC}"
 echo ""
@@ -54,7 +54,7 @@ echo ""
 echo -e "${BLUE}Siguientes pasos:${NC}"
 echo "  1. cd $PROJECT_NAME"
 echo "  2. opencode: cambia con Tab a 'architect' y pídele que complete las specs y ejecute Fase 0."
-echo "  3. Revisa y aprueba el roadmap (ROADMAP.md + tablero Project.canvas)."
+echo "  3. Revisa y aprueba el roadmap (docs/roadmap.md + tablero Project.canvas)."
 echo "  4. opencode: agente 'worker' -> ejecuta las tareas TDD checkpoint por checkpoint."
 echo "  5. pi: abre el proyecto con pi y corre /sdd-init si requieres flujo interactivo."
 echo "  6. Obsidian: abre $PROJECT_NAME como vault o abre Project.canvas para visualizar el kanban."

@@ -1,6 +1,6 @@
 ---
 name: videcoding-framework
-description: Use when starting a videcoding project, creating a new project with new-videcoding-project, or when the user mentions architect/worker, TDD estricto, dual-write, ROADMAP.md, Project.canvas, Kanvas, SPECS.md, CODESTYLE.md, or the videcoding/vibe-coding workflow. Instructs the agent to read the videcoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, TASKS+canvas sync).
+description: Use when starting a videcoding project, creating a new project with new-videcoding-project, or when the user mentions architect/worker, TDD estricto, dual-write, docs/roadmap.md, Project.canvas, Kanvas, docs/specs.md, .agents/codestyle.md, or the videcoding/vibe-coding workflow. Instructs the agent to read the videcoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, TASKS+canvas sync).
 ---
 
 # Framework de Videcoding (Architect + Workers)
@@ -11,8 +11,8 @@ Flujo para proyectos donde un **architect** (modelo potente) define specs y desc
 
 Al iniciar, el agente DEBE leer primero el framework del proyecto:
 
-- `AGENTS.md` de la raíz del proyecto (orquestación: roles, TDD estricto, gates, dual-write). Es agnóstico a la herramienta (opencode / pi).
-- Si el proyecto se creó con `new-videcoding-project` o `new-code` (template GitHub `yordycg/template-videcoding`), la estructura ya existe: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`, `TASKS.md`, `Project.canvas` + `canvas-tool.py`, `docs/`, `meta/`, `Justfile`, y `.agents/agents/`.
+- `AGENTS.md` de la raíz del proyecto (orquestación: roles, TDD estricto, gates, dual-write). Es agnóstico a la herramienta (opencode / pi / agy).
+- Si el proyecto se creó con `new-videcoding-project` o `new-code` (template GitHub `yordycg/template-videcoding`), la estructura ya existe: `docs/specs.md`, `README.md`, `.agents/codestyle.md`, `.agents/rules.md`, `docs/roadmap.md`, `TASKS.md`, `Project.canvas` + `bin/canvas-tool.py`, `docs/`, `meta/`, `Justfile`, y `.agents/agents/`.
 
 ## 2. Roles
 
@@ -23,17 +23,17 @@ Al iniciar, el agente DEBE leer primero el framework del proyecto:
 
 ## 3. Reglas de ejecución (obligatorias)
 
-- **SDD primero**: sin código hasta que `SPECS.md` y el roadmap estén aprobados por el humano.
+- **SDD primero**: sin código hasta que `docs/specs.md` y el roadmap estén aprobados por el humano.
 - **TDD estricto**: RED (test que falla) → GREEN (mínimo) → REFACTOR. `just test` en verde.
 - **Gates**: `just lint` y `just test` antes de cada commit; formatear antes de commitear.
 - **No self-verify**: el worker deja en cian (`finish`); el humano pone el verde.
-- **Dual-write**: cada cambio de estado se refleja en `TASKS.md` Y `Project.canvas` (vía `canvas-tool.py`, NUNCA editar el JSON a mano) en el mismo commit. Si divergen → `just sync-tracking`.
-- **Curse of instructions**: el worker lee SOLO la sección relevante de `SPECS.md` por tarea.
+- **Dual-write**: cada cambio de estado se refleja en `TASKS.md` Y `Project.canvas` (vía `bin/canvas-tool.py` o `just canvas`, NUNCA editar el JSON a mano) en el mismo commit. Si divergen → `just sync-tracking`.
+- **Curse of instructions**: el worker lee SOLO la sección relevante de `docs/specs.md` por tarea.
 - **Commits**: Conventional Commits en inglés, un checkpoint = un commit.
 
 ## 4. Notas por agente
 
-- **Directorio maestro `.agents/`**: la fuente de verdad de roles y subagentes reside en `.agents/agents/` (`architect.md`, `worker.md`, `scout.md`) y `.agents/learnings.md`.
+- **Directorio maestro `.agents/`**: la fuente de verdad de configuración, estilo y roles reside en `.agents/` (`codestyle.md`, `rules.md`, `learnings.md` y subagentes en `.agents/agents/`: `architect.md`, `worker.md`, `scout.md`).
 - **opencode**: subagentes enlazados automáticamente vía symlink `.opencode/agent -> ../.agents/agents`. Switch con Tab.
 - **pi**: `/sdd-init` una vez; el flujo SDD se alinea con este workflow.
 - **agy**: carga directamente los roles y contextos de `.agents/`.

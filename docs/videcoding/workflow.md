@@ -17,31 +17,31 @@ comunidad (véase [recursos](#recursos)) es separar **quién piensa** del **qui�
 - **Architect** (modelo potente): especificación, descomposición en tareas atómicas, scaffolding.
 - **Worker** (modelo barato): implementa tarea a tarea con **TDD estricto** y gates.
 
-Ambos se apoyan en un contrato escrito (`SPECS.md`) y un plan (`ROADMAP.md`) versionados en git,
+Ambos se apoyan en un contrato escrito (`docs/specs.md`) y un plan (`docs/roadmap.md`) versionados en git,
 de modo que el estado nunca vive en el contexto de un chat: sobrevive a cualquier agente.
 
 ## Los 5 documentos de verdad
 
 | Archivo | Qué es | Quién |
 |---------|--------|-------|
-| `SPECS.md` | Comportamiento esperado, entradas/salidas, casos borde, criterios de aceptación | architect |
+| `docs/specs.md` | Comportamiento esperado, entradas/salidas, casos borde, criterios de aceptación | architect |
 | `README.md` | Visión del producto terminado | architect |
-| `CODESTYLE.md` | Reglas de estilo + ejemplo real heredado | architect (Fase 0) |
-| `ROADMAP.md` | Tareas atómicas con IDs y dependencias | architect |
+| `.agents/codestyle.md` | Reglas de estilo + ejemplo real heredado | architect (Fase 0) |
+| `docs/roadmap.md` | Tareas atómicas con IDs y dependencias | architect |
 | `TASKS.md` + `Project.canvas` | Tracking de ejecución (siempre sincronizados) | worker + humano |
 
 ## Flujo de trabajo
 
 1. **Ideación** — itera la idea en un chat (o con el architect en plan mode).
-2. **Especificación** — el architect genera los 4 documentos + descompone el roadmap.
+2. **Especificación** — el architect genera los documentos en `docs/` y `.agents/` + descompone el roadmap.
 3. **Checkpoint humano** — apruebas specs y roadmap (y el tablero `Project.canvas`).
 4. **Fase 0/1** — el architect ejecuta el skeleton: tooling, linter, Justfile, estilo heredado.
 5. **Ejecución** — workers consumen tareas atómicas:
    - `just ready` → elige la de mayor prioridad sin dependencias pendientes (WIP=1).
-   - `python3 canvas-tool.py "Project.canvas" start <ID>` + marca en `TASKS.md`.
+   - `python3 bin/canvas-tool.py "Project.canvas" start <ID>` (o `just canvas start <ID>`) + marca en `TASKS.md`.
    - TDD estricto (RED → GREEN → REFACTOR) y `just test` en verde.
    - `just lint` + `just test` (gates) → formatear → commit convencional.
-   - `python3 canvas-tool.py "Project.canvas" finish <ID>` + marca en revisión en `TASKS.md`.
+   - `python3 bin/canvas-tool.py "Project.canvas" finish <ID>` (o `just canvas finish <ID>`) + marca en revisión en `TASKS.md`.
 6. **Verificación humana** — tú pones el verde en el tablero; se desbloquean dependencias.
 7. **Iterar** — se puede dejar "overnight": los workers continúan mientras el historial de git es el plan.
 
@@ -58,7 +58,7 @@ Cada transición de tarea se refleja en **ambos** sitios en el mismo commit:
 | Hecha | 🟢 green (**solo humano**) | `- [x]` |
 
 `just sync-tracking` reconcilia desfases; `just gate` (o el hook pre-commit) lo verifica en cada commit.
-Nunca editar `Project.canvas` a mano: siempre vía `canvas-tool.py`.
+Nunca editar `Project.canvas` a mano: siempre vía `python3 bin/canvas-tool.py "Project.canvas" <cmd>` o `just canvas <cmd>`.
 
 ## Agentes
 
@@ -68,10 +68,9 @@ Nunca editar `Project.canvas` a mano: siempre vía `canvas-tool.py`.
 | **Worker** | DeepSeek v4-flash | DeepSeek directo | Implementación con TDD estricto |
 | **Scout** | Gemini Flash | Google | Exploración/investigación |
 
-- **opencode** — subagentes en `.opencode/agent/`: `architect` (Claude vía OpenRouter),
-  `worker` (DeepSeek directo) y `scout` (Gemini). Se cambian con `Tab`. El worker es el
-  agente predeterminado. El built-in `explore` usa Gemini (capa barata). OpenRouter está
-  restringido por whitelist a solo Claude (guardrail de coste).
+- **opencode** — subagentes en `.agents/agents/`: `architect.md`, `worker.md` y `scout.md`.
+  El comando `just setup` crea automáticamente el symlink `.opencode/agent -> ../.agents/agents`.
+  Se cambian con `Tab`. El worker es el agente predeterminado.
 - **pi** — el mismo `AGENTS.md` de la raíz es la fuente de verdad. Correr `/sdd-init` una vez;
   el flujo SDD del Gentleman se alinea (`apply` = worker con TDD, `verify` = gates). Asignar
   modelos por fase con `/gentle:models`: design=Claude (OpenRouter), implement=DeepSeek,

@@ -8,8 +8,8 @@ Cómo operar el proyecto en el día a día: la sesión humana de retomar, el cic
 2. **Revisa lo que dejó el worker overnight** (si corrió): `git log --oneline -20` para ver los commits.
 3. **Marca verdes** (tu único poder exclusivo): en Obsidian, las tareas cian → verde. En markdown: `- [ ]` → `- [x]` en `TASKS.md`. Al marcar verdes se desbloquean dependencias.
 4. **`just ready`** → tareas disponibles (rojas con dependencias cumplidas).
-5. **Delega al worker**: en opencode, cambia a `worker` (Tab) y dale: *"Ejecuta la siguiente tarea ready de ROADMAP.md con TDD estricto y gates."*
-6. **Revisa**: cuando el worker deja en cian (`finish`), revisa el commit/diff contra los criterios de aceptación de `SPECS.md`. KINO → verde. SLOP → reabrir (`pause` / nueva tarea).
+5. **Delega al worker**: en opencode, cambia a `worker` (Tab) y dale: *"Ejecuta la siguiente tarea ready de docs/roadmap.md con TDD estricto y gates."*
+6. **Revisa**: cuando el worker deja en cian (`finish`), revisa el commit/diff contra los criterios de aceptación de `docs/specs.md`. KINO → verde. SLOP → reabrir (`pause` / nueva tarea).
 
 > **No self-verify:** el worker nunca se marca verde. El verde lo pones tú. Si ves un `- [x]` en `TASKS.md` que el canvas no tiene en verde, es un error del worker: `just sync-tracking` lo revierte.
 
@@ -27,7 +27,7 @@ El gate pre-commit ya garantiza: lint OK + tests OK + TASKS↔canvas sincronizad
 Ideal para videcoding "máquina de código" de larga duración:
 
 **Antes de irte:**
-1. `SPECS.md` y roadmap aprobados (checkpoint humano hecho).
+1. `docs/specs.md` y roadmap aprobados (checkpoint humano hecho).
 2. Fase 0 completada (Justfile con `lint`/`test` reales — si no, el gate es vacío).
 3. Al menos una tarea roja lista (`just ready`) para que el worker arranque solo.
 4. Confirmar que el worker usa **DeepSeek** (barato) — nunca dejar Claude corriendo solo.

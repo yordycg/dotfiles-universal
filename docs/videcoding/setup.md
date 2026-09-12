@@ -22,7 +22,7 @@ Instala `.git/hooks/pre-commit`, que corre `just gate` (lint + test + verificaci
 ## 3. Verificar el tablero
 
 ```bash
-just setup     # comprueba canvas-tool.py + Project.canvas y muestra el estado
+just setup     # comprueba bin/canvas-tool.py + Project.canvas y muestra el estado
 ```
 
 ## 4. (Opcional) Abrir en Obsidian
@@ -37,7 +37,7 @@ opencode       # dentro del proyecto
 ```
 
 - Confirma que aparece `anthropic/claude-sonnet-4.6` (OpenRouter). La whitelist de OpenRouter solo muestra ese modelo.
-- Si el slug cambió (nuevas versiones de Claude), ajusta `.opencode/agent/architect.md` (`model:`).
+- Si el slug cambió (nuevas versiones de Claude), ajusta `.agents/agents/architect.md` (`model:`).
 
 ## 6. pi: registrar el proyecto y asignar modelos
 
@@ -49,7 +49,7 @@ pi             # dentro del proyecto
 
 ## 7. Fase 0 — ¡crítico! El architect debe llenar el Justfile
 
-Los targets `lint`, `test` y `dev` del `Justfile` son **placeholders** (`⚠ FASE 0: define ...`). Hasta que el architect no los llene con los comandos reales del stack, **el gate no verifica nada** (pasa vacío). Tarea obligatoria del architect en la Fase 0/1, junto con el scaffolding y el ejemplo de estilo en `CODESTYLE.md`.
+Los targets `lint`, `test` y `dev` del `Justfile` son **placeholders** (`⚠ FASE 0: define ...`). Hasta que el architect no los llene con los comandos reales del stack, **el gate no verifica nada** (pasa vacío). Tarea obligatoria del architect en la Fase 0/1, junto con el scaffolding y el ejemplo de estilo en `.agents/codestyle.md`.
 
 ## 8. Auth de proveedores (una vez por máquina)
 
