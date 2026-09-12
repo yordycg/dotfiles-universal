@@ -21,7 +21,7 @@ Modelo estacional: semestre (sep–nov 2026) = `learning-path`; vacaciones (dic 
 ### 3. Responder "¿qué toca hoy?" (El Contrato de la Kata Diaria — Obligatorio)
 Al preguntar "¿qué toca hoy?", **NUNCA** responder con opciones difusas o una lista de 3 ejercicios opcionales. Responder con **La Kata del Día (Un único reto ejecutable)** estructurado exactamente así:
 
-1. **Árbol de Contexto:** Dónde encaja hoy (ej. `OS → Processes → Signals → mysh v1.5`).
+1. **Árbol de Contexto + Milestone Bridge:** Dónde encaja hoy en el roadmap (ej. `OS → Processes → Signals → mysh v1.5`) + **Impacto en el Proyecto del Sábado** (1 oración precisa explicando por qué este concepto es indispensable para el feature o versión del fin de semana en `projects/`).
 2. **La Kata del Día (Reto Principal):**
    - **Objetivo:** 1 oración precisa de lo que se va a demostrar hoy en código.
    - **Archivo:** Ruta exacta (ej. `3-expert/07-signals/3-fork-exec-disposition.c`).
