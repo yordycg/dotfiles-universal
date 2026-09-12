@@ -30,7 +30,7 @@ Errores comunes, su causa y la solución. Si el problema no está aquí, revisa 
 | Síntoma | Causa | Solución |
 |---------|-------|----------|
 | `new-videcoding-project` no existe | No aplicado al home | `chezmoi apply .local/bin/new-videcoding-project` |
-| `.opencode/agent/` no aparece en `~/scripts/templates/videcoding-base` | chezmoi no gestiona directorios con `.` literal | **Normal**: el comando copia la plantilla desde `sourceDir` (el repo git), no desde `~/scripts`. No afecta al crear proyectos |
+| `.agents/` o `.opencode/` en proyectos nuevos | Template oficial en GitHub | **Normal**: el comando clona directamente el repo template `yordycg/template-videcoding` con todos sus dotfiles intactos |
 | La plantilla no actualiza un proyecto ya creado | La plantilla se copia solo al crear | Los proyectos ya creados se actualizan a mano (o se recrea el proyecto) |
 
 ## Regla general

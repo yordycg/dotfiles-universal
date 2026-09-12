@@ -25,4 +25,4 @@
 - **Estado del tablero:** `just status` · `just ready`
 - **Sincronizar TASKS↔canvas:** `just sync-tracking`
 - **Gate pre-commit:** `just gate` (o `just install-hooks` para el hook automático)
-- **Plantilla fuente:** `scripts/templates/videcoding-base/`
+- **Plantilla fuente:** [`yordycg/template-videcoding`](https://github.com/yordycg/template-videcoding)

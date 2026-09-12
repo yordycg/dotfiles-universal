@@ -18,8 +18,9 @@ Si esa ruta no existe, buscar por nombre con fallback:
 - `~/workspace/personal/obsidian-notes/**/Framework Project.md`
 - `~/workspace/personal/obsidian-notes/**/Framework Freelance.md` (nombre antiguo)
 
-**Fallback (plantilla embebida en chezmoi):**
-`~/.local/share/chezmoi/scripts/templates/project-base/` (TASKS.md + docs + meta)
+**Plantilla oficial:**
+GitHub Template: `yordycg/template-videcoding` (TASKS.md + docs + meta + Kanvas)
+Generador: `new-code <nombre>` o `new-videcoding-project <nombre>`
 
 ## 2. Determinar el tamaño del proyecto
 
@@ -53,7 +54,7 @@ El primer paso de cualquier proyecto es la documentación, NO el código. Seguir
 - Rellenar los campos `[placeholder]` de cada doc, no dejarlos vacíos.
 - No crear `Dockerfile`/`compose.yaml`/`Justfile` pre-generados: son tarea de aprendizaje del usuario (Etapa 2 de TASKS.md), solo se crean cuando él lo pida.
 - Los archivos de `meta/` no se versionan (están en `.gitignore`): no sugerir commitearlos.
-- Si el usuario crea el proyecto con `new-project` o `just new-project`, la estructura ya existe; el trabajo es completar los documentos en orden.
+- Si el usuario crea el proyecto con `new-code` o `new-videcoding-project` (o alias `new-project`), la estructura ya existe; el trabajo es completar los documentos en orden.
 
 ## 5. Verificación
 

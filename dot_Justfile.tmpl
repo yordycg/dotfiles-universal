@@ -29,8 +29,14 @@ save MSG="feat: update dotfiles":
 
 # ── Linux / Workspace ──────────────────────────────────────────────
 
+new-learn NAME:
+    @new-learn-project {{`{{NAME}}` }}
+
+new-code NAME:
+    @new-videcoding-project {{`{{NAME}}` }}
+
 new-project NAME:
-    @new-project {{`{{NAME}}` }}
+    @new-videcoding-project {{`{{NAME}}` }}
 
 clean:
     @clean-dotfiles

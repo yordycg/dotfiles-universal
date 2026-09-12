@@ -70,6 +70,8 @@ alias reload='source ~/.zshrc'
 alias oc='opencode'
 alias ocp='opencode --agent plan'
 alias tdl='tdl'
+alias new-learn='new-learn-project'
+alias new-code='new-videcoding-project'
 
 # -- Herdr (Workspace Manager) -------------------
 alias hd='herdr'

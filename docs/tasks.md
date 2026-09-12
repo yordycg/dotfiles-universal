@@ -55,8 +55,8 @@
     doc del workflow "Nuevo proyecto".
 - [x] Implementar agente IA de código `opencode`
   - Configurar e integrar la CLI de `opencode` en el entorno de desarrollo y ajustar alias/keybindings en Zsh, además del layout Tmux (`tdl`).
-- [ ] Implementar agente IA `pi` (Agent IA / pi-acp)
-  - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal.
+- [x] Implementar agente IA `pi` (Agent IA / pi-acp)
+  - Integrar la CLI del agente de inteligencia artificial `pi` para asistencia y automatización avanzada en terminal. Con extensiones personalizadas, headers limpios y paridad total con OpenCode y Antigravity.
 
 ## Fase 5: Videcoding Workflow (Architect + Workers)
 - [x] Investigar recursos de la comunidad (sammwy SPECS/ROADMAP, Kanvas, claude-code-ultimate-guide, gentle-ai/pi)
@@ -99,6 +99,14 @@
 - [x] Reemplazar lista de procesos de DMS por `btop` en Ghostty (`Super+M`).
 - [x] Migrar asociaciones de imágenes de `dms-open` a `imv.desktop` en `mimeapps.list`.
 - [x] Migrar notificaciones de `passage-launcher` a `notify-send`.
+
+## Fase 8: Consolidación de Pilares y Templates Oficiales GitHub (2026-09-12)
+- [x] Paridad de la Tríada de IA (Pi, OpenCode, Antigravity) usando `.agents/` como fuente única de verdad.
+- [x] Optimizar tiempo de arranque de Pi en `$HOME` (de 19.3s a 2.5s) reduciendo timeout de FFF.
+- [x] Pilar 1 (Learn): DAGs en ASCII/Unicode en terminal, Single-Focus Invariant, Code-as-Answer, y estándar `@annotations` en comentarios.
+- [x] Pilar 2 (Videcoding): Unificación de documentación SDD freelance (Fases 0 a 7) con el motor de Videcoding (Kanvas, `Project.canvas`, dual-write, subagentes en `.agents/agents/`).
+- [x] Migración a repositorios template oficiales en GitHub: `yordycg/template-learn` y `yordycg/template-videcoding`.
+- [x] Purga de templates locales en Chezmoi (`scripts/templates/`) y creación de generadores ligeros `new-learn` y `new-code`.
 
 ## Backlog / Futuro: Orquestación Multi-Agente (Firstmate)
 - [ ] Evaluar Firstmate (`kunchenguid/firstmate`) como orquestador asíncrono sobre Herdr:

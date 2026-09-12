@@ -1,54 +1,49 @@
 #!/usr/bin/env bash
 
-# new-videcoding-project
+# new-videcoding-project (alias: new-code)
 # Descripción: Crea un proyecto con el flujo de videcoding (architect + workers,
-# TDD estricto, dual-write TASKS.md <-> Project.canvas/Kanvas). Funciona con
-# opencode y pi por igual (ver AGENTS.md de la plantilla).
+# TDD estricto, dual-write TASKS.md <-> Project.canvas/Kanvas, SDD Fases 0-7).
+# Usa el template oficial de GitHub: yordycg/template-videcoding.
 
 set -euo pipefail
 
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+RED='\033[0;31m'
 NC='\033[0m'
 
-PROJECT_NAME="$1"
+PROJECT_NAME="${1:-}"
 
 if [ -z "$PROJECT_NAME" ]; then
-    echo -e "${YELLOW}Uso: new-videcoding-project <nombre_del_proyecto>${NC}"
+    echo -e "${YELLOW}Uso: $(basename "$0") <nombre_del_proyecto> [--private|--public]${NC}"
     exit 1
 fi
 
+VISIBILITY="${2:---private}"
 TARGET_DIR="$(pwd)/$PROJECT_NAME"
 
 if [ -d "$TARGET_DIR" ]; then
-    echo -e "Error: El directorio $TARGET_DIR ya existe."
+    echo -e "${RED}Error: El directorio $TARGET_DIR ya existe.${NC}"
     exit 1
 fi
 
-echo -e "${BLUE}Creando proyecto videcoding $PROJECT_NAME en $(pwd)...${NC}"
+echo -e "${BLUE}Creando proyecto Videcoding '$PROJECT_NAME' desde yordycg/template-videcoding...${NC}"
 
-{{- $sourceDir := .chezmoi.sourceDir }}
-TEMPLATE_DIR="{{ $sourceDir }}/scripts/templates/videcoding-base"
-
-if [ ! -d "$TEMPLATE_DIR" ]; then
-    echo -e "Error: plantilla no encontrada en $TEMPLATE_DIR"
-    exit 1
+if command -v gh &>/dev/null && gh auth status &>/dev/null; then
+    gh repo create "$PROJECT_NAME" --template yordycg/template-videcoding "$VISIBILITY" --clone
+else
+    echo -e "${YELLOW}Aviso: 'gh' no autenticado o no disponible. Clonando vía git...${NC}"
+    git clone https://github.com/yordycg/template-videcoding.git "$TARGET_DIR"
+    rm -rf "$TARGET_DIR/.git"
+    git -C "$TARGET_DIR" init > /dev/null
+    git -C "$TARGET_DIR" add .
+    git -C "$TARGET_DIR" commit -m "chore: initial videcoding project setup from template" > /dev/null
 fi
 
-mkdir -p "$TARGET_DIR"
-# Copiar todo el contenido incluyendo dotfiles (bin, .opencode, .gitignore, ...)
-cp -r "$TEMPLATE_DIR"/. "$TARGET_DIR/"
-chmod +x "$TARGET_DIR"/bin/*.sh "$TARGET_DIR"/bin/pre-commit 2>/dev/null || true
+chmod +x "$TARGET_DIR"/bin/*.sh "$TARGET_DIR"/bin/pre-commit "$TARGET_DIR"/canvas-tool.py 2>/dev/null || true
 
-cd "$TARGET_DIR"
-
-# Inicializar Git + commit inicial
-git init > /dev/null
-git add .
-git commit -m "chore: initial videcoding project setup" > /dev/null
-
-echo -e "${GREEN}¡Proyecto videcoding $PROJECT_NAME creado en $TARGET_DIR!${NC}"
+echo -e "${GREEN}¡Proyecto videcoding '$PROJECT_NAME' creado en $TARGET_DIR!${NC}"
 echo ""
 if command -v eza &>/dev/null; then
     eza --tree --icons --level=2 "$TARGET_DIR" 2>/dev/null || ls -la "$TARGET_DIR"
@@ -57,11 +52,9 @@ else
 fi
 echo ""
 echo -e "${BLUE}Siguientes pasos:${NC}"
-echo "  1. opencode: cambia con Tab a 'architect' (Claude) y pídele que genere"
-echo "     SPECS.md · README.md · CODESTYLE.md · ROADMAP.md, y que ejecute la Fase 0."
-echo "  2. Revisa y aprueba el roadmap (ROADMAP.md + tablero Project.canvas)."
-echo "  3. En opencode: agente 'worker' -> /goal 'Complete this project. Read AGENTS.md,'"
-echo "     'follow ROADMAP.md, strict TDD, commit on every checkpoint, conventional commits.'"
-echo "  4. pi: abre el proyecto con pi y corre /sdd-init una vez."
-echo "  5. (Opcional) Observa el tablero: abre $PROJECT_NAME como vault en Obsidian"
-echo "     y, si quieres el watcher, instala el plugin canvas-watcher (ver RULES.md)."
+echo "  1. cd $PROJECT_NAME"
+echo "  2. opencode: cambia con Tab a 'architect' y pídele que complete las specs y ejecute Fase 0."
+echo "  3. Revisa y aprueba el roadmap (ROADMAP.md + tablero Project.canvas)."
+echo "  4. opencode: agente 'worker' -> ejecuta las tareas TDD checkpoint por checkpoint."
+echo "  5. pi: abre el proyecto con pi y corre /sdd-init si requieres flujo interactivo."
+echo "  6. Obsidian: abre $PROJECT_NAME como vault o abre Project.canvas para visualizar el kanban."
