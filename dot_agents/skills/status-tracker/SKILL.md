@@ -1,12 +1,12 @@
 ---
 name: status-tracker
-description: "Use at session start or end: read the active phase status.md (panel) and git log -1, then update status.md, session-log.md, and answer 'qué toca hoy' with the daily code-first contract."
+description: "Use at session start or end: read the active phase status.md (panel) and git log -1, then update status.md, session-log.md, and answer 'qué toca hoy' with the daily kata contract."
 ---
 
 # Skill: Operational Status Tracker (`status-tracker`)
 
 ## Purpose
-Manages session synchronization and progress tracking across roadmaps.
+Manages session synchronization, daily challenge framing, and progress tracking across roadmaps.
 
 ## Instructions
 
@@ -18,17 +18,27 @@ Modelo estacional: semestre (sep–nov 2026) = `learning-path`; vacaciones (dic 
 2. `git log -1` en el repo activo (learning-path o projects/mysh según contexto).
 3. **NO escanear** todo el repositorio ni el vault de Obsidian. Leer notas/docs puntuales solo bajo demanda.
 
-### 3. Responder "¿qué toca hoy?" (Contrato diario — obligatorio)
-Al preguntar "¿qué toca hoy?", responder **siempre** con los 6 elementos:
+### 3. Responder "¿qué toca hoy?" (El Contrato de la Kata Diaria — Obligatorio)
+Al preguntar "¿qué toca hoy?", **NUNCA** responder con opciones difusas o una lista de 3 ejercicios opcionales. Responder con **La Kata del Día (Un único reto ejecutable)** estructurado exactamente así:
 
-1. **Árbol de contexto** (OS → Process → fork → mysh): dónde encaja el concepto de hoy en el mapa grande.
-2. **Contexto breve de 2 min**: QUÉ hace el concepto, **sin el CÓMO**. Ej: "`fork()` crea un nuevo proceso. Tú decides cómo."
-3. **Archivo `.c` a crear** con ruta exacta + comando gcc (`-Wall -Wextra -g`).
-4. **Recurso just-in-time** (nombre + link): se abre SOLO si el código falla. No verlo antes.
-5. **3 ejercicios progresivos opcionales** en `exercises/01-*.c`, `02-*.c`, `03-*.c` (básico → aplicado → integrado con el proyecto).
-6. **Plantilla de comentarios** para el `.c` (`APRENDÍ` / `DUDA RESUELTA` / `CONECTA CON`).
+1. **Árbol de Contexto:** Dónde encaja hoy (ej. `OS → Processes → Signals → mysh v1.5`).
+2. **La Kata del Día (Reto Principal):**
+   - **Objetivo:** 1 oración precisa de lo que se va a demostrar hoy en código.
+   - **Archivo:** Ruta exacta (ej. `3-expert/07-signals/3-fork-exec-disposition.c`).
+   - **Compilación estricta:** `gcc -Wall -Wextra -Werror -pedantic -g -fsanitize=address,undefined <archivo>.c -o <bin>`.
+3. **Especificación Técnica (Contrato de Aceptación):**
+   - **Syscalls / APIs clave:** Lista explícita de funciones requeridas (ej. `sigaction`, `fork`, `execvp`).
+   - **Flujo y comportamiento:** 2–3 pasos exactos de lo que debe ocurrir en ejecución.
+   - **Salida esperada y Exit Code:** Lo que debe verse en terminal y el código de salida (`echo $?` o `WIFEXITED`).
+   - **Prueba en 1 comando:** Cómo ejecutar y verificar (ej. `./bin && echo $?`).
+4. **Recurso Just-in-Time (JIT):**
+   - Nombre y enlace (man page, Beej, TLPI). Se abre **SOLO** si el código falla o no recuerdas la firma de la función.
+5. **Plantilla de Comentarios para el `.c`:**
+   - Recordatorio de las 3 marcas: `/* APRENDÍ: ... */`, `/* DUDA RESUELTA: ... */`, `/* CONECTA CON: ... */`.
+6. *(Opcional)* **Stretch Goal (Romper el Código):**
+   - Un único caso de borde o experimento destructivo adicional para probar una vez superado el reto principal.
 
-> El Zettel de Obsidian lo genera la IA al cierre desde los comentarios del `.c`. No es tarea del usuario.
+> **Regla de oro:** El Zettel de Obsidian lo genera la IA al cierre desde los comentarios del `.c`. No es tarea del usuario.
 
 ### 4. Cierre de sesión
 1. Marcar `[ ]` → `[x]` en la fila del día de `status.md`.
