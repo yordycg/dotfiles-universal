@@ -43,6 +43,10 @@ if has_cmd pi; then
         log_info "Instalando extensión fff para Pi..."
         run pi install npm:@ff-labs/pi-fff || log_warn "No se pudo instalar la extensión fff de Pi."
     fi
+    # Parchear timeout de escaneo inicial para evitar congelamientos de 15s al arrancar en $HOME
+    if [ -f "$FFF_PI_DIR/src/sdk.ts" ]; then
+        sed -i 's/SCAN_TIMEOUT_MS = 15_000/SCAN_TIMEOUT_MS = 500/g' "$FFF_PI_DIR/src/sdk.ts"
+    fi
 else
     log_warn "Pi no detectado; omitiendo extensión fff."
 fi
