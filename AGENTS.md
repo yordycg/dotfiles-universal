@@ -64,6 +64,20 @@ El sistema base se mantiene libre de paquetes de desarrollo. Las herramientas se
 - **CLIs y runtimes:** Gestionados por `Mise` (mismas versiones cross-distro). La **data/cache** de los runtimes se redirige a XDG (`CARGO_HOME`, `GOPATH`, `NPM_CONFIG_CACHE`, …) desde `exports.sh` + `environment.d` para que `$HOME` no se ensucie.
 - **Entornos de Proyectos/Bases de Datos:** Encapsulados en contenedores gráficos y de terminal usando **Podman + Distrobox**.
 
+### Los 2 Pilares de Creación del Usuario:
+
+1. **Pilar 1: Learn (Aprender & Comprender):**
+   - **Ámbito:** Repositorios `learning-*`, `emprendimiento-zettel`, C, POSIX, Linux kernel y arquitectura de sistemas.
+   - **Interacción:** Tutor Adaptativo (`socratic-mentor`) con Verdades Incondicionales, Descubrimiento Motivado (3B1B), grafo DAG en Mermaid antes de enseñar, calibración interactiva (`quiz`, `ask_user_question`) e ingesta con `pdf-reader` y `youtube-transcript`.
+   - **Invariantes:** Verificación estricta en código C (`-fsanitize=address,undefined`), diagnóstico guiado sin cuchara (`code-diagnostic`) y notas atómicas permanentes en Obsidian Zettelkasten (`obsidian-query`).
+
+2. **Pilar 2: Videcoding (Construir & Entregar):**
+   - **Ámbito:** Todo proyecto de software nuevo, herramientas y entregables (`new-videcoding-project`).
+   - **Interacción:** Orquestación dual Architect + Worker, metodología SDD (Fases 0–7), TDD estricto y seguimiento dual `TASKS.md` ↔ `Project.canvas`.
+
+- **Plataforma Base (Clean Host & Gobernanza):**
+  Chezmoi, Mise, contenedores y la tríada de IA (`ai-ecosystem`) constituyen la plataforma transversal inmaculada. No representan un flujo de desarrollo diario, sino el taller sobre el que operan ambos pilares.
+
 ---
 
 ## 5. Technical Skills (Guía de Referencia para la IA)
