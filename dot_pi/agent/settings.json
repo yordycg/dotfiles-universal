@@ -1,20 +1,19 @@
 {
-  "theme": "oxocarbon",
-  "terminalMode": "regular",
+  "theme": "dark",
+  "tuiMode": "regular",
   "autoReload": true,
-  "default_model": "deepseek/deepseek-v4-flash",
-  "defaultThinkingLevel": "low",
   "lastChangelogVersion": "0.85.1",
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
+  "defaultThinkingLevel": "low",
+  "npmCommand": [
+    "mise",
+    "exec",
+    "node@22",
+    "--",
+    "npm"
+  ],
   "packages": [
-    "npm:@ff-labs/pi-fff",
-    "npm:mitsupi",
-    "npm:@juanibiapina/pi-extension-settings",
-    "npm:@juanibiapina/pi-powerbar",
-    "npm:@tmustier/pi-usage-extension",
-    "npm:pi-btw",
-    "npm:pi-web-access",
-    "npm:pi-simplify"
+    "npm:@ff-labs/pi-fff"
   ]
 }
