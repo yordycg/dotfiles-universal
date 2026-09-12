@@ -33,12 +33,27 @@ Al preguntar "¿qué toca hoy?", **NUNCA** responder con opciones difusas o una 
    - **Prueba en 1 comando:** Cómo ejecutar y verificar (ej. `./bin && echo $?`).
 4. **Recurso Just-in-Time (JIT):**
    - Nombre y enlace (man page, Beej, TLPI). Se abre **SOLO** si el código falla o no recuerdas la firma de la función.
-5. **Plantilla de Comentarios para el `.c`:**
-   - Recordatorio de las 3 marcas: `/* APRENDÍ: ... */`, `/* DUDA RESUELTA: ... */`, `/* CONECTA CON: ... */`.
+5. **Plantilla de Comentarios Estructurada:**
+   - Entregar el bloque de cabecera con anotaciones para el archivo de código:
+     ```c
+     /*
+      * @title: [Título de la lección / Zettel]
+      * @phase: [Fase / semana / día]
+      * -------------------------------------------------------------------------
+      * @learn:
+      * 1- [Lo que descubriste y aprendiste con tus palabras]
+      *
+      * @open_questions:
+      * - [Dudas o preguntas abiertas para que el mentor las resuelva]
+      *
+      * @connect_with:
+      * - [Concepto o MOC con el que conecta]
+      */
+     ```
 6. *(Opcional)* **Stretch Goal (Romper el Código):**
    - Un único caso de borde o experimento destructivo adicional para probar una vez superado el reto principal.
 
-> **Regla de oro:** El Zettel de Obsidian lo genera la IA al cierre desde los comentarios del `.c`. No es tarea del usuario.
+> **Regla de oro:** El Zettel de Obsidian lo genera la IA al cierre parseando `@title`, `@learn`, `@open_questions` (resolviéndolas) y `@connect_with`. No es tarea del usuario.
 
 ### 4. Cierre de sesión
 1. Marcar `[ ]` → `[x]` en la fila del día de `status.md`.
