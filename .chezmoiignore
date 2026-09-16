@@ -4,3 +4,4 @@
 .sessionizer/
 # Venv del founder-bot (se crea en runtime por el setup; nunca gestionado por chezmoi)
 .local/share/founder-bot/.venv
+AGENTS.md
