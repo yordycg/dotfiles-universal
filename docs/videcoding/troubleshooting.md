@@ -1,19 +1,18 @@
 # Videcoding — Troubleshooting
 
-Errores comunes, su causa y la solución. Si el problema no está aquí, revisa el estado del proyecto y ejecuta `just sync-tracking` antes de nada.
+Errores comunes, su causa y la solución. Si el problema no está aquí, revisa el estado del proyecto con `just status`.
 
 ## Errores del flujo
 
 | Síntoma | Causa | Solución |
 |---------|-------|----------|
-| Commit **bloqueado** por el gate (hook pre-commit) | `TASKS.md` y `Project.canvas` divergen | `just sync-tracking` y vuelve a commitear |
-| `sync-tracking` **revierte** un `- [x]` a `- [ ]` | Alguien (o el worker) marcó TASKS.md como hecha sin que el canvas esté en verde | Solo el **humano** pone el verde en el canvas; luego `just sync-tracking` actualiza TASKS.md |
-| `python3 bin/canvas-tool.py ... start <ID>` (o `just canvas start <ID>`) rechazado | Tarea no está roja (propuesta/bloqueada) o tiene dependencias sin cumplir | `just ready` (solo rojas listas) y `just blocked` para ver qué bloquea |
+| Commit **bloqueado** por el gate (hook pre-commit) | `tasks.yaml` tiene ciclos o tareas `to_do`/`doing` con dependencias incompletas | Corre `python3 bin/task.py check` para ver el error exacto y ajusta `tasks.yaml` |
+| `just start <ID>` rechazado por **WIP=1** | Ya existe otra tarea en curso (`doing`) | Finaliza (`just finish <ID>`) o pausa (`just task pause <ID>`) la tarea previa |
+| `just start <ID>` rechazado por **dependencias** | La tarea tiene dependencias que no están en `done` | Corre `just show <ID>` para ver qué tareas la bloquean y complétalas primero |
 | El gate **pasa sin verificar nada** | Los targets `lint`/`test` del Justfile siguen siendo placeholders de Fase 0 | El architect debe llenarlos en Fase 0 (ver `setup.md` §7) |
-| `bin/canvas-tool.py` no encuentra `Project.canvas` | Se ejecuta desde fuera de la raíz del proyecto | Corre los comandos desde la raíz del proyecto (`Project.canvas` está ahí) |
+| `bin/task.py` no encuentra `tasks.yaml` | Se ejecuta desde fuera de la raíz del proyecto | Corre los comandos desde la raíz del proyecto (`tasks.yaml` está ahí) |
 | `just` no encontrado | Herramienta no instalada | Instalar `just` (ver matriz de paquetes de la infraestructura) |
-| `python3` no encontrado | Entorno sin Python 3.7+ | `bin/canvas-tool.py` requiere Python 3.7+; instalar python3 |
-| Los estados de Obsidian no se actualizan solos | Plugin **canvas-watcher** no instalado | Es opcional: instálalo (ver `.agents/rules.md` §Watcher) o usa la CLI (`just status`) |
+| `python3` no encontrado | Entorno sin Python 3 | `bin/task.py` corre con Python 3 stdlib; instalar python3 |
 
 ## Errores de modelos / proveedores
 
@@ -35,7 +34,7 @@ Errores comunes, su causa y la solución. Si el problema no está aquí, revisa 
 
 ## Regla general
 
-1. `just sync-tracking` → reconcilia el estado.
-2. `just status` → mira el tablero.
-3. Revisa si es un problema de **flujo** (estados) o de **proveedor** (modelos/credito).
+1. `just status` → mira el estado del tablero en terminal.
+2. `python3 bin/task.py check` → valida el grafo y detecta posibles ciclos o dependencias rotas.
+3. Revisa si es un problema de **flujo** (estados) o de **proveedor** (modelos/crédito).
 4. Si el worker "dice" que terminó pero no hay commit o el gate falló: desconfía del relato, mira el diff real.

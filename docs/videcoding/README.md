@@ -6,7 +6,7 @@
 
 | Doc | Contenido |
 |-----|-----------|
-| [`workflow.md`](./workflow.md) | Concepto: filosofía, 5 docs de verdad, dual-write, agentes, recursos |
+| [`workflow.md`](./workflow.md) | Concepto: filosofía, fuentes de verdad, tasks.yaml SSOT, agentes, recursos |
 | [`setup.md`](./setup.md) | **Checklist de inicio**: pasos manuales al crear/arrancar un proyecto |
 | [`daily-flow.md`](./daily-flow.md) | **Flujo de día a día**: sesión humana, verificación, protocolo overnight |
 | [`troubleshooting.md`](./troubleshooting.md) | **Errores comunes**: síntoma → causa → solución |
@@ -23,6 +23,6 @@
 
 - **Crear proyecto:** `new-videcoding-project <nombre>` (ver [`setup.md`](./setup.md))
 - **Estado del tablero:** `just status` · `just ready`
-- **Sincronizar TASKS↔canvas:** `just sync-tracking`
+- **Aprobar / Verificar tareas:** `just approve <ID>` · `just verify <ID>`
 - **Gate pre-commit:** `just gate` (o `just install-hooks` para el hook automático)
 - **Plantilla fuente:** [`yordycg/template-videcoding`](https://github.com/yordycg/template-videcoding)

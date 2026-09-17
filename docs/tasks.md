@@ -63,9 +63,8 @@
 - [x] Crear plantilla `scripts/templates/videcoding-base/`:
   - Documentos sammwy: `SPECS.md`, `README.md`, `CODESTYLE.md`, `ROADMAP.md`
   - Orquestación dual agnóstica: `AGENTS.md` (roles architect/worker, TDD estricto, gates, no self-verify, curse of instructions)
-  - Dual-write obligatorio `TASKS.md` ↔ `Project.canvas` + `bin/sync-tracking.py` + target `just sync-tracking`
-  - Kanvas vendered (MIT): `canvas-tool.py`, `Project.canvas`, `RULES.md` adaptado
-  - `Justfile` (setup/status/ready/lint/test/gate/install-hooks) + `bin/gate.sh` + hook `bin/pre-commit`
+  - SSOT único con `tasks.yaml` + `bin/task.py` (zero-dep) + vistas automáticas en `TASKS.md` con Mermaid
+  - `Justfile` (setup/status/ready/start/finish/approve/verify/render/lint/test/gate/install-hooks) + `bin/gate.sh` + hook `bin/pre-commit`
   - Subagentes opencode: `.opencode/agent/architect.md` (Claude vía OpenRouter), `worker.md` (deepseek-v4-flash) y `scout.md` (Gemini)
   - Reutiliza `.editorconfig`, `.env.example` de `project-base`
 - [x] Crear comando `new-videcoding-project` (`dot_local/bin/executable_new-videcoding-project.tmpl`)
@@ -75,9 +74,9 @@
   - [x] `README.md` (índice) + `workflow.md` (migrado de `docs/videocoding-workflow.md`)
   - [x] `setup.md` (checklist de inicio: install-hooks, /models, /gentle:models, Fase 0 crítica)
   - [x] `daily-flow.md` (sesión humana, verificación, protocolo overnight)
-  - [x] `troubleshooting.md` (errores comunes: gate, sync-tracking, modelos, proveedores)
+  - [x] `troubleshooting.md` (errores comunes: gate, tasks.yaml, modelos, proveedores)
 - [ ] Configurar proveedores en opencode/pi: OpenRouter (Claude, whitelist + $5-10), DeepSeek directo (worker), Gemini (scout)
-- [ ] Probar en seco `new-videcoding-project` y validar el ciclo TDD + dual-write con un proyecto real
+- [ ] Probar en seco `new-videcoding-project` y validar el ciclo TDD con un proyecto real
 
 ## Fase 6: Auditoría Clean Host y Redirección XDG (2026-09-04)
 - [x] Auditar `$HOME`: mise funcionaba (92 shims), pero los runtimes ensuciaban `$HOME` (`.npm` 2.1G, `.rustup` 1.5G, `.nuget` 1.1G) por falta de redirección XDG.
@@ -104,7 +103,7 @@
 - [x] Paridad de la Tríada de IA (Pi, OpenCode, Antigravity) usando `.agents/` como fuente única de verdad.
 - [x] Optimizar tiempo de arranque de Pi en `$HOME` (de 19.3s a 2.5s) reduciendo timeout de FFF.
 - [x] Pilar 1 (Learn): DAGs en ASCII/Unicode en terminal, Single-Focus Invariant, Code-as-Answer, y estándar `@annotations` en comentarios.
-- [x] Pilar 2 (Videcoding): Unificación de documentación SDD freelance (Fases 0 a 7) con el motor de Videcoding (Kanvas, `Project.canvas`, dual-write, subagentes en `.agents/agents/`).
+- [x] Pilar 2 (Videcoding): Unificación de documentación SDD freelance (Fases 0 a 7) con el motor de Videcoding (tasks.yaml SSOT, bin/task.py zero-dep, subagentes en `.agents/agents/`).
 - [x] Migración a repositorios template oficiales en GitHub: `yordycg/template-learn` y `yordycg/template-videcoding`.
 - [x] Purga de templates locales en Chezmoi (`scripts/templates/`) y creación de generadores ligeros `new-learn` y `new-code`.
 

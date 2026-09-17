@@ -75,7 +75,7 @@ El sistema base se mantiene libre de paquetes de desarrollo. Las herramientas se
 
 2. **Pilar 2: Videcoding (Construir & Entregar):**
    - **Ámbito:** Todo proyecto de software nuevo, herramientas y entregables (`new-videcoding-project`).
-   - **Interacción:** Orquestación dual Architect + Worker, metodología SDD (Fases 0–7), TDD estricto y seguimiento dual `TASKS.md` ↔ `Project.canvas`.
+   - **Interacción:** Orquestación dual Architect + Worker, metodología SDD (Fases 0–7), TDD estricto y seguimiento SSOT con `tasks.yaml` (vistas automáticas en `TASKS.md`/Mermaid).
 
 - **Plataforma Base (Clean Host & Gobernanza):**
   Chezmoi, Mise, contenedores y la tríada de IA (`ai-ecosystem`) constituyen la plataforma transversal inmaculada. No representan un flujo de desarrollo diario, sino el taller sobre el que operan ambos pilares.

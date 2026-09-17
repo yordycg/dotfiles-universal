@@ -20,7 +20,7 @@ comunidad (véase [recursos](#recursos)) es separar **quién piensa** del **qui�
 Ambos se apoyan en un contrato escrito (`docs/specs.md`) y un plan (`docs/roadmap.md`) versionados en git,
 de modo que el estado nunca vive en el contexto de un chat: sobrevive a cualquier agente.
 
-## Los 5 documentos de verdad
+## Fuentes de verdad
 
 | Archivo | Qué es | Quién |
 |---------|--------|-------|
@@ -28,37 +28,38 @@ de modo que el estado nunca vive en el contexto de un chat: sobrevive a cualquie
 | `README.md` | Visión del producto terminado | architect |
 | `.agents/codestyle.md` | Reglas de estilo + ejemplo real heredado | architect (Fase 0) |
 | `docs/roadmap.md` | Tareas atómicas con IDs y dependencias | architect |
-| `TASKS.md` + `Project.canvas` | Tracking de ejecución (siempre sincronizados) | worker + humano |
+| `tasks.yaml` | Tracking de ejecución y grafo de dependencias (**SSOT único**) | worker + humano |
+| `TASKS.md` | Vista humana y diagrama Mermaid generado automáticamente | automático (`render`) |
 
 ## Flujo de trabajo
 
 1. **Ideación** — itera la idea en un chat (o con el architect en plan mode).
-2. **Especificación** — el architect genera los documentos en `docs/` y `.agents/` + descompone el roadmap.
-3. **Checkpoint humano** — apruebas specs y roadmap (y el tablero `Project.canvas`).
+2. **Especificación** — el architect genera los documentos en `docs/` y `.agents/` + descompone el roadmap en `tasks.yaml`.
+3. **Checkpoint humano** — apruebas specs y apruebas las primeras tareas con `just approve <ID>`.
 4. **Fase 0/1** — el architect ejecuta el skeleton: tooling, linter, Justfile, estilo heredado.
 5. **Ejecución** — workers consumen tareas atómicas:
    - `just ready` → elige la de mayor prioridad sin dependencias pendientes (WIP=1).
-   - `python3 bin/canvas-tool.py "Project.canvas" start <ID>` (o `just canvas start <ID>`) + marca en `TASKS.md`.
+   - `just start <ID>` → pasa la tarea a `doing`.
    - TDD estricto (RED → GREEN → REFACTOR) y `just test` en verde.
    - `just lint` + `just test` (gates) → formatear → commit convencional.
-   - `python3 bin/canvas-tool.py "Project.canvas" finish <ID>` (o `just canvas finish <ID>`) + marca en revisión en `TASKS.md`.
-6. **Verificación humana** — tú pones el verde en el tablero; se desbloquean dependencias.
+   - `just finish <ID>` → marca en revisión (`review`) y regenera `TASKS.md`.
+6. **Verificación humana** — tú ejecutas `just verify <ID>`; pasa a `done` y desbloquea en cascada las dependientes.
 7. **Iterar** — se puede dejar "overnight": los workers continúan mientras el historial de git es el plan.
 
-## Dual-write (TASKS.md ↔ Project.canvas)
+## SSOT (`tasks.yaml` y vistas derivadas)
 
-Cada transición de tarea se refleja en **ambos** sitios en el mismo commit:
+`tasks.yaml` es la **única fuente de verdad** del estado y dependencias:
 
-| Estado | `Project.canvas` | `TASKS.md` |
-|--------|------------------|------------|
-| Propuesta | 🟣 purple (`propose`) | `- [ ]` en "Propuestas" |
-| Aprobada | 🔴 red (humano) | `- [ ]` en "Pendientes" |
-| En curso | 🟠 orange (`start`) | `- [ ]` + `— ▶ en curso` |
-| En revisión | 🔵 cyan (`finish`) | `- [ ]` + `— 🔵 en revisión` |
-| Hecha | 🟢 green (**solo humano**) | `- [x]` |
+| Estado | Comando CLI | Quién lo controla |
+|--------|-------------|-------------------|
+| Propuesta | `just task propose ...` (🟣) | architect / humano |
+| Aprobada / To Do | `just approve <ID>` (🔴) | humano |
+| En curso | `just start <ID>` (🟠) | worker (WIP=1) |
+| En revisión | `just finish <ID>` (🔵) | worker |
+| Hecha | `just verify <ID>` (🟢) | **solo humano** |
 
-`just sync-tracking` reconcilia desfases; `just gate` (o el hook pre-commit) lo verifica en cada commit.
-Nunca editar `Project.canvas` a mano: siempre vía `python3 bin/canvas-tool.py "Project.canvas" <cmd>` o `just canvas <cmd>`.
+`TASKS.md` y los diagramas Mermaid se regeneran automáticamente en cada transición.
+`just gate` (o el hook pre-commit) valida la ausencia de ciclos y la integridad del grafo antes de cada commit.
 
 ## Agentes
 

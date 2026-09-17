@@ -1,6 +1,6 @@
 ---
 name: videcoding-framework
-description: Use when starting a videcoding project, creating a new project with new-videcoding-project, or when the user mentions architect/worker, TDD estricto, dual-write, docs/roadmap.md, Project.canvas, Kanvas, docs/specs.md, .agents/codestyle.md, or the videcoding/vibe-coding workflow. Instructs the agent to read the videcoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, TASKS+canvas sync).
+description: Use when starting a videcoding project, creating a new project with new-videcoding-project, or when the user mentions architect/worker, TDD estricto, tasks.yaml, SSOT, docs/roadmap.md, docs/specs.md, .agents/codestyle.md, or the videcoding/vibe-coding workflow. Instructs the agent to read the videcoding AGENTS.md and follow the architect+workers flow (spec first, strict TDD, gates, tasks.yaml tracking).
 ---
 
 # Framework de Videcoding (Architect + Workers)
@@ -11,23 +11,23 @@ Flujo para proyectos donde un **architect** (modelo potente) define specs y desc
 
 Al iniciar, el agente DEBE leer primero el framework del proyecto:
 
-- `AGENTS.md` de la raíz del proyecto (orquestación: roles, TDD estricto, gates, dual-write). Es agnóstico a la herramienta (opencode / pi / agy).
-- Si el proyecto se creó con `new-videcoding-project` o `new-code` (template GitHub `yordycg/template-videcoding`), la estructura ya existe: `docs/specs.md`, `README.md`, `.agents/codestyle.md`, `.agents/rules.md`, `docs/roadmap.md`, `TASKS.md`, `Project.canvas` + `bin/canvas-tool.py`, `docs/`, `meta/`, `Justfile`, y `.agents/agents/`.
+- `AGENTS.md` de la raíz del proyecto (orquestación: roles, TDD estricto, gates, SSOT). Es agnóstico a la herramienta (opencode / pi / agy).
+- Si el proyecto se creó con `new-videcoding-project` o `new-code` (template GitHub `yordycg/template-videcoding`), la estructura ya existe: `docs/specs.md`, `README.md`, `.agents/codestyle.md`, `.agents/rules.md`, `docs/roadmap.md`, `tasks.yaml` (SSOT), `TASKS.md` (vista derivada), `bin/task.py`, `docs/`, `meta/`, `Justfile`, y `.agents/agents/`.
 
 ## 2. Roles
 
 | Rol | Modelo | Hace | NO hace |
 |-----|--------|------|---------|
-| **Architect** | potente (Claude Sonnet/Opus) | genera/refina los docs, descompone roadmap, Fase 0/1 (scaffolding), revisa workers | implementar features |
-| **Worker** | barato (deepseek-v4-flash) | UNA tarea atómica a la vez (WIP=1), TDD estricto, gates, dual-write, commits | diseñar, expandir scope, auto-verificarse |
+| **Architect** | potente (Claude Sonnet/Opus) | genera/refina los docs, descompone roadmap, Fase 0/1 (scaffolding), propone tareas en `tasks.yaml`, revisa workers | implementar features |
+| **Worker** | barato (deepseek-v4-flash) | UNA tarea atómica a la vez (WIP=1), TDD estricto, gates, `just start` / `just finish`, commits | diseñar, expandir scope, auto-verificarse |
 
 ## 3. Reglas de ejecución (obligatorias)
 
 - **SDD primero**: sin código hasta que `docs/specs.md` y el roadmap estén aprobados por el humano.
 - **TDD estricto**: RED (test que falla) → GREEN (mínimo) → REFACTOR. `just test` en verde.
 - **Gates**: `just lint` y `just test` antes de cada commit; formatear antes de commitear.
-- **No self-verify**: el worker deja en cian (`finish`); el humano pone el verde.
-- **Dual-write**: cada cambio de estado se refleja en `TASKS.md` Y `Project.canvas` (vía `bin/canvas-tool.py` o `just canvas`, NUNCA editar el JSON a mano) en el mismo commit. Si divergen → `just sync-tracking`.
+- **No self-verify**: el worker deja en cian (`finish`); el humano verifica con `verify`.
+- **SSOT único (`tasks.yaml`)**: `tasks.yaml` es la única fuente de verdad; `TASKS.md` es una vista generada automáticamente con Mermaid. No existe dual-write.
 - **Curse of instructions**: el worker lee SOLO la sección relevante de `docs/specs.md` por tarea.
 - **Commits**: Conventional Commits en inglés, un checkpoint = un commit.
 
@@ -43,4 +43,4 @@ Al iniciar, el agente DEBE leer primero el framework del proyecto:
 - [ ] `AGENTS.md` leído (fuente de verdad)
 - [ ] Specs aprobadas antes de codear (checkpoint humano)
 - [ ] TDD estricto aplicado en cada tarea
-- [ ] Gates pasados y dual-write verificado antes de cada commit
+- [ ] Gates pasados (`just gate`) e integridad de `tasks.yaml` verificada antes de cada commit

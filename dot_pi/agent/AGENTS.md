@@ -14,7 +14,7 @@ The developer's workflow is organized into **2 Creation Pillars** supported by a
 
 - **Pillar 2: Videcoding (Construir & Entregar):**
   - **Scope:** All new software projects, tools, applications, and client deliverables (`new-videcoding-project`).
-  - **Workflow:** Multi-agent orchestration (Architect + Worker), Spec-Driven Development (Phases 0–7), strict TDD, and dual-write tracking (`TASKS.md` ↔ `Project.canvas`).
+  - **Workflow:** Multi-agent orchestration (Architect + Worker), Spec-Driven Development (Phases 0–7), strict TDD, and SSOT tracking with `tasks.yaml` (auto-rendered `TASKS.md`/Mermaid).
 
 - **Platform: Clean Host & Governance:**
   - System dotfiles (`chezmoi`), runtimes (`mise`), rootless containers (`podman` / `distrobox`), and AI governance (`ai-ecosystem`) are not creative pillars; they form the immaculate foundation. All tool dependencies must run isolated (e.g., `uv venv` for Python skills) without polluting `$HOME`.

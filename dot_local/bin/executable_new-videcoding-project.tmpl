@@ -2,7 +2,7 @@
 
 # new-videcoding-project (alias: new-code)
 # Descripción: Crea un proyecto con el flujo de videcoding (architect + workers,
-# TDD estricto, dual-write TASKS.md <-> Project.canvas/Kanvas, SDD Fases 0-7).
+# TDD estricto, SSOT tasks.yaml con vistas automáticas en TASKS.md/Mermaid, SDD Fases 0-7).
 # Usa el template oficial de GitHub: yordycg/template-videcoding.
 
 set -euo pipefail
@@ -54,7 +54,7 @@ echo ""
 echo -e "${BLUE}Siguientes pasos:${NC}"
 echo "  1. cd $PROJECT_NAME"
 echo "  2. opencode: cambia con Tab a 'architect' y pídele que complete las specs y ejecute Fase 0."
-echo "  3. Revisa y aprueba el roadmap (docs/roadmap.md + tablero Project.canvas)."
+echo "  3. Revisa y aprueba el roadmap (docs/roadmap.md + tasks.yaml)."
 echo "  4. opencode: agente 'worker' -> ejecuta las tareas TDD checkpoint por checkpoint."
 echo "  5. pi: abre el proyecto con pi y corre /sdd-init si requieres flujo interactivo."
-echo "  6. Obsidian: abre $PROJECT_NAME como vault o abre Project.canvas para visualizar el kanban."
+echo "  6. Visualización: abre TASKS.md en VS Code para ver la tabla y el diagrama Mermaid interactivo."

@@ -17,17 +17,17 @@ El comando copia la plantilla, inicializa git y hace el commit inicial.
 just install-hooks
 ```
 
-Instala `.git/hooks/pre-commit`, que corre `just gate` (lint + test + verificación dual-write) en **cada commit**. Sin esto el gate no se ejecuta solo.
+Instala `.git/hooks/pre-commit`, que corre `just gate` (lint + test + verificación de grafo tasks.yaml) en **cada commit**. Sin esto el gate no se ejecuta solo.
 
-## 3. Verificar el tablero
+## 3. Verificar el tablero de tareas
 
 ```bash
-just setup     # comprueba bin/canvas-tool.py + Project.canvas y muestra el estado
+just setup     # comprueba bin/task.py + tasks.yaml y muestra el estado
 ```
 
-## 4. (Opcional) Abrir en Obsidian
+## 4. Visualización en VS Code
 
-Abre la carpeta del proyecto como vault para ver el tablero `Project.canvas` visualmente. El flujo funciona igual sin Obsidian (vía `TASKS.md` + CLI), pero el canvas es lo más cómodo para revisar dependencias y marcar verdes.
+Abre `TASKS.md` en VS Code con la vista previa de Markdown (`Ctrl+Shift+V` / `Cmd+Shift+V`) para ver la tabla de tareas y el diagrama de flujo Mermaid interactivo con colores por estado. No necesitas instalar ninguna herramienta externa.
 
 ## 5. opencode: verificar el modelo del architect
 
