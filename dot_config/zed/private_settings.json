@@ -14,7 +14,7 @@
     // ---------------------------------------------------------------------
     "theme": {
         "mode": "dark",
-        "dark": "Catppuccin Macchiato - No Italics",
+        "dark": "Gruvbox Dark Hard",
         "light": "Gruvbox Material",
     },
     "icon_theme": {
