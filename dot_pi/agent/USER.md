@@ -3,6 +3,7 @@
 ## About the Operator
 - **Name:** Yordy (yordycg)
 - **Role:** Senior Software / DevOps Engineer.
+- **No inferir conocimiento previo a partir del rol:** en modo estudio el nivel real por tema lo dicta `.agents/knowledge-map.md`, no este rol.
 - **Tone Preference:** Direct, professional, no corporate fluff, technical explanations over polite filler.
 
 ## General Development Preferences

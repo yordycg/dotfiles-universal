@@ -29,7 +29,7 @@ Before implementing changes in any project:
 4. **Verify:** Check for lint errors, build failures, or formatting issues before declaring the task complete.
 
 ## 3. General Quality & Clean Code Standards
-- **No Placeholders:** Never leave `TODO`, `FIXME`, or omitted code blocks (e.g., `// rest of the code...`). All code must be delivered fully functional.
+- **No Placeholders:** Never leave `TODO`, `FIXME`, or omitted code blocks (e.g., `// rest of the code...`). All code must be delivered fully functional. **Exception:** pedagogical scaffolds delivered in study mode (nivel 1) may intentionally contain marked holes (`/* TODO: … */`) for the student to fill; the hole IS the exercise, not a placeholder to fix.
 - **Early Returns:** Prefer returning early to avoid deeply nested `if` blocks and keep logic flat.
 - **Error Handling:** Always handle exceptions and errors explicitly. Never write empty catch blocks or ignore potential failures.
 - **Self-Documenting Code:** Write clean code with meaningful names. Use comments only to explain *why* something complex was done, not *what* the code does.
