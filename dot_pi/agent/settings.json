@@ -2,7 +2,7 @@
   "theme": "dark",
   "tuiMode": "regular",
   "autoReload": true,
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "0.87.0",
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "low",
