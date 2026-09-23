@@ -21,6 +21,13 @@ Modelo estacional: semestre (sep–nov 2026) = `learning-path`; vacaciones (dic 
 
 ### 3. Responder "¿qué toca hoy?"
 1. Determinar el día: Kata (Lun–Vie) · Milestone/Reto (Sáb) · Tick (Dom).
+1b. Antes de delegar, revisar en `knowledge-map.md` si el tema raíz de hoy
+    lleva ≥2 sesiones consecutivas en nivel 0 sin subconceptos en nivel ≥1.
+    Si es así, aplicar el "Presupuesto Anti-Estancamiento en Nivel 0" de
+    `teaching-contract.md` ANTES de continuar con el flujo normal.
+1c. Si es domingo, antes de delegar el contrato, correr el algoritmo de
+    selección de `teaching-contract.md` § Domingo y pasar el concepto elegido
+    como contexto explícito (no dejar que el contrato re-decida distinto).
 2. **Delegar el contrato completo a `<repo>/.agents/teaching-contract.md`** (single source: Paso 0 → escalera → pistas → cierre). Este skill NO duplica el contrato.
 3. **Fallback:** si `<repo>/.agents/teaching-contract.md` NO existe en el repo activo, decirlo y preguntar al usuario. PROHIBIDO volver al Modo A/B antiguo en silencio.
 
