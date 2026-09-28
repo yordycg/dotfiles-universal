@@ -2,10 +2,9 @@
 #!/usr/bin/env bash
 # =============================================================================
 # .chezmoiscripts/run_once_after_22-setup-herdr-plugins.sh.tmpl
-# Plugins Tier-1 de Herdr (marketplace):
+# Plugins esenciales de Herdr:
 #   - vim-herdr-navigation  -> Ctrl+h/j/k/l cruzando vim <-> herdr panes
 #   - herdr-sessionizer     -> pickers fzf de proyectos/worktrees
-#   - persiyanov.reviewr    -> revisión de diffs de agentes
 # Instalación idempotente: salta lo ya instalado (herdr plugin list --json).
 # =============================================================================
 set -euo pipefail
@@ -17,16 +16,11 @@ if ! command -v herdr &>/dev/null; then
     exit 0
 fi
 
-log_step "Plugins de Herdr (Tier 1)"
+log_step "Plugins de Herdr (Esenciales)"
 
 plugins=(
   "paulbkim-dev/vim-herdr-navigation:vim-herdr-navigation"
   "andrewchng/herdr-sessionizer:sessionizer"
-  "persiyanov/herdr-reviewr:persiyanov.reviewr"
-  "natori-hrj/herdr-lazy:herdr-lazy"
-  "jeffarese/herdr-bar:herdr-bar"
-  "smarzban/herdr-file-viewer:herdr-file-viewer"
-  "iurysza/herdr-tab-smart-rename:tab-smart-rename"
 )
 
 for entry in "${plugins[@]}"; do

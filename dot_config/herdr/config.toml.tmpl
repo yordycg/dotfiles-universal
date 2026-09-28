@@ -1,18 +1,21 @@
 {{- /* ══════════════════════════════════════════════════════════════
      dot_config/herdr/config.toml.tmpl
      Herdr — Terminal Workspace Manager (Agent-Native)
-     Tema: "terminal" hereda la paleta ANSI de kitty (sistema de themes)
+     Tema: Catppuccin Mocha (contraste y jerarquía nativa)
      ══════════════════════════════════════════════════════════════ */ -}}
 
 onboarding = false
 
+[update]
+version_check = true
+
 [theme]
 name = "catppuccin"
-
 auto_switch = false
 
 [terminal]
 new_cwd = "follow"
+kitty_graphics = true
 
 [worktrees]
 directory = "~/workspace/worktrees"
@@ -20,10 +23,54 @@ directory = "~/workspace/worktrees"
 [session]
 resume_agents_on_restore = true
 
+[ui]
+pane_borders = true
+pane_gaps = true
+tab_bar_position = "top"
+sidebar_start_collapsed = false
+agent_panel_sort = "spaces"
+status_indicators = "dots"
+prompt_new_tab_name = false
+
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "workspace"],
+  ["agent", "state_text"],
+]
+
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", "workspace"],
+  ["branch", "git_status"],
+]
+
+[ui.toast]
+delivery = "system"
+delay_seconds = 1
+
+{{- if eq .node.profile "laptop" }}
+# ── ECO MODE (Laptop): sin sonido, scrollback reducido ──
+[ui.sound]
+enabled = false
+
+[advanced]
+scrollback_limit_bytes = 5000000
+{{- else }}
+# ── FULL MODE (Desktop): feedback sonoro + scrollback amplio ──
+[ui.sound]
+enabled = true
+{{- end }}
+
+[experimental]
+pane_history = true
+
 [keys]
 prefix = "ctrl+b"
 # Settings por defecto es prefix+s; lo libero para sessionizer.
 settings = "prefix+shift+s"
+reload_config = "prefix+shift+r"
+help = "prefix+?"
+edit_scrollback = "prefix+e"
 
 # --- Acordes directos (familia segura ctrl+alt) + prefix ---
 # La navegación ctrl+h/j/k/l la gestiona el plugin vim-herdr-navigation.
@@ -81,28 +128,7 @@ type = "plugin_action"
 command = "sessionizer.worktree-open"
 description = "open worktree workspace"
 
-# --- Plugin actions: persiyanov.reviewr (revisar diffs de agentes) ---
-[[keys.command]]
-key = "prefix+alt+r"
-type = "plugin_action"
-command = "persiyanov.reviewr.open"
-description = "open reviewr pane"
-
-# --- Plugin actions: herdr-file-viewer (Previsualizador de archivos) ---
-[[keys.command]]
-key = "prefix+alt+f"
-type = "plugin_action"
-command = "herdr-file-viewer.open-file-viewer"
-description = "open file viewer panel"
-
-# --- Plugin actions: herdr-bar (Barra de estado de Herdr) ---
-[[keys.command]]
-key = "prefix+alt+b"
-type = "plugin_action"
-command = "herdr-bar.open"
-description = "toggle herdr bar status"
-
-# --- Popups (Custom Commands) ---
+# ── Popups Rápidos Esenciales (Git & Herramientas) ──
 
 [[keys.command]]
 key = "prefix+alt+g"
@@ -121,56 +147,7 @@ width = "80%"
 height = "80%"
 
 [[keys.command]]
-key = "prefix+alt+o"
-type = "popup"
-command = "opencode"
-description = "opencode"
-width = "80%"
-height = "80%"
-
-[[keys.command]]
 key = "prefix+alt+d"
 type = "pane"
 command = "lazydocker"
 description = "lazydocker"
-
-[ui]
-pane_borders = true
-pane_gaps = true
-tab_bar_position = "top"
-sidebar_start_collapsed = false
-# Agent panel ordering: "spaces" (grouped by space) or "priority" (attention queue).
-agent_panel_sort = "spaces"
-
-status_indicators = "dots"
-
-[ui.sidebar.agents]
-rows = [
-  ["state_icon", "workspace"],
-  ["agent", "state_text"],
-]
-
-[ui.sidebar.spaces]
-rows = [
-  ["state_icon", "workspace"],
-  ["branch", "git_status"],
-]
-
-
-
-[ui.toast]
-delivery = "system"
-delay_seconds = 1
-
-{{- if eq .node.profile "laptop" }}
-# ── ECO MODE (Laptop): sin sonido, scrollback reducido ──
-[ui.sound]
-enabled = false
-
-[advanced]
-scrollback_limit_bytes = 5000000
-{{- else }}
-# ── FULL MODE (Desktop): feedback sonoro + scrollback amplio ──
-[ui.sound]
-enabled = true
-{{- end }}

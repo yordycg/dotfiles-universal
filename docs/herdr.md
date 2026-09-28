@@ -5,7 +5,7 @@
 
 ## Arranque y vida
 
-| Acción | Comando |
+| Acción | Comando / Key |
 |---|---|
 | Abrir/adjuntar sesión default | `herdr` |
 | Detachar (deja todo corriendo) | `ctrl+b q` |
@@ -13,7 +13,7 @@
 | Listar workspaces | `herdr workspace list` |
 | Enfocar workspace | `herdr workspace focus <id>` |
 | Parar servidor (mata panes) | `herdr server stop` |
-| Recargar config en caliente | `herdr server reload-config` |
+| Recargar config en caliente | `prefix+shift+r` (o `herdr server reload-config`) |
 | Ayuda de keybinds en vivo | `prefix+?` |
 
 ## Keybinds — Prefix (`ctrl+b`)
@@ -21,6 +21,9 @@
 | Acción | Key |
 |---|---|
 | Settings (reubicado) | `prefix+shift+s` |
+| Recargar config en caliente | `prefix+shift+r` |
+| Ayuda de keybinds en vivo | `prefix+?` |
+| Editar scrollback | `prefix+e` |
 | Nueva pestaña | `prefix+c` |
 | Split vertical / horizontal | `prefix+v` / `prefix+minus` |
 | Moverse entre panes | `prefix+h/j/k/l` |
@@ -41,7 +44,6 @@
 | Navegar vim<->panes | `ctrl+h/j/k/l` |
 | Sessionizer: abrir proyecto | `prefix+s` |
 | Sessionizer: abrir worktree | `prefix+f` |
-| Reviewr: abrir pane | `prefix+alt+r` |
 
 ## Keybinds — Acordes directos (`ctrl+alt`, seguros en kitty/Hyprland)
 
@@ -55,30 +57,32 @@
 | Ciclar pane | `ctrl+alt+tab` |
 | Workspace picker / goto | `ctrl+alt+w` / `ctrl+alt+g` |
 
-## Popups (custom commands)
+## Popups (custom commands esenciales)
 
 | Acción | Key |
 |---|---|
 | lazygit | `prefix+alt+g` |
 | Scratch terminal | `prefix+alt+t` |
-| opencode | `prefix+alt+o` |
 | lazydocker (pane) | `prefix+alt+d` |
 
-## Integración con agentes
+## Integración con agentes (Tríada de IA)
 
-- **Instalar integración** (estado de vida + resume): `herdr integration install opencode`
+- **Instalar integraciones** (lifecycle state + resume):
+  - `herdr integration install opencode`
+  - `herdr integration install pi`
+  - `herdr integration install antigravity-cli`
 - Estado se muestra en el sidebar: `working` / `blocked` / `idle` / `done`.
 - Notificaciones del sistema (SwayNC) cuando un agente termina o pide input.
+- Bordes de paneles muestran automáticamente la etiqueta del agente activo (`show_agent_labels_on_pane_borders = true`).
 
-## Plugins instalados (Tier 1 — mercado herdr.dev)
+## Plugins instalados (Esenciales)
 
 Instalación declarativa en `.chezmoiscripts/run_once_after_22-setup-herdr-plugins.sh.tmpl`.
 
 | Plugin | Qué hace | Key(s) |
 |---|---|---|
-| `vim-herdr-navigation` | `Ctrl+h/j/k/l` cruza splits de vim y panes de herdr; fuera de herdr cae a tmux | chords directos |
-| `herdr-sessionizer` | pickers fzf de proyectos (`~/workspace`) y worktrees | `prefix+s` / `prefix+f` |
-| `persiyanov.reviewr` | pane de revisión de diffs de agentes + comentarios en línea | `prefix+alt+r` |
+| `vim-herdr-navigation` | `Ctrl+h/j/k/l` cruza splits de vim y panes de herdr; fuera de herdr cae a tmux | `ctrl+h/j/k/l` |
+| `herdr-sessionizer` | Pickers fzf de proyectos (`~/workspace`) y worktrees | `prefix+s` / `prefix+f` |
 
 - Editor side vendored: `~/.config/herdr/editor/herdr_nav.lua`, cargado por LazyVim y
   nvim-personal tras cargar plugins.
@@ -137,12 +141,12 @@ hd='herdr'                 hdl='herdr workspace list'
 hdw='herdr workspace focus' hdstop='herdr server stop'
 ```
 
-## Hyprland
+## Lanzador en Compositor
 
-`SUPER+O` abre herdr en kitty (definido en `modules/binds.lua`).
+- **Niri**: `Super+O` abre Herdr en Ghostty (`dot_config/niri/binds.kdl.tmpl`).
+- **Hyprland**: `Super+O` abre Herdr en Kitty (`modules/binds.lua`).
 
 ## Notas sobre el tema
 
-El config usa `[theme] name = "terminal"` → herdr hereda la paleta ANSI de kitty,
-que es tematizada externamente por el sistema `~/.config/themes` + `link-theme`.
-Cambiar de theme visual actualiza herdr automáticamente (vía kitty) sin tocar config de herdr.
+El config usa `[theme] name = "catppuccin"` (Catppuccin Mocha nativo), ofreciendo
+contraste definido en la barra lateral e indicadores en puntos (`dots`).

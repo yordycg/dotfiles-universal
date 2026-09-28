@@ -36,14 +36,14 @@
   - Configurar integración con iOS usando **Working Copy** + **Atajos de Apple (Shortcuts)** para enviar notas rápidas desde el iPhone al repositorio de Obsidian vía Git.
 - [x] Evaluar migración total de Tmux a `lazy-tmux`
   - Reemplazar la pila anterior (`tmux-resurrect`, `tmux-continuum`, `tmux-sessionx`) por `lazy-tmux` en `tmux.conf.tmpl` y la matriz `packages.yaml`.
-- [x] Implementar herramienta `herdr`
+- [x] Implementar y modernizar herramienta `herdr` (v0.9.1)
   - Integrar `herdr` en la matriz de Mise (`config.toml.tmpl`) con instalador oficial como fallback.
-  - Config completa en `dot_config/herdr/config.toml.tmpl` (tema ANSI, keybinds, popups, notificaciones, ECO mode).
-  - Integración nativa con `opencode` (`herdr integration install`) vía `run_once_after_21`.
-  - Bind `SUPER+O` en Hyprland y aliases `hd`/`hdl`/`hdw`/`hdstop` en zsh.
-- [x] Plugins herdr Tier 1 (vim-herdr-navigation, sessionizer, reviewr)
-  - Setup declarativo e idempotente en `run_once_after_22-setup-herdr-plugins.sh.tmpl`.
-  - Keybinds: `Ctrl+h/j/k/l` navegan vim<->herdr; `prefix+s`/`prefix+f` sessionizer; `prefix+alt+r` reviewr.
+  - Config completa en `dot_config/herdr/config.toml.tmpl`: tema Catppuccin Mocha con contraste definido, barra lateral compacta e indicadores dots, tab bar permanente, popups esenciales (`lazygit`, scratch terminal, `lazydocker`), hot reload (`prefix+shift+r`), persistencia de pane history y ECO mode.
+  - Integración nativa con la Tríada de IA completa (`opencode`, `pi`, `antigravity-cli`) vía `run_once_after_21`.
+  - Bind `SUPER+O` en Niri (Ghostty) y Hyprland (Kitty) y aliases `hd`/`hdl`/`hdw`/`hdstop` en zsh.
+- [x] Plugins Herdr Esenciales (vim-herdr-navigation, sessionizer)
+  - Setup declarativo e idempotente en `run_once_after_22-setup-herdr-plugins.sh.tmpl` (solo `vim-herdr-navigation` y `herdr-sessionizer`).
+  - Keybinds: `Ctrl+h/j/k/l` navegan vim<->herdr; `prefix+s`/`prefix+f` sessionizer.
   - Editor side vendored en `~/.config/herdr/editor/herdr_nav.lua`, dofile desde LazyVim y nvim-personal.
   - Layout sessionizer replicando `tdl` (nvim 65% + opencode 35% + lazygit abajo).
   - `HERDR_NAV_PASSTHROUGH_RE` en `exports.sh` para lazygit/lazydocker/yazi.

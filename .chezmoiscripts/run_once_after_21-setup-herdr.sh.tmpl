@@ -36,13 +36,13 @@ if ! herdr --help >/dev/null 2>&1; then
 fi
 log_ok "Herdr $(herdr --version 2>/dev/null | head -1 || echo "instalado") listo."
 
-# ── 3. Integración nativa con OpenCode (lifecycle state + session resume) ──
-if [ -d "$HOME/.config/opencode" ]; then
-    log_info "Instalando integracion herdr -> opencode..."
-    run herdr integration install opencode || log_warn "No se pudo instalar la integracion opencode."
-else
-    log_warn "No existe ~/.config/opencode; saltando integracion de agentes."
-fi
+# ── 3. Integración nativa con la Tríada de IA (Pi, OpenCode, Antigravity) ────
+# Lifecycle state + session resume + agent detection
+ai_agents=("opencode" "pi" "antigravity-cli")
+for agent in "${ai_agents[@]}"; do
+    log_info "Asegurando integracion herdr -> ${agent}..."
+    run herdr integration install "${agent}" || log_warn "No se pudo instalar integracion ${agent}."
+done
 
 log_ok "Herdr configurado correctamente."
 {{- end }}
