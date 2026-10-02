@@ -1,12 +1,9 @@
 include colors/oxocarbon.conf
 
 # Font
-font_family      Liga SFMono Nerd Font Regular
-bold_font        Liga SFMono Nerd Font Bold
-italic_font      Liga SFMono Nerd Font Italic
-bold_italic_font Liga SFMono Nerd Font Bold Italic
+font_family      FiraCode Nerd Font
 font_size        13.0
-modify_font      cell_height 112%
+modify_font      cell_height 110%
 text_composition_strategy legacy
 
 # Cursor
@@ -14,7 +11,6 @@ cursor_shape          block
 cursor_blink_interval 0
 cursor_trail          3
 
-# disable_ligatures yes
 url_style         curly
 
 # Window layout
@@ -25,10 +21,10 @@ window_padding_width    24
 hide_window_decorations yes
 confirm_os_window_close 0
 
-# Terminal sólida (sin blur/transparencia): se comentan las opciones de acrílico
-# background_opacity 0.85
-# background_blur 1
-# dynamic_background_opacity yes
+# UI
+background_opacity 0.85
+background_blur 30
+dynamic_background_opacity yes
 prefer_gles yes
 scrollbar_handle_opacity      0
 scrollbar_track_opacity       0
@@ -40,6 +36,7 @@ enable_audio_bell     no
 shell_integration     disabled
 sync_to_monitor       no
 term                  xterm-256color
+
 # --- Mouse & Copy-Paste ---
 copy_on_select yes
 mouse_map right press ungrabbed paste_from_clipboard
