@@ -128,6 +128,28 @@ if [ ! -d "$FONTS_DIR/CaskaydiaCove" ]; then
     fi
 fi
 
+# ── 8. Ioskeley Mono (Standard & Term Nerd Font) ───────────────────────────
+if [ ! -d "$FONTS_DIR/IoskeleyMono" ] || [ -z "$(ls -A "$FONTS_DIR/IoskeleyMono" 2>/dev/null)" ]; then
+    log_info "Descargando Ioskeley Mono (Nerd Font y Term Nerd Font)..."
+    IOSKELEY_VERSION="v2.1.0"
+    mkdir -p "$FONTS_DIR/IoskeleyMono"
+    # Variante para editores (Standard Nerd Font)
+    if curl -fSL -o "/tmp/IoskeleyMono-NerdFont.zip" \
+        "https://github.com/ahatem/IoskeleyMono/releases/download/${IOSKELEY_VERSION}/IoskeleyMono-NerdFont.zip"; then
+        unzip -q -o "/tmp/IoskeleyMono-NerdFont.zip" -d "/tmp/IoskeleyMono-NerdFont"
+        find "/tmp/IoskeleyMono-NerdFont" -name "*.ttf" -exec cp {} "$FONTS_DIR/IoskeleyMono/" \;
+        rm -rf "/tmp/IoskeleyMono-NerdFont.zip" "/tmp/IoskeleyMono-NerdFont"
+    fi
+    # Variante para terminales (Term Nerd Font con espaciado estricto)
+    if curl -fSL -o "/tmp/IoskeleyMono-Term-NerdFont.zip" \
+        "https://github.com/ahatem/IoskeleyMono/releases/download/${IOSKELEY_VERSION}/IoskeleyMono-Term-NerdFont.zip"; then
+        unzip -q -o "/tmp/IoskeleyMono-Term-NerdFont.zip" -d "/tmp/IoskeleyMono-Term-NerdFont"
+        find "/tmp/IoskeleyMono-Term-NerdFont" -name "*.ttf" -exec cp {} "$FONTS_DIR/IoskeleyMono/" \;
+        rm -rf "/tmp/IoskeleyMono-Term-NerdFont.zip" "/tmp/IoskeleyMono-Term-NerdFont"
+    fi
+    log_ok "Ioskeley Mono instalada."
+fi
+
 log_info "Actualizando caché del sistema..."
 find "$FONTS_DIR" -name '*Windows Compatible*' -delete &>/dev/null || true
 fc-cache -f > /dev/null
