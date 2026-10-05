@@ -10,7 +10,7 @@ require('koda').setup {
 vim.opt.termguicolors = true
 -- Tema por defecto: Oxocarbon (alto contraste industrial/monocromático)
 -- Alternativas disponibles: :colorscheme koda-high-contrast o :colorscheme koda-dark
-vim.cmd.colorscheme 'oxocarbon'
+vim.cmd.colorscheme 'koda-moss'
 
 vim.opt.number = true -- line number
 vim.opt.relativenumber = true -- relative line numbers
@@ -154,4 +154,3 @@ if vim.g.neovide then
     vim.g.neovide_scale_factor = 1.0
   end, { desc = 'Neovide Reset Zoom' })
 end
-
